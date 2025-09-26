@@ -72,6 +72,9 @@ export interface Config {
     media: Media;
     categories: Category;
     users: User;
+    'role-upgrade-requests': RoleUpgradeRequest;
+    'admin-logs': AdminLog;
+    comments: Comment;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -88,6 +91,9 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    'role-upgrade-requests': RoleUpgradeRequestsSelect<false> | RoleUpgradeRequestsSelect<true>;
+    'admin-logs': AdminLogsSelect<false> | AdminLogsSelect<true>;
+    comments: CommentsSelect<false> | CommentsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -248,6 +254,10 @@ export interface Post {
         name?: string | null;
       }[]
     | null;
+  /**
+   * Feedback from editor for rejected posts
+   */
+  editorFeedback?: string | null;
   slug?: string | null;
   slugLock?: boolean | null;
   updatedAt: string;
@@ -373,7 +383,13 @@ export interface Category {
  */
 export interface User {
   id: string;
-  name?: string | null;
+  name: string;
+  role?: ('contributor' | 'editor' | 'admin') | null;
+  /**
+   * Short bio for author pages
+   */
+  bio?: string | null;
+  avatar?: (string | null) | Media;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -736,6 +752,120 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "role-upgrade-requests".
+ */
+export interface RoleUpgradeRequest {
+  id: string;
+  user: string | User;
+  requestedRole: 'editor' | 'admin';
+  /**
+   * Explain why you should be granted this role
+   */
+  message?: string | null;
+  status?: ('pending' | 'approved' | 'rejected') | null;
+  /**
+   * Internal notes for admin review
+   */
+  adminNotes?: string | null;
+  processedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "admin-logs".
+ */
+export interface AdminLog {
+  id: string;
+  action:
+    | 'approve_post'
+    | 'reject_post'
+    | 'approve_comment'
+    | 'reject_comment'
+    | 'spam_comment'
+    | 'comment_reported'
+    | 'role_change'
+    | 'user_action'
+    | 'content_moderation';
+  resourceType: 'posts' | 'comments' | 'users' | 'role-upgrade-requests' | 'media';
+  /**
+   * ID of the affected resource
+   */
+  resourceId: string;
+  /**
+   * User who performed the action
+   */
+  user: string | User;
+  /**
+   * Additional details about the action
+   */
+  details?: string | null;
+  timestamp: string;
+  /**
+   * IP address of the user
+   */
+  ipAddress?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "comments".
+ */
+export interface Comment {
+  id: string;
+  post: string | Post;
+  /**
+   * Comment author (optional for anonymous comments)
+   */
+  author?: (string | null) | User;
+  /**
+   * Name for anonymous comments
+   */
+  authorName?: string | null;
+  /**
+   * Email for anonymous comments (not displayed publicly)
+   */
+  authorEmail?: string | null;
+  content: string;
+  status?: ('pending' | 'approved' | 'rejected' | 'spam') | null;
+  /**
+   * Internal notes for moderators
+   */
+  moderatorNotes?: string | null;
+  /**
+   * Editor/admin who moderated this comment
+   */
+  moderatedBy?: (string | null) | User;
+  /**
+   * When this comment was moderated
+   */
+  moderatedAt?: string | null;
+  /**
+   * User who reported this comment
+   */
+  reportedBy?: (string | null) | User;
+  /**
+   * Reason for reporting this comment
+   */
+  reportReason?: string | null;
+  /**
+   * When this comment was reported
+   */
+  reportedAt?: string | null;
+  /**
+   * IP address of the commenter
+   */
+  ipAddress?: string | null;
+  /**
+   * User agent of the commenter
+   */
+  userAgent?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -926,6 +1056,18 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'users';
         value: string | User;
+      } | null)
+    | ({
+        relationTo: 'role-upgrade-requests';
+        value: string | RoleUpgradeRequest;
+      } | null)
+    | ({
+        relationTo: 'admin-logs';
+        value: string | AdminLog;
+      } | null)
+    | ({
+        relationTo: 'comments';
+        value: string | Comment;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -1149,6 +1291,7 @@ export interface PostsSelect<T extends boolean = true> {
         id?: T;
         name?: T;
       };
+  editorFeedback?: T;
   slug?: T;
   slugLock?: T;
   updatedAt?: T;
@@ -1274,6 +1417,9 @@ export interface CategoriesSelect<T extends boolean = true> {
  */
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
+  role?: T;
+  bio?: T;
+  avatar?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -1290,6 +1436,57 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "role-upgrade-requests_select".
+ */
+export interface RoleUpgradeRequestsSelect<T extends boolean = true> {
+  user?: T;
+  requestedRole?: T;
+  message?: T;
+  status?: T;
+  adminNotes?: T;
+  processedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "admin-logs_select".
+ */
+export interface AdminLogsSelect<T extends boolean = true> {
+  action?: T;
+  resourceType?: T;
+  resourceId?: T;
+  user?: T;
+  details?: T;
+  timestamp?: T;
+  ipAddress?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "comments_select".
+ */
+export interface CommentsSelect<T extends boolean = true> {
+  post?: T;
+  author?: T;
+  authorName?: T;
+  authorEmail?: T;
+  content?: T;
+  status?: T;
+  moderatorNotes?: T;
+  moderatedBy?: T;
+  moderatedAt?: T;
+  reportedBy?: T;
+  reportReason?: T;
+  reportedAt?: T;
+  ipAddress?: T;
+  userAgent?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

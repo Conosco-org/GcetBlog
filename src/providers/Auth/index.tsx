@@ -1,0 +1,89 @@
+'use client'
+
+import { createContext, useCallback, useContext, useEffect, useState } from 'react'
+
+interface User {
+  id: string
+  email: string
+  name?: string
+  role: 'admin' | 'editor' | 'contributor'
+}
+
+interface AuthContextType {
+  user: User | null
+  loading: boolean
+  refreshUser: () => Promise<void>
+  logout: () => Promise<void>
+}
+
+const AuthContext = createContext<AuthContextType | null>(null)
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [mounted, setMounted] = useState(false)
+
+  const logout = async () => {
+    try {
+      const response = await fetch('/api/auth/logout', { method: 'POST' })
+      if (response.ok) {
+        setUser(null)
+        window.location.href = '/login'
+      }
+    } catch (error) {
+      console.error('Error logging out:', error)
+    }
+  }
+
+  const fetchUser = useCallback(async () => {
+    if (!mounted) return
+
+    try {
+      const response = await fetch('/api/auth/me')
+      if (response.ok) {
+        const userData = await response.json()
+        setUser(userData)
+      } else {
+        setUser(null)
+      }
+    } catch (error) {
+      console.error('Error fetching user:', error)
+      setUser(null)
+    } finally {
+      setLoading(false)
+    }
+  }, [mounted])
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (mounted) {
+      fetchUser()
+    }
+  }, [mounted, fetchUser])
+
+  // Prevent hydration mismatch by not rendering auth-dependent content until mounted
+  if (!mounted) {
+    return (
+      <AuthContext.Provider value={{ user: null, loading: true, refreshUser: fetchUser, logout }}>
+        {children}
+      </AuthContext.Provider>
+    )
+  }
+
+  return (
+    <AuthContext.Provider value={{ user, loading, refreshUser: fetchUser, logout }}>
+      {children}
+    </AuthContext.Provider>
+  )
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext)
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider')
+  }
+  return context
+}

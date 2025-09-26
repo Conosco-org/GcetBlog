@@ -217,6 +217,28 @@ export const Posts: CollectionConfig<'posts'> = {
         },
       ],
     },
+    {
+      name: 'editorFeedback',
+      type: 'textarea',
+      admin: {
+        condition: (data) => data._status === 'draft',
+        description: 'Feedback from editor for rejected posts',
+      },
+      access: {
+        read: ({ req }) => {
+          // Authors can see feedback on their own posts, editors/admins can see all
+          const user = req.user as { role: string; id: string } | undefined
+          if (!user) return false
+          if (['editor', 'admin'].includes(user.role)) return true
+          // TODO: Add author check when we have proper author relationships
+          return true
+        },
+        update: ({ req }) => {
+          const user = req.user as { role: string } | undefined
+          return user ? ['editor', 'admin'].includes(user.role) : false
+        },
+      },
+    },
     ...slugField(),
   ],
   hooks: {
