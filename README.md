@@ -1,8 +1,10 @@
-# Payload Website Template
+# GCET Blog
 
-This is the official [Payload Website Template](https://github.com/payloadcms/payload/blob/main/templates/website). Use it to power websites, blogs, or portfolios from small to enterprise. This repo includes a fully-working backend, enterprise-grade admin panel, and a beautifully designed, production-ready website.
+A modern, full-stack blog platform built with Next.js 15, Payload CMS, and MongoDB.
 
-This template is right for you if you are working on:
+> **📚 New to this codebase?** Check out our comprehensive [CODEBASE_GUIDE.md](./CODEBASE_GUIDE.md) - a beginner-friendly guide that explains everything from slugs to permissions!
+
+This template is based on the official [Payload Website Template](https://github.com/payloadcms/payload/blob/main/templates/website) and is perfect for:
 
 - A personal or enterprise-grade website, blog, or portfolio
 - A content publishing platform with a fully featured publication workflow
