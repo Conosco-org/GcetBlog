@@ -2,8 +2,14 @@
 
 A modern, full-stack blog platform built with Next.js 15, Payload CMS, and MongoDB.
 
-> **🚀 New here?** Start with [QUICK_START.md](./QUICK_START.md) for a 5-minute overview  
-> **📚 Want to become a pro?** Read [CODEBASE_GUIDE.md](./CODEBASE_GUIDE.md) for comprehensive documentation
+## 📖 Documentation
+
+**Start here:** [DOCUMENTATION_INDEX.md](./DOCUMENTATION_INDEX.md) - Choose your learning path
+
+**Quick links:**
+- 🚀 **New here?** [QUICK_START.md](./QUICK_START.md) - 5-minute overview
+- 📚 **Want to become a pro?** [CODEBASE_GUIDE.md](./CODEBASE_GUIDE.md) - Complete guide
+- 🏗️ **Need architecture?** [ARCHITECTURE.md](./ARCHITECTURE.md) - Visual diagrams
 
 This template is based on the official [Payload Website Template](https://github.com/payloadcms/payload/blob/main/templates/website) and is perfect for:
 
