@@ -9,9 +9,9 @@ export default async function LoginPage() {
 
   if (user) {
     if (user.role === 'admin') {
-      redirect('/dashboard/admin')
+      redirect('/admin')
     } else if (user.role === 'editor') {
-      redirect('/editor/queue')
+      redirect('/editor')
     } else {
       redirect('/dashboard')
     }

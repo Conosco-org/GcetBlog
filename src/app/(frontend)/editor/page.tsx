@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { LogoutButton } from '@/components/LogoutButton'
 import type { User } from '@/payload-types'
 
-export default async function EditorDashboardPage() {
+export default async function EditorHomePage() {
   const payload = await getPayload({ config: configPromise })
   const requestHeaders = await headers()
 
@@ -21,7 +21,7 @@ export default async function EditorDashboardPage() {
 
   // Only editors and admins can access this page
   if (typedUser.role !== 'editor' && typedUser.role !== 'admin') {
-    redirect('/dashboard')
+    redirect('/')
   }
 
   // Get pending posts for review

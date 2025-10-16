@@ -12,18 +12,26 @@ export async function POST(): Promise<Response> {
   // Authenticate by passing request headers
   const { user } = await payload.auth({ headers: requestHeaders })
 
-  if (!user) {
-    return new Response('Action forbidden.', { status: 403 })
+  // Check if there are any users in the system
+  const userCount = await payload.count({
+    collection: 'users',
+  })
+
+  // Allow seeding if no users exist OR if user is authenticated
+  if (!user && userCount.totalDocs > 0) {
+    return new Response('Action forbidden. Please login as admin to seed the database.', { status: 403 })
   }
 
   try {
     // Create a Payload request object to pass to the Local API for transactions
-    // At this point you should pass in a user, locale, and any other context you need for the Local API
-    const payloadReq = await createLocalReq({ user }, payload)
+    // If no user exists, create a temporary admin context for seeding
+    const payloadReq = user 
+      ? await createLocalReq({ user }, payload)
+      : await createLocalReq({}, payload)
 
     await seed({ payload, req: payloadReq })
 
-    return Response.json({ success: true })
+    return Response.json({ success: true, message: 'Database seeded successfully!' })
   } catch (e) {
     payload.logger.error({ err: e, message: 'Error seeding data' })
     return new Response('Error seeding data.', { status: 500 })

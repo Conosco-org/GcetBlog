@@ -66,17 +66,47 @@ export const seed = async ({
       .map((collection) => payload.db.deleteVersions({ collection, req, where: {} })),
   )
 
-  payload.logger.info(`— Seeding demo author and user...`)
+  payload.logger.info(`— Seeding demo users with different roles...`)
 
-  await payload.delete({
-    collection: 'users',
-    depth: 0,
-    where: {
-      email: {
-        equals: 'demo-author@example.com',
+  // Delete existing demo users if they exist
+  await Promise.all([
+    payload.delete({
+      collection: 'users',
+      depth: 0,
+      where: {
+        email: {
+          equals: 'demo-author@example.com',
+        },
       },
-    },
-  })
+    }),
+    payload.delete({
+      collection: 'users',
+      depth: 0,
+      where: {
+        email: {
+          equals: 'admin@gcet.edu.in',
+        },
+      },
+    }),
+    payload.delete({
+      collection: 'users',
+      depth: 0,
+      where: {
+        email: {
+          equals: 'editor@gcet.edu.in',
+        },
+      },
+    }),
+    payload.delete({
+      collection: 'users',
+      depth: 0,
+      where: {
+        email: {
+          equals: 'contributor@gcet.edu.in',
+        },
+      },
+    }),
+  ])
 
   payload.logger.info(`— Seeding media...`)
 
@@ -95,13 +125,41 @@ export const seed = async ({
     ),
   ])
 
-  const [demoAuthor, image1Doc, image2Doc, image3Doc, imageHomeDoc] = await Promise.all([
+  const [demoAuthor, _adminUser, _editorUser, _contributorUser, image1Doc, image2Doc, image3Doc, imageHomeDoc] = await Promise.all([
     payload.create({
       collection: 'users',
       data: {
         name: 'Demo Author',
         email: 'demo-author@example.com',
         password: 'password',
+        role: 'contributor',
+      },
+    }),
+    payload.create({
+      collection: 'users',
+      data: {
+        name: 'Admin User',
+        email: 'admin@gcet.edu.in',
+        password: 'admin123',
+        role: 'admin',
+      },
+    }),
+    payload.create({
+      collection: 'users',
+      data: {
+        name: 'Editor User',
+        email: 'editor@gcet.edu.in',
+        password: 'editor123',
+        role: 'editor',
+      },
+    }),
+    payload.create({
+      collection: 'users',
+      data: {
+        name: 'Contributor User',
+        email: 'contributor@gcet.edu.in',
+        password: 'contributor123',
+        role: 'contributor',
       },
     }),
     payload.create({

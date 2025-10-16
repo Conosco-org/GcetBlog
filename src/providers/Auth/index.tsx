@@ -39,15 +39,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!mounted) return
 
     try {
-      const response = await fetch('/api/auth/me')
+      const response = await fetch('/api/auth/me', {
+        credentials: 'include',
+        cache: 'no-store',
+      })
       if (response.ok) {
         const userData = await response.json()
         setUser(userData)
       } else {
         setUser(null)
       }
-    } catch (error) {
-      console.error('Error fetching user:', error)
+    } catch (_error) {
+      // Silently fail - this is expected when not authenticated
       setUser(null)
     } finally {
       setLoading(false)

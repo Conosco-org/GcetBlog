@@ -32,20 +32,18 @@ export async function loginAction(formData: FormData) {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
+        path: '/',
         maxAge: 60 * 60 * 24 * 7, // 7 days
       })
 
       // Redirect based on user role
       const user = result.user
-      if (user.role === 'admin') {
-        redirect('/dashboard/admin')
-      } else if (user.role === 'editor') {
-        redirect('/editor/queue')
-      } else if (user.role === 'contributor') {
-        redirect('/dashboard')
-      } else {
-        redirect('/dashboard')
-      }
+      const redirectPath = user.role === 'admin' ? '/admin' : 
+                          user.role === 'editor' ? '/editor' : 
+                          '/dashboard'
+      
+      console.log('Login successful - User role:', user.role, 'Redirecting to:', redirectPath)
+      redirect(redirectPath)
     } else {
       return { error: 'Invalid credentials' }
     }

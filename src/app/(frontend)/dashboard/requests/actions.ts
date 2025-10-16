@@ -71,6 +71,7 @@ export async function approveRoleUpgradeRequest(requestId: string, adminNotes?: 
     const request = await payload.findByID({
       collection: 'role-upgrade-requests',
       id: requestId,
+      depth: 1,
     })
 
     if (!request) {
@@ -81,28 +82,31 @@ export async function approveRoleUpgradeRequest(requestId: string, adminNotes?: 
       throw new Error('Request has already been processed')
     }
 
-    // Update the user's role
-    await payload.update({
-      collection: 'users',
-      id: typeof request.user === 'object' ? request.user.id : request.user,
-      data: {
-        role: request.requestedRole,
-      },
-    })
+    const userId = typeof request.user === 'object' ? request.user.id : request.user
 
-    // Update the request status
+    // Update the request status (the afterChange hook will update the user's role)
     await payload.update({
       collection: 'role-upgrade-requests',
       id: requestId,
       data: {
         status: 'approved',
-        adminNotes,
+        adminNotes: adminNotes || undefined,
         processedAt: new Date().toISOString(),
+      },
+    })
+
+    // Also directly update the user's role to ensure it works
+    await payload.update({
+      collection: 'users',
+      id: userId,
+      data: {
+        role: request.requestedRole,
       },
     })
 
     return { success: true, message: 'Role upgrade approved successfully' }
   } catch (error) {
+    console.error('Error approving role upgrade:', error)
     return {
       success: false,
       message: error instanceof Error ? error.message : 'Failed to approve request',

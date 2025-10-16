@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { ContributorApplyForm } from '../ContributorApplyForm'
 import { AdminRoleRequestsList } from './AdminRoleRequestsList'
+import { LogoutButton } from '@/components/LogoutButton'
 import type { User } from '@/payload-types'
 
 export default async function AdminDashboardPage() {
@@ -15,10 +16,20 @@ export default async function AdminDashboardPage() {
   const { user } = await payload.auth({ headers: requestHeaders })
 
   if (!user) {
-    redirect('/admin/login')
+    redirect('/login')
   }
 
   const typedUser = user as User & { role: string }
+
+  // Only admins can access this page
+  if (typedUser.role !== 'admin') {
+    // Redirect to appropriate dashboard based on role
+    if (typedUser.role === 'editor') {
+      redirect('/dashboard/editor')
+    } else {
+      redirect('/dashboard')
+    }
+  }
 
   // Check for existing pending requests for current user
   const existingRequest = await payload.find({
@@ -45,10 +56,19 @@ export default async function AdminDashboardPage() {
     <div className="container mx-auto p-6 space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Dashboard</h1>
+          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
           <p className="text-muted-foreground">
-            Current role: <span className="font-medium capitalize">{typedUser.role}</span>
+            Welcome, <span className="font-medium">{typedUser.name || typedUser.email}</span> | Role: <span className="font-medium capitalize">{typedUser.role}</span>
           </p>
+        </div>
+        <div className="flex gap-3">
+          <Link 
+            href="/admin" 
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Full CMS Admin
+          </Link>
+          <LogoutButton />
         </div>
       </div>
 
