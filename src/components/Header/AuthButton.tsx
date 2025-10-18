@@ -1,39 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { LogoutButton } from '@/components/LogoutButton'
-
-interface User {
-  id: string
-  email: string
-  name?: string
-  role: 'contributor' | 'editor' | 'admin'
-}
+import { useUser } from '@/providers/User'
 
 export function AuthButton() {
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    fetch('/api/users/me', {
-      credentials: 'include',
-    })
-      .then((res) => {
-        if (res.ok) return res.json()
-        return null
-      })
-      .then((data) => {
-        if (data?.user) {
-          setUser(data.user)
-        }
-        setLoading(false)
-      })
-      .catch(() => {
-        setLoading(false)
-      })
-  }, [])
+  const { user, loading } = useUser()
 
   if (loading) {
     return (

@@ -15,7 +15,11 @@ import {
 import { Eye, EyeOff, LogIn } from 'lucide-react'
 import { loginAction } from './actions'
 
-export function LoginForm() {
+interface LoginFormProps {
+  redirectTo?: string
+}
+
+export function LoginForm({ redirectTo }: LoginFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
@@ -23,6 +27,11 @@ export function LoginForm() {
   async function handleSubmit(formData: FormData) {
     setIsLoading(true)
     setMessage(null)
+
+    // Add redirect parameter if present
+    if (redirectTo) {
+      formData.append('redirectTo', redirectTo)
+    }
 
     const result = await loginAction(formData)
 

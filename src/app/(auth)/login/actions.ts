@@ -10,6 +10,7 @@ export async function loginAction(formData: FormData) {
 
   const email = formData.get('email') as string
   const password = formData.get('password') as string
+  const redirectTo = formData.get('redirectTo') as string | null
 
   if (!email || !password) {
     return { error: 'Email and password are required' }
@@ -36,11 +37,19 @@ export async function loginAction(formData: FormData) {
         maxAge: 60 * 60 * 24 * 7, // 7 days
       })
 
-      // Redirect based on user role
+      // Redirect to the requested page or role-based dashboard
       const user = result.user
-      const redirectPath = user.role === 'admin' ? '/admin' : 
-                          user.role === 'editor' ? '/editor' : 
-                          '/dashboard'
+      let redirectPath: string
+      
+      if (redirectTo && redirectTo.startsWith('/')) {
+        // Use the redirect parameter if it's a safe internal path
+        redirectPath = redirectTo
+      } else {
+        // Default role-based redirect
+        redirectPath = user.role === 'admin' ? '/admin' : 
+                      user.role === 'editor' ? '/editor' : 
+                      '/dashboard'
+      }
       
       console.log('Login successful - User role:', user.role, 'Redirecting to:', redirectPath)
       redirect(redirectPath)
@@ -49,7 +58,26 @@ export async function loginAction(formData: FormData) {
     }
   } catch (error) {
     console.error('Login error:', error)
-    return { error: 'Invalid email or password' }
+    
+    // Provide more specific error messages
+    if (error instanceof Error) {
+      const errorMessage = error.message.toLowerCase()
+      
+      if (errorMessage.includes('credentials')) {
+        return { error: 'Invalid email or password. Please try again.' }
+      }
+      if (errorMessage.includes('user') && errorMessage.includes('not found')) {
+        return { error: 'No account found with this email address.' }
+      }
+      if (errorMessage.includes('password')) {
+        return { error: 'Incorrect password. Please try again.' }
+      }
+      if (errorMessage.includes('locked') || errorMessage.includes('disabled')) {
+        return { error: 'Your account has been disabled. Please contact support.' }
+      }
+    }
+    
+    return { error: 'Unable to sign in. Please check your credentials and try again.' }
   }
 }
 
