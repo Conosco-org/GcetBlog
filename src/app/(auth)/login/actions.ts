@@ -37,7 +37,7 @@ export async function loginAction(formData: FormData) {
         maxAge: 60 * 60 * 24 * 7, // 7 days
       })
 
-      // Redirect to the requested page or role-based dashboard
+      // Determine redirect path
       const user = result.user
       let redirectPath: string
       
@@ -52,7 +52,9 @@ export async function loginAction(formData: FormData) {
       }
       
       console.log('Login successful - User role:', user.role, 'Redirecting to:', redirectPath)
-      redirect(redirectPath)
+      
+      // Return success with redirect path for client-side handling
+      return { success: true, redirectPath }
     } else {
       return { error: 'Invalid credentials' }
     }
