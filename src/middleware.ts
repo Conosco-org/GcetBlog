@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from 'next/server'
 // Routes that require authentication
 const protectedRoutes = [
   '/dashboard',
-  '/editor',
 ]
 
 export async function middleware(request: NextRequest) {
@@ -15,12 +14,84 @@ export async function middleware(request: NextRequest) {
     return new NextResponse(null, { status: 404 })
   }
 
-  // Require authentication for /admin routes
+  // Require authentication AND admin role for /admin routes
   if (pathname.startsWith('/admin')) {
     if (!token) {
       return NextResponse.redirect(new URL('/login', request.url))
     }
-    return NextResponse.next()
+    
+    // Verify user role by calling /api/users/me
+    try {
+      const apiUrl = new URL('/api/users/me', request.url)
+      const meResponse = await fetch(apiUrl, {
+        headers: {
+          Cookie: `payload-token=${token}`,
+        },
+      })
+
+      if (!meResponse.ok) {
+        // Token invalid or expired, redirect to login
+        return NextResponse.redirect(new URL('/login?message=Session expired', request.url))
+      }
+
+      const { user } = await meResponse.json()
+
+      // Only admins can access /admin routes
+      if (user?.role !== 'admin') {
+        // Redirect non-admins to their appropriate dashboard
+        const redirectUrl = user?.role === 'editor' ? '/editor' : '/dashboard'
+        return NextResponse.redirect(new URL(redirectUrl, request.url))
+      }
+
+      // Admin verified, allow access
+      return NextResponse.next()
+    } catch (error) {
+      console.error('Error verifying admin access:', error)
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
+  }
+
+  // Require authentication AND editor/admin role for /editor routes
+  if (pathname.startsWith('/editor')) {
+    if (!token) {
+      const loginUrl = new URL('/login', request.url)
+      loginUrl.searchParams.set('redirect', pathname)
+      return NextResponse.redirect(loginUrl)
+    }
+
+    // Verify user role by calling /api/users/me
+    try {
+      const apiUrl = new URL('/api/users/me', request.url)
+      const meResponse = await fetch(apiUrl, {
+        headers: {
+          Cookie: `payload-token=${token}`,
+        },
+      })
+
+      if (!meResponse.ok) {
+        // Token invalid or expired, redirect to login
+        const loginUrl = new URL('/login', request.url)
+        loginUrl.searchParams.set('message', 'Session expired')
+        loginUrl.searchParams.set('redirect', pathname)
+        return NextResponse.redirect(loginUrl)
+      }
+
+      const { user } = await meResponse.json()
+
+      // Only editors and admins can access /editor routes
+      if (user?.role !== 'editor' && user?.role !== 'admin') {
+        // Redirect contributors to their dashboard
+        return NextResponse.redirect(new URL('/dashboard', request.url))
+      }
+
+      // Editor/Admin verified, allow access
+      return NextResponse.next()
+    } catch (error) {
+      console.error('Error verifying editor access:', error)
+      const loginUrl = new URL('/login', request.url)
+      loginUrl.searchParams.set('redirect', pathname)
+      return NextResponse.redirect(loginUrl)
+    }
   }
 
   // Check if route needs authentication
