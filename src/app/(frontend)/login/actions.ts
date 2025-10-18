@@ -3,7 +3,7 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { redirect } from 'next/navigation'
-import { cookies } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 
 export async function loginAction(formData: FormData) {
   const payload = await getPayload({ config })
@@ -59,25 +59,18 @@ export async function logoutAction() {
   redirect('/login')
 }
 
-export async function getCurrentUser() {
-  const payload = await getPayload({ config })
+export async function logoutWithoutRedirect() {
   const cookieStore = await cookies()
-  const token = cookieStore.get('payload-token')
+  cookieStore.delete('payload-token')
+}
 
-  if (!token) {
-    return null
-  }
-
+export async function getCurrentUser() {
   try {
-    const result = await payload.auth({
-      headers: new Headers({
-        Authorization: `JWT ${token.value}`,
-      }),
-    })
-
-    return result.user || null
-  } catch (error) {
-    console.error('Auth error:', error)
+    const payload = await getPayload({ config })
+    const requestHeaders = await headers()
+    const { user } = await payload.auth({ headers: requestHeaders })
+    return user || null
+  } catch {
     return null
   }
 }
