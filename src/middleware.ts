@@ -6,12 +6,6 @@ const protectedRoutes = [
   '/editor',
 ]
 
-// Routes that redirect authenticated users
-const authRoutes = [
-  '/login',
-  '/register'
-]
-
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const token = request.cookies.get('payload-token')?.value
@@ -31,7 +25,6 @@ export async function middleware(request: NextRequest) {
 
   // Check if route needs authentication
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route))
-  const isAuthRoute = authRoutes.some(route => pathname.startsWith(route))
 
   // If accessing protected route without token
   if (isProtectedRoute && !token) {
@@ -40,10 +33,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  // If accessing auth routes with token, redirect to appropriate dashboard via API
-  if (isAuthRoute && token) {
-    return NextResponse.redirect(new URL('/api/auth/redirect', request.url))
-  }
+  // Don't handle auth route redirects in middleware - let the page component handle it
+  // This avoids conflicts with server action redirects from loginAction
+  // The login page itself checks getCurrentUser() and redirects appropriately
 
   return NextResponse.next()
 }
