@@ -1,4 +1,4 @@
-import { logoutWithoutRedirect } from '../../../(frontend)/login/actions'
+import { logoutWithoutRedirect } from '../../../(auth)/login/actions'
 
 export async function POST() {
   try {
