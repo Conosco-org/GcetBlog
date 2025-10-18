@@ -22,7 +22,7 @@ export default async function RegisterPage() {
       <div className="max-w-md w-full space-y-6">
         <div>
           <h2 className="text-center text-3xl font-extrabold text-gray-900">
-            Apply to Join GCET Blog
+            Apply to Join Geethanjali Blog
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Create your account to start contributing to the blog

@@ -40,7 +40,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             {/* Simple footer */}
             <footer className="container mx-auto px-4 py-6 mt-8">
               <p className="text-center text-sm text-gray-500">
-                © {new Date().getFullYear()} GCET Blog. All rights reserved.
+                © {new Date().getFullYear()} Geethanjali College of Engineering and Technology. All rights reserved.
               </p>
             </footer>
           </div>

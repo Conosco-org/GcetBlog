@@ -2,7 +2,7 @@
 
 ## 🎯 What is GCET Blog?
 
-GCET Blog is a modern, full-stack blog platform built for Government College of Engineering and Technology. It provides a content management system where multiple users with different roles can collaborate to create, review, and publish blog posts.
+GCET Blog is a modern, full-stack blog platform built for Geethanjali College of Engineering and Technology. It provides a content management system where multiple users with different roles can collaborate to create, review, and publish blog posts.
 
 ## 🏗️ Technology Stack
 

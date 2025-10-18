@@ -40,7 +40,7 @@ export function RegistrationForm() {
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl text-center">Create Account</CardTitle>
         <CardDescription className="text-center">
-          Join the GCET Blog community as a contributor
+          Join the Geethanjali Blog community as a contributor
         </CardDescription>
       </CardHeader>
 
@@ -70,7 +70,7 @@ export function RegistrationForm() {
               disabled={isLoading}
               className="w-full"
             />
-            <p className="text-xs text-gray-500">Use your GCET email address for verification</p>
+            <p className="text-xs text-gray-500">Use your college email address for verification</p>
           </div>
 
           <div className="space-y-2">
