@@ -15,7 +15,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <link href="/favicon.ico" rel="icon" sizes="32x32" />
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <Providers>
           <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
             {/* Simple header with logo and back button */}
