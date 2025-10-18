@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -23,6 +24,7 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const router = useRouter()
 
   async function handleSubmit(formData: FormData) {
     setIsLoading(true)
@@ -38,8 +40,11 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
     if (result?.error) {
       setMessage({ type: 'error', text: result.error })
       setIsLoading(false)
+    } else if (result?.success && result?.redirectPath) {
+      // Login successful - redirect to the appropriate page
+      setMessage({ type: 'success', text: 'Login successful! Redirecting...' })
+      router.push(result.redirectPath)
     }
-    // If successful, the action will redirect, so no need to handle success here
   }
 
   return (
