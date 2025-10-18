@@ -71,6 +71,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
         sizes={sizes}
         src={src}
         width={!fill ? width : undefined}
+        unoptimized={process.env.NODE_ENV === 'development'}
       />
     </picture>
   )
