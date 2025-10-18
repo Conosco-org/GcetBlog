@@ -16,14 +16,17 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const token = request.cookies.get('payload-token')?.value
 
-  // Allow Payload admin routes to pass through (Payload handles its own auth)
-  if (pathname.startsWith('/admin')) {
-    return NextResponse.next()
-  }
-
   // Block direct access to /admin/login - force use of /login
   if (pathname === '/admin/login') {
-    return NextResponse.redirect(new URL('/login', request.url))
+    return new NextResponse(null, { status: 404 })
+  }
+
+  // Require authentication for /admin routes
+  if (pathname.startsWith('/admin')) {
+    if (!token) {
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
+    return NextResponse.next()
   }
 
   // Check if route needs authentication
