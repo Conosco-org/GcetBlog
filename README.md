@@ -1,6 +1,16 @@
+# GCET Blog
+
+> **📚 [Complete Documentation Available in `/docs`](./docs/README.md)**
+> 
+> New to the project? Start here: **[Project Overview](./docs/01-project-overview.md)** | **[Quick Reference](./docs/QUICK-REFERENCE.md)**
+
+A modern, full-stack blog platform built for Government College of Engineering and Technology. Built with Next.js 15, Payload CMS, and TypeScript.
+
+---
+
 # Payload Website Template
 
-This is the official [Payload Website Template](https://github.com/payloadcms/payload/blob/main/templates/website). Use it to power websites, blogs, or portfolios from small to enterprise. This repo includes a fully-working backend, enterprise-grade admin panel, and a beautifully designed, production-ready website.
+This project is based on the official [Payload Website Template](https://github.com/payloadcms/payload/blob/main/templates/website). Use it to power websites, blogs, or portfolios from small to enterprise. This repo includes a fully-working backend, enterprise-grade admin panel, and a beautifully designed, production-ready website.
 
 This template is right for you if you are working on:
 
