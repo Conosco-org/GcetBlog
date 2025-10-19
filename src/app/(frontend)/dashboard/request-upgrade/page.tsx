@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '../../../../providers/Auth'
+import { useUser } from '../../../../providers/User'
 import {
   Card,
   CardContent,
@@ -19,7 +19,7 @@ import { Alert, AlertDescription } from '../../../../components/ui/alert'
 import Link from 'next/link'
 
 export default function RequestUpgradePage() {
-  const { user, loading } = useAuth()
+  const { user, loading } = useUser()
   const router = useRouter()
   const [requestedRole, setRequestedRole] = useState<'editor' | 'admin'>('editor')
   const [reason, setReason] = useState('')
