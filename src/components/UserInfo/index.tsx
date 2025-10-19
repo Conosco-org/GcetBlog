@@ -1,9 +1,9 @@
 'use client'
 
-import { useAuth } from '../../providers/Auth'
+import { useUser } from '../../providers/User'
 
 export function UserInfo() {
-  const { user, loading, logout } = useAuth()
+  const { user, loading, logout } = useUser()
 
   if (loading) {
     return <div className="text-sm text-gray-500">Loading user...</div>

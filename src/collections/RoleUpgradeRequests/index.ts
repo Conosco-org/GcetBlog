@@ -99,6 +99,32 @@ export const RoleUpgradeRequests: CollectionConfig = {
         }
       },
     ],
+    afterChange: [
+      async ({ req, doc, operation, previousDoc }) => {
+        // When status changes from pending to approved, update the user's role
+        if (
+          operation === 'update' &&
+          doc.status === 'approved' &&
+          previousDoc?.status === 'pending'
+        ) {
+          try {
+            const userId = typeof doc.user === 'object' ? doc.user.id : doc.user
+            
+            await req.payload.update({
+              collection: 'users',
+              id: userId,
+              data: {
+                role: doc.requestedRole,
+              },
+            })
+            
+            req.payload.logger.info(`Successfully upgraded user ${userId} to role ${doc.requestedRole}`)
+          } catch (error) {
+            req.payload.logger.error(`Failed to upgrade user role: ${error}`)
+          }
+        }
+      },
+    ],
   },
   timestamps: true,
 }

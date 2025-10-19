@@ -7,7 +7,7 @@ import { adminOrSelf } from '../../access/adminOrSelf'
 export const Users: CollectionConfig = {
   slug: 'users',
   access: {
-    admin: authenticated,
+    admin: adminOnly,
     create: authenticated,
     delete: adminOnly,
     read: authenticated,

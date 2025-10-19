@@ -1,6 +1,6 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
-import { getCurrentUser } from '../../(frontend)/login/actions'
+import { getCurrentUser } from '../../(auth)/login/actions'
 
 export async function GET() {
   try {

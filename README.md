@@ -1,6 +1,6 @@
 # GCET Blog
 
-A modern, full-stack blog platform built with Next.js 15, Payload CMS, and MongoDB.
+A modern, full-stack blog platform built for Geethanjali College of Engineering and Technology with Next.js 15, Payload CMS, and MongoDB.
 
 ## 📖 Documentation
 

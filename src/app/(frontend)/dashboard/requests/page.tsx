@@ -22,38 +22,40 @@ export default function RequestUpgradePage() {
   const { user, loading } = useUser()
   const router = useRouter()
   const [requestedRole, setRequestedRole] = useState<'editor' | 'admin'>('editor')
-  const [reason, setReason] = useState('')
+  const [message, setMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setSuccess(false)
     setIsSubmitting(true)
 
-    if (!reason.trim()) {
+    if (!message.trim()) {
       setError('Please provide a reason for your request')
       setIsSubmitting(false)
       return
     }
 
     try {
-      const response = await fetch('/api/role-requests', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          requestedRole,
-          reason: reason.trim(),
-        }),
-      })
+      const formData = new FormData()
+      formData.append('requestedRole', requestedRole)
+      formData.append('message', message.trim())
 
-      if (response.ok) {
-        router.push('/dashboard?success=role-request-submitted')
+      // Use the server action from the dashboard
+      const { submitRoleUpgradeRequest } = await import('./actions')
+      const result = await submitRoleUpgradeRequest(formData)
+
+      if (result.success) {
+        setSuccess(true)
+        setMessage('')
+        setTimeout(() => {
+          router.push('/dashboard')
+        }, 2000)
       } else {
-        const data = await response.json()
-        setError(data.error || 'Failed to submit request')
+        setError(result.message || 'Failed to submit request')
       }
     } catch (_err) {
       setError('An error occurred while submitting your request')
@@ -112,7 +114,7 @@ export default function RequestUpgradePage() {
               <Label className="text-base font-medium">Requested Role</Label>
               <RadioGroup
                 value={requestedRole}
-                onValueChange={(value: 'editor' | 'admin') => setRequestedRole(value)}
+                onValueChange={(value) => setRequestedRole(value as 'editor' | 'admin')}
                 className="mt-2"
               >
                 <div className="flex items-center space-x-2">
@@ -131,14 +133,14 @@ export default function RequestUpgradePage() {
             </div>
 
             <div>
-              <Label htmlFor="reason" className="text-base font-medium">
+              <Label htmlFor="message" className="text-base font-medium">
                 Reason for Request
               </Label>
               <Textarea
-                id="reason"
+                id="message"
                 placeholder="Please explain why you should be granted this role. Include your experience, qualifications, and how you plan to contribute..."
-                value={reason}
-                onChange={(e) => setReason(e.target.value)}
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
                 className="mt-2"
                 rows={6}
                 required
@@ -155,11 +157,20 @@ export default function RequestUpgradePage() {
               </Alert>
             )}
 
+            {success && (
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  Request submitted successfully! Redirecting to dashboard...
+                </AlertDescription>
+              </Alert>
+            )}
+
             <div className="flex gap-4">
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Submitting...' : 'Submit Request'}
+              <Button type="submit" disabled={isSubmitting || success}>
+                {isSubmitting ? 'Submitting...' : success ? 'Submitted!' : 'Submit Request'}
               </Button>
-              <Button variant="outline" asChild>
+              <Button variant="outline" asChild disabled={isSubmitting}>
                 <Link href="/dashboard">Cancel</Link>
               </Button>
             </div>

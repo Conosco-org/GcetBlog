@@ -1,8 +1,8 @@
-import { logoutAction } from '../../../(frontend)/login/actions'
+import { logoutWithoutRedirect } from '../../../(auth)/login/actions'
 
 export async function POST() {
   try {
-    await logoutAction()
+    await logoutWithoutRedirect()
     return Response.json({ success: true })
   } catch (error) {
     console.error('Error in logout API:', error)
