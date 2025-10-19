@@ -15,6 +15,7 @@ interface UserContextType {
   loading: boolean
   refreshUser: () => Promise<void>
   clearUser: () => void
+  logout: () => Promise<void>
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined)
@@ -75,6 +76,21 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     setUser(null)
   }
 
+  const logout = async () => {
+    try {
+      const response = await fetch('/api/auth/logout', { 
+        method: 'POST',
+        credentials: 'include'
+      })
+      if (response.ok) {
+        setUser(null)
+        router.push('/login')
+      }
+    } catch (error) {
+      console.error('Error logging out:', error)
+    }
+  }
+
   useEffect(() => {
     fetchUser()
     
@@ -104,7 +120,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }, [pathname])
 
   return (
-    <UserContext.Provider value={{ user, loading, refreshUser, clearUser }}>
+    <UserContext.Provider value={{ user, loading, refreshUser, clearUser, logout }}>
       {children}
     </UserContext.Provider>
   )

@@ -1,25 +1,27 @@
 'use client'
 
-import { useAuth } from '@payloadcms/ui'
 import React from 'react'
 import './styles.css'
 
-export const AdminLogout = () => {
-  const { logOut } = useAuth()
-
+export default function AdminLogout() {
   const handleLogout = React.useCallback(async () => {
     try {
-      // Call Payload's logout to clear the session
-      await logOut()
-      
-      // Redirect to /login instead of /admin/login
-      window.location.href = '/login'
+      // Call our logout API endpoint to clear the payload-token cookie
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      })
+
+      if (!response.ok) {
+        console.error('Logout failed:', await response.text())
+      }
     } catch (error) {
       console.error('Logout error:', error)
-      // Even if there's an error, redirect to login
+    } finally {
+      // Always redirect to /login after logout attempt
       window.location.href = '/login'
     }
-  }, [logOut])
+  }, [])
 
   return (
     <button
