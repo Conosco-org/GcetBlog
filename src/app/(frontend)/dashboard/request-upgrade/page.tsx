@@ -112,7 +112,7 @@ export default function RequestUpgradePage() {
               <Label className="text-base font-medium">Requested Role</Label>
               <RadioGroup
                 value={requestedRole}
-                onValueChange={(value: 'editor' | 'admin') => setRequestedRole(value)}
+                onValueChange={(value) => setRequestedRole(value as 'editor' | 'admin')}
                 className="mt-2"
               >
                 <div className="flex items-center space-x-2">

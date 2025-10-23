@@ -1,0 +1,170 @@
+'use client'
+
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { LogoutButton } from '@/components/LogoutButton'
+import type { User } from '@/payload-types'
+import { 
+  Home, 
+  FileText, 
+  Clock, 
+  Image, 
+  FileStack, 
+  BarChart3, 
+  Activity, 
+  Settings, 
+  Eye
+} from 'lucide-react'
+
+interface NavItem {
+  label: string
+  href: string
+  icon: React.ReactNode
+  badge?: number
+}
+
+interface EditorSidebarProps {
+  user: User & { role: string }
+  pendingPostsCount?: number
+  totalPostsCount?: number
+  activityLogsCount?: number
+}
+
+export function EditorSidebar({ 
+  user, 
+  pendingPostsCount = 0,
+  totalPostsCount = 0,
+  activityLogsCount = 0
+}: EditorSidebarProps) {
+  const pathname = usePathname()
+
+  const navItems: NavItem[] = [
+    {
+      label: 'Dashboard',
+      href: '/editor',
+      icon: <Home className="w-5 h-5" />,
+    },
+    {
+      label: 'Content Manager',
+      href: '/editor/content',
+      icon: <FileText className="w-5 h-5" />,
+      badge: totalPostsCount,
+    },
+    {
+      label: 'Review Queue',
+      href: '/editor/queue',
+      icon: <Clock className="w-5 h-5" />,
+      badge: pendingPostsCount,
+    },
+    {
+      label: 'Media Manager',
+      href: '/editor/media',
+      icon: <Image className="w-5 h-5" />,
+    },
+    {
+      label: 'Templates',
+      href: '/editor/templates',
+      icon: <FileStack className="w-5 h-5" />,
+      // badge: templatesCount, // Will add when templates collection is implemented
+    },
+    {
+      label: 'Analytics',
+      href: '/editor/analytics',
+      icon: <BarChart3 className="w-5 h-5" />,
+    },
+    {
+      label: 'Activity Logs',
+      href: '/editor/activity',
+      icon: <Activity className="w-5 h-5" />,
+      badge: activityLogsCount,
+    },
+    {
+      label: 'Workspace Settings',
+      href: '/editor/settings',
+      icon: <Settings className="w-5 h-5" />,
+    },
+    {
+      label: 'Public Blog View',
+      href: '/',
+      icon: <Eye className="w-5 h-5" />,
+    },
+  ]
+
+  const isActive = (href: string) => {
+    if (href === '/editor') {
+      return pathname === href
+    }
+    return pathname.startsWith(href)
+  }
+
+  return (
+    <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
+      {/* Logo & User Info */}
+      <div className="p-6 border-b border-gray-200">
+        <Link href="/editor" className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
+            GC
+          </div>
+          <span className="text-xl font-bold text-gray-900">GCET Blog</span>
+        </Link>
+        
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold text-lg">
+            {(user.name || user.email || 'U').charAt(0).toUpperCase()}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="font-semibold text-sm text-gray-900 truncate">
+              {user.name || 'Content Editor'}
+            </p>
+            <p className="text-xs text-gray-500 uppercase tracking-wide flex items-center gap-1">
+              {user.role}
+              <span className="w-2 h-2 bg-green-500 rounded-full inline-block"></span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <nav className="flex-1 overflow-y-auto p-4">
+        <ul className="space-y-1">
+          {navItems.map((item) => {
+            const active = isActive(item.href)
+            return (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  className={`
+                    flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors relative
+                    ${active 
+                      ? 'bg-blue-50 text-blue-700' 
+                      : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                    }
+                  `}
+                >
+                  <span className={active ? 'text-blue-700' : 'text-gray-500'}>
+                    {item.icon}
+                  </span>
+                  <span className="flex-1">{item.label}</span>
+                  {item.badge !== undefined && (
+                    <span className={`
+                      px-2 py-0.5 text-xs font-semibold rounded-full
+                      ${active ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}
+                    `}>
+                      {item.badge}
+                    </span>
+                  )}
+                </Link>
+              </li>
+            )
+          })}
+        </ul>
+      </nav>
+
+      {/* Footer */}
+      <div className="p-4 border-t border-gray-200">
+        <LogoutButton className="w-full text-left px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors flex items-center gap-2" />
+        <p className="text-xs text-gray-400 text-center mt-3">v2.4.1</p>
+      </div>
+    </aside>
+  )
+}
