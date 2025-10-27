@@ -51,16 +51,16 @@ export default async function EditorLayout({
   })
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gray-50">
       <EditorSidebar 
         user={typedUser}
         pendingPostsCount={pendingPosts.totalDocs}
         totalPostsCount={totalPosts.totalDocs}
         activityLogsCount={recentLogs.totalDocs}
       />
-      <main className="flex-1 overflow-y-auto lg:ml-0">
-        {/* Mobile top padding for hamburger button */}
-        <div className="lg:hidden h-16" />
+      <main className="flex-1 overflow-y-auto">
+        {/* Top padding for hamburger button */}
+        <div className="h-16" />
         {children}
       </main>
     </div>

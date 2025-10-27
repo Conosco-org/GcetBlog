@@ -40,7 +40,7 @@ export function EditorSidebar({
   activityLogsCount = 0
 }: EditorSidebarProps) {
   const pathname = usePathname()
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(true) // Start open by default
 
   const navItems: NavItem[] = [
     {
@@ -102,97 +102,86 @@ export function EditorSidebar({
 
   return (
     <>
-      {/* Mobile Hamburger Button */}
+      {/* Hamburger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-lg shadow-lg border border-gray-200"
+        className="fixed top-4 left-4 z-50 p-2 bg-white rounded-lg shadow-lg border border-gray-200 hover:bg-gray-50 transition-colors"
         aria-label="Toggle menu"
       >
         {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
       </button>
 
-      {/* Backdrop for mobile */}
+      {/* Sidebar - Static positioning to push content */}
       {isOpen && (
-        <div
-          className="lg:hidden fixed inset-0 bg-black/50 z-30"
-          onClick={() => setIsOpen(false)}
-        />
-      )}
-
-      {/* Sidebar - Always visible on desktop, toggle on mobile */}
-      <aside className={`
-        fixed lg:static inset-y-0 left-0 z-40
-        w-64 bg-white border-r border-gray-200 flex flex-col
-        ${isOpen ? '' : 'hidden lg:flex'}
-      `}>
-        {/* Logo & User Info */}
-        <div className="p-6 border-b border-gray-200">
-          <Link href="/editor" className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
-              GC
-            </div>
-            <span className="text-xl font-bold text-gray-900">GCET Blog</span>
-          </Link>
-          
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold text-lg">
-              {(user.name || user.email || 'U').charAt(0).toUpperCase()}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-semibold text-sm text-gray-900 truncate">
-                {user.name || 'Content Editor'}
-              </p>
-              <p className="text-xs text-gray-500 uppercase tracking-wide flex items-center gap-1">
-                {user.role}
-                <span className="w-2 h-2 bg-green-500 rounded-full inline-block"></span>
-              </p>
+        <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-screen sticky top-0">
+          {/* Logo & User Info */}
+          <div className="p-6 border-b border-gray-200 mt-16">
+            <Link href="/editor" className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
+                GC
+              </div>
+              <span className="text-xl font-bold text-gray-900">GCET Blog</span>
+            </Link>
+            
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold text-lg">
+                {(user.name || user.email || 'U').charAt(0).toUpperCase()}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-sm text-gray-900 truncate">
+                  {user.name || 'Content Editor'}
+                </p>
+                <p className="text-xs text-gray-500 uppercase tracking-wide flex items-center gap-1">
+                  {user.role}
+                  <span className="w-2 h-2 bg-green-500 rounded-full inline-block"></span>
+                </p>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto p-4">
-          <ul className="space-y-1">
-            {navItems.map((item) => {
-              const active = isActive(item.href)
-              return (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    onClick={() => setIsOpen(false)}
-                    className={`
-                      flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium
-                      ${active 
-                        ? 'bg-blue-50 text-blue-700' 
-                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                      }
-                    `}
-                  >
-                    <span className={active ? 'text-blue-700' : 'text-gray-500'}>
-                      {item.icon}
-                    </span>
-                    <span className="flex-1">{item.label}</span>
-                    {item.badge !== undefined && (
-                      <span className={`
-                        px-2 py-0.5 text-xs font-semibold rounded-full
-                        ${active ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}
-                      `}>
-                        {item.badge}
+          {/* Navigation */}
+          <nav className="flex-1 overflow-y-auto p-4">
+            <ul className="space-y-1">
+              {navItems.map((item) => {
+                const active = isActive(item.href)
+                return (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className={`
+                        flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium
+                        ${active 
+                          ? 'bg-blue-50 text-blue-700' 
+                          : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                        }
+                      `}
+                    >
+                      <span className={active ? 'text-blue-700' : 'text-gray-500'}>
+                        {item.icon}
                       </span>
-                    )}
-                  </Link>
-                </li>
-              )
-            })}
-          </ul>
-        </nav>
+                      <span className="flex-1">{item.label}</span>
+                      {item.badge !== undefined && (
+                        <span className={`
+                          px-2 py-0.5 text-xs font-semibold rounded-full
+                          ${active ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}
+                        `}>
+                          {item.badge}
+                        </span>
+                      )}
+                    </Link>
+                  </li>
+                )
+              })}
+            </ul>
+          </nav>
 
-        {/* Footer */}
-        <div className="p-4 border-t border-gray-200">
-          <LogoutButton className="w-full text-left px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg flex items-center gap-2" />
-          <p className="text-xs text-gray-400 text-center mt-3">v2.4.1</p>
-        </div>
-      </aside>
+          {/* Footer */}
+          <div className="p-4 border-t border-gray-200">
+            <LogoutButton className="w-full text-left px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg flex items-center gap-2" />
+            <p className="text-xs text-gray-400 text-center mt-3">v2.4.1</p>
+          </div>
+        </aside>
+      )}
     </>
   )
 }
