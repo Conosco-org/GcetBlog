@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { EditorSidebar } from './EditorSidebar'
 import { EditorHeader } from './EditorHeader'
+import { Toaster } from '@/components/ui/toaster'
 import type { User } from '@/payload-types'
 
 interface EditorLayoutClientProps {
@@ -43,6 +44,7 @@ export function EditorLayoutClient({
           {children}
         </main>
       </div>
+      <Toaster />
     </div>
   )
 }

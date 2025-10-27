@@ -1,7 +1,8 @@
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import Link from 'next/link'
-import { Search, Filter, Plus, MoreVertical, Eye, MessageSquare } from 'lucide-react'
+import { Search, Filter, Plus, MoreVertical, Eye, MessageSquare, Pencil } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 export default async function ContentManagerPage() {
   const payload = await getPayload({ config: configPromise })
@@ -23,12 +24,11 @@ export default async function ContentManagerPage() {
             <h1 className="text-3xl font-bold text-gray-900">Content Manager</h1>
             <p className="text-gray-600">Manage and organize all blog content</p>
           </div>
-          <Link 
-            href="/admin/collections/posts/create"
-            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium flex items-center gap-2"
-          >
-            <Plus className="w-4 h-4" />
-            New Post
+          <Link href="/editor/posts/create">
+            <Button>
+              <Plus className="w-4 h-4 mr-2" />
+              New Post
+            </Button>
           </Link>
         </div>
       </div>
@@ -197,11 +197,11 @@ export default async function ContentManagerPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <Link
-                          href={`/admin/collections/posts/${post.id}`}
-                          className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-                        >
-                          Edit
+                        <Link href={`/editor/posts/edit/${post.id}`}>
+                          <Button variant="ghost" size="sm">
+                            <Pencil className="w-4 h-4 mr-2" />
+                            Edit
+                          </Button>
                         </Link>
                         <button className="p-1 hover:bg-gray-100 rounded">
                           <MoreVertical className="w-4 h-4 text-gray-500" />

@@ -286,6 +286,10 @@ export interface Media {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Cloudinary CDN URL for the uploaded image
+   */
+  cloudinaryUrl?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -1305,6 +1309,7 @@ export interface PostsSelect<T extends boolean = true> {
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   caption?: T;
+  cloudinaryUrl?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;

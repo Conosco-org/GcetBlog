@@ -2,8 +2,11 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Save, ArrowLeft, Eye } from 'lucide-react'
+import { Save, ArrowLeft, Eye, Upload, X } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
+import { Button } from '@/components/ui/button'
+import { useToast } from '@/hooks/use-toast'
 import type { Category, User } from '@/payload-types'
 
 interface PostFormProps {
@@ -17,6 +20,7 @@ interface PostFormProps {
       title?: string
       description?: string
     }
+    heroImage?: string
   }
   postId?: string
   isEdit?: boolean
@@ -24,27 +28,106 @@ interface PostFormProps {
 
 export function PostForm({ categories, user, initialData, postId, isEdit = false }: PostFormProps) {
   const router = useRouter()
+  const { toast } = useToast()
   const [title, setTitle] = useState(initialData?.title || '')
   const [content, setContent] = useState(initialData?.content || '')
   const [selectedCategories, setSelectedCategories] = useState<string[]>(initialData?.categories || [])
   const [metaTitle, setMetaTitle] = useState(initialData?.meta?.title || '')
   const [metaDescription, setMetaDescription] = useState(initialData?.meta?.description || '')
+  const [heroImageId, setHeroImageId] = useState<string | undefined>(initialData?.heroImage)
+  const [heroImagePreview, setHeroImagePreview] = useState<string | undefined>(undefined)
+  const [isUploadingImage, setIsUploadingImage] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [error, setError] = useState('')
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Error",
+        description: "Please select an image file",
+        variant: "destructive",
+      })
+      return
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "Error",
+        description: "Image size should be less than 5MB",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setIsUploadingImage(true)
+
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const response = await fetch('/api/media', {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setHeroImageId(data.doc.id)
+        // Use Cloudinary URL for preview instead of blob URL
+        setHeroImagePreview(data.cloudinaryUrl || URL.createObjectURL(file))
+        toast({
+          title: "Success",
+          description: "Image uploaded successfully to Cloudinary",
+        })
+      } else {
+        const error = await response.json()
+        toast({
+          title: "Error",
+          description: error.message || "Failed to upload image",
+          variant: "destructive",
+        })
+      }
+    } catch (err) {
+      toast({
+        title: "Error",
+        description: "An error occurred while uploading",
+        variant: "destructive",
+      })
+      console.error('Image upload error:', err)
+    } finally {
+      setIsUploadingImage(false)
+    }
+  }
+
+  const handleRemoveImage = () => {
+    setHeroImageId(undefined)
+    setHeroImagePreview(undefined)
+  }
 
   const handleSubmit = async (status: 'draft' | 'published') => {
     if (!title.trim()) {
-      setError('Title is required')
+      toast({
+        title: "Error",
+        description: "Title is required",
+        variant: "destructive",
+      })
       return
     }
 
     if (!content.trim()) {
-      setError('Content is required')
+      toast({
+        title: "Error",
+        description: "Content is required",
+        variant: "destructive",
+      })
       return
     }
 
     setIsSubmitting(true)
-    setError('')
 
     try {
       const url = isEdit ? `/api/posts/${postId}` : '/api/posts'
@@ -61,6 +144,7 @@ export function PostForm({ categories, user, initialData, postId, isEdit = false
           categories: selectedCategories,
           authors: [user.id],
           _status: status,
+          heroImage: heroImageId,
           meta: {
             title: metaTitle.trim() || title.trim(),
             description: metaDescription.trim() || content.substring(0, 160).trim(),
@@ -68,16 +152,42 @@ export function PostForm({ categories, user, initialData, postId, isEdit = false
         }),
       })
 
-      if (response.ok) {
-        const data = await response.json()
-        router.push(`/editor/content?success=${status === 'published' ? 'published' : 'saved'}`)
-        router.refresh()
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        // Show success toast
+        toast({
+          title: "Success!",
+          description: data.message || (status === 'published' ? 'Post published successfully!' : 'Draft saved successfully!'),
+        })
+
+        // Navigate based on status
+        if (status === 'published') {
+          // Navigate to main blog page to see the published post
+          setTimeout(() => {
+            router.push('/')
+            router.refresh()
+          }, 1000)
+        } else {
+          // Navigate to editor content page for drafts
+          setTimeout(() => {
+            router.push('/editor/content')
+            router.refresh()
+          }, 1000)
+        }
       } else {
-        const errorData = await response.json()
-        setError(errorData.message || `Failed to ${isEdit ? 'update' : 'create'} post`)
+        toast({
+          title: "Error",
+          description: data.message || `Failed to ${isEdit ? 'update' : 'create'} post`,
+          variant: "destructive",
+        })
       }
     } catch (err) {
-      setError('An error occurred. Please try again.')
+      toast({
+        title: "Error",
+        description: "An error occurred. Please try again.",
+        variant: "destructive",
+      })
       console.error('Post submission error:', err)
     } finally {
       setIsSubmitting(false)
@@ -104,33 +214,25 @@ export function PostForm({ categories, user, initialData, postId, isEdit = false
           Back to Content
         </Link>
         <div className="flex gap-3">
-          <button
+          <Button
             type="button"
             onClick={() => handleSubmit('draft')}
             disabled={isSubmitting}
-            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            variant="outline"
           >
-            <Save className="w-4 h-4" />
+            <Save className="w-4 h-4 mr-2" />
             {isSubmitting ? 'Saving...' : 'Save as Draft'}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             onClick={() => handleSubmit('published')}
             disabled={isSubmitting}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <Eye className="w-4 h-4" />
+            <Eye className="w-4 h-4 mr-2" />
             {isSubmitting ? 'Publishing...' : 'Publish'}
-          </button>
+          </Button>
         </div>
       </div>
-
-      {/* Error Message */}
-      {error && (
-        <div className="mx-6 mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-sm text-red-800">{error}</p>
-        </div>
-      )}
 
       {/* Form */}
       <div className="p-6 space-y-6">
@@ -148,6 +250,61 @@ export function PostForm({ categories, user, initialData, postId, isEdit = false
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
             required
           />
+        </div>
+
+        {/* Hero Image */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Hero Image
+          </label>
+          
+          {!heroImageId && !heroImagePreview ? (
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-500 transition">
+              <input
+                type="file"
+                id="heroImage"
+                accept="image/*"
+                onChange={handleImageUpload}
+                disabled={isUploadingImage}
+                className="hidden"
+              />
+              <label
+                htmlFor="heroImage"
+                className="cursor-pointer flex flex-col items-center"
+              >
+                <Upload className="w-12 h-12 text-gray-400 mb-2" />
+                <p className="text-sm font-medium text-gray-700 mb-1">
+                  {isUploadingImage ? 'Uploading...' : 'Click to upload hero image'}
+                </p>
+                <p className="text-xs text-gray-500">
+                  PNG, JPG, WebP up to 5MB
+                </p>
+              </label>
+            </div>
+          ) : (
+            <div className="relative border border-gray-300 rounded-lg overflow-hidden">
+              {heroImagePreview ? (
+                <Image
+                  src={heroImagePreview}
+                  alt="Hero image preview"
+                  width={800}
+                  height={400}
+                  className="w-full h-64 object-cover"
+                />
+              ) : heroImageId ? (
+                <div className="w-full h-64 bg-gray-100 flex items-center justify-center">
+                  <p className="text-sm text-gray-500">Image uploaded</p>
+                </div>
+              ) : null}
+              <button
+                type="button"
+                onClick={handleRemoveImage}
+                className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Content */}
