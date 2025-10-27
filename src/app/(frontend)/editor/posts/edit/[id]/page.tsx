@@ -5,13 +5,14 @@ import { headers } from 'next/headers'
 import { PostForm } from '../../create/PostForm'
 import type { User } from '@/payload-types'
 
-export default async function EditPostPage({ params }: { params: { id: string } }) {
+export default async function EditPostPage({ params }: { params: Promise<{ id: string }> }) {
   const payload = await getPayload({ config: configPromise })
+  const { id } = await params
 
   // Get the post
   const post = await payload.findByID({
     collection: 'posts',
-    id: params.id,
+    id: id,
     depth: 2,
   })
 

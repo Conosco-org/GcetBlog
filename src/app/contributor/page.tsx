@@ -70,7 +70,7 @@ export default async function ContributorDashboardPage() {
     <div className="p-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Welcome back, {typedUser.name || 'Contributor'}!</h1>
-        <p className="text-muted-foreground">Here's your writing journey overview</p>
+        <p className="text-muted-foreground">Here&apos;s your writing journey overview</p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">

@@ -346,7 +346,7 @@ export default function CategoryManager({ categories, totalCategories }: Categor
                             <AlertDialogHeader>
                               <AlertDialogTitle>Delete Category</AlertDialogTitle>
                               <AlertDialogDescription>
-                                Are you sure you want to delete "{category.title}"? This action cannot be undone.
+                                Are you sure you want to delete &ldquo;{category.title}&rdquo;? This action cannot be undone.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>

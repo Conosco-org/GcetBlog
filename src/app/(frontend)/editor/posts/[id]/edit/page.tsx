@@ -2,11 +2,12 @@ import { redirect, notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
-import { PostForm } from '../create/PostForm'
+import { PostForm } from '../../create/PostForm'
 
-export default async function EditPostPage({ params }: { params: { id: string } }) {
+export default async function EditPostPage({ params }: { params: Promise<{ id: string }> }) {
   const payload = await getPayload({ config: configPromise })
   const requestHeaders = await headers()
+  const { id } = await params
 
   // Authenticate the request
   const { user } = await payload.auth({ headers: requestHeaders })
@@ -24,7 +25,7 @@ export default async function EditPostPage({ params }: { params: { id: string } 
   try {
     const post = await payload.findByID({
       collection: 'posts',
-      id: params.id,
+      id: id,
       depth: 2,
     })
 
