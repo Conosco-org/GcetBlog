@@ -381,15 +381,15 @@ export const seed = async ({
               type: 'custom',
               label: 'Source Code',
               newTab: true,
-              url: 'https://github.com/payloadcms/payload/tree/main/templates/website',
+              url: 'https://github.com/Conosco-org/GcetBlog',
             },
           },
           {
             link: {
               type: 'custom',
-              label: 'Payload',
+              label: 'GCET Official',
               newTab: true,
-              url: 'https://payloadcms.com/',
+              url: 'https://gcettbr.ac.in/',
             },
           },
         ],

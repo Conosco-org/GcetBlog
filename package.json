@@ -1,7 +1,7 @@
 {
   "name": "gcet-blog",
   "version": "1.0.0",
-  "description": "GCET College Blog Website with Payload CMS",
+  "description": "Official blog platform for Geethanjali College of Engineering and Technology (GCET)",
   "license": "MIT",
   "type": "module",
   "scripts": {

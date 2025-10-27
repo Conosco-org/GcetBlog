@@ -12,6 +12,7 @@ import { RenderHero } from '@/heros/RenderHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
+import { HeroSection, HomePosts } from '@/components/LandingPage'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -63,6 +64,36 @@ export default async function Page({ params: paramsPromise }: Args) {
     return <PayloadRedirects url={url} />
   }
 
+  // Modern landing page for home - show latest 10 posts
+  if (slug === 'home') {
+    const payload = await getPayload({ config: configPromise })
+    
+    // Fetch latest 10 published posts
+    const postsResult = await payload.find({
+      collection: 'posts',
+      depth: 2,
+      limit: 10,
+      overrideAccess: true,
+      where: {
+        _status: {
+          equals: 'published',
+        },
+      },
+      sort: '-publishedAt',
+    })
+
+    return (
+      <main className="min-h-screen" data-hide-footer="true">
+        <PageClient />
+        <PayloadRedirects disableNotFound url={url} />
+        {draft && <LivePreviewListener />}
+        
+        <HeroSection />
+        <HomePosts posts={postsResult.docs} />
+      </main>
+    )
+  }
+
   const { hero, layout } = page
 
   return (
@@ -108,3 +139,4 @@ const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {
 
   return result.docs?.[0] || null
 })
+
