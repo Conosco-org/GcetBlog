@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { CheckCircle, XCircle } from 'lucide-react'
 import { approvePost, rejectPost } from './actions'
 import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import { useToast } from '@/hooks/use-toast'
 
 interface ApprovalButtonsProps {
   postId: string
@@ -12,11 +14,12 @@ interface ApprovalButtonsProps {
 
 export function ApprovalButtons({ postId, postTitle }: ApprovalButtonsProps) {
   const router = useRouter()
+  const { toast } = useToast()
   const [isApproving, setIsApproving] = useState(false)
   const [isRejecting, setIsRejecting] = useState(false)
 
   const handleApprove = async () => {
-    if (!confirm(`Are you sure you want to approve "${postTitle}"?`)) {
+    if (!confirm(`Are you sure you want to approve and publish "${postTitle}"?`)) {
       return
     }
 
@@ -24,20 +27,31 @@ export function ApprovalButtons({ postId, postTitle }: ApprovalButtonsProps) {
     try {
       const result = await approvePost(postId)
       if (result.success) {
-        alert('Post approved and published successfully!')
+        toast({
+          title: "Success!",
+          description: "Post approved and published successfully!",
+        })
         router.refresh()
       } else {
-        alert(result.message || 'Failed to approve post')
+        toast({
+          title: "Error",
+          description: result.message || 'Failed to approve post',
+          variant: "destructive",
+        })
       }
     } catch (error) {
-      alert('An error occurred while approving the post')
+      toast({
+        title: "Error",
+        description: "An error occurred while approving the post",
+        variant: "destructive",
+      })
     } finally {
       setIsApproving(false)
     }
   }
 
   const handleReject = async () => {
-    const reason = prompt(`Why are you rejecting "${postTitle}"? (This will be sent to the author)`)
+    const reason = prompt(`Why are you rejecting "${postTitle}"? (This feedback will be sent to the author)`)
     if (reason === null) {
       return // User cancelled
     }
@@ -46,13 +60,24 @@ export function ApprovalButtons({ postId, postTitle }: ApprovalButtonsProps) {
     try {
       const result = await rejectPost(postId, reason || undefined)
       if (result.success) {
-        alert('Post rejected with feedback sent to author')
+        toast({
+          title: "Post Rejected",
+          description: "Feedback sent to the author",
+        })
         router.refresh()
       } else {
-        alert(result.message || 'Failed to reject post')
+        toast({
+          title: "Error",
+          description: result.message || 'Failed to reject post',
+          variant: "destructive",
+        })
       }
     } catch (error) {
-      alert('An error occurred while rejecting the post')
+      toast({
+        title: "Error",
+        description: "An error occurred while rejecting the post",
+        variant: "destructive",
+      })
     } finally {
       setIsRejecting(false)
     }
@@ -60,22 +85,24 @@ export function ApprovalButtons({ postId, postTitle }: ApprovalButtonsProps) {
 
   return (
     <div className="flex items-center gap-2">
-      <button
+      <Button
         onClick={handleApprove}
         disabled={isApproving || isRejecting}
-        className="px-3 py-1.5 bg-green-600 text-white rounded hover:bg-green-700 transition text-sm font-medium flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+        size="sm"
+        className="bg-green-600 hover:bg-green-700"
       >
-        <CheckCircle className="w-4 h-4" />
+        <CheckCircle className="w-4 h-4 mr-1" />
         {isApproving ? 'Approving...' : 'Approve'}
-      </button>
-      <button
+      </Button>
+      <Button
         onClick={handleReject}
         disabled={isApproving || isRejecting}
-        className="px-3 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 transition text-sm font-medium flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+        size="sm"
+        variant="destructive"
       >
-        <XCircle className="w-4 h-4" />
+        <XCircle className="w-4 h-4 mr-1" />
         {isRejecting ? 'Rejecting...' : 'Reject'}
-      </button>
+      </Button>
     </div>
   )
 }

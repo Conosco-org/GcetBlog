@@ -75,6 +75,7 @@ export interface Config {
     'role-upgrade-requests': RoleUpgradeRequest;
     'admin-logs': AdminLog;
     comments: Comment;
+    feedback: Feedback;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -94,6 +95,7 @@ export interface Config {
     'role-upgrade-requests': RoleUpgradeRequestsSelect<false> | RoleUpgradeRequestsSelect<true>;
     'admin-logs': AdminLogsSelect<false> | AdminLogsSelect<true>;
     comments: CommentsSelect<false> | CommentsSelect<true>;
+    feedback: FeedbackSelect<false> | FeedbackSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -258,6 +260,14 @@ export interface Post {
    * Feedback from editor for rejected posts
    */
   editorFeedback?: string | null;
+  /**
+   * Current review status of the post
+   */
+  reviewStatus?: ('draft' | 'pending_review' | 'approved' | 'rejected') | null;
+  /**
+   * When the post was submitted for review
+   */
+  submittedForReviewAt?: string | null;
   slug?: string | null;
   slugLock?: boolean | null;
   updatedAt: string;
@@ -870,6 +880,41 @@ export interface Comment {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "feedback".
+ */
+export interface Feedback {
+  id: string;
+  title: string;
+  /**
+   * The post this feedback is related to
+   */
+  post: string | Post;
+  /**
+   * The contributor receiving the feedback
+   */
+  contributor: string | User;
+  /**
+   * The editor providing the feedback
+   */
+  editor: string | User;
+  /**
+   * Type of feedback
+   */
+  type: 'critical' | 'suggestions' | 'praise' | 'questions';
+  status: 'active' | 'resolved' | 'closed';
+  messages?:
+    | {
+        content: string;
+        sender: string | User;
+        timestamp?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -1072,6 +1117,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'comments';
         value: string | Comment;
+      } | null)
+    | ({
+        relationTo: 'feedback';
+        value: string | Feedback;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -1296,6 +1345,8 @@ export interface PostsSelect<T extends boolean = true> {
         name?: T;
       };
   editorFeedback?: T;
+  reviewStatus?: T;
+  submittedForReviewAt?: T;
   slug?: T;
   slugLock?: T;
   updatedAt?: T;
@@ -1490,6 +1541,28 @@ export interface CommentsSelect<T extends boolean = true> {
   reportedAt?: T;
   ipAddress?: T;
   userAgent?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "feedback_select".
+ */
+export interface FeedbackSelect<T extends boolean = true> {
+  title?: T;
+  post?: T;
+  contributor?: T;
+  editor?: T;
+  type?: T;
+  status?: T;
+  messages?:
+    | T
+    | {
+        content?: T;
+        sender?: T;
+        timestamp?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
