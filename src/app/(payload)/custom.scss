@@ -1,0 +1,25 @@
+// Hide the default Payload collection cards
+// Target the dashboard__group that contains Collections and Globals
+.dashboard__group {
+  display: none !important;
+}
+
+// Hide all the default dashboard card lists
+.dashboard__card-list {
+  display: none !important;
+}
+
+// Make sure our custom dashboard is always visible
+.custom-dashboard {
+  display: block !important;
+}
+
+
+
+
+
+
+
+
+
+

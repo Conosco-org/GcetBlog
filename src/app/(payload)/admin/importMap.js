@@ -21,9 +21,11 @@ import { LinkToDoc as LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloa
 import { ReindexButton as ReindexButton_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
 import { RowLabel as RowLabel_ec255a65fa6fa8d1faeb09cf35284224 } from '@/Header/RowLabel'
 import { RowLabel as RowLabel_1f6ff6ff633e3695d348f4f3c58f1466 } from '@/Footer/RowLabel'
+import { default as default_746d0320409c02f8120f68c01aa89341 } from '@/components/AdminUI/CustomNav'
 import { default as default_a94b973e04625a2034d1f418c5138318 } from '@/components/AdminLogout'
-import { default as default_1a7510af427896d367a49dbf838d2de6 } from '@/components/BeforeDashboard'
+import { default as default_314742147967cd6e64b5e4c316e92ae8 } from '@/components/AdminUI/CustomLogo'
 import { default as default_8a7ab0eb7ab5c511aba12e68480bfe5e } from '@/components/BeforeLogin'
+import { default as default_f5e8c4a1b2d3e7f9a6c8b1d4e2f7a9c3 } from '@/components/AdminUI/CustomDashboard'
 
 export const importMap = {
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
@@ -49,7 +51,9 @@ export const importMap = {
   "@payloadcms/plugin-search/client#ReindexButton": ReindexButton_aead06e4cbf6b2620c5c51c9ab283634,
   "@/Header/RowLabel#RowLabel": RowLabel_ec255a65fa6fa8d1faeb09cf35284224,
   "@/Footer/RowLabel#RowLabel": RowLabel_1f6ff6ff633e3695d348f4f3c58f1466,
+  "@/components/AdminUI/CustomNav#default": default_746d0320409c02f8120f68c01aa89341,
   "@/components/AdminLogout#default": default_a94b973e04625a2034d1f418c5138318,
-  "@/components/BeforeDashboard#default": default_1a7510af427896d367a49dbf838d2de6,
-  "@/components/BeforeLogin#default": default_8a7ab0eb7ab5c511aba12e68480bfe5e
+  "@/components/AdminUI/CustomLogo#default": default_314742147967cd6e64b5e4c316e92ae8,
+  "@/components/BeforeLogin#default": default_8a7ab0eb7ab5c511aba12e68480bfe5e,
+  "@/components/AdminUI/CustomDashboard#default": default_f5e8c4a1b2d3e7f9a6c8b1d4e2f7a9c3
 }
