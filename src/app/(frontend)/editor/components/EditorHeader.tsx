@@ -29,7 +29,7 @@ export function EditorHeader({ user, isOpen, onToggle }: EditorHeaderProps) {
 
         {/* Left side - GCET Blog Logo */}
         <div className="flex items-center gap-2">
-          <Link href="/editor" className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-3">
             <Image 
               src="https://res.cloudinary.com/dqpvhbkdd/image/upload/v1761577830/Gcet_Logo_i9fkbt.png"
               alt="GCET Logo"
