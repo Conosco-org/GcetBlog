@@ -1,13 +1,14 @@
 import type { CollectionConfig } from 'payload'
-import { editorOrAdmin } from '../../access/editorOrAdmin'
+import { editorOnly } from '../../access/editorOnly'
+import { isAdmin } from '../../utilities/checkUserRole'
 
 export const Comments: CollectionConfig = {
   slug: 'comments',
   access: {
     read: ({ req, data }) => {
-      // Admins and editors can see all
+      // Editors can see all (admins cannot)
       const user = req.user as { role: string; id: string } | undefined
-      if (user && ['editor', 'admin'].includes(user.role)) return true
+      if (user && user.role === 'editor') return true
 
       // Users can see their own comments
       if (user && data && data.author === user.id) return true
@@ -18,13 +19,11 @@ export const Comments: CollectionConfig = {
       }
     },
     create: () => true, // Anyone can create comments (we'll validate in hooks)
-    update: ({ req }) => {
-      const user = req.user as { role: string } | undefined
-      return user ? ['editor', 'admin'].includes(user.role) : false
-    },
-    delete: editorOrAdmin,
+    update: editorOnly,
+    delete: editorOnly,
   },
   admin: {
+    hidden: ({ user }) => isAdmin(user),
     defaultColumns: ['post', 'author', 'content', 'status', 'createdAt'],
     useAsTitle: 'content',
   },
@@ -86,7 +85,7 @@ export const Comments: CollectionConfig = {
       access: {
         update: ({ req }) => {
           const user = req.user as { role: string } | undefined
-          return user ? ['editor', 'admin'].includes(user.role) : false
+          return user ? user.role === 'editor' : false
         },
       },
     },
@@ -99,11 +98,11 @@ export const Comments: CollectionConfig = {
       access: {
         read: ({ req }) => {
           const user = req.user as { role: string } | undefined
-          return user ? ['editor', 'admin'].includes(user.role) : false
+          return user ? user.role === 'editor' : false
         },
         update: ({ req }) => {
           const user = req.user as { role: string } | undefined
-          return user ? ['editor', 'admin'].includes(user.role) : false
+          return user ? user.role === 'editor' : false
         },
       },
     },
@@ -112,13 +111,13 @@ export const Comments: CollectionConfig = {
       type: 'relationship',
       relationTo: 'users',
       admin: {
-        description: 'Editor/admin who moderated this comment',
+        description: 'Editor who moderated this comment',
         readOnly: true,
       },
       access: {
         read: ({ req }) => {
           const user = req.user as { role: string } | undefined
-          return user ? ['editor', 'admin'].includes(user.role) : false
+          return user ? user.role === 'editor' : false
         },
       },
     },
@@ -132,7 +131,7 @@ export const Comments: CollectionConfig = {
       access: {
         read: ({ req }) => {
           const user = req.user as { role: string } | undefined
-          return user ? ['editor', 'admin'].includes(user.role) : false
+          return user ? user.role === 'editor' : false
         },
       },
     },
@@ -147,7 +146,7 @@ export const Comments: CollectionConfig = {
       access: {
         read: ({ req }) => {
           const user = req.user as { role: string } | undefined
-          return user ? ['editor', 'admin'].includes(user.role) : false
+          return user ? user.role === 'editor' : false
         },
       },
     },
@@ -161,7 +160,7 @@ export const Comments: CollectionConfig = {
       access: {
         read: ({ req }) => {
           const user = req.user as { role: string } | undefined
-          return user ? ['editor', 'admin'].includes(user.role) : false
+          return user ? user.role === 'editor' : false
         },
       },
     },
@@ -175,7 +174,7 @@ export const Comments: CollectionConfig = {
       access: {
         read: ({ req }) => {
           const user = req.user as { role: string } | undefined
-          return user ? ['editor', 'admin'].includes(user.role) : false
+          return user ? user.role === 'editor' : false
         },
       },
     },
@@ -189,7 +188,7 @@ export const Comments: CollectionConfig = {
       access: {
         read: ({ req }) => {
           const user = req.user as { role: string } | undefined
-          return user ? ['editor', 'admin'].includes(user.role) : false
+          return user ? user.role === 'editor' : false
         },
       },
     },
@@ -203,7 +202,7 @@ export const Comments: CollectionConfig = {
       access: {
         read: ({ req }) => {
           const user = req.user as { role: string } | undefined
-          return user ? ['editor', 'admin'].includes(user.role) : false
+          return user ? user.role === 'editor' : false
         },
       },
     },
@@ -211,10 +210,10 @@ export const Comments: CollectionConfig = {
   hooks: {
     beforeChange: [
       ({ req, operation, data }) => {
-        // Auto-approve comments from editors/admins
+        // Auto-approve comments from editors only
         if (operation === 'create' && req.user) {
           const user = req.user as { role: string }
-          if (['editor', 'admin'].includes(user.role)) {
+          if (user.role === 'editor') {
             data.status = 'approved'
           }
         }
