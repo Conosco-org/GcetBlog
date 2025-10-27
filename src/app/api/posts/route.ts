@@ -60,6 +60,8 @@ export async function POST(request: NextRequest) {
         categories: body.categories || [],
         authors: body.authors || [user.id],
         _status: body._status || 'draft',
+        reviewStatus: body.reviewStatus || 'draft',
+        submittedForReviewAt: body.submittedForReviewAt,
         heroImage: body.heroImage || undefined,
         meta: body.meta || {
           title: body.title,

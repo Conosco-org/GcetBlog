@@ -63,6 +63,8 @@ export async function PATCH(
         content: lexicalContent,
         categories: body.categories,
         _status: body._status,
+        reviewStatus: body.reviewStatus,
+        submittedForReviewAt: body.submittedForReviewAt,
         heroImage: body.heroImage,
         meta: body.meta,
         publishedAt: body._status === 'published' && !body.publishedAt 
