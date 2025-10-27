@@ -31,16 +31,27 @@ export default buildConfig({
       password: 'test',
       prefillOnly: true,
     } : false,
+    meta: {
+      titleSuffix: '- GCET Blog Admin',
+      ogImage: '/website-template-OG.webp',
+    },
     components: {
+      // Custom branding and navigation
+      graphics: {
+        Logo: '@/components/AdminUI/CustomLogo',
+      },
+      // Removed custom Nav - using Payload's default with admin.hidden
+      
       // The `BeforeLogin` component renders a message that you see while logging into your admin panel.
-      // Feel free to delete this at any time. Simply remove the line below.
       beforeLogin: ['@/components/BeforeLogin'],
-      // The `BeforeDashboard` component renders the 'welcome' block that you see after logging into your admin panel.
-      // Feel free to delete this at any time. Simply remove the line below.
-      beforeDashboard: ['@/components/BeforeDashboard'],
+      
+      // Custom logout button
       logout: {
         Button: '@/components/AdminLogout'
-      }
+      },
+      
+      // Add custom dashboard before the default one (so we can hide default with CSS)
+      beforeDashboard: ['@/components/AdminUI/CustomDashboard'],
     },
     importMap: {
       baseDir: path.resolve(dirname),

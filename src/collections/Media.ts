@@ -9,7 +9,8 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 import { anyone } from '../access/anyone'
-import { authenticated } from '../access/authenticated'
+import { editorOnly } from '../access/editorOnly'
+import { isAdmin } from '../utilities/checkUserRole'
 import { useCloudinaryFallback } from './Media/hooks/useCloudinaryFallback'
 
 const filename = fileURLToPath(import.meta.url)
@@ -18,10 +19,13 @@ const dirname = path.dirname(filename)
 export const Media: CollectionConfig = {
   slug: 'media',
   access: {
-    create: authenticated,
-    delete: authenticated,
+    create: editorOnly,
+    delete: editorOnly,
     read: anyone,
-    update: authenticated,
+    update: editorOnly,
+  },
+  admin: {
+    hidden: ({ user }) => isAdmin(user),
   },
   hooks: {
     afterRead: [useCloudinaryFallback],
