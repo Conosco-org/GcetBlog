@@ -14,6 +14,7 @@ import { Users } from './collections/Users'
 import { RoleUpgradeRequests } from './collections/RoleUpgradeRequests'
 import { AdminLogs } from './collections/AdminLogs'
 import { Comments } from './collections/Comments'
+import { Feedback } from './collections/Feedback'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { plugins } from './plugins'
@@ -73,7 +74,7 @@ export default buildConfig({
   db: mongooseAdapter({
     url: process.env.DATABASE_URI || '',
   }),
-  collections: [Pages, Posts, Media, Categories, Users, RoleUpgradeRequests, AdminLogs, Comments],
+  collections: [Pages, Posts, Media, Categories, Users, RoleUpgradeRequests, AdminLogs, Comments, Feedback],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins: [
