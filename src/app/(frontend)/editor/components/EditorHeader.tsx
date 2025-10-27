@@ -4,8 +4,9 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, Moon, Sun } from 'lucide-react'
 import type { User } from '@/payload-types'
+import { useTheme } from '@/providers/Theme'
 
 interface EditorHeaderProps {
   user: User & { role: string }
@@ -14,6 +15,12 @@ interface EditorHeaderProps {
 }
 
 export function EditorHeader({ user, isOpen, onToggle }: EditorHeaderProps) {
+  const { theme, setTheme } = useTheme()
+
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark')
+  }
+
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex h-16 items-center px-4 gap-4">
@@ -41,8 +48,21 @@ export function EditorHeader({ user, isOpen, onToggle }: EditorHeaderProps) {
           </Link>
         </div>
 
-        {/* Right side - User Info */}
-        <div className="ml-auto flex items-center gap-4">
+        {/* Right side - Theme Toggle & User Info */}
+        <div className="ml-auto flex items-center gap-3">
+          {/* Theme Toggle Button */}
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            className="relative"
+          >
+            <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          </Button>
+
+          {/* User Info */}
           <div className="flex items-center gap-3 px-3 py-2 rounded-lg border bg-card">
             <div className="flex items-center justify-center w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold text-sm">
               {(user.name || user.email || 'U').charAt(0).toUpperCase()}
