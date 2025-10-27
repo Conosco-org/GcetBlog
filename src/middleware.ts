@@ -94,6 +94,56 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // Require authentication AND contributor role for /contributor routes
+  if (pathname.startsWith('/contributor')) {
+    if (!token) {
+      const loginUrl = new URL('/login', request.url)
+      loginUrl.searchParams.set('redirect', pathname)
+      return NextResponse.redirect(loginUrl)
+    }
+
+    // Verify user role by calling /api/users/me
+    try {
+      const apiUrl = new URL('/api/users/me', request.url)
+      const meResponse = await fetch(apiUrl, {
+        headers: {
+          Cookie: `payload-token=${token}`,
+        },
+      })
+
+      if (!meResponse.ok) {
+        // Token invalid or expired, redirect to login
+        const loginUrl = new URL('/login', request.url)
+        loginUrl.searchParams.set('message', 'Session expired')
+        loginUrl.searchParams.set('redirect', pathname)
+        return NextResponse.redirect(loginUrl)
+      }
+
+      const { user } = await meResponse.json()
+
+      // Only contributors can access /contributor routes
+      if (user?.role !== 'contributor') {
+        // Redirect to appropriate dashboard
+        const redirectUrl = user?.role === 'admin' ? '/admin' : user?.role === 'editor' ? '/editor' : '/dashboard/user'
+        return NextResponse.redirect(new URL(redirectUrl, request.url))
+      }
+
+      // Contributor verified, allow access
+      return NextResponse.next()
+    } catch (error) {
+      console.error('Error verifying contributor access:', error)
+      const loginUrl = new URL('/login', request.url)
+      loginUrl.searchParams.set('redirect', pathname)
+      return NextResponse.redirect(loginUrl)
+    }
+  }
+
+  // Redirect old /dashboard/contributor routes to new /contributor
+  if (pathname.startsWith('/dashboard/contributor')) {
+    const newPath = pathname.replace('/dashboard/contributor', '/contributor')
+    return NextResponse.redirect(new URL(newPath, request.url))
+  }
+
   // Check if route needs authentication
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route))
 
