@@ -38,3 +38,17 @@
   --theme-warning: #f59e0b;
   --theme-error: #dc2626;
 }
+
+/* Hide the default Payload collection cards on dashboard */
+.dashboard__group {
+  display: none !important;
+}
+
+.dashboard__card-list {
+  display: none !important;
+}
+
+/* Make sure our custom dashboard is always visible */
+.custom-dashboard {
+  display: block !important;
+}

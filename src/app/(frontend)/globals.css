@@ -151,4 +151,4 @@ html {
 .gradient-text {
   @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400;
 }
-}
+
