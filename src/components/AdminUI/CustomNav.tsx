@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
+import { useAuth } from '@payloadcms/ui'
 import { cn } from '@/utilities/ui'
 import { 
   LayoutDashboard, 
@@ -12,22 +13,24 @@ import {
   MessageSquare,
   Settings,
   BarChart3,
-  Shield
+  Shield,
+  File
 } from 'lucide-react'
 
 interface NavItem {
   href: string
   label: string
   icon: React.ElementType
+  hideForAdmin?: boolean
 }
 
 const navItems: NavItem[] = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/admin/collections/posts', label: 'Posts', icon: FileText },
-  { href: '/admin/collections/pages', label: 'Pages', icon: FolderOpen },
-  { href: '/admin/collections/media', label: 'Media', icon: Image },
-  { href: '/admin/collections/categories', label: 'Categories', icon: FolderOpen },
-  { href: '/admin/collections/comments', label: 'Comments', icon: MessageSquare },
+  { href: '/admin/collections/posts', label: 'Posts', icon: FileText, hideForAdmin: true },
+  { href: '/admin/collections/pages', label: 'Pages', icon: File },
+  { href: '/admin/collections/media', label: 'Media', icon: Image, hideForAdmin: true },
+  { href: '/admin/collections/categories', label: 'Categories', icon: FolderOpen, hideForAdmin: true },
+  { href: '/admin/collections/comments', label: 'Comments', icon: MessageSquare, hideForAdmin: true },
   { href: '/admin/collections/users', label: 'Users', icon: Users },
   { href: '/admin/collections/role-upgrade-requests', label: 'Role Requests', icon: Shield },
   { href: '/admin/collections/admin-logs', label: 'Activity Logs', icon: BarChart3 },
@@ -35,11 +38,23 @@ const navItems: NavItem[] = [
 
 export default function CustomNav() {
   const pathname = usePathname()
+  const { user } = useAuth()
+  
+  // Type assertion for user role
+  const userRole = (user as { role?: string })?.role
+
+  // Filter nav items based on user role
+  const filteredNavItems = navItems.filter(item => {
+    if (item.hideForAdmin && userRole === 'admin') {
+      return false
+    }
+    return true
+  })
 
   return (
     <nav className="flex-1 overflow-y-auto py-4">
       <div className="px-3 space-y-1">
-        {navItems.map((item) => {
+        {filteredNavItems.map((item) => {
           const Icon = item.icon
           const isActive = pathname === item.href || pathname?.startsWith(`${item.href}/`)
           

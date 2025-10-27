@@ -9,8 +9,9 @@ import {
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
 
-import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
+import { editorOnly } from '../../access/editorOnly'
+import { isAdmin } from '../../utilities/checkUserRole'
 import { Banner } from '../../blocks/Banner/config'
 import { Code } from '../../blocks/Code/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
@@ -30,10 +31,10 @@ import { slugField } from '@/fields/slug'
 export const Posts: CollectionConfig<'posts'> = {
   slug: 'posts',
   access: {
-    create: authenticated,
-    delete: authenticated,
+    create: editorOnly,
+    delete: editorOnly,
     read: authenticatedOrPublished,
-    update: authenticated,
+    update: editorOnly,
   },
   // This config controls what's populated by default when a post is referenced
   // https://payloadcms.com/docs/queries/select#defaultpopulate-collection-config-property
@@ -48,6 +49,7 @@ export const Posts: CollectionConfig<'posts'> = {
     },
   },
   admin: {
+    hidden: ({ user }) => isAdmin(user),
     defaultColumns: ['title', 'slug', 'updatedAt'],
     livePreview: {
       url: ({ data, req }) => {

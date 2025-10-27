@@ -838,7 +838,7 @@ export interface Comment {
    */
   moderatorNotes?: string | null;
   /**
-   * Editor/admin who moderated this comment
+   * Editor who moderated this comment
    */
   moderatedBy?: (string | null) | User;
   /**

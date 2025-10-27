@@ -23,37 +23,25 @@ export async function GET() {
 
     // Fetch all stats in parallel
     const [
-      totalPosts,
+      totalPages,
       totalUsers,
-      totalComments,
       pendingApprovals,
-      draftPosts,
-      flaggedComments,
       totalMedia,
     ] = await Promise.all([
-      payload.count({ collection: 'posts' }),
+      payload.count({ collection: 'pages' }),
       payload.count({ collection: 'users' }),
-      payload.count({ collection: 'comments' }),
       payload.count({
         collection: 'role-upgrade-requests',
         where: { status: { equals: 'pending' } },
       }),
-      payload.count({
-        collection: 'posts',
-        where: { _status: { equals: 'draft' } },
-      }),
-      payload.count({
-        collection: 'comments',
-        where: { status: { equals: 'reported' } },
-      }),
-      payload.count({ collection: 'media' }),
+      payload.count({ collection: 'admin-logs' }),
     ])
 
-    // Get posts published today
+    // Get pages published today
     const today = new Date()
     today.setHours(0, 0, 0, 0)
     const publishedToday = await payload.count({
-      collection: 'posts',
+      collection: 'pages',
       where: {
         _status: { equals: 'published' },
         publishedAt: { greater_than: today.toISOString() },
@@ -61,14 +49,11 @@ export async function GET() {
     })
 
     return NextResponse.json({
-      totalPosts: totalPosts.totalDocs,
+      totalPosts: totalPages.totalDocs, // Using totalPosts key for compatibility
       totalUsers: totalUsers.totalDocs,
-      totalComments: totalComments.totalDocs,
       pendingApprovals: pendingApprovals.totalDocs,
       publishedToday: publishedToday.totalDocs,
-      draftPosts: draftPosts.totalDocs,
-      flaggedComments: flaggedComments.totalDocs,
-      totalMedia: totalMedia.totalDocs,
+      totalMedia: totalMedia.totalDocs, // Actually admin logs count
     })
   } catch (error) {
     console.error('Error fetching admin stats:', error)

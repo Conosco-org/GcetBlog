@@ -3,28 +3,25 @@
 import { useEffect, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { 
-  FileText, 
   Users, 
-  MessageSquare, 
-  Image,
   TrendingUp,
   Plus,
   Clock,
   CheckCircle,
-  AlertCircle,
   Activity,
   BarChart3,
-  ArrowRight
+  ArrowRight,
+  Sun,
+  Moon,
+  Shield,
+  File
 } from 'lucide-react'
 
 interface DashboardStats {
   totalPosts: number
   totalUsers: number
-  totalComments: number
   pendingApprovals: number
   publishedToday: number
-  draftPosts: number
-  flaggedComments: number
   totalMedia: number
 }
 
@@ -32,14 +29,45 @@ export default function CustomDashboard() {
   const [stats, setStats] = useState<DashboardStats>({
     totalPosts: 0,
     totalUsers: 0,
-    totalComments: 0,
     pendingApprovals: 0,
     publishedToday: 0,
-    draftPosts: 0,
-    flaggedComments: 0,
     totalMedia: 0,
   })
   const [loading, setLoading] = useState(true)
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark')
+
+  useEffect(() => {
+    // Check for Payload's theme preference
+    const payloadTheme = document.documentElement.getAttribute('data-theme')
+    if (payloadTheme === 'light' || payloadTheme === 'dark') {
+      setTheme(payloadTheme)
+    }
+
+    // Listen for theme changes
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'data-theme') {
+          const newTheme = document.documentElement.getAttribute('data-theme')
+          if (newTheme === 'light' || newTheme === 'dark') {
+            setTheme(newTheme)
+          }
+        }
+      })
+    })
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme']
+    })
+
+    return () => observer.disconnect()
+  }, [])
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'dark' ? 'light' : 'dark'
+    setTheme(newTheme)
+    document.documentElement.setAttribute('data-theme', newTheme)
+  }
 
   useEffect(() => {
     async function fetchStats() {
@@ -61,16 +89,16 @@ export default function CustomDashboard() {
 
   const statCards = [
     {
-      title: 'Total Posts',
+      title: 'Total Pages',
       value: stats.totalPosts,
-      icon: FileText,
+      icon: File,
       gradient: 'from-blue-500 to-blue-600',
       change: '+12%',
       changeType: 'increase',
       subtitle: `${stats.publishedToday} published today`,
       bgColor: 'bg-blue-50',
       iconColor: 'text-blue-600',
-      href: '/admin/collections/posts'
+      href: '/admin/collections/pages'
     },
     {
       title: 'Active Users',
@@ -85,37 +113,37 @@ export default function CustomDashboard() {
       href: '/admin/collections/users'
     },
     {
-      title: 'Comments',
-      value: stats.totalComments,
-      icon: MessageSquare,
+      title: 'Role Requests',
+      value: stats.pendingApprovals || 0,
+      icon: Shield,
       gradient: 'from-purple-500 to-purple-600',
-      change: stats.flaggedComments > 0 ? `${stats.flaggedComments} flagged` : 'All clear',
-      changeType: stats.flaggedComments > 0 ? 'alert' : 'neutral',
-      subtitle: 'Total discussions',
+      change: stats.pendingApprovals > 0 ? `${stats.pendingApprovals} pending` : 'All clear',
+      changeType: stats.pendingApprovals > 0 ? 'alert' : 'neutral',
+      subtitle: 'Upgrade requests',
       bgColor: 'bg-purple-50',
       iconColor: 'text-purple-600',
-      href: '/admin/collections/comments'
+      href: '/admin/collections/role-upgrade-requests'
     },
     {
-      title: 'Media Files',
-      value: stats.totalMedia,
-      icon: Image,
+      title: 'Admin Logs',
+      value: stats.totalMedia || 0,
+      icon: Activity,
       gradient: 'from-orange-500 to-orange-600',
       change: '+8%',
       changeType: 'increase',
-      subtitle: 'Uploaded assets',
+      subtitle: 'System activity',
       bgColor: 'bg-orange-50',
       iconColor: 'text-orange-600',
-      href: '/admin/collections/media'
+      href: '/admin/collections/admin-logs'
     }
   ]
 
   const quickActions = [
     {
-      title: 'Create New Post',
-      description: 'Start writing a new article',
+      title: 'Create New Page',
+      description: 'Start creating a new page',
       icon: Plus,
-      href: '/admin/collections/posts/create',
+      href: '/admin/collections/pages/create',
       gradient: 'from-blue-500 to-blue-600',
       hoverGradient: 'hover:from-blue-600 hover:to-blue-700'
     },
@@ -128,28 +156,28 @@ export default function CustomDashboard() {
       hoverGradient: 'hover:from-green-600 hover:to-green-700'
     },
     {
-      title: 'Review Comments',
-      description: 'Moderate pending comments',
-      icon: MessageSquare,
-      href: '/admin/collections/comments',
+      title: 'Role Requests',
+      description: 'Review upgrade requests',
+      icon: Shield,
+      href: '/admin/collections/role-upgrade-requests',
       gradient: 'from-purple-500 to-purple-600',
       hoverGradient: 'hover:from-purple-600 hover:to-purple-700'
     },
     {
-      title: 'Media Library',
-      description: 'Upload and manage files',
-      icon: Image,
-      href: '/admin/collections/media',
+      title: 'Admin Logs',
+      description: 'View system activity',
+      icon: Activity,
+      href: '/admin/collections/admin-logs',
       gradient: 'from-orange-500 to-orange-600',
       hoverGradient: 'hover:from-orange-600 hover:to-orange-700'
     }
   ]
 
   const recentActivity = [
-    { action: 'Published', item: 'New blog post: Getting Started', time: '2 hours ago', icon: CheckCircle, color: 'text-green-600', bgColor: 'bg-green-50' },
-    { action: 'Pending', item: 'Comment moderation needed', time: '4 hours ago', icon: Clock, color: 'text-yellow-600', bgColor: 'bg-yellow-50' },
+    { action: 'Published', item: 'New page: Getting Started', time: '2 hours ago', icon: CheckCircle, color: 'text-green-600', bgColor: 'bg-green-50' },
+    { action: 'Pending', item: 'Role upgrade request', time: '4 hours ago', icon: Clock, color: 'text-yellow-600', bgColor: 'bg-yellow-50' },
     { action: 'Joined', item: 'New contributor registered', time: '1 day ago', icon: Users, color: 'text-blue-600', bgColor: 'bg-blue-50' },
-    { action: 'Uploaded', item: '5 new media files', time: '2 days ago', icon: Image, color: 'text-purple-600', bgColor: 'bg-purple-50' },
+    { action: 'Updated', item: 'Page edited: About Us', time: '2 days ago', icon: File, color: 'text-purple-600', bgColor: 'bg-purple-50' },
   ]
 
   if (loading) {
@@ -171,7 +199,7 @@ export default function CustomDashboard() {
 
   return (
     <div className="custom-dashboard">
-      <div className="p-8 bg-[#1a1a1a]">
+      <div className={`p-8 transition-colors duration-300 ${theme === 'dark' ? 'bg-[#1a1a1a]' : 'bg-gray-50'}`}>
         <div className="max-w-7xl mx-auto space-y-8">
           {/* Header */}
           <div className="flex items-center justify-between">
@@ -179,11 +207,39 @@ export default function CustomDashboard() {
               <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
                 Welcome to GCET Blog
               </h1>
-              <p className="text-gray-400 text-lg">Here&apos;s your content overview and quick actions</p>
+              <p className={`text-lg ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                Here&apos;s your content overview and quick actions
+              </p>
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 bg-gray-800/50 rounded-xl border border-gray-700">
-              <Activity className="h-4 w-4 text-green-400 animate-pulse" />
-              <span className="text-sm font-medium text-gray-300">All systems operational</span>
+            <div className="flex items-center gap-3">
+              {/* Theme Toggle Button */}
+              <button
+                onClick={toggleTheme}
+                className={`p-3 rounded-xl border transition-all duration-300 ${
+                  theme === 'dark' 
+                    ? 'bg-gray-800/50 border-gray-700 hover:bg-gray-700/50 hover:border-blue-500/50' 
+                    : 'bg-white border-gray-300 hover:bg-gray-100 hover:border-blue-500/50'
+                }`}
+                aria-label="Toggle theme"
+              >
+                {theme === 'dark' ? (
+                  <Sun className="h-5 w-5 text-yellow-400" />
+                ) : (
+                  <Moon className="h-5 w-5 text-blue-600" />
+                )}
+              </button>
+              
+              {/* System Status */}
+              <div className={`flex items-center gap-2 px-4 py-2 rounded-xl border ${
+                theme === 'dark' 
+                  ? 'bg-gray-800/50 border-gray-700' 
+                  : 'bg-white border-gray-300'
+              }`}>
+                <Activity className="h-4 w-4 text-green-400 animate-pulse" />
+                <span className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                  All systems operational
+                </span>
+              </div>
             </div>
           </div>
 
@@ -197,27 +253,37 @@ export default function CustomDashboard() {
                   href={card.href}
                   className="group"
                 >
-                  <Card className="relative overflow-hidden hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-300 border border-gray-800 bg-gray-900/50 backdrop-blur-sm group-hover:scale-[1.02] group-hover:border-blue-500/50">
+                  <Card className={`relative overflow-hidden hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-300 border backdrop-blur-sm group-hover:scale-[1.02] group-hover:border-blue-500/50 ${
+                    theme === 'dark' 
+                      ? 'border-gray-800 bg-gray-900/50' 
+                      : 'border-gray-200 bg-white'
+                  }`}>
                     <div className={`absolute top-0 right-0 w-32 h-32 ${card.bgColor} rounded-full -mr-16 -mt-16 opacity-10 group-hover:opacity-20 transition-opacity`}></div>
                     <CardHeader className="flex flex-row items-center justify-between pb-2 relative z-10">
-                      <CardTitle className="text-sm font-medium text-gray-400">{card.title}</CardTitle>
+                      <CardTitle className={`text-sm font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                        {card.title}
+                      </CardTitle>
                       <div className={`p-3 ${card.bgColor} bg-opacity-10 border border-${card.iconColor} border-opacity-20 rounded-xl group-hover:scale-110 transition-transform`}>
                         <Icon className={`h-5 w-5 ${card.iconColor}`} />
                       </div>
                     </CardHeader>
                     <CardContent className="relative z-10">
                       <div className="flex items-baseline gap-2 mb-3">
-                        <div className="text-3xl font-bold text-white">{card.value}</div>
+                        <div className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                          {card.value}
+                        </div>
                         <span className={`flex items-center text-xs font-medium ${
                           card.changeType === 'increase' ? 'text-green-400' : 
                           card.changeType === 'alert' ? 'text-yellow-400' : 
-                          'text-gray-400'
+                          theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
                         }`}>
                           {card.changeType === 'increase' && <TrendingUp className="h-3 w-3 mr-1" />}
                           {card.change}
                         </span>
                       </div>
-                      <p className="text-xs text-gray-500">{card.subtitle}</p>
+                      <p className={`text-xs ${theme === 'dark' ? 'text-gray-500' : 'text-gray-600'}`}>
+                        {card.subtitle}
+                      </p>
                       <div className="mt-3 flex items-center text-xs text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity">
                         View details <ArrowRight className="h-3 w-3 ml-1" />
                       </div>
@@ -232,13 +298,19 @@ export default function CustomDashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Quick Actions - 2 columns */}
             <div className="lg:col-span-2">
-              <Card className="border border-gray-800 bg-gray-900/50 backdrop-blur-sm">
+              <Card className={`border backdrop-blur-sm ${
+                theme === 'dark' 
+                  ? 'border-gray-800 bg-gray-900/50' 
+                  : 'border-gray-200 bg-white'
+              }`}>
                 <CardHeader>
-                  <CardTitle className="text-xl flex items-center gap-2 text-white">
+                  <CardTitle className={`text-xl flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                     <BarChart3 className="h-5 w-5" />
                     Quick Actions
                   </CardTitle>
-                  <CardDescription className="text-gray-400">Common administrative tasks</CardDescription>
+                  <CardDescription className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
+                    Common administrative tasks
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -248,15 +320,23 @@ export default function CustomDashboard() {
                         <a
                           key={index}
                           href={action.href}
-                          className="group relative p-6 rounded-xl border-2 border-gray-800 hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 overflow-hidden bg-gray-900/30"
+                          className={`group relative p-6 rounded-xl border-2 hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 overflow-hidden ${
+                            theme === 'dark' 
+                              ? 'border-gray-800 bg-gray-900/30' 
+                              : 'border-gray-200 bg-gray-50'
+                          }`}
                         >
                           <div className={`absolute inset-0 bg-gradient-to-br ${action.gradient} opacity-0 group-hover:opacity-10 transition-opacity`}></div>
                           <div className="relative z-10">
                             <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${action.gradient} mb-4 group-hover:scale-110 transition-transform shadow-lg`}>
                               <Icon className="h-6 w-6 text-white" />
                             </div>
-                            <h3 className="font-semibold text-white mb-1">{action.title}</h3>
-                            <p className="text-sm text-gray-400 mb-3">{action.description}</p>
+                            <h3 className={`font-semibold mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                              {action.title}
+                            </h3>
+                            <p className={`text-sm mb-3 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                              {action.description}
+                            </p>
                             <div className="flex items-center text-sm text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity">
                               Get started <ArrowRight className="h-4 w-4 ml-1" />
                             </div>
@@ -271,27 +351,41 @@ export default function CustomDashboard() {
 
             {/* Recent Activity - 1 column */}
             <div>
-              <Card className="border border-gray-800 bg-gray-900/50 backdrop-blur-sm">
+              <Card className={`border backdrop-blur-sm ${
+                theme === 'dark' 
+                  ? 'border-gray-800 bg-gray-900/50' 
+                  : 'border-gray-200 bg-white'
+              }`}>
                 <CardHeader>
-                  <CardTitle className="text-xl flex items-center gap-2 text-white">
+                  <CardTitle className={`text-xl flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                     <Activity className="h-5 w-5" />
                     Recent Activity
                   </CardTitle>
-                  <CardDescription className="text-gray-400">Latest updates</CardDescription>
+                  <CardDescription className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
+                    Latest updates
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     {recentActivity.map((activity, index) => {
                       const Icon = activity.icon
                       return (
-                        <div key={index} className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-800/50 transition-colors cursor-pointer group">
+                        <div key={index} className={`flex items-start gap-3 p-3 rounded-lg transition-colors cursor-pointer group ${
+                          theme === 'dark' ? 'hover:bg-gray-800/50' : 'hover:bg-gray-100'
+                        }`}>
                           <div className={`p-2 rounded-lg ${activity.bgColor} bg-opacity-10 border border-${activity.color} border-opacity-20 group-hover:scale-110 transition-transform`}>
                             <Icon className={`h-4 w-4 ${activity.color}`} />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-white">{activity.action}</p>
-                            <p className="text-xs text-gray-400 truncate">{activity.item}</p>
-                            <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
+                            <p className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                              {activity.action}
+                            </p>
+                            <p className={`text-xs truncate ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                              {activity.item}
+                            </p>
+                            <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'}`}>
+                              {activity.time}
+                            </p>
                           </div>
                         </div>
                       )
@@ -305,32 +399,6 @@ export default function CustomDashboard() {
                   </a>
                 </CardContent>
               </Card>
-
-              {/* Pending Items Alert */}
-              {(stats.pendingApprovals > 0 || stats.draftPosts > 0) && (
-                <Card className="border border-yellow-500/20 bg-gradient-to-br from-yellow-900/20 to-orange-900/20 mt-6">
-                  <CardHeader>
-                    <CardTitle className="text-lg flex items-center gap-2 text-yellow-400">
-                      <AlertCircle className="h-5 w-5" />
-                      Needs Attention
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    {stats.pendingApprovals > 0 && (
-                      <a href="/admin/collections/role-upgrade-requests" className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800 transition border border-gray-700">
-                        <span className="text-sm font-medium text-gray-200">Pending Approvals</span>
-                        <span className="px-2 py-1 bg-yellow-500/20 text-yellow-300 rounded-full text-xs font-bold">{stats.pendingApprovals}</span>
-                      </a>
-                    )}
-                    {stats.draftPosts > 0 && (
-                      <a href="/admin/collections/posts?where[_status][equals]=draft" className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800 transition border border-gray-700">
-                        <span className="text-sm font-medium text-gray-200">Draft Posts</span>
-                        <span className="px-2 py-1 bg-orange-500/20 text-orange-300 rounded-full text-xs font-bold">{stats.draftPosts}</span>
-                      </a>
-                    )}
-                  </CardContent>
-                </Card>
-              )}
             </div>
           </div>
         </div>

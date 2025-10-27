@@ -39,7 +39,7 @@ export default buildConfig({
       graphics: {
         Logo: '@/components/AdminUI/CustomLogo',
       },
-      Nav: '@/components/AdminUI/CustomNav',
+      // Removed custom Nav - using Payload's default with admin.hidden
       
       // The `BeforeLogin` component renders a message that you see while logging into your admin panel.
       beforeLogin: ['@/components/BeforeLogin'],
