@@ -63,10 +63,10 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
     content: plainTextContent,
     categories: categoryIds,
     meta: post.meta ? {
-      title: typeof post.meta === 'object' && 'title' in post.meta ? post.meta.title as string : '',
-      description: typeof post.meta === 'object' && 'description' in post.meta ? post.meta.description as string : '',
+      title: typeof post.meta === 'object' && 'title' in post.meta && post.meta.title ? String(post.meta.title) : undefined,
+      description: typeof post.meta === 'object' && 'description' in post.meta && post.meta.description ? String(post.meta.description) : undefined,
     } : undefined,
-    heroImage: typeof post.heroImage === 'object' && post.heroImage ? post.heroImage.id : post.heroImage,
+    heroImage: typeof post.heroImage === 'object' && post.heroImage ? post.heroImage.id : (post.heroImage || undefined),
   }
 
   return (

@@ -33,7 +33,6 @@ export default buildConfig({
     } : false,
     meta: {
       titleSuffix: '- GCET Blog Admin',
-      ogImage: '/website-template-OG.webp',
     },
     components: {
       // Custom branding and navigation
