@@ -3,7 +3,7 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { revalidatePath } from 'next/cache'
-import { headers } from 'next/headers'
+import { getMeUser } from '@/utilities/getMeUser'
 
 export async function submitComment(formData: FormData) {
   const payload = await getPayload({ config })
@@ -62,13 +62,10 @@ export async function moderateComment(formData: FormData) {
   }
 
   try {
-    // Get the current user from the request context
-    // This works in server actions: https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions#accessing-request-and-response
-  const headersList = await headers()
-  const userId = headersList.get('x-user-id')
-  const userRole = headersList.get('x-user-role')
+    // Get the current user
+    const { user } = await getMeUser()
 
-    if (!userId || !userRole || !['editor', 'admin'].includes(userRole)) {
+    if (!user || !user.role || !['editor', 'admin'].includes(user.role)) {
       return { error: 'Unauthorized' }
     }
 
@@ -78,7 +75,7 @@ export async function moderateComment(formData: FormData) {
       id: commentId,
       data: {
         status: action === 'approve' ? 'approved' : action === 'reject' ? 'rejected' : 'spam',
-        moderatedBy: userId,
+        moderatedBy: user.id,
         moderatorNotes: moderationNotes,
         moderatedAt: new Date().toISOString(),
       },
@@ -95,7 +92,7 @@ export async function moderateComment(formData: FormData) {
       collection: 'admin-logs',
       data: {
         action: logAction,
-        user: userId,
+        user: user.id,
         resourceType: 'comments',
         resourceId: commentId,
         timestamp: new Date().toISOString(),
@@ -106,7 +103,7 @@ export async function moderateComment(formData: FormData) {
     })
 
     // Get the post to revalidate its page
-  const _comment = await payload.findByID({
+    const _comment = await payload.findByID({
       collection: 'comments',
       id: commentId,
     })
