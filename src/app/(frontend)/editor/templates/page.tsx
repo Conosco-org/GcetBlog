@@ -42,7 +42,7 @@ export default async function TemplatesPage() {
           <div className="mt-8 p-4 bg-gray-50 rounded-lg text-left">
             <p className="text-sm font-medium text-gray-900 mb-2">To enable templates:</p>
             <ol className="text-sm text-gray-600 space-y-1 list-decimal list-inside">
-              <li>Add a &apos;templates&apos; collection to your Payload config</li>
+              <li>Add a &apos;templates&apos; collection to your database schema</li>
               <li>Define fields: name, category, content, usageCount</li>
               <li>Update this page to fetch from the collection</li>
             </ol>

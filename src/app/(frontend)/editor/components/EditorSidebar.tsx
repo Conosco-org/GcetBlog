@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { LogoutButton } from '@/components/LogoutButton'
 import type { User } from '@/payload-types'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { 
   Home, 
   FileText, 
@@ -103,24 +105,26 @@ export function EditorSidebar({
   return (
     <>
       {/* Hamburger Button */}
-      <button
+      <Button
+        variant="outline"
+        size="icon"
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-4 left-4 z-50 p-2 bg-white rounded-lg shadow-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+        className="fixed top-4 left-4 z-50"
         aria-label="Toggle menu"
       >
-        {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-      </button>
+        {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+      </Button>
 
       {/* Sidebar - Static positioning to push content */}
       {isOpen && (
-        <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-screen sticky top-0">
+        <aside className="w-64 border-r bg-background flex flex-col h-screen sticky top-0">
           {/* Logo & User Info */}
-          <div className="p-6 border-b border-gray-200 mt-16">
+          <div className="p-6 border-b mt-16">
             <Link href="/editor" className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
                 GC
               </div>
-              <span className="text-xl font-bold text-gray-900">GCET Blog</span>
+              <span className="text-xl font-bold">GCET Blog</span>
             </Link>
             
             <div className="flex items-center gap-3">
@@ -128,13 +132,15 @@ export function EditorSidebar({
                 {(user.name || user.email || 'U').charAt(0).toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-semibold text-sm text-gray-900 truncate">
+                <p className="font-semibold text-sm truncate">
                   {user.name || 'Content Editor'}
                 </p>
-                <p className="text-xs text-gray-500 uppercase tracking-wide flex items-center gap-1">
-                  {user.role}
-                  <span className="w-2 h-2 bg-green-500 rounded-full inline-block"></span>
-                </p>
+                <div className="flex items-center gap-1.5 mt-1">
+                  <Badge variant="secondary" className="text-xs uppercase">
+                    {user.role}
+                  </Badge>
+                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                </div>
               </div>
             </div>
           </div>
@@ -149,24 +155,21 @@ export function EditorSidebar({
                     <Link
                       href={item.href}
                       className={`
-                        flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium
+                        flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
                         ${active 
-                          ? 'bg-blue-50 text-blue-700' 
-                          : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                          ? 'bg-primary/10 text-primary' 
+                          : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                         }
                       `}
                     >
-                      <span className={active ? 'text-blue-700' : 'text-gray-500'}>
+                      <span>
                         {item.icon}
                       </span>
                       <span className="flex-1">{item.label}</span>
                       {item.badge !== undefined && (
-                        <span className={`
-                          px-2 py-0.5 text-xs font-semibold rounded-full
-                          ${active ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}
-                        `}>
+                        <Badge variant={active ? "default" : "secondary"} className="ml-auto">
                           {item.badge}
-                        </span>
+                        </Badge>
                       )}
                     </Link>
                   </li>
@@ -176,9 +179,9 @@ export function EditorSidebar({
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-gray-200">
-            <LogoutButton className="w-full text-left px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg flex items-center gap-2" />
-            <p className="text-xs text-gray-400 text-center mt-3">v2.4.1</p>
+          <div className="p-4 border-t">
+            <LogoutButton className="w-full" />
+            <p className="text-xs text-muted-foreground text-center mt-3">v2.4.1</p>
           </div>
         </aside>
       )}

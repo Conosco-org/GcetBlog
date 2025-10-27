@@ -7,6 +7,7 @@ import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
+import { ConditionalLayout } from './ConditionalLayout'
 
 export default async function FrontendLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -18,9 +19,11 @@ export default async function FrontendLayout({ children }: { children: React.Rea
       </head>
       <body suppressHydrationWarning>
         <Providers>
-          <Header />
-          {children}
-          <Footer />
+          <ConditionalLayout>
+            <Header />
+            {children}
+            <Footer />
+          </ConditionalLayout>
         </Providers>
       </body>
     </html>

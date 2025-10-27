@@ -57,7 +57,7 @@ export default async function ContentManagerPage() {
             
             <select className="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white">
               <option>All Categories</option>
-              {/* TODO: Fetch real categories from PayloadCMS */}
+              {/* TODO: Fetch real categories from the database */}
             </select>
             
             {/* TODO: Add editor filter when editor tracking is implemented
