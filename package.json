@@ -1,7 +1,7 @@
 {
-  "name": "gcet-blog",
+  "name": "gcet-tech-blog",
   "version": "1.0.0",
-  "description": "GCET College Blog Website with Payload CMS",
+  "description": "Official Tech Blog of Government College of Engineering and Textile Technology, Berhampore",
   "license": "MIT",
   "type": "module",
   "scripts": {

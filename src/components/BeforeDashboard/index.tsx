@@ -10,63 +10,40 @@ const BeforeDashboard: React.FC = () => {
   return (
     <div className={baseClass}>
       <Banner className={`${baseClass}__banner`} type="success">
-        <h4>Welcome to your dashboard!</h4>
+        <h4>Welcome to GCET Tech Blog Dashboard!</h4>
       </Banner>
-      Here&apos;s what to do next:
+      Here&apos;s what you can do:
       <ul className={`${baseClass}__instructions`}>
         <li>
           <SeedButton />
-          {' with a few pages, posts, and projects to jump-start your new site, then '}
+          {' with sample pages and posts to get started, then '}
           <a href="/" target="_blank">
-            visit your website
+            visit the blog
           </a>
           {' to see the results.'}
         </li>
         <li>
-          If you created this repo using Payload Cloud, head over to GitHub and clone it to your
-          local machine. It will be under the <i>GitHub Scope</i> that you selected when creating
-          this project.
+          Create and manage blog posts, pages, and media files from the collections in the sidebar.
         </li>
         <li>
-          {'Modify your '}
-          <a
-            href="https://payloadcms.com/docs/configuration/collections"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            collections
-          </a>
-          {' and add more '}
-          <a
-            href="https://payloadcms.com/docs/fields/overview"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            fields
-          </a>
-          {' as needed. If you are new to Payload, we also recommend you check out the '}
-          <a
-            href="https://payloadcms.com/docs/getting-started/what-is-payload"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Getting Started
-          </a>
-          {' docs.'}
+          Review and approve role upgrade requests from contributors who want to become editors.
         </li>
         <li>
-          Commit and push your changes to the repository to trigger a redeployment of your project.
+          Monitor activity through the Admin Logs collection to track changes made by team members.
+        </li>
+        <li>
+          Manage user accounts and permissions based on roles (Admin, Editor, Contributor).
         </li>
       </ul>
-      {'Pro Tip: This block is a '}
+      {'For questions or support, contact the GCET IT department or visit '}
       <a
-        href="https://payloadcms.com/docs/custom-components/overview"
+        href="https://gcettbr.ac.in"
         rel="noopener noreferrer"
         target="_blank"
       >
-        custom component
+        GCET Official Website
       </a>
-      , you can remove it at any time by updating your <strong>payload.config</strong>.
+      .
     </div>
   )
 }

@@ -1,6 +1,6 @@
-# GCET Blog
+# GCET Tech Blog
 
-A modern, full-stack blog platform built for Geethanjali College of Engineering and Technology with Next.js 15, Payload CMS, and MongoDB.
+A modern, full-stack blog platform built for Government College of Engineering and Textile Technology, Berhampore with Next.js 15, Payload CMS, and MongoDB.
 
 ## 📖 Documentation
 
@@ -15,11 +15,12 @@ A modern, full-stack blog platform built for Geethanjali College of Engineering 
 - 🧭 [DOCUMENTATION_INDEX.md](./DOCUMENTATION_INDEX.md) - Navigate all docs
 - 📋 [DOCUMENTATION_SUMMARY.md](./DOCUMENTATION_SUMMARY.md) - Overview
 
-This template is based on the official [Payload Website Template](https://github.com/payloadcms/payload/blob/main/templates/website) and is perfect for:
+This blog platform is built with Payload CMS and is perfect for:
 
-- A personal or enterprise-grade website, blog, or portfolio
-- A content publishing platform with a fully featured publication workflow
-- Exploring the capabilities of Payload
+- A college blog and content publishing platform
+- Technical articles, news, and announcements
+- A fully featured publication workflow with role-based access control
+- Managing content by students, faculty, and administrators
 
 Core features:
 

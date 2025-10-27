@@ -12,6 +12,13 @@ import { RenderHero } from '@/heros/RenderHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
+import {
+  HeroSection,
+  FeaturesSection,
+  StatsSection,
+  RecentPostsSection,
+  CTASection,
+} from '@/components/LandingPage'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -61,6 +68,23 @@ export default async function Page({ params: paramsPromise }: Args) {
 
   if (!page) {
     return <PayloadRedirects url={url} />
+  }
+
+  // Modern landing page for home
+  if (slug === 'home') {
+    return (
+      <main className="min-h-screen">
+        <PageClient />
+        <PayloadRedirects disableNotFound url={url} />
+        {draft && <LivePreviewListener />}
+        
+        <HeroSection />
+        <FeaturesSection />
+        <StatsSection />
+        <RecentPostsSection />
+        <CTASection />
+      </main>
+    )
   }
 
   const { hero, layout } = page
