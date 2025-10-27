@@ -258,6 +258,14 @@ export interface Post {
    * Feedback from editor for rejected posts
    */
   editorFeedback?: string | null;
+  /**
+   * Current review status of the post
+   */
+  reviewStatus?: ('draft' | 'pending_review' | 'approved' | 'rejected') | null;
+  /**
+   * When the post was submitted for review
+   */
+  submittedForReviewAt?: string | null;
   slug?: string | null;
   slugLock?: boolean | null;
   updatedAt: string;
@@ -1296,6 +1304,8 @@ export interface PostsSelect<T extends boolean = true> {
         name?: T;
       };
   editorFeedback?: T;
+  reviewStatus?: T;
+  submittedForReviewAt?: T;
   slug?: T;
   slugLock?: T;
   updatedAt?: T;

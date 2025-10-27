@@ -113,11 +113,11 @@ export default async function EditorDashboardPage() {
     const storageGB = (totalBytes / (1024 * 1024 * 1024)).toFixed(2)
 
   return (
-    <div className="p-8 min-h-screen">
+    <div className="p-8 min-h-screen bg-background">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-2">
-          <h1 className="text-3xl font-bold">Editor Dashboard</h1>
+          <h1 className="text-3xl font-bold text-foreground">Editor Dashboard</h1>
           <div className="flex items-center gap-3">
             <Button asChild>
               <Link href="/editor/posts/create">
@@ -132,309 +132,330 @@ export default async function EditorDashboardPage() {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {/* Pending Reviews */}
-        <div className="bg-white dark:bg-gray-900 rounded-xl border-t-4 border-orange-500 p-6 shadow-sm">
-          <div className="flex items-start justify-between mb-4">
-            <div>
-              <p className="text-gray-600 dark:text-gray-400 text-sm font-medium mb-1">Pending Reviews</p>
-              <p className="text-gray-500 dark:text-gray-500 text-xs">Awaiting review</p>
+        <Card className="border-t-4 border-t-orange-500">
+          <CardHeader className="pb-3">
+            <div className="flex items-start justify-between">
+              <div>
+                <CardTitle className="text-sm font-medium text-muted-foreground mb-1">Pending Reviews</CardTitle>
+                <CardDescription>Awaiting review</CardDescription>
+              </div>
+              <div className="w-12 h-12 bg-orange-500/10 rounded-full flex items-center justify-center">
+                <Clock className="w-6 h-6 text-orange-500" />
+              </div>
             </div>
-            <div className="w-12 h-12 bg-orange-50 dark:bg-orange-900/30 rounded-full flex items-center justify-center">
-              <Clock className="w-6 h-6 text-orange-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-3xl font-bold text-foreground">{pendingPosts.totalDocs}</p>
+                {newPostsToday.totalDocs > 0 && (
+                  <p className="text-sm text-orange-600 dark:text-orange-400 mt-1">+{newPostsToday.totalDocs} new today</p>
+                )}
+              </div>
             </div>
-          </div>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">{pendingPosts.totalDocs}</p>
-              {newPostsToday.totalDocs > 0 && (
-                <p className="text-sm text-orange-600 dark:text-orange-400 mt-1">+{newPostsToday.totalDocs} new today</p>
-              )}
-            </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Approved Today */}
-        <div className="bg-white dark:bg-gray-900 rounded-xl border-t-4 border-green-500 p-6 shadow-sm">
-          <div className="flex items-start justify-between mb-4">
-            <div>
-              <p className="text-gray-600 dark:text-gray-400 text-sm font-medium mb-1">Approved Today</p>
-              <p className="text-gray-500 dark:text-gray-500 text-xs">Published posts</p>
+        <Card className="border-t-4 border-t-green-500">
+          <CardHeader className="pb-3">
+            <div className="flex items-start justify-between">
+              <div>
+                <CardTitle className="text-sm font-medium text-muted-foreground mb-1">Approved Today</CardTitle>
+                <CardDescription>Published posts</CardDescription>
+              </div>
+              <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center">
+                <CheckCircle2 className="w-6 h-6 text-green-500" />
+              </div>
             </div>
-            <div className="w-12 h-12 bg-green-50 dark:bg-green-900/30 rounded-full flex items-center justify-center">
-              <CheckCircle2 className="w-6 h-6 text-green-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-end justify-between">
+              <div>
+                <p className="text-4xl font-bold text-foreground">{approvedPosts.totalDocs}</p>
+                {approvalChange !== 0 && (
+                  <p className={`text-sm mt-1 ${approvalChange > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                    {approvalChange > 0 ? '+' : ''}{approvalChange}% from yesterday
+                  </p>
+                )}
+              </div>
             </div>
-          </div>
-          <div className="flex items-end justify-between">
-            <div>
-              <p className="text-4xl font-bold text-gray-900">{approvedPosts.totalDocs}</p>
-              {approvalChange !== 0 && (
-                <p className={`text-sm mt-1 ${approvalChange > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {approvalChange > 0 ? '+' : ''}{approvalChange}% from yesterday
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Comments Pending */}
-        <div className="bg-white rounded-xl border-t-4 border-blue-500 p-6 shadow-sm">
-          <div className="flex items-start justify-between mb-4">
-            <div>
-              <p className="text-gray-600 text-sm font-medium mb-1">Comments Pending</p>
-              <p className="text-gray-500 text-xs">Comments to moderate</p>
+        <Card className="border-t-4 border-t-blue-500">
+          <CardHeader className="pb-3">
+            <div className="flex items-start justify-between">
+              <div>
+                <CardTitle className="text-sm font-medium text-muted-foreground mb-1">Comments Pending</CardTitle>
+                <CardDescription>Comments to moderate</CardDescription>
+              </div>
+              <div className="w-12 h-12 bg-blue-500/10 rounded-full flex items-center justify-center">
+                <MessageSquare className="w-6 h-6 text-blue-500" />
+              </div>
             </div>
-            <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center">
-              <MessageSquare className="w-6 h-6 text-blue-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-end justify-between">
+              <div>
+                <p className="text-4xl font-bold text-foreground">{pendingComments.totalDocs}</p>
+                {reportedComments.totalDocs > 0 && (
+                  <p className="text-sm text-red-600 dark:text-red-400 mt-1">{reportedComments.totalDocs} reported</p>
+                )}
+              </div>
             </div>
-          </div>
-          <div className="flex items-end justify-between">
-            <div>
-              <p className="text-4xl font-bold text-gray-900">{pendingComments.totalDocs}</p>
-              {reportedComments.totalDocs > 0 && (
-                <p className="text-sm text-red-600 mt-1">{reportedComments.totalDocs} reported</p>
-              )}
-            </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Media Uploaded */}
-        <div className="bg-white rounded-xl border-t-4 border-purple-500 p-6 shadow-sm">
-          <div className="flex items-start justify-between mb-4">
-            <div>
-              <p className="text-gray-600 text-sm font-medium mb-1">Media Uploaded</p>
-              <p className="text-gray-500 text-xs">Files this week</p>
+        <Card className="border-t-4 border-t-purple-500">
+          <CardHeader className="pb-3">
+            <div className="flex items-start justify-between">
+              <div>
+                <CardTitle className="text-sm font-medium text-muted-foreground mb-1">Media Uploaded</CardTitle>
+                <CardDescription>Files this week</CardDescription>
+              </div>
+              <div className="w-12 h-12 bg-purple-500/10 rounded-full flex items-center justify-center">
+                <Image className="w-6 h-6 text-purple-500" />
+              </div>
             </div>
-            <div className="w-12 h-12 bg-purple-50 rounded-full flex items-center justify-center">
-              <Image className="w-6 h-6 text-purple-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-end justify-between">
+              <div>
+                <p className="text-4xl font-bold text-foreground">{recentMedia.totalDocs}</p>
+                <p className="text-sm text-muted-foreground mt-1">{storageGB}GB used</p>
+              </div>
             </div>
-          </div>
-          <div className="flex items-end justify-between">
-            <div>
-              <p className="text-4xl font-bold text-gray-900">{recentMedia.totalDocs}</p>
-              <p className="text-sm text-gray-600 mt-1">{storageGB}GB used</p>
-            </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Activity */}
-        <div className="lg:col-span-2 bg-white rounded-xl p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-gray-900">Recent Activity</h2>
-            <Link 
-              href="/editor/activity" 
-              className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
-            >
-              View All Activity
-              <ChevronRight className="w-4 h-4" />
-            </Link>
-          </div>
-          <div className="space-y-4">
-            {allPosts.docs.length === 0 && allComments.docs.length === 0 ? (
-              <p className="text-center py-8 text-gray-500">No recent activity</p>
-            ) : (
-              <>
-                {/* Show recent posts */}
-                {allPosts.docs.slice(0, 2).map((post) => {
-                  const author = Array.isArray(post.authors) && post.authors.length > 0 && typeof post.authors[0] === 'object'
-                    ? post.authors[0]
-                    : null
-                  const initials = author?.name ? author.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U'
-                  const status = post._status
-                  
-                  return (
-                    <div key={post.id} className="flex items-start gap-3 pb-4 border-b">
-                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0" role="img" aria-label={`${author?.name || 'User'} avatar`}>
-                        <span className="text-blue-700 font-semibold text-sm">{initials}</span>
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-xl">Recent Activity</CardTitle>
+              <Button variant="link" asChild className="h-auto p-0">
+                <Link href="/editor/activity" className="flex items-center gap-1">
+                  View All Activity
+                  <ChevronRight className="w-4 h-4" />
+                </Link>
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {allPosts.docs.length === 0 && allComments.docs.length === 0 ? (
+                <p className="text-center py-8 text-muted-foreground">No recent activity</p>
+              ) : (
+                <>
+                  {/* Show recent posts */}
+                  {allPosts.docs.slice(0, 2).map((post) => {
+                    const author = Array.isArray(post.authors) && post.authors.length > 0 && typeof post.authors[0] === 'object'
+                      ? post.authors[0]
+                      : null
+                    const initials = author?.name ? author.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'U'
+                    const status = post._status
+                    
+                    return (
+                      <div key={post.id} className="flex items-start gap-3 pb-4 border-b last:border-0">
+                        <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0" role="img" aria-label={`${author?.name || 'User'} avatar`}>
+                          <span className="text-primary font-semibold text-sm">{initials}</span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-foreground">
+                            <span className="font-semibold">{author?.name || 'Unknown'}</span>{' '}
+                            {status === 'published' ? 'published' : 'submitted'}{' '}
+                            <span className="font-medium">&quot;{post.title}&quot;</span>
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {new Date(post.updatedAt).toLocaleString()}
+                          </p>
+                        </div>
+                        {status === 'published' ? (
+                          <CheckCircle2 className="w-4 h-4 text-green-500" />
+                        ) : (
+                          <Clock className="w-4 h-4 text-orange-500" />
+                        )}
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm text-gray-900">
-                          <span className="font-semibold">{author?.name || 'Unknown'}</span>{' '}
-                          {status === 'published' ? 'published' : 'submitted'}{' '}
-                          <span className="font-medium">&quot;{post.title}&quot;</span>
-                        </p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          {new Date(post.updatedAt).toLocaleString()}
-                        </p>
-                      </div>
-                      {status === 'published' ? (
-                        <CheckCircle2 className="w-4 h-4 text-green-500" />
-                      ) : (
-                        <Clock className="w-4 h-4 text-orange-500" />
-                      )}
-                    </div>
-                  )
-                })}
+                    )
+                  })}
 
-                {/* Show recent comments */}
-                {allComments.docs.slice(0, 2).map((comment) => {
-                  const author = typeof comment.author === 'object' && comment.author ? comment.author : null
-                  const initials = author?.name ? author.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'A'
-                  
-                  return (
-                    <div key={comment.id} className="flex items-start gap-3 pb-4 border-b last:border-0">
-                      <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0" role="img" aria-label={`${author?.name || 'User'} avatar`}>
-                        <span className="text-purple-700 font-semibold text-sm">{initials}</span>
+                  {/* Show recent comments */}
+                  {allComments.docs.slice(0, 2).map((comment) => {
+                    const author = typeof comment.author === 'object' && comment.author ? comment.author : null
+                    const initials = author?.name ? author.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'A'
+                    
+                    return (
+                      <div key={comment.id} className="flex items-start gap-3 pb-4 border-b last:border-0">
+                        <div className="w-10 h-10 bg-purple-500/10 rounded-full flex items-center justify-center flex-shrink-0" role="img" aria-label={`${author?.name || 'User'} avatar`}>
+                          <span className="text-purple-700 dark:text-purple-300 font-semibold text-sm">{initials}</span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-foreground">
+                            <span className="font-semibold">{author?.name || 'Anonymous'}</span> commented
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {new Date(comment.createdAt).toLocaleString()}
+                          </p>
+                        </div>
+                        <MessageSquare className="w-4 h-4 text-blue-500" />
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm text-gray-900">
-                          <span className="font-semibold">{author?.name || 'Anonymous'}</span> commented
-                        </p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          {new Date(comment.createdAt).toLocaleString()}
-                        </p>
-                      </div>
-                      <MessageSquare className="w-4 h-4 text-blue-500" />
-                    </div>
-                  )
-                })}
-              </>
-            )}
-          </div>
-        </div>
+                    )
+                  })}
+                </>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Quick Actions */}
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Quick Actions</h2>
-          <div className="space-y-3">
-            <Link
-              href="/editor/queue"
-              className="block w-full px-4 py-3 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition font-medium text-center"
-            >
-              Review Queue
-              <ChevronRight className="w-4 h-4 inline ml-2" />
-            </Link>
-            <Link
-              href="/editor/content"
-              className="block w-full px-4 py-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium text-center"
-            >
-              Bulk Operations
-            </Link>
-            <Link
-              href="/editor/queue"
-              className="block w-full px-4 py-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium text-center"
-            >
-              Schedule Posts
-            </Link>
-            <Link
-              href="/editor/comments"
-              className="block w-full px-4 py-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium text-center"
-            >
-              Moderate Comments
-            </Link>
-            <Link
-              href="/editor/analytics"
-              className="block w-full px-4 py-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium text-center"
-            >
-              View Analytics
-            </Link>
-          </div>
-        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">Quick Actions</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Button variant="secondary" className="w-full justify-between" asChild>
+              <Link href="/editor/queue">
+                Review Queue
+                <ChevronRight className="w-4 h-4" />
+              </Link>
+            </Button>
+            <Button variant="outline" className="w-full" asChild>
+              <Link href="/editor/content">
+                Bulk Operations
+              </Link>
+            </Button>
+            <Button variant="outline" className="w-full" asChild>
+              <Link href="/editor/queue">
+                Schedule Posts
+              </Link>
+            </Button>
+            <Button variant="outline" className="w-full" asChild>
+              <Link href="/editor/comments">
+                Moderate Comments
+              </Link>
+            </Button>
+            <Button variant="outline" className="w-full" asChild>
+              <Link href="/editor/analytics">
+                View Analytics
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Recent Approvals */}
-      <div className="mt-6 bg-white rounded-xl p-6 shadow-sm">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-gray-900">Recent Approvals</h2>
-          <Link 
-            href="/editor/content" 
-            className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
-          >
-            View All
-            <ChevronRight className="w-4 h-4" />
-          </Link>
-        </div>
-        <p className="text-sm text-gray-500 mb-4">
-          Showing {Math.min(approvedPosts.docs.length, 4)} of {approvedPosts.totalDocs} approvals
-        </p>
-        
-        {approvedPosts.docs.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="border-b">
-                <tr className="text-left">
-                  <th className="pb-3 text-sm font-semibold text-gray-700">Post Title</th>
-                  <th className="pb-3 text-sm font-semibold text-gray-700">Category</th>
-                  <th className="pb-3 text-sm font-semibold text-gray-700">Author</th>
-                  <th className="pb-3 text-sm font-semibold text-gray-700">Date</th>
-                  <th className="pb-3 text-sm font-semibold text-gray-700">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y">
-                {approvedPosts.docs.slice(0, 4).map((post) => {
-                  const author = Array.isArray(post.authors) && post.authors.length > 0 && typeof post.authors[0] === 'object'
-                    ? post.authors[0]
-                    : null
-                  const category = Array.isArray(post.categories) && post.categories.length > 0 && typeof post.categories[0] === 'object'
-                    ? post.categories[0]
-                    : null
-                  const initials = author?.name ? author.name.split(' ').map((n: string) => n[0]).join('').toUpperCase() : 'U'
-                  
-                  return (
-                    <tr key={post.id} className="hover:bg-gray-50">
-                      <td className="py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0" role="img" aria-label="Author avatar">
-                            <span className="text-blue-700 font-semibold text-sm">{initials}</span>
-                          </div>
-                          <span className="text-sm font-medium text-gray-900">{post.title}</span>
-                        </div>
-                      </td>
-                      <td className="py-4">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                          {category?.title || 'Uncategorized'}
-                        </span>
-                      </td>
-                      <td className="py-4 text-sm text-gray-600">{author?.name || 'Unknown'}</td>
-                      <td className="py-4 text-sm text-gray-600">
-                        {new Date(post.publishedAt || post.updatedAt).toLocaleDateString()}
-                      </td>
-                      <td className="py-4">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                          Published
-                        </span>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
+      <Card className="mt-6">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-xl">Recent Approvals</CardTitle>
+            <Button variant="link" asChild className="h-auto p-0">
+              <Link href="/editor/content" className="flex items-center gap-1">
+                View All
+                <ChevronRight className="w-4 h-4" />
+              </Link>
+            </Button>
           </div>
-        ) : (
-          <p className="text-center py-8 text-gray-500">No recent approvals</p>
-        )}
-        
-        <div className="flex items-center justify-between mt-6 pt-4 border-t">
-          <button className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 font-medium disabled:opacity-50" disabled>
-            Previous
-          </button>
-          <button className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 font-medium">
-            Next
-          </button>
-        </div>
-      </div>
+          <CardDescription>
+            Showing {Math.min(approvedPosts.docs.length, 4)} of {approvedPosts.totalDocs} approvals
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {approvedPosts.docs.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="border-b">
+                  <tr className="text-left">
+                    <th className="pb-3 text-sm font-semibold text-muted-foreground">Post Title</th>
+                    <th className="pb-3 text-sm font-semibold text-muted-foreground">Category</th>
+                    <th className="pb-3 text-sm font-semibold text-muted-foreground">Author</th>
+                    <th className="pb-3 text-sm font-semibold text-muted-foreground">Date</th>
+                    <th className="pb-3 text-sm font-semibold text-muted-foreground">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  {approvedPosts.docs.slice(0, 4).map((post) => {
+                    const author = Array.isArray(post.authors) && post.authors.length > 0 && typeof post.authors[0] === 'object'
+                      ? post.authors[0]
+                      : null
+                    const category = Array.isArray(post.categories) && post.categories.length > 0 && typeof post.categories[0] === 'object'
+                      ? post.categories[0]
+                      : null
+                    const initials = author?.name ? author.name.split(' ').map((n: string) => n[0]).join('').toUpperCase() : 'U'
+                    
+                    return (
+                      <tr key={post.id} className="hover:bg-muted/50">
+                        <td className="py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0" role="img" aria-label="Author avatar">
+                              <span className="text-primary font-semibold text-sm">{initials}</span>
+                            </div>
+                            <span className="text-sm font-medium text-foreground">{post.title}</span>
+                          </div>
+                        </td>
+                        <td className="py-4">
+                          <Badge variant="secondary">
+                            {category?.title || 'Uncategorized'}
+                          </Badge>
+                        </td>
+                        <td className="py-4 text-sm text-muted-foreground">{author?.name || 'Unknown'}</td>
+                        <td className="py-4 text-sm text-muted-foreground">
+                          {new Date(post.publishedAt || post.updatedAt).toLocaleDateString()}
+                        </td>
+                        <td className="py-4">
+                          <Badge className="bg-green-500/10 text-green-700 dark:text-green-400 hover:bg-green-500/20">
+                            Published
+                          </Badge>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="text-center py-8 text-muted-foreground">No recent approvals</p>
+          )}
+          
+          <div className="flex items-center justify-between mt-6 pt-4 border-t">
+            <Button variant="outline" size="sm" disabled>
+              Previous
+            </Button>
+            <Button variant="outline" size="sm">
+              Next
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
   } catch (error) {
     console.error('Dashboard error:', error)
     return (
-      <div className="p-8 bg-gray-50 min-h-screen">
+      <div className="p-8 bg-background min-h-screen">
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center max-w-md">
-            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-2xl">⚠️</span>
-            </div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">Failed to load dashboard</h2>
-            <p className="text-gray-600 mb-4">
-              There was an error loading your dashboard data. Please try refreshing the page.
-            </p>
-            <button
-              onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-            >
-              Refresh Page
-            </button>
-          </div>
+          <Card className="max-w-md">
+            <CardHeader className="text-center">
+              <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">⚠️</span>
+              </div>
+              <CardTitle className="text-xl">Failed to load dashboard</CardTitle>
+              <CardDescription>
+                There was an error loading your dashboard data. Please try refreshing the page.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="text-center">
+              <Button
+                onClick={() => window.location.reload()}
+              >
+                Refresh Page
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
     )
