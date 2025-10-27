@@ -71,15 +71,9 @@ export function ContributorHeader({ user, isOpen, onToggle }: ContributorHeaderP
               <p className="font-medium text-sm truncate">
                 {user.name || 'Contributor'}
               </p>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs h-5">
-                  {user.role}
-                </Badge>
-                <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
-                  Online
-                </span>
-              </div>
+              <Badge variant="outline" className="text-xs h-5">
+                {user.role}
+              </Badge>
             </div>
           </div>
         </div>

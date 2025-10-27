@@ -107,7 +107,7 @@ export function ContributorSidebar({ user, stats, isOpen }: ContributorSidebarPr
 
         {/* Logout */}
         <div className="border-t p-4">
-          <LogoutButton className="w-full justify-start gap-2 text-destructive hover:text-destructive" />
+          <LogoutButton className="w-full justify-start gap-2" />
           <p className="mt-3 text-xs text-muted-foreground text-center">
             v2.4.1 - Contributor
           </p>
