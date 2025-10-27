@@ -1,0 +1,40 @@
+/* GCET Blog Admin Panel Custom Styles */
+
+/* Replace Payload logo with GCET logo */
+:root {
+  --branding-logo-url: url('https://res.cloudinary.com/dqpvhbkdd/image/upload/v1761577830/Gcet_Logo_i9fkbt.png');
+}
+
+/* Override the default Payload logo in the admin panel */
+.payload-logo {
+  background-image: var(--branding-logo-url) !important;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* Hide default Payload branding text */
+.nav__brand {
+  .payload-logo svg {
+    display: none;
+  }
+  
+  &::after {
+    content: '';
+    display: block;
+    width: 150px;
+    height: 40px;
+    background-image: var(--branding-logo-url);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: left center;
+  }
+}
+
+/* Customize admin panel theme colors for GCET branding */
+:root {
+  --theme-primary: #1e40af; /* GCET Blue */
+  --theme-success: #16a34a;
+  --theme-warning: #f59e0b;
+  --theme-error: #dc2626;
+}

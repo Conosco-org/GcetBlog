@@ -140,13 +140,23 @@ export default async function EditorQueuePage() {
       <Card className="mb-6">
         <div className="border-b">
           <nav className="flex">
-            <button className="px-6 py-4 text-sm font-medium text-primary border-b-2 border-primary">
+            <Link 
+              href="/editor/queue"
+              className="px-6 py-4 text-sm font-medium text-blue-600 border-b-2 border-blue-600"
+            >
               Post Approvals ({pendingPosts.totalDocs})
-            </button>
-            <button className="px-6 py-4 text-sm font-medium text-muted-foreground hover:text-foreground">
+            </Link>
+            <Link 
+              href="/editor/comments"
+              className="px-6 py-4 text-sm font-medium text-gray-600 hover:text-gray-900 hover:border-b-2 hover:border-gray-300 transition-colors"
+            >
               Comment Moderation ({pendingComments.totalDocs})
-            </button>
-            <button className="px-6 py-4 text-sm font-medium text-muted-foreground hover:text-foreground">
+            </Link>
+            <button 
+              className="px-6 py-4 text-sm font-medium text-gray-400 cursor-not-allowed"
+              disabled
+              title="Coming soon"
+            >
               Publishing Schedule ({scheduledPosts})
             </button>
           </nav>

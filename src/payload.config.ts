@@ -26,7 +26,7 @@ const dirname = path.dirname(filename)
 export default buildConfig({
   admin: {
     autoLogin: process.env.PAYLOAD_PUBLIC_AUTO_LOGIN === 'true' ? {
-      email: 'dev@payloadcms.com',
+      email: 'admin@gcet.edu.in',
       password: 'test',
       prefillOnly: true,
     } : false,
