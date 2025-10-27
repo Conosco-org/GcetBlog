@@ -58,7 +58,9 @@ export default async function EditorLayout({
         totalPostsCount={totalPosts.totalDocs}
         activityLogsCount={recentLogs.totalDocs}
       />
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto lg:ml-0">
+        {/* Mobile top padding for hamburger button */}
+        <div className="lg:hidden h-16" />
         {children}
       </main>
     </div>
