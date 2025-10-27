@@ -1,0 +1,74 @@
+import { redirect, notFound } from 'next/navigation'
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
+import { headers } from 'next/headers'
+import { PostForm } from '../create/PostForm'
+
+export default async function EditPostPage({ params }: { params: { id: string } }) {
+  const payload = await getPayload({ config: configPromise })
+  const requestHeaders = await headers()
+
+  // Authenticate the request
+  const { user } = await payload.auth({ headers: requestHeaders })
+
+  if (!user) {
+    redirect('/login')
+  }
+
+  // Only editors and admins can edit posts
+  if (user.role !== 'editor' && user.role !== 'admin') {
+    redirect('/dashboard')
+  }
+
+  // Get the post
+  try {
+    const post = await payload.findByID({
+      collection: 'posts',
+      id: params.id,
+      depth: 2,
+    })
+
+    if (!post) {
+      notFound()
+    }
+
+    // Get categories for the form
+    const categories = await payload.find({
+      collection: 'categories',
+      limit: 100,
+      sort: 'title',
+    })
+
+    // Extract category IDs
+    const categoryIds = Array.isArray(post.categories)
+      ? post.categories.map(cat => typeof cat === 'object' ? cat.id : cat)
+      : []
+
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-4xl mx-auto p-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Edit Post</h1>
+            <p className="text-gray-600">Update your blog post</p>
+          </div>
+
+          <PostForm
+            categories={categories.docs}
+            user={user}
+            postId={post.id}
+            isEdit={true}
+            initialData={{
+              title: post.title,
+              content: typeof post.content === 'string' ? post.content : '',
+              categories: categoryIds,
+              meta: post.meta,
+            }}
+          />
+        </div>
+      </div>
+    )
+  } catch (error) {
+    console.error('Error fetching post:', error)
+    notFound()
+  }
+}

@@ -34,6 +34,7 @@ export async function approvePost(postId: string, editorNotes?: string) {
       id: postId,
       data: {
         _status: 'published',
+        reviewStatus: 'approved',
         publishedAt: new Date().toISOString(),
       },
       draft: false, // This publishes the draft
@@ -99,6 +100,7 @@ export async function rejectPost(postId: string, reason?: string) {
       id: postId,
       data: {
         editorFeedback: reason || 'Post rejected by editor',
+        reviewStatus: 'rejected',
         _status: 'draft', // Keep as draft
       },
       draft: true,

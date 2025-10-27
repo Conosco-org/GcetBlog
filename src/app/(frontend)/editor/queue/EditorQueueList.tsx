@@ -96,7 +96,7 @@ export function EditorQueueList({ posts }: EditorQueueListProps) {
                 <div className="space-y-2">
                   <CardTitle className="text-lg">
                     <Link
-                      href={`/admin/collections/posts/${post.id}`}
+                      href={`/editor/posts/${post.id}/edit`}
                       className="hover:underline text-blue-600"
                     >
                       {post.title}
@@ -198,7 +198,7 @@ export function EditorQueueList({ posts }: EditorQueueListProps) {
                     {isProcessing ? 'Processing...' : 'Reject'}
                   </Button>
                   <Button asChild variant="outline">
-                    <Link href={`/admin/collections/posts/${post.id}`}>Edit in Admin</Link>
+                    <Link href={`/editor/posts/${post.id}/edit`}>Edit Post</Link>
                   </Button>
                 </div>
               </div>

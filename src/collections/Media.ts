@@ -10,6 +10,7 @@ import { fileURLToPath } from 'url'
 
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
+import { useCloudinaryFallback } from './Media/hooks/useCloudinaryFallback'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -21,6 +22,9 @@ export const Media: CollectionConfig = {
     delete: authenticated,
     read: anyone,
     update: authenticated,
+  },
+  hooks: {
+    afterRead: [useCloudinaryFallback],
   },
   fields: [
     {
@@ -37,12 +41,20 @@ export const Media: CollectionConfig = {
         },
       }),
     },
+    {
+      name: 'cloudinaryUrl',
+      type: 'text',
+      admin: {
+        description: 'Cloudinary CDN URL for the uploaded image',
+      },
+    },
   ],
   upload: {
     // Upload to the public/media directory in Next.js making them publicly accessible even outside of Payload
     staticDir: path.resolve(dirname, '../../public/media'),
     adminThumbnail: 'thumbnail',
     focalPoint: true,
+    disableLocalStorage: false, // Keep local storage but prioritize Cloudinary
     imageSizes: [
       {
         name: 'thumbnail',

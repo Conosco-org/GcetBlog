@@ -239,6 +239,50 @@ export const Posts: CollectionConfig<'posts'> = {
         },
       },
     },
+    {
+      name: 'reviewStatus',
+      type: 'select',
+      defaultValue: 'draft',
+      options: [
+        {
+          label: 'Draft',
+          value: 'draft',
+        },
+        {
+          label: 'Pending Review',
+          value: 'pending_review',
+        },
+        {
+          label: 'Approved',
+          value: 'approved',
+        },
+        {
+          label: 'Rejected',
+          value: 'rejected',
+        },
+      ],
+      admin: {
+        position: 'sidebar',
+        description: 'Current review status of the post',
+      },
+      access: {
+        read: () => true,
+        update: ({ req }) => {
+          const user = req.user as { role: string } | undefined
+          // Only editors and admins can change review status
+          return user ? ['editor', 'admin'].includes(user.role) : false
+        },
+      },
+    },
+    {
+      name: 'submittedForReviewAt',
+      type: 'date',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description: 'When the post was submitted for review',
+      },
+    },
     ...slugField(),
   ],
   hooks: {
