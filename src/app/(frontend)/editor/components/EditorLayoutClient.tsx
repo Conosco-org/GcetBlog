@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { EditorSidebar } from './EditorSidebar'
-import { Menu, X } from 'lucide-react'
+import { EditorHeader } from './EditorHeader'
 import type { User } from '@/payload-types'
 
 interface EditorLayoutClientProps {
@@ -18,41 +18,31 @@ export function EditorLayoutClient({
   pendingPostsCount,
   totalPostsCount,
   activityLogsCount,
-  children,
+  children
 }: EditorLayoutClientProps) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(prev => !prev)
-  }
+  const [isOpen, setIsOpen] = useState(true)
 
   return (
-    <div className="flex h-screen bg-gray-50">
-      {/* Mobile Hamburger Button */}
-      <button
-        onClick={toggleSidebar}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-lg shadow-lg border border-gray-200"
-        aria-label="Toggle menu"
-      >
-        {isSidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-      </button>
-
-      {/* Sidebar */}
-      <EditorSidebar
+    <div className="flex flex-col min-h-screen bg-background">
+      <EditorHeader 
         user={user}
-        pendingPostsCount={pendingPostsCount}
-        totalPostsCount={totalPostsCount}
-        activityLogsCount={activityLogsCount}
-        isOpen={isSidebarOpen}
-        onToggle={toggleSidebar}
+        isOpen={isOpen}
+        onToggle={() => setIsOpen(!isOpen)}
       />
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
-        {/* Mobile top padding for hamburger button */}
-        <div className="lg:hidden h-16" />
-        {children}
-      </main>
+      <div className="flex flex-1">
+        <EditorSidebar 
+          user={user}
+          pendingPostsCount={pendingPostsCount}
+          totalPostsCount={totalPostsCount}
+          activityLogsCount={activityLogsCount}
+          isOpen={isOpen}
+          onToggle={() => setIsOpen(!isOpen)}
+        />
+        <main className={`flex-1 overflow-y-auto transition-all duration-200 ${isOpen ? 'ml-64' : 'ml-0'}`}>
+          {children}
+        </main>
+      </div>
     </div>
   )
 }

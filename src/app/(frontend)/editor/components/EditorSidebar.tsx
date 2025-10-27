@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { LogoutButton } from '@/components/LogoutButton'
@@ -33,16 +32,19 @@ interface EditorSidebarProps {
   pendingPostsCount?: number
   totalPostsCount?: number
   activityLogsCount?: number
+  isOpen: boolean
+  onToggle: () => void
 }
 
 export function EditorSidebar({ 
   user, 
   pendingPostsCount = 0,
   totalPostsCount = 0,
-  activityLogsCount = 0
+  activityLogsCount = 0,
+  isOpen,
+  onToggle
 }: EditorSidebarProps) {
   const pathname = usePathname()
-  const [isOpen, setIsOpen] = useState(true) // Start open by default
 
   const navItems: NavItem[] = [
     {
@@ -104,49 +106,11 @@ export function EditorSidebar({
 
   return (
     <>
-      {/* Hamburger Button */}
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-4 left-4 z-50"
-        aria-label="Toggle menu"
-      >
-        {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-      </Button>
-
-      {/* Sidebar - Static positioning to push content */}
+      {/* Sidebar - Fixed positioning */}
       {isOpen && (
-        <aside className="w-64 border-r bg-background flex flex-col h-screen sticky top-0">
-          {/* Logo & User Info */}
-          <div className="p-6 border-b mt-16">
-            <Link href="/editor" className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
-                GC
-              </div>
-              <span className="text-xl font-bold">GCET Blog</span>
-            </Link>
-            
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold text-lg">
-                {(user.name || user.email || 'U').charAt(0).toUpperCase()}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="font-semibold text-sm truncate">
-                  {user.name || 'Content Editor'}
-                </p>
-                <div className="flex items-center gap-1.5 mt-1">
-                  <Badge variant="secondary" className="text-xs uppercase">
-                    {user.role}
-                  </Badge>
-                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                </div>
-              </div>
-            </div>
-          </div>
-
+        <aside className="w-64 border-r bg-background flex flex-col fixed left-0 top-16 bottom-0 z-30">
           {/* Navigation */}
-          <nav className="flex-1 overflow-y-auto p-4">
+          <nav className="flex-1 p-4">
             <ul className="space-y-1">
               {navItems.map((item) => {
                 const active = isActive(item.href)

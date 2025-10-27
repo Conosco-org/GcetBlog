@@ -3,7 +3,7 @@ import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import type { User } from '@/payload-types'
-import { EditorSidebar } from './components/EditorSidebar'
+import { EditorLayoutClient } from './components/EditorLayoutClient'
 
 export default async function EditorLayout({
   children,
@@ -51,18 +51,13 @@ export default async function EditorLayout({
   })
 
   return (
-    <div className="flex min-h-screen bg-background">
-      <EditorSidebar 
-        user={typedUser}
-        pendingPostsCount={pendingPosts.totalDocs}
-        totalPostsCount={totalPosts.totalDocs}
-        activityLogsCount={recentLogs.totalDocs}
-      />
-      <main className="flex-1 overflow-y-auto">
-        {/* Top padding for hamburger button */}
-        <div className="h-16" />
-        {children}
-      </main>
-    </div>
+    <EditorLayoutClient
+      user={typedUser}
+      pendingPostsCount={pendingPosts.totalDocs}
+      totalPostsCount={totalPosts.totalDocs}
+      activityLogsCount={recentLogs.totalDocs}
+    >
+      {children}
+    </EditorLayoutClient>
   )
 }
