@@ -116,13 +116,23 @@ export default async function EditorQueuePage() {
       <div className="bg-white rounded-xl shadow-sm mb-6">
         <div className="border-b border-gray-200">
           <nav className="flex">
-            <button className="px-6 py-4 text-sm font-medium text-blue-600 border-b-2 border-blue-600">
+            <Link 
+              href="/editor/queue"
+              className="px-6 py-4 text-sm font-medium text-blue-600 border-b-2 border-blue-600"
+            >
               Post Approvals ({pendingPosts.totalDocs})
-            </button>
-            <button className="px-6 py-4 text-sm font-medium text-gray-600 hover:text-gray-900">
+            </Link>
+            <Link 
+              href="/editor/comments"
+              className="px-6 py-4 text-sm font-medium text-gray-600 hover:text-gray-900 hover:border-b-2 hover:border-gray-300 transition-colors"
+            >
               Comment Moderation ({pendingComments.totalDocs})
-            </button>
-            <button className="px-6 py-4 text-sm font-medium text-gray-600 hover:text-gray-900">
+            </Link>
+            <button 
+              className="px-6 py-4 text-sm font-medium text-gray-400 cursor-not-allowed"
+              disabled
+              title="Coming soon"
+            >
               Publishing Schedule ({scheduledPosts})
             </button>
           </nav>

@@ -1,7 +1,7 @@
 {
-  "name": "gcet-tech-blog",
+  "name": "gcet-blog",
   "version": "1.0.0",
-  "description": "Official Tech Blog of Government College of Engineering and Textile Technology, Berhampore",
+  "description": "Official blog platform for Geethanjali College of Engineering and Technology (GCET)",
   "license": "MIT",
   "type": "module",
   "scripts": {

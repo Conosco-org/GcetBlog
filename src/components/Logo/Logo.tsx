@@ -16,7 +16,7 @@ export const Logo = (props: Props) => {
   return (
     /* eslint-disable @next/next/no-img-element */
     <img
-      alt="GCET Tech Blog Logo"
+      alt="GCET Blog Logo"
       width={193}
       height={34}
       loading={loading}

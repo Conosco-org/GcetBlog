@@ -1,4 +1,6 @@
-# GCET Tech Blog
+# GCET Blog
+
+Official blog platform for Geethanjali College of Engineering and Technology (GCET).
 
 A modern, full-stack blog platform built for Government College of Engineering and Textile Technology, Berhampore with Next.js 15, Payload CMS, and MongoDB.
 

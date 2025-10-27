@@ -62,14 +62,13 @@ export async function moderateComment(formData: FormData) {
   }
 
   try {
-    // TODO: Get the current user from server context
-    // For now, we'll create a basic auth check - this needs to be implemented properly
-    // const authResult = await payload.auth()
+    // Get the current user from the request context
+    // This works in server actions: https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions#accessing-request-and-response
+  const headersList = await headers()
+  const userId = headersList.get('x-user-id')
+  const userRole = headersList.get('x-user-role')
 
-    // Placeholder for auth - in production, get user from session/context
-    const mockUser = { id: 'admin', role: 'admin' }
-
-    if (!mockUser || !['editor', 'admin'].includes(mockUser.role)) {
+    if (!userId || !userRole || !['editor', 'admin'].includes(userRole)) {
       return { error: 'Unauthorized' }
     }
 
@@ -79,7 +78,7 @@ export async function moderateComment(formData: FormData) {
       id: commentId,
       data: {
         status: action === 'approve' ? 'approved' : action === 'reject' ? 'rejected' : 'spam',
-        moderatedBy: mockUser.id,
+        moderatedBy: userId,
         moderatorNotes: moderationNotes,
         moderatedAt: new Date().toISOString(),
       },
@@ -96,7 +95,7 @@ export async function moderateComment(formData: FormData) {
       collection: 'admin-logs',
       data: {
         action: logAction,
-        user: mockUser.id,
+        user: userId,
         resourceType: 'comments',
         resourceId: commentId,
         timestamp: new Date().toISOString(),
@@ -107,13 +106,13 @@ export async function moderateComment(formData: FormData) {
     })
 
     // Get the post to revalidate its page
-    const comment = await payload.findByID({
+  const _comment = await payload.findByID({
       collection: 'comments',
       id: commentId,
     })
 
-    if (comment.post && typeof comment.post === 'object') {
-      revalidatePath(`/posts/${comment.post.slug}`)
+    if (_comment.post && typeof _comment.post === 'object') {
+      revalidatePath(`/posts/${_comment.post.slug}`)
     }
 
     return { success: `Comment ${action}d successfully` }

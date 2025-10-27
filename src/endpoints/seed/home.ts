@@ -47,7 +47,7 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
                   format: 0,
                   mode: 'normal',
                   style: '',
-                  text: 'Welcome to GCET Tech Blog',
+                  text: 'Welcome to GCET Blog',
                   version: 1,
                 },
               ],
@@ -568,7 +568,7 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
     meta: {
       description: 'An open-source website built with Payload and Next.js.',
       image: heroImage.id,
-      title: 'GCET Tech Blog',
+      title: 'GCET Blog',
     },
     title: 'Home',
   }

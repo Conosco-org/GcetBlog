@@ -14,12 +14,12 @@ export const HeroSection: React.FC = () => {
           <div className="space-y-8 animate-fade-in">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 rounded-full text-sm font-medium text-blue-700 dark:text-blue-300">
               <Award className="w-4 h-4" />
-              <span>Government College of Engineering and Technology</span>
+              <span>Geethanjali College of Engineering and Technology</span>
             </div>
             
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight">
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400">
-                GCET Tech Blog
+                GCET Blog
               </span>
             </h1>
             

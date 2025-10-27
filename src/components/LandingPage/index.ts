@@ -1,5 +1,2 @@
 export { HeroSection } from './HeroSection'
-export { FeaturesSection } from './FeaturesSection'
-export { StatsSection } from './StatsSection'
-export { RecentPostsSection } from './RecentPostsSection'
-export { CTASection } from './CTASection'
+export { HomePosts } from './HomePosts'
