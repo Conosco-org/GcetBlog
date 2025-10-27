@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { 
   Users, 
@@ -391,12 +392,12 @@ export default function CustomDashboard() {
                       )
                     })}
                   </div>
-                  <a 
+                  <Link 
                     href="/admin/collections/admin-logs"
                     className="block mt-4 text-center text-sm text-blue-400 hover:text-blue-300 font-medium"
                   >
                     View all activity →
-                  </a>
+                  </Link>
                 </CardContent>
               </Card>
             </div>

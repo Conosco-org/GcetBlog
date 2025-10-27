@@ -62,7 +62,10 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
               title: post.title,
               content: typeof post.content === 'string' ? post.content : '',
               categories: categoryIds,
-              meta: post.meta,
+              meta: post.meta ? {
+                title: typeof post.meta === 'object' && 'title' in post.meta && post.meta.title ? String(post.meta.title) : undefined,
+                description: typeof post.meta === 'object' && 'description' in post.meta && post.meta.description ? String(post.meta.description) : undefined,
+              } : undefined,
             }}
           />
         </div>
