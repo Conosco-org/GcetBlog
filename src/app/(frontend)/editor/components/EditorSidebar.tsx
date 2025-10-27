@@ -17,7 +17,8 @@ import {
   Settings, 
   Eye,
   Menu,
-  X
+  X,
+  Tag
 } from 'lucide-react'
 
 interface NavItem {
@@ -68,6 +69,11 @@ export function EditorSidebar({
       label: 'Media Manager',
       href: '/editor/media',
       icon: <Image className="w-5 h-5" />,
+    },
+    {
+      label: 'Categories',
+      href: '/editor/categories',
+      icon: <Tag className="w-5 h-5" />,
     },
     {
       label: 'Templates',

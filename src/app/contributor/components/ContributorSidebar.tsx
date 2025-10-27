@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { User } from '@/payload-types'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { LogoutButton } from '@/components/LogoutButton'
 import { 
   BarChart3, 
   FileText, 
@@ -106,17 +107,7 @@ export function ContributorSidebar({ user, stats, isOpen }: ContributorSidebarPr
 
         {/* Logout */}
         <div className="border-t p-4">
-          <form action="/api/auth/logout" method="POST">
-            <Button 
-              type="submit" 
-              variant="ghost" 
-              className="w-full justify-start gap-2 text-destructive hover:text-destructive"
-              size="sm"
-            >
-              <LogOut className="h-4 w-4" />
-              Logout
-            </Button>
-          </form>
+          <LogoutButton className="w-full justify-start gap-2 text-destructive hover:text-destructive" />
           <p className="mt-3 text-xs text-muted-foreground text-center">
             v2.4.1 - Contributor
           </p>

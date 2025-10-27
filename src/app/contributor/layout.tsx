@@ -74,8 +74,12 @@ export default async function ContributorLayout({
     drafts: draftPosts.totalDocs,
     submissions: submittedPosts.totalDocs,
     published: publishedPosts.totalDocs,
-    // Feedback is typically comments or reviews - for now set to 0
-    feedback: 0,
+    // Get feedback count for this contributor
+    feedback: (await payload.find({
+      collection: 'feedback',
+      where: { contributor: { equals: typedUser.id } },
+      limit: 0,
+    })).totalDocs,
   }
 
   return (

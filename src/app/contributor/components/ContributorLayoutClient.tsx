@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { ContributorSidebar } from './ContributorSidebar'
 import { ContributorHeader } from './ContributorHeader'
+import { Toaster } from '@/components/ui/toaster'
 import type { User } from '@/payload-types'
 
 interface ContributorLayoutClientProps {
@@ -32,6 +33,7 @@ export function ContributorLayoutClient({ user, stats, children }: ContributorLa
           {children}
         </main>
       </div>
+      <Toaster />
     </div>
   )
 }
