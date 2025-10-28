@@ -29,7 +29,7 @@ export async function approvePost(postId: string, editorNotes?: string) {
     }
 
     // Publish the post - convert draft to published version
-    await payload.update({
+    const updatedPost = await payload.update({
       collection: 'posts',
       id: postId,
       data: {
@@ -58,9 +58,19 @@ export async function approvePost(postId: string, editorNotes?: string) {
       console.log('Could not create audit log:', error)
     }
 
+    // Revalidate multiple paths
     revalidatePath('/editor/queue')
+    revalidatePath('/editor')
     revalidatePath('/posts')
     revalidatePath(`/posts/${post.slug}`)
+    revalidatePath('/')
+    
+    console.log('Post approved successfully:', {
+      postId,
+      slug: post.slug,
+      reviewStatus: updatedPost.reviewStatus,
+      _status: updatedPost._status,
+    })
 
     return { success: true, message: 'Post approved and published successfully' }
   } catch (error) {
@@ -95,7 +105,7 @@ export async function rejectPost(postId: string, reason?: string) {
     }
 
     // Add rejection feedback to the post
-    await payload.update({
+    const updatedPost = await payload.update({
       collection: 'posts',
       id: postId,
       data: {
@@ -123,7 +133,16 @@ export async function rejectPost(postId: string, reason?: string) {
       console.log('Could not create audit log:', error)
     }
 
+    // Revalidate multiple paths to ensure UI updates
     revalidatePath('/editor/queue')
+    revalidatePath('/editor')
+    revalidatePath('/contributor/submissions')
+    
+    console.log('Post rejected successfully:', {
+      postId,
+      reviewStatus: updatedPost.reviewStatus,
+      editorFeedback: updatedPost.editorFeedback,
+    })
 
     return { success: true, message: 'Post rejected with feedback' }
   } catch (error) {
