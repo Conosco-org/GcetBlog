@@ -2,6 +2,12 @@ import { getCurrentUser } from '../login/actions'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { RegistrationForm } from './RegistrationForm'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Register',
+  description: 'Create your GCET Blog account',
+}
 
 export default async function RegisterPage() {
   // If user is already logged in, redirect to appropriate dashboard

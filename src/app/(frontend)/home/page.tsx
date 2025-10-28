@@ -1,4 +1,5 @@
 import React from 'react'
+import type { Metadata } from 'next'
 import {
   HeroSection,
   FeaturesSection,
@@ -6,6 +7,10 @@ import {
   RecentPostsSection,
   CTASection,
 } from '@/components/LandingPage'
+
+export const metadata: Metadata = {
+  title: 'Home',
+}
 
 export default function HomePage() {
   return (

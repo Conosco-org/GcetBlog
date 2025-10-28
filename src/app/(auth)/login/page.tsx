@@ -2,6 +2,12 @@ import { getCurrentUser } from './actions'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { LoginForm } from './LoginForm'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Login',
+  description: 'Sign in to your GCET Blog account',
+}
 
 export default async function LoginPage({
   searchParams,

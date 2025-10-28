@@ -4,6 +4,11 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import type { User } from '@/payload-types'
 import { EditorLayoutClient } from './components/EditorLayoutClient'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Editor Dashboard',
+}
 
 export default async function EditorLayout({
   children,

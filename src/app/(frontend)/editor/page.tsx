@@ -5,6 +5,11 @@ import { Clock, CheckCircle2, MessageSquare, Image, Calendar, ChevronRight } fro
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Editor Dashboard',
+}
 
 export default async function EditorDashboardPage() {
   try {

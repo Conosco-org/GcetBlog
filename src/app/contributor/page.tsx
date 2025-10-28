@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import type { Metadata } from 'next'
 import { 
   FileText, 
   CheckCircle, 
@@ -19,6 +20,10 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import type { User } from '@/payload-types'
+
+export const metadata: Metadata = {
+  title: 'Contributor Dashboard',
+}
 
 export default async function ContributorDashboardPage() {
   const payload = await getPayload({ config: configPromise })
