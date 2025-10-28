@@ -68,7 +68,7 @@ export default async function Page({ params: paramsPromise }: Args) {
   if (slug === 'home') {
     const payload = await getPayload({ config: configPromise })
     
-    // Fetch latest 10 published posts
+    // Fetch latest 10 published posts, sorted by most recently updated
     const postsResult = await payload.find({
       collection: 'posts',
       depth: 2,
@@ -79,7 +79,7 @@ export default async function Page({ params: paramsPromise }: Args) {
           equals: 'published',
         },
       },
-      sort: '-publishedAt',
+      sort: '-updatedAt',
     })
 
     return (

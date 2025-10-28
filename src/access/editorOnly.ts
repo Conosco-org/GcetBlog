@@ -3,8 +3,8 @@ import type { User } from '@/payload-types'
 
 type HasEditorAccess = (args: AccessArgs<User>) => boolean
 
-// Only editors can access, admins are explicitly excluded
+// Allow access to editors and admins
 export const editorOnly: HasEditorAccess = ({ req: { user } }) => {
-  // Must be editor role specifically (not admin)
-  return Boolean(user?.role === 'editor')
+  // Allow both editor and admin roles
+  return Boolean(user?.role === 'editor' || user?.role === 'admin')
 }
