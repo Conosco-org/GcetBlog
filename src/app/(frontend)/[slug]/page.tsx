@@ -82,13 +82,34 @@ export default async function Page({ params: paramsPromise }: Args) {
       sort: '-updatedAt',
     })
 
+    // Get total counts for stats
+    const totalPosts = await payload.count({
+      collection: 'posts',
+      where: {
+        _status: {
+          equals: 'published',
+        },
+      },
+    })
+
+    const totalUsers = await payload.count({
+      collection: 'users',
+    })
+
+    // Get latest post for the floating card
+    const latestPost = postsResult.docs[0]
+
     return (
       <main className="min-h-screen" data-hide-footer="true">
         <PageClient />
         <PayloadRedirects disableNotFound url={url} />
         {draft && <LivePreviewListener />}
         
-        <HeroSection />
+        <HeroSection 
+          totalPosts={totalPosts.totalDocs} 
+          totalUsers={totalUsers.totalDocs}
+          latestPost={latestPost}
+        />
         <HomePosts posts={postsResult.docs} />
       </main>
     )

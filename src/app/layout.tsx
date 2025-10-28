@@ -11,6 +11,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
 export const metadata: Metadata = {
   metadataBase: new URL(getServerSideURL()),
+  title: {
+    default: 'GCET Blog',
+    template: '%s | GCET Blog',
+  },
+  description: 'Official blog platform for Geethanjali College of Engineering and Technology',
   openGraph: mergeOpenGraph(),
   twitter: {
     card: 'summary_large_image',

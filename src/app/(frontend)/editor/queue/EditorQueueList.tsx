@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
+import { Eye } from 'lucide-react'
 import type { Post } from '@/payload-types'
 
 interface EditorQueueListProps {
@@ -196,6 +197,12 @@ export function EditorQueueList({ posts }: EditorQueueListProps) {
                     variant="destructive"
                   >
                     {isProcessing ? 'Processing...' : 'Reject'}
+                  </Button>
+                  <Button asChild variant="outline">
+                    <Link href={`/posts/${post.slug}?draft=true`} target="_blank">
+                      <Eye className="w-4 h-4 mr-2" />
+                      Preview
+                    </Link>
                   </Button>
                   <Button asChild variant="outline">
                     <Link href={`/editor/posts/${post.id}/edit`}>Edit Post</Link>
