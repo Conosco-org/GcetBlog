@@ -18,7 +18,13 @@ export default async function Page() {
     collection: 'posts',
     depth: 1,
     limit: 12,
-    overrideAccess: false,
+    overrideAccess: true,
+    where: {
+      _status: {
+        equals: 'published',
+      },
+    },
+    sort: '-updatedAt',
     select: {
       title: true,
       slug: true,

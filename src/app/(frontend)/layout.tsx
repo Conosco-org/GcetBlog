@@ -1,4 +1,5 @@
 import React from 'react'
+import type { Metadata } from 'next'
 import { cn } from '@/utilities/ui'
 import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
@@ -8,6 +9,14 @@ import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
 import { ConditionalLayout } from './ConditionalLayout'
+
+export const metadata: Metadata = {
+  title: {
+    default: 'GCET Blog',
+    template: '%s | GCET Blog',
+  },
+  description: 'Official blog platform for Geethanjali College of Engineering and Technology',
+}
 
 export default async function FrontendLayout({ children }: { children: React.ReactNode }) {
   return (

@@ -1,18 +1,20 @@
 'use client'
 
 import { useState } from 'react'
-import { CheckCircle, XCircle } from 'lucide-react'
+import { CheckCircle, XCircle, Eye } from 'lucide-react'
 import { approvePost, rejectPost } from './actions'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/hooks/use-toast'
+import Link from 'next/link'
 
 interface ApprovalButtonsProps {
   postId: string
   postTitle: string
+  postSlug: string
 }
 
-export function ApprovalButtons({ postId, postTitle }: ApprovalButtonsProps) {
+export function ApprovalButtons({ postId, postTitle, postSlug }: ApprovalButtonsProps) {
   const router = useRouter()
   const { toast } = useToast()
   const [isApproving, setIsApproving] = useState(false)
@@ -31,21 +33,24 @@ export function ApprovalButtons({ postId, postTitle }: ApprovalButtonsProps) {
           title: "Success!",
           description: "Post approved and published successfully!",
         })
-        router.refresh()
+        // Wait a moment for the database to update, then refresh
+        setTimeout(() => {
+          router.refresh()
+        }, 500)
       } else {
         toast({
           title: "Error",
           description: result.message || 'Failed to approve post',
           variant: "destructive",
         })
+        setIsApproving(false)
       }
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: "Error",
         description: "An error occurred while approving the post",
         variant: "destructive",
       })
-    } finally {
       setIsApproving(false)
     }
   }
@@ -64,27 +69,40 @@ export function ApprovalButtons({ postId, postTitle }: ApprovalButtonsProps) {
           title: "Post Rejected",
           description: "Feedback sent to the author",
         })
-        router.refresh()
+        // Wait a moment for the database to update, then refresh
+        setTimeout(() => {
+          router.refresh()
+        }, 500)
       } else {
         toast({
           title: "Error",
           description: result.message || 'Failed to reject post',
           variant: "destructive",
         })
+        setIsRejecting(false)
       }
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: "Error",
         description: "An error occurred while rejecting the post",
         variant: "destructive",
       })
-    } finally {
       setIsRejecting(false)
     }
   }
 
   return (
     <div className="flex items-center gap-2">
+      <Button
+        asChild
+        size="sm"
+        variant="outline"
+      >
+        <Link href={`/api/draft?slug=${postSlug}`} target="_blank">
+          <Eye className="w-4 h-4 mr-1" />
+          Preview
+        </Link>
+      </Button>
       <Button
         onClick={handleApprove}
         disabled={isApproving || isRejecting}

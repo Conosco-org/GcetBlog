@@ -794,6 +794,8 @@ export interface AdminLog {
   action:
     | 'approve_post'
     | 'reject_post'
+    | 'delete_post'
+    | 'unpublish_post'
     | 'approve_comment'
     | 'reject_comment'
     | 'spam_comment'

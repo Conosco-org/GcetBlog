@@ -15,6 +15,10 @@ import {
   TableRow,
 } from '@/components/ui/table'
 
+// Force dynamic rendering - no caching
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function EditorQueuePage() {
   const payload = await getPayload({ config: configPromise })
 
@@ -216,7 +220,7 @@ export default async function EditorQueuePage() {
                       {getTimeAgo(post.updatedAt)}
                     </TableCell>
                     <TableCell>
-                      <ApprovalButtons postId={post.id} postTitle={post.title} />
+                      <ApprovalButtons postId={post.id} postTitle={post.title} postSlug={post.slug || ''} />
                     </TableCell>
                   </TableRow>
                 )
