@@ -71,8 +71,8 @@ export function AdminRoleRequestsList({ requests }: AdminRoleRequestsListProps) 
           <CardDescription>No pending requests at this time.</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
-            <CheckCircle2 className="h-10 w-10 mb-2 text-green-500" />
+          <div className="flex flex-col items-center justify-center py-4 text-muted-foreground">
+            <CheckCircle2 className="h-8 w-8 mb-1.5 text-green-500" />
             <p className="text-sm">All caught up!</p>
           </div>
         </CardContent>
