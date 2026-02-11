@@ -22,7 +22,7 @@ export const CTASection: React.FC = () => {
 
       <div className="container mx-auto px-6 relative z-10">
         <div className="max-w-3xl mx-auto text-center">
-          <span className="text-xs tracking-widest uppercase text-accent font-medium">Students &middot; Staff &middot; Alumni</span>
+          <span className="text-xs tracking-widest uppercase text-background/50 font-medium">Students &middot; Staff &middot; Alumni</span>
           
           <h2 className="font-display text-4xl md:text-6xl lg:text-7xl text-background mt-6 mb-8 leading-[1.05]">
             Got something
