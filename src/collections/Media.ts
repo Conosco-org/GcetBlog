@@ -55,11 +55,12 @@ export const Media: CollectionConfig = {
     },
   ],
   upload: {
-    // Upload to the public/media directory in Next.js making them publicly accessible even outside of Payload
+    // On Vercel (read-only filesystem), local storage must be disabled.
+    // All images are served via Cloudinary CDN (useCloudinaryFallback hook).
     staticDir: path.resolve(dirname, '../../public/media'),
     adminThumbnail: 'thumbnail',
     focalPoint: true,
-    disableLocalStorage: false, // Keep local storage but prioritize Cloudinary
+    disableLocalStorage: true, // Vercel has read-only filesystem; use Cloudinary only
     imageSizes: [
       {
         name: 'thumbnail',
