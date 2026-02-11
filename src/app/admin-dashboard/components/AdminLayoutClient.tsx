@@ -32,7 +32,7 @@ export function AdminLayoutClient({ user, stats, children }: AdminLayoutClientPr
         onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
       />
       <div className="flex pt-16">
-        <AdminSidebar user={user} stats={stats} isOpen={isSidebarOpen} />
+        <AdminSidebar stats={stats} isOpen={isSidebarOpen} />
         <main className={`flex-1 min-w-0 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-0'}`}>
           {children}
         </main>

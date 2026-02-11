@@ -23,10 +23,8 @@ export default async function AdminCommentsPage() {
 
   const typedUser = user as User
   if (typedUser.role !== 'admin') {
-    redirect('/dashboard')
+    redirect('/admin-dashboard')
   }
-
-  const currentUser = { id: typedUser.id, role: typedUser.role || 'admin', name: typedUser.name || 'Admin' }
 
   // Get stats
   const pendingPosts = await payload.find({
@@ -144,7 +142,7 @@ export default async function AdminCommentsPage() {
         </CardHeader>
         <CardContent className="p-6">
           {pendingComments.docs.length > 0 ? (
-            <AdminCommentModerationList comments={pendingComments.docs} currentUser={currentUser} />
+            <AdminCommentModerationList comments={pendingComments.docs} />
           ) : (
             <p className="text-muted-foreground bg-muted p-4 rounded-md text-center">No pending comments</p>
           )}
@@ -163,7 +161,7 @@ export default async function AdminCommentsPage() {
         </CardHeader>
         <CardContent className="p-6">
           {reportedComments.docs.length > 0 ? (
-            <AdminCommentModerationList comments={reportedComments.docs} currentUser={currentUser} />
+            <AdminCommentModerationList comments={reportedComments.docs} />
           ) : (
             <p className="text-muted-foreground bg-muted p-4 rounded-md text-center">No reported comments</p>
           )}

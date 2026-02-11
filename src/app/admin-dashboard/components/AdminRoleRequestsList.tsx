@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { approveRoleUpgradeRequest, rejectRoleUpgradeRequest } from '@/app/(frontend)/dashboard/requests/actions'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -14,6 +15,7 @@ interface AdminRoleRequestsListProps {
 }
 
 export function AdminRoleRequestsList({ requests }: AdminRoleRequestsListProps) {
+  const router = useRouter()
   const [processingIds, setProcessingIds] = useState<string[]>([])
   const [adminNotes, setAdminNotes] = useState<{ [key: string]: string }>({})
   const [messages, setMessages] = useState<{
@@ -26,7 +28,7 @@ export function AdminRoleRequestsList({ requests }: AdminRoleRequestsListProps) 
       const result = await approveRoleUpgradeRequest(requestId, adminNotes[requestId] || '')
       if (result.success) {
         setMessages((prev) => ({ ...prev, [requestId]: { type: 'success', text: result.message } }))
-        setTimeout(() => window.location.reload(), 1500)
+        setTimeout(() => router.refresh(), 1500)
       } else {
         setMessages((prev) => ({ ...prev, [requestId]: { type: 'error', text: result.message } }))
       }
@@ -46,7 +48,7 @@ export function AdminRoleRequestsList({ requests }: AdminRoleRequestsListProps) 
       const result = await rejectRoleUpgradeRequest(requestId, adminNotes[requestId] || '')
       if (result.success) {
         setMessages((prev) => ({ ...prev, [requestId]: { type: 'success', text: result.message } }))
-        setTimeout(() => window.location.reload(), 1500)
+        setTimeout(() => router.refresh(), 1500)
       } else {
         setMessages((prev) => ({ ...prev, [requestId]: { type: 'error', text: result.message } }))
       }

@@ -1,6 +1,7 @@
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -24,8 +25,11 @@ export default async function AdminPostsPage() {
   const requestHeaders = await headers()
   const { user } = await payload.auth({ headers: requestHeaders })
 
-  if (!user || (user as User).role !== 'admin') {
-    return null
+  if (!user) {
+    redirect('/login')
+  }
+  if ((user as User).role !== 'admin') {
+    redirect('/admin-dashboard')
   }
 
   // Fetch all posts
