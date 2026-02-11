@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/hooks/use-toast'
+import { RichTextEditor, htmlToLexical, htmlToPlainText } from '@/components/RichTextEditor'
 import type { Category, User } from '@/payload-types'
 
 interface PostFormProps {
@@ -41,34 +42,10 @@ export function PostForm({ categories, user, initialData, postId, isEdit = false
   const [isUploadingImage, setIsUploadingImage] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Convert plain text to Lexical-compatible format
-  const textToLexical = (text: string) => {
-    const paragraphs = text.split('\n').filter(line => line.trim().length > 0)
-    return {
-      root: {
-        type: 'root',
-        children: paragraphs.map(paragraph => ({
-          type: 'paragraph',
-          children: [{ type: 'text', text: paragraph, detail: 0, format: 0, mode: 'normal', style: '', version: 1 }],
-          direction: 'ltr',
-          format: '',
-          indent: 0,
-          textFormat: 0,
-          textStyle: '',
-          version: 1,
-        })),
-        direction: 'ltr',
-        format: '',
-        indent: 0,
-        version: 1,
-      },
-    }
-  }
-
-  const getWordCount = (text: string) => {
-    const trimmed = text.trim()
-    if (!trimmed) return 0
-    return trimmed.split(/\s+/).length
+  const getWordCount = (html: string) => {
+    const text = htmlToPlainText(html).trim()
+    if (!text) return 0
+    return text.split(/\s+/).length
   }
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -150,7 +127,7 @@ export function PostForm({ categories, user, initialData, postId, isEdit = false
       return
     }
 
-    if (!content.trim()) {
+    if (!content || content === '<p></p>') {
       toast({
         title: "Error",
         description: "Content is required",
@@ -164,6 +141,7 @@ export function PostForm({ categories, user, initialData, postId, isEdit = false
     try {
       const url = isEdit ? `/api/posts/${postId}` : '/api/posts'
       const method = isEdit ? 'PATCH' : 'POST'
+      const plainText = htmlToPlainText(content)
 
       const response = await fetch(url, {
         method,
@@ -172,7 +150,7 @@ export function PostForm({ categories, user, initialData, postId, isEdit = false
         },
         body: JSON.stringify({
           title: title.trim(),
-          content: textToLexical(content.trim()),
+          content: htmlToLexical(content),
           categories: selectedCategories,
           authors: [user.id],
           _status: 'draft',
@@ -180,7 +158,7 @@ export function PostForm({ categories, user, initialData, postId, isEdit = false
           heroImage: heroImageId,
           meta: {
             title: metaTitle.trim() || title.trim(),
-            description: metaDescription.trim() || content.substring(0, 160).trim(),
+            description: metaDescription.trim() || plainText.substring(0, 160).trim(),
           },
         }),
       })
@@ -226,7 +204,7 @@ export function PostForm({ categories, user, initialData, postId, isEdit = false
       return
     }
 
-    if (!content.trim()) {
+    if (!content || content === '<p></p>') {
       toast({
         title: "Error",
         description: "Content is required",
@@ -240,6 +218,7 @@ export function PostForm({ categories, user, initialData, postId, isEdit = false
     try {
       const url = isEdit ? `/api/posts/${postId}` : '/api/posts'
       const method = isEdit ? 'PATCH' : 'POST'
+      const plainText = htmlToPlainText(content)
 
       const response = await fetch(url, {
         method,
@@ -248,14 +227,14 @@ export function PostForm({ categories, user, initialData, postId, isEdit = false
         },
         body: JSON.stringify({
           title: title.trim(),
-          content: textToLexical(content.trim()),
+          content: htmlToLexical(content),
           categories: selectedCategories,
           authors: [user.id],
           _status: status,
           heroImage: heroImageId,
           meta: {
             title: metaTitle.trim() || title.trim(),
-            description: metaDescription.trim() || content.substring(0, 160).trim(),
+            description: metaDescription.trim() || plainText.substring(0, 160).trim(),
           },
         }),
       })
@@ -436,20 +415,17 @@ export function PostForm({ categories, user, initialData, postId, isEdit = false
 
         {/* Content */}
         <div>
-          <label htmlFor="content" className="block text-sm font-semibold mb-2">
+          <label className="block text-sm font-semibold mb-2">
             Content *
           </label>
-          <Textarea
-            id="content"
+          <RichTextEditor
             value={content}
-            onChange={(e) => setContent(e.target.value)}
+            onChange={setContent}
             placeholder="Write your post content here..."
-            rows={16}
-            className="font-mono text-sm"
-            required
+            minHeight="400px"
           />
           <p className="text-xs text-muted-foreground mt-1">
-            {content.length} characters • {getWordCount(content)} words
+            {getWordCount(content)} words
           </p>
         </div>
 
