@@ -57,7 +57,7 @@ export default async function ContributorLayout({
       where: {
         and: [
           { authors: { equals: typedUser.id } },
-          { reviewStatus: { equals: 'pending' } },
+          { reviewStatus: { equals: 'pending_review' } },
         ],
       },
       limit: 0,
