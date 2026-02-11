@@ -16,7 +16,9 @@ export default async function DashboardPage() {
   const typedUser = user as User
 
   // Redirect based on user role
-  if (typedUser.role === 'admin' || typedUser.role === 'editor') {
+  if (typedUser.role === 'admin') {
+    redirect('/admin-dashboard')
+  } else if (typedUser.role === 'editor') {
     redirect('/editor')
   } else if (typedUser.role === 'contributor') {
     redirect('/contributor')

@@ -54,11 +54,11 @@ export default function FeedbackCenter({ feedback, stats, user }: FeedbackCenter
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'critical': return 'bg-red-100 text-red-800 border-red-200 dark:bg-red-950 dark:text-red-300 dark:border-red-800'
-      case 'suggestions': return 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800'
-      case 'praise': return 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-950 dark:text-yellow-300 dark:border-yellow-800'
-      case 'questions': return 'bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-950 dark:text-purple-300 dark:border-purple-800'
-      default: return 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700'
+      case 'critical': return 'bg-red-100 text-red-800 border-red-200 dark:bg-red-950/30 dark:text-red-300 dark:border-red-800'
+      case 'suggestions': return 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-950/30 dark:text-blue-300 dark:border-blue-800'
+      case 'praise': return 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-950/30 dark:text-yellow-300 dark:border-yellow-800'
+      case 'questions': return 'bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-950/30 dark:text-purple-300 dark:border-purple-800'
+      default: return 'bg-muted text-muted-foreground border-border'
     }
   }
 
@@ -116,56 +116,56 @@ export default function FeedbackCenter({ feedback, stats, user }: FeedbackCenter
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <Card className="border-red-200 dark:border-red-900 bg-red-50/50 dark:bg-red-950/20">
+        <Card className="border-red-200 dark:border-red-800 bg-red-50/50 dark:bg-red-950/20">
           <CardContent className="pt-6">
             <div className="flex items-start justify-between mb-4">
               <div>
                 <p className="text-red-600 dark:text-red-400 text-sm font-medium mb-1">Critical Issues</p>
                 <p className="text-4xl font-bold text-red-700 dark:text-red-300">{stats.critical}</p>
               </div>
-              <div className="w-12 h-12 bg-red-100 dark:bg-red-900/50 rounded-full flex items-center justify-center">
+              <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
                 <AlertCircle className="w-6 h-6 text-red-500" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-blue-200 dark:border-blue-900 bg-blue-50/50 dark:bg-blue-950/20">
+        <Card className="border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-950/20">
           <CardContent className="pt-6">
             <div className="flex items-start justify-between mb-4">
               <div>
                 <p className="text-blue-600 dark:text-blue-400 text-sm font-medium mb-1">Suggestions</p>
                 <p className="text-4xl font-bold text-blue-700 dark:text-blue-300">{stats.suggestions}</p>
               </div>
-              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/50 rounded-full flex items-center justify-center">
+              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
                 <HelpCircle className="w-6 h-6 text-blue-500" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-yellow-200 dark:border-yellow-900 bg-yellow-50/50 dark:bg-yellow-950/20">
+        <Card className="border-yellow-200 dark:border-yellow-800 bg-yellow-50/50 dark:bg-yellow-950/20">
           <CardContent className="pt-6">
             <div className="flex items-start justify-between mb-4">
               <div>
                 <p className="text-yellow-600 dark:text-yellow-400 text-sm font-medium mb-1">Praise</p>
                 <p className="text-4xl font-bold text-yellow-700 dark:text-yellow-300">{stats.praise}</p>
               </div>
-              <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/50 rounded-full flex items-center justify-center">
+              <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center">
                 <Star className="w-6 h-6 text-yellow-500" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-purple-200 dark:border-purple-900 bg-purple-50/50 dark:bg-purple-950/20">
+        <Card className="border-purple-200 dark:border-purple-800 bg-purple-50/50 dark:bg-purple-950/20">
           <CardContent className="pt-6">
             <div className="flex items-start justify-between mb-4">
               <div>
                 <p className="text-purple-600 dark:text-purple-400 text-sm font-medium mb-1">Questions</p>
                 <p className="text-4xl font-bold text-purple-700 dark:text-purple-300">{stats.questions}</p>
               </div>
-              <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/50 rounded-full flex items-center justify-center">
+              <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
                 <MessageSquare className="w-6 h-6 text-purple-500" />
               </div>
             </div>
@@ -215,9 +215,8 @@ export default function FeedbackCenter({ feedback, stats, user }: FeedbackCenter
                   filteredFeedback.map((item) => (
                     <button
                       key={item.id}
-                      type="button"
-                      className={`w-full text-left p-4 border-b cursor-pointer hover:bg-muted transition-colors ${
-                        selectedFeedback?.id === item.id ? 'bg-primary/10 border-l-4 border-l-primary' : ''
+                      className={`p-4 border-b cursor-pointer hover:bg-muted transition-colors ${
+                        selectedFeedback?.id === item.id ? 'bg-primary/5 border-l-4 border-l-primary' : ''
                       }`}
                       onClick={() => setSelectedFeedback(item)}
                     >

@@ -46,7 +46,7 @@ export async function loginAction(formData: FormData) {
         redirectPath = redirectTo
       } else {
         // Default role-based redirect
-        redirectPath = user?.role === 'admin' ? '/admin' : 
+        redirectPath = user?.role === 'admin' ? '/admin-dashboard' : 
                       user?.role === 'editor' ? '/editor' : 
                       '/contributor'
       }
