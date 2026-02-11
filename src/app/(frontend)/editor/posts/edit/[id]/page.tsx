@@ -18,7 +18,7 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
   }
 
   // Editors, admins, and contributors can edit posts
-  if (!['contributor', 'editor', 'admin'].includes(user.role)) {
+  if (!user.role || !['contributor', 'editor', 'admin'].includes(user.role)) {
     redirect('/dashboard')
   }
 

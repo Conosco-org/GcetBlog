@@ -16,7 +16,7 @@ export default async function CreatePostPage() {
   }
 
   // Editors, admins, and contributors can create posts
-  if (!['contributor', 'editor', 'admin'].includes(user.role)) {
+  if (!user.role || !['contributor', 'editor', 'admin'].includes(user.role)) {
     redirect('/dashboard')
   }
 
