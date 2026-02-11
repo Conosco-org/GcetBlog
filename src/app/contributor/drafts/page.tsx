@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { formatDateTime } from '@/utilities/formatDateTime'
 import Link from 'next/link'
-import { Edit, Trash2, Send, FileText, AlertCircle } from 'lucide-react'
+import { Edit, FileText } from 'lucide-react'
 
 export default async function DraftsPage() {
   const payload = await getPayload({ config: configPromise })
@@ -86,15 +86,9 @@ export default async function DraftsPage() {
               <CardContent>
                 <div className="flex gap-2">
                   <Button variant="default" size="sm" asChild className="flex-1">
-                    <Link href={`/contributor/edit/${post.id}`}>
+                    <Link href={`/editor/posts/${post.id}/edit`}>
                       <Edit className="h-4 w-4 mr-1" />
                       Continue
-                    </Link>
-                  </Button>
-                  <Button variant="outline" size="sm" asChild>
-                    <Link href={`/contributor/submit/${post.id}`}>
-                      <Send className="h-4 w-4 mr-1" />
-                      Submit
                     </Link>
                   </Button>
                 </div>

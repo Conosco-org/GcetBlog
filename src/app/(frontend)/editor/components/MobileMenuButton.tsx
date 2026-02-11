@@ -38,7 +38,7 @@ export function MobileMenuButton({
         totalPostsCount={totalPostsCount}
         activityLogsCount={activityLogsCount}
         isOpen={isOpen}
-        onToggle={() => setIsOpen(false)}
+        _onToggle={() => setIsOpen(false)}
       />
     </>
   )

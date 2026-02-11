@@ -38,7 +38,7 @@ export function EditorLayoutClient({
           totalPostsCount={totalPostsCount}
           activityLogsCount={activityLogsCount}
           isOpen={isOpen}
-          onToggle={() => setIsOpen(!isOpen)}
+          _onToggle={() => setIsOpen(!isOpen)}
         />
         <main className={`flex-1 overflow-y-auto transition-all duration-200 ${isOpen ? 'ml-64' : 'ml-0'}`}>
           {children}

@@ -26,6 +26,7 @@ export const Media: CollectionConfig = {
   },
   admin: {
     hidden: ({ user }) => isAdmin(user),
+    description: '📸 Recommended sizes: Hero 1920×1080 (16:9), Cards 900×600 (3:2), OG 1200×630. Optimize images to <500KB. See IMAGE_GUIDELINES.md for details.',
   },
   hooks: {
     afterRead: [useCloudinaryFallback],
@@ -54,11 +55,12 @@ export const Media: CollectionConfig = {
     },
   ],
   upload: {
-    // Upload to the public/media directory in Next.js making them publicly accessible even outside of Payload
+    // On Vercel (read-only filesystem), local storage must be disabled.
+    // All images are served via Cloudinary CDN (useCloudinaryFallback hook).
     staticDir: path.resolve(dirname, '../../public/media'),
     adminThumbnail: 'thumbnail',
     focalPoint: true,
-    disableLocalStorage: false, // Keep local storage but prioritize Cloudinary
+    disableLocalStorage: true, // Vercel has read-only filesystem; use Cloudinary only
     imageSizes: [
       {
         name: 'thumbnail',

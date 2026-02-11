@@ -1,14 +1,14 @@
-'use client'
+﻿'use client'
 import { cn } from '@/utilities/ui'
 import useClickableCard from '@/utilities/useClickableCard'
 import Link from 'next/link'
 import React, { Fragment } from 'react'
 
-import type { Post } from '@/payload-types'
+import type { Post, Media as MediaType } from '@/payload-types'
 
 import { Media } from '@/components/Media'
 
-export type CardPostData = Pick<Post, 'slug' | 'categories' | 'meta' | 'title'>
+export type CardPostData = Pick<Post, 'slug' | 'categories' | 'meta' | 'title' | 'heroImage'>
 
 export const Card: React.FC<{
   alignItems?: 'center'
@@ -21,63 +21,99 @@ export const Card: React.FC<{
   const { card, link } = useClickableCard({})
   const { className, doc, relationTo, showCategories, title: titleFromProps } = props
 
-  const { slug, categories, meta, title } = doc || {}
+  const { slug, categories, meta, title, heroImage } = doc || {}
   const { description, image: metaImage } = meta || {}
 
   const hasCategories = categories && Array.isArray(categories) && categories.length > 0
   const titleToUse = titleFromProps || title
-  const sanitizedDescription = description?.replace(/\s/g, ' ') // replace non-breaking space with white space
+  const sanitizedDescription = description?.replace(/\s/g, ' ')
   const href = `/${relationTo}/${slug}`
+
+  const categoryLabel = hasCategories && typeof categories[0] === 'object'
+    ? categories[0].title || 'Uncategorized'
+    : null
+
+  // Use meta.image first, fall back to heroImage
+  const displayImage: MediaType | null | undefined =
+    metaImage && typeof metaImage === 'object' ? metaImage as MediaType :
+    heroImage && typeof heroImage === 'object' ? heroImage as MediaType :
+    null
 
   return (
     <article
       className={cn(
-        'border border-border rounded-lg overflow-hidden bg-card hover:cursor-pointer',
+        'group relative overflow-hidden rounded-2xl border border-border bg-card hover:shadow-lg transition-all duration-300 hover:cursor-pointer',
         className,
       )}
       ref={card.ref}
     >
-      <div className="relative w-full ">
-        {!metaImage && <div className="">No image</div>}
-        {metaImage && typeof metaImage !== 'string' && <Media resource={metaImage} size="33vw" />}
+      {/* Image - responsive aspect ratio */}
+      <div className="relative aspect-[3/2] sm:aspect-[16/10] overflow-hidden bg-muted">
+        {displayImage ? (
+          <Media
+            fill
+            resource={displayImage}
+            size="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            imgClassName="object-cover object-top w-full h-full group-hover:scale-[1.03] transition-transform duration-500"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-accent/15 to-accent/5 flex items-center justify-center">
+            <span className="font-display text-4xl sm:text-5xl text-accent/20">
+              {titleToUse?.charAt(0)?.toUpperCase() || 'G'}
+            </span>
+          </div>
+        )}
+        {/* Category Badge */}
+        {showCategories && categoryLabel && (
+          <div className="absolute top-3 left-3 sm:top-4 sm:left-4">
+            <span className="px-2.5 py-1 bg-background/90 backdrop-blur-sm text-foreground text-[10px] sm:text-xs font-medium tracking-wider uppercase rounded-full border border-border/50">
+              {categoryLabel}
+            </span>
+          </div>
+        )}
       </div>
-      <div className="p-4">
-        {showCategories && hasCategories && (
-          <div className="uppercase text-sm mb-4">
-            {showCategories && hasCategories && (
-              <div>
-                {categories?.map((category, index) => {
-                  if (typeof category === 'object') {
-                    const { title: titleFromCategory } = category
 
-                    const categoryTitle = titleFromCategory || 'Untitled category'
-
-                    const isLast = index === categories.length - 1
-
-                    return (
-                      <Fragment key={index}>
-                        {categoryTitle}
-                        {!isLast && <Fragment>, &nbsp;</Fragment>}
-                      </Fragment>
-                    )
-                  }
-
-                  return null
-                })}
-              </div>
-            )}
+      {/* Content */}
+      <div className="p-4 sm:p-5">
+        {showCategories && hasCategories && !categoryLabel && (
+          <div className="text-[10px] sm:text-xs tracking-wider uppercase text-accent font-medium mb-2">
+            {categories?.map((category, index) => {
+              if (typeof category === 'object') {
+                const { title: categoryTitle } = category
+                const isLast = index === categories.length - 1
+                return (
+                  <Fragment key={index}>
+                    {categoryTitle || 'Untitled'}
+                    {!isLast && <Fragment>, </Fragment>}
+                  </Fragment>
+                )
+              }
+              return null
+            })}
           </div>
         )}
+
         {titleToUse && (
-          <div className="prose">
-            <h3>
-              <Link className="not-prose" href={href} ref={link.ref}>
-                {titleToUse}
-              </Link>
-            </h3>
-          </div>
+          <h3 className="text-base sm:text-lg font-semibold leading-snug mb-1.5 sm:mb-2 group-hover:text-accent transition-colors line-clamp-2">
+            <Link className="no-underline" href={href} ref={link.ref}>
+              {titleToUse}
+            </Link>
+          </h3>
         )}
-        {description && <div className="mt-2">{description && <p>{sanitizedDescription}</p>}</div>}
+
+        {sanitizedDescription && (
+          <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+            {sanitizedDescription}
+          </p>
+        )}
+
+        {/* Read indicator - visible on mobile since no hover */}
+        <div className="mt-3 pt-3 sm:mt-4 sm:pt-4 border-t border-border flex items-center gap-2 text-xs font-medium tracking-wider uppercase text-accent sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+          Read Article
+          <svg className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
       </div>
     </article>
   )

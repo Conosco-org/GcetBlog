@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 // Routes that require authentication
-const protectedRoutes = [
-  '/dashboard',
-]
+// (All role-specific routes /admin, /editor, /contributor are protected inline above)
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -37,6 +35,8 @@ export async function middleware(request: NextRequest) {
 
       if (user?.role !== 'admin') {
         const redirectUrl = user?.role === 'editor' ? '/editor' : '/dashboard'
+        // Redirect non-admins to their appropriate dashboard
+        const redirectUrl = user?.role === 'editor' ? '/editor' : '/contributor'
         return NextResponse.redirect(new URL(redirectUrl, request.url))
       }
 
@@ -81,6 +81,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Require authentication AND editor/admin role for /editor routes
+  // (Allow contributors to access /editor/posts/*/edit for editing their own posts)
   if (pathname.startsWith('/editor')) {
     if (!token) {
       const loginUrl = new URL('/login', request.url)
@@ -107,10 +108,16 @@ export async function middleware(request: NextRequest) {
 
       const { user } = await meResponse.json()
 
-      // Only editors and admins can access /editor routes
+      // Allow contributors to access post edit routes
+      const isPostEditRoute = /^\/editor\/posts\/[^/]+\/edit/.test(pathname)
+      if (user?.role === 'contributor' && isPostEditRoute) {
+        return NextResponse.next()
+      }
+
+      // Only editors and admins can access other /editor routes
       if (user?.role !== 'editor' && user?.role !== 'admin') {
         // Redirect contributors to their dashboard
-        return NextResponse.redirect(new URL('/dashboard', request.url))
+        return NextResponse.redirect(new URL('/contributor', request.url))
       }
 
       // Editor/Admin verified, allow access
@@ -154,6 +161,7 @@ export async function middleware(request: NextRequest) {
       if (user?.role !== 'contributor') {
         // Redirect to appropriate dashboard
         const redirectUrl = user?.role === 'admin' ? '/admin-dashboard' : user?.role === 'editor' ? '/editor' : '/dashboard/user'
+        const redirectUrl = user?.role === 'admin' ? '/admin' : user?.role === 'editor' ? '/editor' : '/contributor'
         return NextResponse.redirect(new URL(redirectUrl, request.url))
       }
 
@@ -167,20 +175,13 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Redirect old /dashboard/contributor routes to new /contributor
+  // Redirect all old /dashboard routes to appropriate new routes
   if (pathname.startsWith('/dashboard/contributor')) {
     const newPath = pathname.replace('/dashboard/contributor', '/contributor')
     return NextResponse.redirect(new URL(newPath, request.url))
   }
-
-  // Check if route needs authentication
-  const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route))
-
-  // If accessing protected route without token
-  if (isProtectedRoute && !token) {
-    const loginUrl = new URL('/login', request.url)
-    loginUrl.searchParams.set('redirect', pathname)
-    return NextResponse.redirect(loginUrl)
+  if (pathname.startsWith('/dashboard')) {
+    return NextResponse.redirect(new URL('/login', request.url))
   }
 
   // Don't handle auth route redirects in middleware - let the page component handle it

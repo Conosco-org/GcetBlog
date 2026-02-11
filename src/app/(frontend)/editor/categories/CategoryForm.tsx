@@ -6,9 +6,8 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { useToast } from '@/hooks/use-toast'
-import { Plus, Save, X } from 'lucide-react'
+import { Save, X } from 'lucide-react'
 
 interface CategoryFormProps {
   category?: {
@@ -16,7 +15,7 @@ interface CategoryFormProps {
     title: string
     description?: string
   }
-  onSave?: (category: any) => void
+  onSave?: (category: { id: string; title: string; description?: string }) => void
   onCancel?: () => void
 }
 

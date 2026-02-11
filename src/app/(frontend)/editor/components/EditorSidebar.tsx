@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { LogoutButton } from '@/components/LogoutButton'
 import type { User } from '@/payload-types'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { 
   Home, 
@@ -16,8 +15,6 @@ import {
   Activity, 
   Settings, 
   Eye,
-  Menu,
-  X,
   Tag
 } from 'lucide-react'
 
@@ -34,16 +31,16 @@ interface EditorSidebarProps {
   totalPostsCount?: number
   activityLogsCount?: number
   isOpen: boolean
-  onToggle: () => void
+  _onToggle?: () => void
 }
 
 export function EditorSidebar({ 
-  user, 
+  user: _user, 
   pendingPostsCount = 0,
   totalPostsCount = 0,
   activityLogsCount = 0,
   isOpen,
-  onToggle
+  _onToggle
 }: EditorSidebarProps) {
   const pathname = usePathname()
 

@@ -3,7 +3,7 @@ import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import type { User } from '@/payload-types'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { formatDateTime } from '@/utilities/formatDateTime'
@@ -135,7 +135,7 @@ export default async function SubmissionsPage() {
                 <div className="flex gap-2">
                   {post.reviewStatus === 'rejected' && (
                     <Button variant="default" size="sm" asChild>
-                      <Link href={`/contributor/edit/${post.id}`}>
+                      <Link href={`/editor/posts/${post.id}/edit`}>
                         <Edit className="h-4 w-4 mr-1" />
                         Edit & Resubmit
                       </Link>
