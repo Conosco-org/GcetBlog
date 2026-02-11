@@ -35,8 +35,6 @@ export async function middleware(request: NextRequest) {
 
       if (user?.role !== 'admin') {
         const redirectUrl = user?.role === 'editor' ? '/editor' : '/dashboard'
-        // Redirect non-admins to their appropriate dashboard
-        const redirectUrl = user?.role === 'editor' ? '/editor' : '/contributor'
         return NextResponse.redirect(new URL(redirectUrl, request.url))
       }
 
@@ -161,7 +159,6 @@ export async function middleware(request: NextRequest) {
       if (user?.role !== 'contributor') {
         // Redirect to appropriate dashboard
         const redirectUrl = user?.role === 'admin' ? '/admin-dashboard' : user?.role === 'editor' ? '/editor' : '/dashboard/user'
-        const redirectUrl = user?.role === 'admin' ? '/admin' : user?.role === 'editor' ? '/editor' : '/contributor'
         return NextResponse.redirect(new URL(redirectUrl, request.url))
       }
 
