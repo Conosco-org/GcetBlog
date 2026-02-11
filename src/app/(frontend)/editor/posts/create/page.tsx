@@ -15,8 +15,8 @@ export default async function CreatePostPage() {
     redirect('/login')
   }
 
-  // Only editors and admins can create posts
-  if (user.role !== 'editor' && user.role !== 'admin') {
+  // Editors, admins, and contributors can create posts
+  if (!['contributor', 'editor', 'admin'].includes(user.role)) {
     redirect('/dashboard')
   }
 
@@ -28,11 +28,11 @@ export default async function CreatePostPage() {
   })
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <div className="max-w-4xl mx-auto p-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Create New Post</h1>
-          <p className="text-gray-600">Write and publish a new blog post</p>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Create New Post</h1>
+          <p className="text-muted-foreground">Write and publish a new blog post</p>
         </div>
 
         <PostForm categories={categories.docs} user={user} />

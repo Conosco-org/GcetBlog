@@ -87,7 +87,7 @@ export default async function MediaManagerPage() {
                   className="pl-9"
                 />
               </div>
-              <select className="px-3 py-2 border rounded-lg bg-background text-sm">
+              <select className="px-3 py-2 border rounded-lg bg-background text-sm" title="Sort files">
                 <option>Sort by Date</option>
                 <option>Sort by Name</option>
                 <option>Sort by Size</option>

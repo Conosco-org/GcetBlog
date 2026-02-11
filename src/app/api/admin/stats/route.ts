@@ -23,25 +23,25 @@ export async function GET() {
 
     // Fetch all stats in parallel
     const [
-      totalPages,
+      totalPosts,
       totalUsers,
       pendingApprovals,
       totalMedia,
     ] = await Promise.all([
-      payload.count({ collection: 'pages' }),
+      payload.count({ collection: 'posts' }),
       payload.count({ collection: 'users' }),
       payload.count({
         collection: 'role-upgrade-requests',
         where: { status: { equals: 'pending' } },
       }),
-      payload.count({ collection: 'admin-logs' }),
+      payload.count({ collection: 'media' }),
     ])
 
-    // Get pages published today
+    // Get posts published today
     const today = new Date()
     today.setHours(0, 0, 0, 0)
     const publishedToday = await payload.count({
-      collection: 'pages',
+      collection: 'posts',
       where: {
         _status: { equals: 'published' },
         publishedAt: { greater_than: today.toISOString() },
@@ -49,11 +49,11 @@ export async function GET() {
     })
 
     return NextResponse.json({
-      totalPosts: totalPages.totalDocs, // Using totalPosts key for compatibility
+      totalPosts: totalPosts.totalDocs,
       totalUsers: totalUsers.totalDocs,
       pendingApprovals: pendingApprovals.totalDocs,
       publishedToday: publishedToday.totalDocs,
-      totalMedia: totalMedia.totalDocs, // Actually admin logs count
+      totalMedia: totalMedia.totalDocs,
     })
   } catch (error) {
     console.error('Error fetching admin stats:', error)

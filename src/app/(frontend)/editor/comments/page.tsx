@@ -2,20 +2,32 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { CommentModerationList } from './CommentModerationList'
 import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 import Link from 'next/link'
 import { Clock, MessageSquare, Calendar } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import type { User } from '@/payload-types'
 
 export default async function CommentModerationPage() {
   const payload = await getPayload({ config })
+  const requestHeaders = await headers()
 
-  // TODO: Get current user from session
-  // For now, mock an admin user
-  const mockUser = { id: 'admin', role: 'admin', name: 'Admin User' }
+  // Authenticate the request
+  const { user } = await payload.auth({ headers: requestHeaders })
+
+  if (!user) {
+    redirect('/login')
+  }
+
+  const typedUser = user as User & { role: string }
 
   // Check if user has moderator permissions
-  if (!mockUser || !['editor', 'admin'].includes(mockUser.role)) {
+  if (typedUser.role !== 'editor' && typedUser.role !== 'admin') {
     redirect('/dashboard')
   }
+
+  const currentUser = { id: typedUser.id, role: typedUser.role, name: typedUser.name || 'User' }
 
   // Get pending posts count for navigation
   const pendingPosts = await payload.count({
@@ -37,28 +49,27 @@ export default async function CommentModerationPage() {
     limit: 50,
   })
 
-  // Get reported comments
+  // Get reported comments that haven't been moderated yet
   const reportedComments = await payload.find({
     collection: 'comments',
     where: {
-      reportedBy: {
-        exists: true,
-      },
+      and: [
+        { reportedBy: { exists: true } },
+        { status: { equals: 'pending' } },
+      ],
     },
     sort: '-reportedAt',
     limit: 50,
   })
 
-  const scheduledPosts = 0 // Mock for now
-
   return (
-    <div className="p-8 bg-gray-50 min-h-screen">
+    <div className="p-8 min-h-screen">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-2">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Comment Moderation</h1>
-            <p className="text-gray-600">Review and moderate user comments</p>
+            <h1 className="text-3xl font-bold text-foreground">Comment Moderation</h1>
+            <p className="text-muted-foreground">Review and moderate user comments</p>
           </div>
         </div>
       </div>
@@ -66,115 +77,121 @@ export default async function CommentModerationPage() {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         {/* Pending Posts */}
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <div className="flex items-start justify-between mb-4">
-            <div>
-              <p className="text-gray-600 text-sm font-medium mb-1">Pending Posts</p>
-              <p className="text-4xl font-bold text-gray-900">{pendingPosts.totalDocs}</p>
+        <Card className="border-t-4 border-t-orange-500">
+          <CardContent className="pt-6">
+            <div className="flex items-start justify-between mb-4">
+              <div>
+                <p className="text-muted-foreground text-sm font-medium mb-1">Pending Posts</p>
+                <p className="text-4xl font-bold text-foreground">{pendingPosts.totalDocs}</p>
+              </div>
+              <div className="w-12 h-12 bg-orange-500/10 rounded-full flex items-center justify-center">
+                <Clock className="w-6 h-6 text-orange-500" />
+              </div>
             </div>
-            <div className="w-12 h-12 bg-orange-50 rounded-full flex items-center justify-center">
-              <Clock className="w-6 h-6 text-orange-500" />
-            </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Pending Comments */}
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <div className="flex items-start justify-between mb-4">
-            <div>
-              <p className="text-gray-600 text-sm font-medium mb-1">Pending Comments</p>
-              <p className="text-4xl font-bold text-gray-900">{pendingComments.totalDocs}</p>
-              <p className="text-sm text-orange-600 mt-2">{reportedComments.totalDocs} flagged</p>
+        <Card className="border-t-4 border-t-blue-500">
+          <CardContent className="pt-6">
+            <div className="flex items-start justify-between mb-4">
+              <div>
+                <p className="text-muted-foreground text-sm font-medium mb-1">Pending Comments</p>
+                <p className="text-4xl font-bold text-foreground">{pendingComments.totalDocs}</p>
+                <p className="text-sm text-orange-600 dark:text-orange-400 mt-2">{reportedComments.totalDocs} flagged</p>
+              </div>
+              <div className="w-12 h-12 bg-blue-500/10 rounded-full flex items-center justify-center">
+                <MessageSquare className="w-6 h-6 text-blue-500" />
+              </div>
             </div>
-            <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center">
-              <MessageSquare className="w-6 h-6 text-blue-500" />
-            </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Scheduled Posts */}
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <div className="flex items-start justify-between mb-4">
-            <div>
-              <p className="text-gray-600 text-sm font-medium mb-1">Scheduled Posts</p>
-              <p className="text-4xl font-bold text-gray-900">{scheduledPosts}</p>
+        <Card className="border-t-4 border-t-purple-500">
+          <CardContent className="pt-6">
+            <div className="flex items-start justify-between mb-4">
+              <div>
+                <p className="text-muted-foreground text-sm font-medium mb-1">Scheduled Posts</p>
+                <p className="text-4xl font-bold text-foreground">0</p>
+              </div>
+              <div className="w-12 h-12 bg-purple-500/10 rounded-full flex items-center justify-center">
+                <Calendar className="w-6 h-6 text-purple-500" />
+              </div>
             </div>
-            <div className="w-12 h-12 bg-purple-50 rounded-full flex items-center justify-center">
-              <Calendar className="w-6 h-6 text-purple-500" />
-            </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Tabs */}
-      <div className="bg-white rounded-xl shadow-sm mb-6">
-        <div className="border-b border-gray-200">
+      <Card className="mb-6">
+        <div className="border-b">
           <nav className="flex">
             <Link 
               href="/editor/queue"
-              className="px-6 py-4 text-sm font-medium text-gray-600 hover:text-gray-900 hover:border-b-2 hover:border-gray-300 transition-colors"
+              className="px-6 py-4 text-sm font-medium text-muted-foreground hover:text-foreground hover:border-b-2 hover:border-muted-foreground transition-colors"
             >
               Post Approvals ({pendingPosts.totalDocs})
             </Link>
             <Link 
               href="/editor/comments"
-              className="px-6 py-4 text-sm font-medium text-blue-600 border-b-2 border-blue-600"
+              className="px-6 py-4 text-sm font-medium text-primary border-b-2 border-primary"
             >
               Comment Moderation ({pendingComments.totalDocs})
             </Link>
             <button 
-              className="px-6 py-4 text-sm font-medium text-gray-400 cursor-not-allowed"
+              className="px-6 py-4 text-sm font-medium text-muted-foreground/50 cursor-not-allowed"
               disabled
               title="Coming soon"
             >
-              Publishing Schedule ({scheduledPosts})
+              Publishing Schedule (0)
             </button>
           </nav>
         </div>
-      </div>
+      </Card>
 
       {/* Content */}
       <div className="space-y-8">
         <section>
-          <div className="bg-white rounded-xl shadow-sm">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+          <Card>
+            <CardHeader className="border-b">
+              <CardTitle className="flex items-center gap-2">
                 Pending Comments
-                <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-sm">
+                <Badge variant="secondary" className="bg-yellow-500/10 text-yellow-700 dark:text-yellow-400">
                   {pendingComments.totalDocs}
-                </span>
-              </h2>
-            </div>
+                </Badge>
+              </CardTitle>
+            </CardHeader>
 
-            <div className="p-6">
+            <CardContent className="p-6">
               {pendingComments.docs.length > 0 ? (
-                <CommentModerationList comments={pendingComments.docs} currentUser={mockUser} />
+                <CommentModerationList comments={pendingComments.docs} currentUser={currentUser} />
               ) : (
-                <p className="text-gray-500 bg-gray-50 p-4 rounded-md text-center">No pending comments</p>
+                <p className="text-muted-foreground bg-muted p-4 rounded-md text-center">No pending comments</p>
               )}
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </section>
 
         <section>
-          <div className="bg-white rounded-xl shadow-sm">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+          <Card>
+            <CardHeader className="border-b">
+              <CardTitle className="flex items-center gap-2">
                 Reported Comments
-                <span className="bg-red-100 text-red-800 px-2 py-1 rounded-full text-sm">
+                <Badge variant="destructive">
                   {reportedComments.totalDocs}
-                </span>
-              </h2>
-            </div>
+                </Badge>
+              </CardTitle>
+            </CardHeader>
 
-            <div className="p-6">
+            <CardContent className="p-6">
               {reportedComments.docs.length > 0 ? (
-                <CommentModerationList comments={reportedComments.docs} currentUser={mockUser} />
+                <CommentModerationList comments={reportedComments.docs} currentUser={currentUser} />
               ) : (
-                <p className="text-gray-500 bg-gray-50 p-4 rounded-md text-center">No reported comments</p>
+                <p className="text-muted-foreground bg-muted p-4 rounded-md text-center">No reported comments</p>
               )}
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </section>
       </div>
     </div>

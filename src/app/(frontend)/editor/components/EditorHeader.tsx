@@ -2,9 +2,20 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Menu, X, Moon, Sun } from 'lucide-react'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Menu, X, Moon, Sun, Settings, LogOut, User as UserIcon, Shield, Eye } from 'lucide-react'
 import type { User } from '@/payload-types'
 import { useTheme } from '@/providers/Theme'
 
@@ -16,10 +27,30 @@ interface EditorHeaderProps {
 
 export function EditorHeader({ user, isOpen, onToggle }: EditorHeaderProps) {
   const { theme, setTheme } = useTheme()
+  const router = useRouter()
+  const [loggingOut, setLoggingOut] = useState(false)
 
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark')
   }
+
+  const handleLogout = async () => {
+    setLoggingOut(true)
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' })
+      router.push('/login')
+      router.refresh()
+    } catch {
+      router.push('/login')
+      router.refresh()
+    }
+  }
+
+  const initials = (user.name || user.email || 'U')
+    .split(' ')
+    .map((w) => w.charAt(0).toUpperCase())
+    .slice(0, 2)
+    .join('')
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -48,7 +79,7 @@ export function EditorHeader({ user, isOpen, onToggle }: EditorHeaderProps) {
           </Link>
         </div>
 
-        {/* Right side - Theme Toggle & User Info */}
+        {/* Right side - Theme Toggle & User Menu */}
         <div className="ml-auto flex items-center gap-3">
           {/* Theme Toggle Button */}
           <Button
@@ -62,20 +93,69 @@ export function EditorHeader({ user, isOpen, onToggle }: EditorHeaderProps) {
             <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
           </Button>
 
-          {/* User Info */}
-          <div className="flex items-center gap-3 px-3 py-2 rounded-lg border bg-card">
-            <div className="flex items-center justify-center w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold text-sm">
-              {(user.name || user.email || 'U').charAt(0).toUpperCase()}
-            </div>
-            <div className="flex flex-col min-w-0">
-              <p className="font-medium text-sm truncate">
-                {user.name || 'Content Editor'}
-              </p>
-              <Badge variant="outline" className="text-xs h-5">
-                {user.role}
-              </Badge>
-            </div>
-          </div>
+          {/* User Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="relative h-9 w-9 rounded-full" aria-label="User menu">
+                <Avatar className="h-9 w-9">
+                  <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
+                    {initials}
+                  </AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="end" forceMount>
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium leading-none">
+                    {user.name || 'User'}
+                  </p>
+                  <p className="text-xs leading-none text-muted-foreground">
+                    {user.email}
+                  </p>
+                  <Badge variant="secondary" className="w-fit mt-1 text-xs capitalize">
+                    {user.role}
+                  </Badge>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="/editor/profile" className="cursor-pointer">
+                  <UserIcon className="mr-2 h-4 w-4" />
+                  Profile & Account
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/editor/settings" className="cursor-pointer">
+                  <Settings className="mr-2 h-4 w-4" />
+                  Workspace Settings
+                </Link>
+              </DropdownMenuItem>
+              {user.role === 'admin' && (
+                <DropdownMenuItem asChild>
+                  <Link href="/admin" className="cursor-pointer">
+                    <Shield className="mr-2 h-4 w-4" />
+                    Admin Panel
+                  </Link>
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuItem asChild>
+                <Link href="/" className="cursor-pointer">
+                  <Eye className="mr-2 h-4 w-4" />
+                  Public Blog
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                className="cursor-pointer text-destructive focus:text-destructive"
+                disabled={loggingOut}
+                onClick={handleLogout}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                {loggingOut ? 'Logging out...' : 'Logout'}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </header>
