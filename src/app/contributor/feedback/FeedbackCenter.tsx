@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Separator } from '@/components/ui/separator'
@@ -14,13 +13,11 @@ import {
   HelpCircle, 
   Star, 
   MessageSquare, 
-  Clock,
-  CheckCircle,
   Send,
   Eye
 } from 'lucide-react'
 import { formatDateTime } from '@/utilities/formatDateTime'
-import type { User, Feedback, Post } from '@/payload-types'
+import type { User, Feedback } from '@/payload-types'
 
 interface FeedbackStats {
   critical: number
@@ -35,7 +32,7 @@ interface FeedbackCenterProps {
   user: User
 }
 
-export default function FeedbackCenter({ feedback, stats, user }: FeedbackCenterProps) {
+export default function FeedbackCenter({ feedback, stats, user: _user }: FeedbackCenterProps) {
   const [selectedFeedback, setSelectedFeedback] = useState<Feedback | null>(null)
   const [newMessage, setNewMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -290,7 +287,7 @@ export default function FeedbackCenter({ feedback, stats, user }: FeedbackCenter
               <CardContent>
                 {/* Messages */}
                 <div className="space-y-4 mb-6 max-h-96 overflow-y-auto">
-                  {selectedFeedback.messages?.map((message: any, index: number) => (
+                  {selectedFeedback.messages?.map((message: { sender?: { name?: string } | string; content?: string; createdAt?: string }, index: number) => (
                     <div key={index} className="flex gap-3">
                       <Avatar className="w-8 h-8">
                         <AvatarFallback className="text-xs">
@@ -303,7 +300,7 @@ export default function FeedbackCenter({ feedback, stats, user }: FeedbackCenter
                             {typeof message.sender === 'object' && message.sender?.name ? message.sender.name : 'User'}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            {message.timestamp ? formatDateTime(message.timestamp) : ''}
+                            {message.createdAt ? formatDateTime(message.createdAt) : ''}
                           </p>
                         </div>
                         <div className="bg-muted rounded-lg p-3">

@@ -21,7 +21,7 @@ export async function POST(
       )
     }
 
-    const typedUser = user as User & { role: string }
+    const _typedUser = user as User & { role: string }
     const body = await request.json()
     const { content } = body
 

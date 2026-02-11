@@ -1,159 +1,180 @@
-import React from 'react'
+﻿import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Card } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { User, Calendar, ArrowRight } from 'lucide-react'
-import type { Post, Media } from '@/payload-types'
+import { ArrowRight, Calendar, User } from 'lucide-react'
+import type { Post, Media, Category } from '@/payload-types'
 import { formatDateTime } from '@/utilities/formatDateTime'
 
 interface HomePostsProps {
   posts: Post[]
 }
 
+function getPostImage(post: Post): Media | null {
+  if (typeof post.heroImage === 'object' && post.heroImage) return post.heroImage as Media
+  if (post.meta && typeof post.meta.image === 'object' && post.meta.image) return post.meta.image as Media
+  return null
+}
+
+function getPostCategory(post: Post): string {
+  if (post.categories && post.categories.length > 0) {
+    const cat = post.categories[0]
+    if (typeof cat === 'object' && cat !== null) return (cat as Category).title || 'Uncategorized'
+  }
+  return 'Uncategorized'
+}
+
+function getPostAuthor(post: Post): string {
+  if (post.populatedAuthors && post.populatedAuthors.length > 0) {
+    return post.populatedAuthors[0]?.name || 'Anonymous'
+  }
+  return 'Anonymous'
+}
+
 export const HomePosts: React.FC<HomePostsProps> = ({ posts }) => {
   if (!posts || posts.length === 0) {
     return (
-      <section className="py-20 bg-gray-50 dark:bg-gray-900">
-        <div className="container mx-auto px-4">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold mb-4">No Posts Yet</h2>
-            <p className="text-gray-600 dark:text-gray-400">
-              Check back soon for exciting content from our community!
-            </p>
-          </div>
+      <section className="py-20">
+        <div className="container mx-auto px-6 text-center">
+          <h2 className="font-display text-3xl mb-4">No Posts Yet</h2>
+          <p className="text-muted-foreground">Check back soon for exciting content from our community.</p>
         </div>
       </section>
     )
   }
 
+  const featured = posts[0]
+  const rest = posts.slice(1, 5)
+  const featuredImage = featured ? getPostImage(featured) : null
+
   return (
-    <section className="py-20 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950">
-      <div className="container mx-auto px-4">
+    <section className="py-20 md:py-28">
+      <div className="container mx-auto px-6">
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10 md:mb-12 animate-fade-up">
+          <div>
+            <span className="text-xs tracking-widest uppercase text-accent font-medium">From the Community</span>
+            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl mt-3 leading-[1.1]">
               Latest Stories
-            </span>
-          </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Discover the newest articles, insights, and achievements from our vibrant GCET community
-          </p>
+            </h2>
+          </div>
+          <Link
+            href="/posts"
+            className="group inline-flex items-center gap-2 text-sm font-medium tracking-wide hover:text-accent transition-colors"
+          >
+            View All
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+          </Link>
         </div>
 
-        {/* Posts Grid */}
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 mb-12">
-          {posts.map((post, index) => {
-            const heroImage = typeof post.heroImage === 'object' && post.heroImage ? post.heroImage as Media : null
-            const category = post.categories && post.categories.length > 0
-              ? typeof post.categories[0] === 'object'
-                ? post.categories[0].title
-                : 'Uncategorized'
-              : 'Uncategorized'
-            
-            const author = post.authors && post.authors.length > 0
-              ? typeof post.authors[0] === 'object'
-                ? post.authors[0].name || 'Anonymous'
-                : 'Anonymous'
-              : 'Anonymous'
+        {/* Bento Grid - mobile stacked, desktop side-by-side */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 animate-fade-up stagger-2">
+          {/* Featured Post - Large */}
+          {featured && (
+            <Link href={`/posts/${featured.slug}`} className="group block lg:row-span-2">
+              <article className="relative h-full min-h-[300px] sm:min-h-[400px] lg:min-h-full overflow-hidden rounded-2xl border border-border bg-card">
+                <div className="relative h-full">
+                  {featuredImage?.url ? (
+                    <Image
+                      src={featuredImage.url}
+                      alt={featuredImage.alt || featured.title}
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                      priority
+                      className="object-cover group-hover:scale-[1.03] transition-transform duration-700"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 bg-gradient-to-br from-accent/20 to-accent/5" />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                  
+                  {/* Content overlay */}
+                  <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-8">
+                    <span className="inline-block px-2.5 py-1 bg-accent text-accent-foreground text-[10px] sm:text-xs font-medium tracking-wider uppercase rounded-full mb-3 sm:mb-4">
+                      {getPostCategory(featured)}
+                    </span>
+                    <h3 className="font-display text-xl sm:text-2xl md:text-3xl text-white leading-snug mb-2 sm:mb-3 group-hover:text-accent transition-colors line-clamp-3">
+                      {featured.title}
+                    </h3>
+                    {featured.meta?.description && (
+                      <p className="text-white/70 text-sm line-clamp-2 mb-3 sm:mb-4 max-w-lg hidden sm:block">
+                        {featured.meta.description}
+                      </p>
+                    )}
+                    <div className="flex items-center gap-3 sm:gap-4 text-[10px] sm:text-xs text-white/60">
+                      <span className="flex items-center gap-1.5">
+                        <User className="w-3 h-3" />
+                        {getPostAuthor(featured)}
+                      </span>
+                      {featured.publishedAt && (
+                        <span className="flex items-center gap-1.5">
+                          <Calendar className="w-3 h-3" />
+                          {formatDateTime(featured.publishedAt)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </article>
+            </Link>
+          )}
 
+          {/* Smaller Posts */}
+          {rest.map((post) => {
+            const image = getPostImage(post)
             return (
-              <Link
-                key={post.id}
-                href={`/posts/${post.slug}`}
-                className="group"
-              >
-                <Card className="h-full overflow-hidden hover:shadow-2xl transition-all duration-300 border-2 hover:border-blue-500 dark:hover:border-blue-400">
-                  {/* Featured Image */}
-                  <div className="relative h-56 bg-gradient-to-br from-blue-500 to-cyan-500 overflow-hidden">
-                    {heroImage?.url ? (
+              <Link key={post.id} href={`/posts/${post.slug}`} className="group block">
+                <article className="flex gap-4 p-4 sm:p-5 rounded-2xl border border-border bg-card hover:shadow-md transition-shadow duration-300 h-full">
+                  {/* Thumbnail */}
+                  <div className="relative w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 flex-shrink-0 rounded-xl overflow-hidden bg-muted">
+                    {image?.url ? (
                       <Image
-                        src={heroImage.url}
-                        alt={heroImage.alt || post.title}
+                        src={image.url}
+                        alt={image.alt || post.title}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        sizes="(max-width: 640px) 80px, 128px"
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     ) : (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="text-white/80 text-6xl font-bold">
-                          {post.title.charAt(0).toUpperCase()}
-                        </div>
-                      </div>
-                    )}
-                    
-                    {/* Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60 group-hover:opacity-40 transition-opacity"></div>
-                    
-                    {/* Category Badge */}
-                    <div className="absolute top-4 right-4">
-                      <Badge className="bg-white/95 text-gray-900 hover:bg-white backdrop-blur-sm">
-                        {category}
-                      </Badge>
-                    </div>
-
-                    {/* Featured Badge for first post */}
-                    {index === 0 && (
-                      <div className="absolute top-4 left-4">
-                        <Badge className="bg-blue-600 text-white hover:bg-blue-700">
-                          Featured
-                        </Badge>
+                      <div className="absolute inset-0 bg-gradient-to-br from-accent/15 to-accent/5 flex items-center justify-center">
+                        <span className="font-display text-2xl sm:text-3xl text-accent/30">{post.title.charAt(0)}</span>
                       </div>
                     )}
                   </div>
 
                   {/* Content */}
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
+                  <div className="flex flex-col justify-center min-w-0 flex-1">
+                    <span className="text-[10px] sm:text-xs tracking-wider uppercase text-accent font-medium mb-1 sm:mb-2">
+                      {getPostCategory(post)}
+                    </span>
+                    <h3 className="text-sm sm:text-base md:text-lg font-semibold leading-snug mb-1.5 group-hover:text-accent transition-colors line-clamp-2">
                       {post.title}
                     </h3>
-                    
-                    {post.meta?.description && (
-                      <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3 text-sm">
-                        {post.meta.description}
-                      </p>
-                    )}
-
-                    {/* Meta Info */}
-                    <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-4">
-                      <div className="flex items-center gap-1.5">
-                        <User className="w-4 h-4" />
-                        <span className="truncate">{author}</span>
-                      </div>
+                    <div className="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs text-muted-foreground">
+                      <span className="truncate">{getPostAuthor(post)}</span>
                       {post.publishedAt && (
-                        <div className="flex items-center gap-1.5">
-                          <Calendar className="w-4 h-4" />
-                          <span>{formatDateTime(post.publishedAt)}</span>
-                        </div>
+                        <>
+                          <span className="text-border">|</span>
+                          <span className="flex-shrink-0">{formatDateTime(post.publishedAt)}</span>
+                        </>
                       )}
                     </div>
-
-                    {/* Read More Link */}
-                    <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                      <div className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold group-hover:gap-3 transition-all">
-                        Read Article
-                        <ArrowRight className="w-4 h-4" />
-                      </div>
-                    </div>
                   </div>
-                </Card>
+                </article>
               </Link>
             )
           })}
         </div>
 
-        {/* View All Posts Link */}
-        {posts.length >= 10 && (
-          <div className="text-center">
-            <Link
-              href="/posts"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl"
-            >
-              Explore All Posts
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-          </div>
-        )}
+        {/* Mobile View All */}
+        <div className="text-center sm:hidden mt-8">
+          <Link
+            href="/posts"
+            className="group inline-flex items-center gap-2 px-6 py-3 border border-border rounded-full text-sm font-medium hover:bg-card transition-colors"
+          >
+            View All Posts
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+          </Link>
+        </div>
       </div>
     </section>
   )

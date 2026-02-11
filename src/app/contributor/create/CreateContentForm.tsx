@@ -539,6 +539,9 @@ export function CreateContentForm({ user, categories: dbCategories }: CreateCont
                       <>
                         <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
                         <p className="text-sm text-muted-foreground mb-2">Upload featured image</p>
+                        <p className="text-xs text-muted-foreground mb-3">
+                          📐 Recommended: 900×600 (3:2) • Optimize to &lt;500KB
+                        </p>
                         <span className="inline-flex items-center justify-center rounded-md text-sm font-medium border border-input bg-background px-3 py-1.5">
                           Choose File
                         </span>
