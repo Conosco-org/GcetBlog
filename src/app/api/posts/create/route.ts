@@ -77,17 +77,21 @@ export async function POST(request: NextRequest) {
       data: {
         title,
         slug,
-        content: {
+        content: typeof content === 'object' ? content : {
           root: {
             type: 'root',
             children: [
               {
                 type: 'paragraph',
                 version: 1,
+                direction: 'ltr',
+                format: '',
+                indent: 0,
                 children: [
                   {
                     type: 'text',
                     text: content,
+                    format: 0,
                     version: 1,
                   },
                 ],

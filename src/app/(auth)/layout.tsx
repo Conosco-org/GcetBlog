@@ -16,7 +16,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body suppressHydrationWarning>
         <Providers>
-          <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+          <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-background dark:via-background dark:to-background">
             {/* Simple header with logo and back button */}
             <div className="container mx-auto px-4 py-6">
               <div className="flex items-center justify-between">
@@ -25,7 +25,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                 </Link>
                 <Link 
                   href="/" 
-                  className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                  className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   <span>Back to Home</span>
@@ -38,7 +38,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 
             {/* Simple footer */}
             <footer className="container mx-auto px-4 py-6 mt-8">
-              <p className="text-center text-sm text-gray-500">
+              <p className="text-center text-sm text-muted-foreground">
                 © {new Date().getFullYear()} Geethanjali College of Engineering and Technology. All rights reserved.
               </p>
             </footer>

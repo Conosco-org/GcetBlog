@@ -1,13 +1,26 @@
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { headers } from 'next/headers'
 import { PostForm } from '../../create/PostForm'
 import type { User } from '@/payload-types'
 
 export default async function EditPostPage({ params }: { params: Promise<{ id: string }> }) {
   const payload = await getPayload({ config: configPromise })
+  const requestHeaders = await headers()
   const { id } = await params
+
+  // Get current user
+  const { user } = await payload.auth({ headers: requestHeaders })
+  
+  if (!user) {
+    redirect('/login')
+  }
+
+  // Editors, admins, and contributors can edit posts
+  if (!user.role || !['contributor', 'editor', 'admin'].includes(user.role)) {
+    redirect('/dashboard')
+  }
 
   // Get the post
   const post = await payload.findByID({
@@ -16,23 +29,12 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
     depth: 2,
   })
 
-  if (!post) {
-    notFound()
-  }
-
-  // Get categories
+  // Get categories for the form
   const categories = await payload.find({
     collection: 'categories',
     limit: 100,
+    sort: 'title',
   })
-
-  // Get current user
-  const requestHeaders = await headers()
-  const { user } = await payload.auth({ headers: requestHeaders })
-  
-  if (!user) {
-    notFound()
-  }
 
   // Extract category IDs
   const categoryIds = Array.isArray(post.categories) 
@@ -70,12 +72,20 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
   }
 
   return (
-    <PostForm
-      categories={categories.docs}
-      user={user as User}
-      initialData={initialData}
-      postId={post.id}
-      isEdit={true}
-    />
+    <div className="min-h-screen">
+      <div className="max-w-4xl mx-auto p-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-foreground mb-2">Edit Post</h1>
+          <p className="text-muted-foreground">Update your blog post</p>
+        </div>
+        <PostForm
+          categories={categories.docs}
+          user={user as User}
+          initialData={initialData}
+          postId={post.id}
+          isEdit={true}
+        />
+      </div>
+    </div>
   )
 }

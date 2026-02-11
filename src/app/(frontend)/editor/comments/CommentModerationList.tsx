@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { formatDistanceToNow } from 'date-fns'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -21,6 +22,7 @@ interface CommentModerationCardProps {
 }
 
 function CommentModerationCard({ comment }: CommentModerationCardProps) {
+  const router = useRouter()
   const [isModerating, setIsModerating] = useState(false)
   const [showModerationForm, setShowModerationForm] = useState(false)
   const [showFullComment, setShowFullComment] = useState(false)
@@ -34,7 +36,7 @@ function CommentModerationCard({ comment }: CommentModerationCardProps) {
       setMessage({ type: 'error', text: result.error })
     } else {
       setMessage({ type: 'success', text: result.success || 'Comment moderated successfully' })
-      // The comment will be updated, you might want to refresh the list
+      setTimeout(() => router.refresh(), 1000)
     }
     setIsModerating(false)
   }
@@ -76,11 +78,11 @@ function CommentModerationCard({ comment }: CommentModerationCardProps) {
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
               <h4 className="font-medium">{comment.authorName}</h4>
-              <span className="text-sm text-gray-500">({comment.authorEmail})</span>
+              <span className="text-sm text-muted-foreground">({comment.authorEmail})</span>
               {getStatusBadge()}
             </div>
 
-            <div className="text-sm text-gray-500 space-y-1">
+            <div className="text-sm text-muted-foreground space-y-1">
               <p>Posted {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}</p>
 
               {/* Show post info if available */}
@@ -130,7 +132,7 @@ function CommentModerationCard({ comment }: CommentModerationCardProps) {
       </CardHeader>
 
       <CardContent className="pb-4">
-        <div className="bg-gray-50 p-3 rounded-md">
+        <div className="bg-muted p-3 rounded-md">
           <p className="whitespace-pre-wrap">
             {isLongComment && !showFullComment
               ? comment.content.substring(0, 300) + '...'
@@ -152,7 +154,7 @@ function CommentModerationCard({ comment }: CommentModerationCardProps) {
       </CardContent>
 
       {showModerationForm && (
-        <CardFooter className="bg-gray-50 border-t pt-4">
+        <CardFooter className="bg-muted border-t pt-4">
           <form action={handleModeration} className="w-full space-y-4">
             <input type="hidden" name="commentId" value={comment.id} />
 
@@ -220,7 +222,7 @@ function CommentModerationCard({ comment }: CommentModerationCardProps) {
 export function CommentModerationList({ comments, currentUser }: CommentModerationListProps) {
   if (comments.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500 bg-gray-50 rounded-md">
+      <div className="text-center py-8 text-muted-foreground bg-muted rounded-md">
         No comments to moderate
       </div>
     )

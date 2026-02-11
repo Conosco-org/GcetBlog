@@ -2,6 +2,36 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 
+// GET handler — list posts (proxies to Payload's built-in REST)
+export async function GET(request: NextRequest) {
+  try {
+    const payload = await getPayload({ config })
+    const { user } = await payload.auth({ headers: request.headers })
+    const { searchParams } = new URL(request.url)
+    const limit = parseInt(searchParams.get('limit') || '10')
+    const page = parseInt(searchParams.get('page') || '1')
+    const sort = searchParams.get('sort') || '-createdAt'
+    const draft = searchParams.get('draft') === 'true'
+
+    const result = await payload.find({
+      collection: 'posts',
+      limit,
+      page,
+      sort,
+      draft,
+      user,
+      overrideAccess: false,
+    })
+
+    return NextResponse.json(result)
+  } catch (error: any) {
+    return NextResponse.json(
+      { message: error.message || 'Failed to fetch posts' },
+      { status: 500 }
+    )
+  }
+}
+
 // Convert plain text to Lexical JSON format
 function textToLexical(text: string) {
   // Split text into paragraphs
@@ -65,7 +95,7 @@ export async function POST(request: NextRequest) {
         heroImage: body.heroImage || undefined,
         meta: body.meta || {
           title: body.title,
-          description: body.content?.substring(0, 160) || '',
+          description: typeof body.content === 'string' ? body.content.substring(0, 160) : '',
         },
         publishedAt: body._status === 'published' ? new Date().toISOString() : undefined,
       },

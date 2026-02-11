@@ -4,6 +4,24 @@ import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import { PostForm } from '../../create/PostForm'
 
+// Helper to extract plain text from Lexical content
+function lexicalToPlainText(content: unknown): string {
+  if (!content || typeof content !== 'object' || !('root' in (content as Record<string, unknown>))) {
+    return typeof content === 'string' ? content : ''
+  }
+  const root = (content as { root: { children?: Array<{ children?: Array<{ text?: string }> }> } }).root
+  if (!root.children || !Array.isArray(root.children)) return ''
+  return root.children
+    .map((child) => {
+      if (child.children && Array.isArray(child.children)) {
+        return child.children.map((textNode) => textNode.text || '').join('')
+      }
+      return ''
+    })
+    .filter((text: string) => text.trim())
+    .join('\n\n')
+}
+
 export default async function EditPostPage({ params }: { params: Promise<{ id: string }> }) {
   const payload = await getPayload({ config: configPromise })
   const requestHeaders = await headers()
@@ -16,8 +34,8 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
     redirect('/login')
   }
 
-  // Only editors and admins can edit posts
-  if (user.role !== 'editor' && user.role !== 'admin') {
+  // Editors, admins, and contributors can edit posts
+  if (!user.role || !['contributor', 'editor', 'admin'].includes(user.role)) {
     redirect('/dashboard')
   }
 
@@ -45,12 +63,15 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
       ? post.categories.map(cat => typeof cat === 'object' ? cat.id : cat)
       : []
 
+    // Convert Lexical content to plain text for editing
+    const plainTextContent = lexicalToPlainText(post.content)
+
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen">
         <div className="max-w-4xl mx-auto p-8">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Edit Post</h1>
-            <p className="text-gray-600">Update your blog post</p>
+            <h1 className="text-3xl font-bold text-foreground mb-2">Edit Post</h1>
+            <p className="text-muted-foreground">Update your blog post</p>
           </div>
 
           <PostForm
@@ -60,12 +81,13 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
             isEdit={true}
             initialData={{
               title: post.title,
-              content: typeof post.content === 'string' ? post.content : '',
+              content: plainTextContent,
               categories: categoryIds,
               meta: post.meta ? {
                 title: typeof post.meta === 'object' && 'title' in post.meta && post.meta.title ? String(post.meta.title) : undefined,
                 description: typeof post.meta === 'object' && 'description' in post.meta && post.meta.description ? String(post.meta.description) : undefined,
               } : undefined,
+              heroImage: typeof post.heroImage === 'object' && post.heroImage ? post.heroImage.id : (typeof post.heroImage === 'string' ? post.heroImage : undefined),
             }}
           />
         </div>

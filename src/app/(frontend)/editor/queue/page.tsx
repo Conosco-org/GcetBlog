@@ -146,18 +146,18 @@ export default async function EditorQueuePage() {
           <nav className="flex">
             <Link 
               href="/editor/queue"
-              className="px-6 py-4 text-sm font-medium text-blue-600 border-b-2 border-blue-600"
+              className="px-6 py-4 text-sm font-medium text-primary border-b-2 border-primary"
             >
               Post Approvals ({pendingPosts.totalDocs})
             </Link>
             <Link 
               href="/editor/comments"
-              className="px-6 py-4 text-sm font-medium text-gray-600 hover:text-gray-900 hover:border-b-2 hover:border-gray-300 transition-colors"
+              className="px-6 py-4 text-sm font-medium text-muted-foreground hover:text-foreground hover:border-b-2 hover:border-muted-foreground transition-colors"
             >
               Comment Moderation ({pendingComments.totalDocs})
             </Link>
             <button 
-              className="px-6 py-4 text-sm font-medium text-gray-400 cursor-not-allowed"
+              className="px-6 py-4 text-sm font-medium text-muted-foreground/50 cursor-not-allowed"
               disabled
               title="Coming soon"
             >
@@ -179,7 +179,7 @@ export default async function EditorQueuePage() {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-12">
-                  <input type="checkbox" className="rounded border-input" />
+                  <input type="checkbox" className="rounded border-input" aria-label="Select all posts" />
                 </TableHead>
                 <TableHead>Title</TableHead>
                 <TableHead>Author</TableHead>
@@ -200,7 +200,7 @@ export default async function EditorQueuePage() {
                 return (
                   <TableRow key={post.id}>
                     <TableCell>
-                      <input type="checkbox" className="rounded border-input" />
+                      <input type="checkbox" className="rounded border-input" aria-label={`Select ${post.title}`} />
                     </TableCell>
                     <TableCell>
                       <p className="font-medium">{post.title}</p>

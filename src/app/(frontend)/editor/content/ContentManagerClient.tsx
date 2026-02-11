@@ -341,7 +341,7 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <Link href={`/editor/posts/edit/${post.id}`}>
+                        <Link href={`/editor/posts/${post.id}/edit`}>
                           <Button variant="ghost" size="sm">
                             <Pencil className="w-4 h-4 mr-2" />
                             Edit

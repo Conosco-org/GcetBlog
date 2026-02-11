@@ -41,6 +41,36 @@ export function PostForm({ categories, user, initialData, postId, isEdit = false
   const [isUploadingImage, setIsUploadingImage] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  // Convert plain text to Lexical-compatible format
+  const textToLexical = (text: string) => {
+    const paragraphs = text.split('\n').filter(line => line.trim().length > 0)
+    return {
+      root: {
+        type: 'root',
+        children: paragraphs.map(paragraph => ({
+          type: 'paragraph',
+          children: [{ type: 'text', text: paragraph, detail: 0, format: 0, mode: 'normal', style: '', version: 1 }],
+          direction: 'ltr',
+          format: '',
+          indent: 0,
+          textFormat: 0,
+          textStyle: '',
+          version: 1,
+        })),
+        direction: 'ltr',
+        format: '',
+        indent: 0,
+        version: 1,
+      },
+    }
+  }
+
+  const getWordCount = (text: string) => {
+    const trimmed = text.trim()
+    if (!trimmed) return 0
+    return trimmed.split(/\s+/).length
+  }
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -142,11 +172,10 @@ export function PostForm({ categories, user, initialData, postId, isEdit = false
         },
         body: JSON.stringify({
           title: title.trim(),
-          content: content.trim(),
+          content: textToLexical(content.trim()),
           categories: selectedCategories,
           authors: [user.id],
           _status: 'draft',
-          reviewStatus: 'pending_review',
           submittedForReviewAt: new Date().toISOString(),
           heroImage: heroImageId,
           meta: {
@@ -158,7 +187,7 @@ export function PostForm({ categories, user, initialData, postId, isEdit = false
 
       const data = await response.json()
 
-      if (response.ok && data.success) {
+      if (response.ok) {
         toast({
           title: "Success!",
           description: "Post submitted for review. You'll be notified when it's approved.",
@@ -219,7 +248,7 @@ export function PostForm({ categories, user, initialData, postId, isEdit = false
         },
         body: JSON.stringify({
           title: title.trim(),
-          content: content.trim(),
+          content: textToLexical(content.trim()),
           categories: selectedCategories,
           authors: [user.id],
           _status: status,
@@ -233,7 +262,7 @@ export function PostForm({ categories, user, initialData, postId, isEdit = false
 
       const data = await response.json()
 
-      if (response.ok && data.success) {
+      if (response.ok) {
         // Show success toast
         toast({
           title: "Success!",
@@ -304,7 +333,7 @@ export function PostForm({ categories, user, initialData, postId, isEdit = false
           </Button>
           
           {/* Show different buttons based on user role */}
-          {(user as any).role === 'contributor' ? (
+          {user.role === 'contributor' ? (
             <Button
               type="button"
               onClick={handleSendForReview}
@@ -420,7 +449,7 @@ export function PostForm({ categories, user, initialData, postId, isEdit = false
             required
           />
           <p className="text-xs text-muted-foreground mt-1">
-            {content.length} characters • {Math.ceil(content.trim().split(/\s+/).length)} words
+            {content.length} characters • {getWordCount(content)} words
           </p>
         </div>
 

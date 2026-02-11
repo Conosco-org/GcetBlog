@@ -100,10 +100,10 @@ export default function SettingsPage() {
               <div className="space-y-6">
                 {/* Default Post Status */}
                 <div>
-                  <label className="block text-sm font-semibold mb-2">
+                  <label htmlFor="defaultPostStatus" className="block text-sm font-semibold mb-2">
                     Default Post Status
                   </label>
-                  <select className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-background">
+                  <select id="defaultPostStatus" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-background">
                     <option>Draft</option>
                     <option>Pending Review</option>
                     <option>Published</option>
@@ -124,6 +124,7 @@ export default function SettingsPage() {
                       step="10"
                       defaultValue="10"
                       className="flex-1"
+                      aria-label="Auto-save interval in seconds"
                     />
                     <span className="text-sm text-muted-foreground">10s</span>
                   </div>
@@ -136,10 +137,11 @@ export default function SettingsPage() {
 
                 {/* Media Upload Limit */}
                 <div>
-                  <label className="block text-sm font-semibold mb-2">
+                  <label htmlFor="mediaUploadLimit" className="block text-sm font-semibold mb-2">
                     Media Upload Limit (MB)
                   </label>
                   <input
+                    id="mediaUploadLimit"
                     type="number"
                     defaultValue="50"
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-background"
@@ -197,7 +199,7 @@ export default function SettingsPage() {
                     <p className="text-xs text-muted-foreground">Use condensed interface layout</p>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" className="sr-only peer" />
+                    <input type="checkbox" className="sr-only peer" aria-label="Compact View" />
                     <div className="w-11 h-6 bg-muted peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-background after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                   </label>
                 </div>
@@ -208,7 +210,7 @@ export default function SettingsPage() {
                     <p className="text-xs text-muted-foreground">Display line numbers in editor</p>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" defaultChecked className="sr-only peer" />
+                    <input type="checkbox" defaultChecked className="sr-only peer" aria-label="Show Line Numbers" />
                     <div className="w-11 h-6 bg-muted peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-background after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                   </label>
                 </div>
@@ -219,7 +221,7 @@ export default function SettingsPage() {
                     <p className="text-xs text-muted-foreground">Enable code syntax highlighting</p>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" defaultChecked className="sr-only peer" />
+                    <input type="checkbox" defaultChecked className="sr-only peer" aria-label="Syntax Highlighting" />
                     <div className="w-11 h-6 bg-muted peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-background after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                   </label>
                 </div>
@@ -230,16 +232,16 @@ export default function SettingsPage() {
                     <p className="text-xs text-muted-foreground">Enable text auto-completion</p>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" defaultChecked className="sr-only peer" />
+                    <input type="checkbox" defaultChecked className="sr-only peer" aria-label="Auto-complete" />
                     <div className="w-11 h-6 bg-muted peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-background after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                   </label>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">
+                  <label htmlFor="defaultEditorView" className="block text-sm font-medium mb-2">
                     Default Editor View
                   </label>
-                  <select className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-background text-sm">
+                  <select id="defaultEditorView" className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-background text-sm">
                     <option>Visual Editor</option>
                     <option>Code Editor</option>
                     <option>Split View</option>
@@ -264,7 +266,7 @@ export default function SettingsPage() {
                 {['New post submissions', 'Post approvals', 'Post rejections', 'Comment moderation needed'].map((item) => (
                   <div key={item} className="flex items-center justify-between py-2 border-b last:border-0">
                     <span className="text-sm">{item}</span>
-                    <input type="checkbox" defaultChecked className="rounded border text-primary" />
+                    <input type="checkbox" defaultChecked className="rounded border text-primary" aria-label={item} />
                   </div>
                 ))}
               </div>
@@ -274,7 +276,7 @@ export default function SettingsPage() {
                 {['Weekly summary email', 'Storage warnings', 'Security alerts', 'System updates'].map((item) => (
                   <div key={item} className="flex items-center justify-between py-2 border-b last:border-0">
                     <span className="text-sm">{item}</span>
-                    <input type="checkbox" defaultChecked className="rounded border text-primary" />
+                    <input type="checkbox" defaultChecked className="rounded border text-primary" aria-label={item} />
                   </div>
                 ))}
               </div>
@@ -293,10 +295,10 @@ export default function SettingsPage() {
             
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-semibold mb-2">
+                <label htmlFor="approval-process" className="block text-sm font-semibold mb-2">
                   Approval Process
                 </label>
-                <select className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-background">
+                <select id="approval-process" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-background">
                   <option>Single Approval (Editor)</option>
                   <option>Dual Approval (Editor + Admin)</option>
                   <option>Auto-publish (Trusted Authors)</option>
@@ -308,7 +310,7 @@ export default function SettingsPage() {
                   <p className="text-sm font-medium">Require category for posts</p>
                   <p className="text-xs text-muted-foreground">Posts must have a category assigned</p>
                 </div>
-                <input type="checkbox" defaultChecked className="rounded border text-primary" />
+                <input type="checkbox" defaultChecked className="rounded border text-primary" aria-label="Require category for posts" />
               </div>
               
               <div className="flex items-center justify-between py-3 border-b">
@@ -316,7 +318,7 @@ export default function SettingsPage() {
                   <p className="text-sm font-medium">Auto-publish scheduled posts</p>
                   <p className="text-xs text-muted-foreground">Automatically publish posts at scheduled time</p>
                 </div>
-                <input type="checkbox" defaultChecked className="rounded border text-primary" />
+                <input type="checkbox" defaultChecked className="rounded border text-primary" aria-label="Auto-publish scheduled posts" />
               </div>
             </div>
           </Card>
