@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { formatDateTime } from '@/utilities/formatDateTime'
 import Link from 'next/link'
-import { Edit, Trash2, Send, FileText, AlertCircle } from 'lucide-react'
+import { Edit, Send, FileText } from 'lucide-react'
 
 export default async function DraftsPage() {
   const payload = await getPayload({ config: configPromise })
