@@ -16,9 +16,9 @@ export const PostHero: React.FC<{
 
   return (
     <div className="relative pt-16 flex items-end">
-      <div className="container z-10 relative lg:grid lg:grid-cols-[1fr_48rem_1fr] text-white pb-8">
+      <div className="container z-10 relative lg:grid lg:grid-cols-[1fr_48rem_1fr] text-white px-5 sm:px-6 pb-6 sm:pb-8">
         <div className="col-start-1 col-span-1 md:col-start-2 md:col-span-2">
-          <div className="uppercase text-sm mb-6">
+          <div className="text-[10px] sm:text-xs tracking-widest uppercase mb-4 sm:mb-6 text-white/70 font-medium">
             {categories?.map((category, index) => {
               if (typeof category === 'object' && category !== null) {
                 const { title: categoryTitle } = category
@@ -39,32 +39,32 @@ export const PostHero: React.FC<{
           </div>
 
           <div className="">
-            <h1 className="mb-6 text-3xl md:text-5xl lg:text-6xl">{title}</h1>
+            <h1 className="font-display mb-4 sm:mb-6 text-2xl sm:text-3xl md:text-5xl lg:text-6xl leading-[1.1]">{title}</h1>
           </div>
 
-          <div className="flex flex-col md:flex-row gap-4 md:gap-16">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 md:gap-16">
             {hasAuthors && (
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-3 sm:gap-4">
                 <div className="flex flex-col gap-1">
-                  <p className="text-sm">Author</p>
+                  <p className="text-[10px] sm:text-xs tracking-widest uppercase text-white/50">Author</p>
 
-                  <p>{formatAuthors(populatedAuthors)}</p>
+                  <p className="text-sm sm:text-base font-medium">{formatAuthors(populatedAuthors)}</p>
                 </div>
               </div>
             )}
             {publishedAt && (
               <div className="flex flex-col gap-1">
-                <p className="text-sm">Date Published</p>
+                <p className="text-[10px] sm:text-xs tracking-widest uppercase text-white/50">Date Published</p>
 
-                <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
+                <time dateTime={publishedAt} className="text-sm sm:text-base font-medium">{formatDateTime(publishedAt)}</time>
               </div>
             )}
           </div>
         </div>
       </div>
-      <div className="min-h-[80vh] select-none">
+      <div className="min-h-[60vh] sm:min-h-[80vh] select-none">
         {heroImage && typeof heroImage !== 'string' && (
-          <Media fill priority imgClassName="-z-10 object-cover" resource={heroImage} />
+          <Media fill priority imgClassName="-z-10 object-cover object-top sm:object-center" resource={heroImage} />
         )}
         <div className="absolute pointer-events-none left-0 bottom-0 w-full h-1/2 bg-gradient-to-t from-black to-transparent" />
       </div>
