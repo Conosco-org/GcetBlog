@@ -13,6 +13,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Users, Shield, UserCog } from 'lucide-react'
+import { UserActions } from './UserActions'
 import type { User } from '@/payload-types'
 
 export const dynamic = 'force-dynamic'
@@ -26,6 +27,8 @@ export default async function AdminUsersPage() {
   if (!user || (user as User).role !== 'admin') {
     return null
   }
+
+  const currentUserId = (user as User).id
 
   // Fetch all users with pagination
   const allUsers = await payload.find({
@@ -121,6 +124,7 @@ export default async function AdminUsersPage() {
                 <TableHead>Email</TableHead>
                 <TableHead>Role</TableHead>
                 <TableHead>Joined</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -146,6 +150,9 @@ export default async function AdminUsersPage() {
                     </TableCell>
                     <TableCell className="text-muted-foreground">
                       {new Date(typedU.createdAt).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <UserActions user={typedU} currentUserId={currentUserId} />
                     </TableCell>
                   </TableRow>
                 )

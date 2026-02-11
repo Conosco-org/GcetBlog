@@ -3,7 +3,7 @@ import { getServerSideURL } from './getURL'
 
 const defaultOpenGraph: Metadata['openGraph'] = {
   type: 'website',
-  description: 'Official blog of Government College of Engineering and Textile Technology, Berhampore.',
+  description: 'Official blog of Geethanjali College of Engineering and Technology.',
   images: [
     {
       url: `${getServerSideURL()}/website-template-OG.webp`,

@@ -33,7 +33,7 @@ export const HighImpactHero: React.FC<Page['hero']> = ({ links, media, richText 
         <div className="max-w-4xl mx-auto text-center">
           {/* Logo/Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-8">
-            <span className="text-sm font-medium">🎓 Government College of Engineering and Technology</span>
+            <span className="text-sm font-medium">🎓 Geethanjali College of Engineering and Technology</span>
           </div>
 
           {/* Main Heading */}
