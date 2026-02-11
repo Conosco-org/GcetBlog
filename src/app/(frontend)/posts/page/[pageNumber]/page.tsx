@@ -34,15 +34,24 @@ export default async function Page({ params: paramsPromise }: Args) {
   })
 
   return (
-    <div className="pt-24 pb-24">
+    <div className="min-h-screen">
       <PageClient />
-      <div className="container mb-16">
-        <div className="prose dark:prose-invert max-w-none">
-          <h1>Posts</h1>
+      
+      {/* Editorial Header */}
+      <div className="container mx-auto px-5 sm:px-6 pt-24 pb-12 md:pt-36 md:pb-20">
+        <div className="max-w-3xl animate-fade-up">
+          <span className="text-[10px] sm:text-xs tracking-widest uppercase text-accent font-medium">All Articles</span>
+          <h1 className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl mt-3 sm:mt-4 mb-4 sm:mb-6 leading-[1.05]">
+            Posts
+          </h1>
+          <p className="text-sm sm:text-lg text-muted-foreground leading-relaxed max-w-xl">
+            Discover insights, tutorials, creative writing, and student achievements from the GCET community.
+          </p>
         </div>
+        <div className="h-px bg-border mt-12" />
       </div>
 
-      <div className="container mb-8">
+      <div className="container mx-auto px-6 mb-8">
         <PageRange
           collection="posts"
           currentPage={posts.page}
@@ -53,7 +62,7 @@ export default async function Page({ params: paramsPromise }: Args) {
 
       <CollectionArchive posts={posts.docs} />
 
-      <div className="container">
+      <div className="container mx-auto px-6 pb-24">
         {posts?.page && posts?.totalPages > 1 && (
           <Pagination page={posts.page} totalPages={posts.totalPages} />
         )}
