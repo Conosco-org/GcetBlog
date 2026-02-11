@@ -29,7 +29,7 @@ export async function submitComment(formData: FormData) {
     }
 
     // Create the comment
-    const comment = await payload.create({
+    await payload.create({
       collection: 'comments',
       data: {
         post: postId,
