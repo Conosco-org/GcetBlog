@@ -370,7 +370,10 @@ export function PostForm({ categories, user, initialData, postId, isEdit = false
                   {isUploadingImage ? 'Uploading...' : 'Click to upload hero image'}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  PNG, JPG, WebP up to 5MB
+                  Recommended: 1920×1080 (16:9) • PNG, JPG, WebP • Optimize to &lt;500KB
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  💡 Tip: Keep faces in top 60% for better cropping
                 </p>
               </label>
             </div>

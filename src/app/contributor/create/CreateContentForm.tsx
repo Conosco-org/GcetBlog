@@ -465,6 +465,9 @@ export function CreateContentForm({ user, categories: dbCategories }: CreateCont
                 <div className="border-2 border-dashed rounded-lg p-8 text-center hover:border-primary transition-colors cursor-pointer">
                   <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
                   <p className="text-sm text-muted-foreground mb-2">Upload featured image</p>
+                  <p className="text-xs text-muted-foreground mb-3">
+                    📐 Recommended: 900×600 (3:2) • Optimize to &lt;500KB
+                  </p>
                   <Button variant="outline" size="sm" type="button">
                     Choose File
                   </Button>

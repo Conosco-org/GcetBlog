@@ -85,6 +85,9 @@ export const Posts: CollectionConfig<'posts'> = {
               name: 'heroImage',
               type: 'upload',
               relationTo: 'media',
+              admin: {
+                description: 'Recommended: 1920×1080 (16:9). For portraits, keep faces in top 60% of frame. Compress to <500KB.',
+              },
             },
             {
               name: 'content',
