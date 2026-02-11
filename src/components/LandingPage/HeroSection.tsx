@@ -4,8 +4,19 @@ import React from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { ArrowRight, BookOpen, Users, Award } from 'lucide-react'
+import type { Post } from '@/payload-types'
 
-export const HeroSection: React.FC = () => {
+interface HeroSectionProps {
+  totalPosts: number
+  totalUsers: number
+  latestPost?: Post | null
+}
+
+export const HeroSection: React.FC<HeroSectionProps> = ({ 
+  totalPosts, 
+  totalUsers, 
+  latestPost 
+}) => {
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-blue-50 via-white to-white dark:from-gray-900 dark:via-gray-950 dark:to-gray-950">
       <div className="container mx-auto px-4 py-20 md:py-32">
@@ -43,17 +54,13 @@ export const HeroSection: React.FC = () => {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-6 pt-8 border-t border-gray-200 dark:border-gray-800">
+            <div className="grid grid-cols-2 gap-6 pt-8 border-t border-gray-200 dark:border-gray-800">
               <div>
-                <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">500+</div>
+                <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{totalPosts}+</div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">Articles</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-cyan-600 dark:text-cyan-400">1000+</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Students</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">50+</div>
+                <div className="text-3xl font-bold text-cyan-600 dark:text-cyan-400">{totalUsers}+</div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">Contributors</div>
               </div>
             </div>
@@ -67,29 +74,35 @@ export const HeroSection: React.FC = () => {
               <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
               
               {/* Floating Cards */}
-              <div className="absolute top-10 right-10 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 transform hover:scale-105 transition-transform">
-                <div className="flex items-center gap-3">
-                  <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                    <BookOpen className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+              {latestPost && (
+                <Link href={`/posts/${latestPost.slug}`}>
+                  <div className="absolute top-10 right-10 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 transform hover:scale-105 transition-transform cursor-pointer">
+                    <div className="flex items-center gap-3">
+                      <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                        <BookOpen className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                      </div>
+                      <div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">Latest Article</div>
+                        <div className="font-semibold line-clamp-1">{latestPost.title}</div>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">Latest Article</div>
-                    <div className="font-semibold">Tech Innovation</div>
-                  </div>
-                </div>
-              </div>
+                </Link>
+              )}
 
-              <div className="absolute bottom-20 left-10 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 transform hover:scale-105 transition-transform">
-                <div className="flex items-center gap-3">
-                  <div className="p-3 bg-cyan-100 dark:bg-cyan-900/30 rounded-lg">
-                    <Users className="w-6 h-6 text-cyan-600 dark:text-cyan-400" />
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">Active Community</div>
-                    <div className="font-semibold">Join Us Today</div>
+              <Link href="/login">
+                <div className="absolute bottom-20 left-10 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 transform hover:scale-105 transition-transform cursor-pointer">
+                  <div className="flex items-center gap-3">
+                    <div className="p-3 bg-cyan-100 dark:bg-cyan-900/30 rounded-lg">
+                      <Users className="w-6 h-6 text-cyan-600 dark:text-cyan-400" />
+                    </div>
+                    <div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">Active Community</div>
+                      <div className="font-semibold">Join Us Today</div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             </div>
           </div>
         </div>

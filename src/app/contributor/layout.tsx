@@ -12,6 +12,11 @@ import { GeistSans } from 'geist/font/sans'
 import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
 import '@/app/(frontend)/globals.css'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Contributor Dashboard',
+}
 
 export default async function ContributorLayout({
   children,

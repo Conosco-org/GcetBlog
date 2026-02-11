@@ -32,8 +32,8 @@ export default buildConfig({
       prefillOnly: true,
     } : false,
     meta: {
-      titleSuffix: '- GCET Blog Admin',
-      ogImage: '/website-template-OG.webp',
+      title: 'GCET Blog Admin',
+      titleSuffix: '- GCET Blog',
     },
     components: {
       // Custom branding and navigation

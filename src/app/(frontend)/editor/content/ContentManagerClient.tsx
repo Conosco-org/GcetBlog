@@ -14,8 +14,17 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import {
   Select,
   SelectContent,
@@ -37,10 +46,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Search, Filter, Plus, MoreVertical, Pencil, MessageSquare, Loader2 } from 'lucide-react'
+import { Search, Filter, MoreVertical, Pencil, MessageSquare, Loader2, Trash2, FileX } from 'lucide-react'
 import Link from 'next/link'
-import type { Post, User, Category } from '@/payload-types'
 import { useRouter } from 'next/navigation'
+import { deletePost, unpublishPost } from './actions'
 
 interface ContentManagerClientProps {
   posts: any
@@ -49,6 +58,14 @@ interface ContentManagerClientProps {
 
 export default function ContentManagerClient({ posts, categories }: ContentManagerClientProps) {
   const [feedbackDialog, setFeedbackDialog] = useState<{ open: boolean; post: any | null }>({
+    open: false,
+    post: null,
+  })
+  const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; post: any | null }>({
+    open: false,
+    post: null,
+  })
+  const [unpublishDialog, setUnpublishDialog] = useState<{ open: boolean; post: any | null }>({
     open: false,
     post: null,
   })
@@ -127,6 +144,70 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
       type: 'suggestions',
       message: '',
     })
+  }
+
+  const handleDeletePost = async () => {
+    if (!deleteDialog.post) return
+
+    setIsLoading(true)
+    try {
+      const result = await deletePost(deleteDialog.post.id)
+      
+      if (result.success) {
+        toast({
+          title: 'Success',
+          description: result.message,
+        })
+        setDeleteDialog({ open: false, post: null })
+        router.refresh()
+      } else {
+        toast({
+          title: 'Error',
+          description: result.message,
+          variant: 'destructive',
+        })
+      }
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to delete post',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleUnpublishPost = async () => {
+    if (!unpublishDialog.post) return
+
+    setIsLoading(true)
+    try {
+      const result = await unpublishPost(unpublishDialog.post.id)
+      
+      if (result.success) {
+        toast({
+          title: 'Success',
+          description: result.message,
+        })
+        setUnpublishDialog({ open: false, post: null })
+        router.refresh()
+      } else {
+        toast({
+          title: 'Error',
+          description: result.message,
+          variant: 'destructive',
+        })
+      }
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to unpublish post',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const getStatusVariant = (status: string) => {
@@ -252,11 +333,15 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
                       </Badge>
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
-                      {new Date(post.updatedAt).toLocaleDateString()}
+                      {new Date(post.updatedAt).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                      })}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <Link href={`/editor/posts/edit/${post.id}`}>
+                        <Link href={`/editor/posts/${post.id}/edit`}>
                           <Button variant="ghost" size="sm">
                             <Pencil className="w-4 h-4 mr-2" />
                             Edit
@@ -277,8 +362,23 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
                               <MessageSquare className="w-4 h-4" />
                               Send Feedback
                             </DropdownMenuItem>
+                            {status === 'published' && (
+                              <DropdownMenuItem
+                                onClick={() => setUnpublishDialog({ open: true, post })}
+                                className="flex items-center gap-2"
+                              >
+                                <FileX className="w-4 h-4" />
+                                Unpublish
+                              </DropdownMenuItem>
+                            )}
                             <DropdownMenuItem>Duplicate</DropdownMenuItem>
-                            <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => setDeleteDialog({ open: true, post })}
+                              className="text-destructive flex items-center gap-2"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                              Delete
+                            </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
@@ -383,6 +483,69 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog 
+        open={deleteDialog.open} 
+        onOpenChange={(open) => setDeleteDialog({ ...deleteDialog, open })}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the post &ldquo;{deleteDialog.post?.title}&rdquo;.
+              {deleteDialog.post?._status === 'published' && (
+                <span className="block mt-2 text-orange-600 font-medium">
+                  Note: This post is currently published. It will be unpublished before deletion.
+                </span>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isLoading}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault()
+                handleDeletePost()
+              }}
+              disabled={isLoading}
+              className="bg-destructive hover:bg-destructive/90"
+            >
+              {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Delete Post
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Unpublish Confirmation Dialog */}
+      <AlertDialog 
+        open={unpublishDialog.open} 
+        onOpenChange={(open) => setUnpublishDialog({ ...unpublishDialog, open })}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Unpublish Post?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will change the status of &ldquo;{unpublishDialog.post?.title}&rdquo; from published to draft.
+              The post will no longer be visible on the public website until it&apos;s published again.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isLoading}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault()
+                handleUnpublishPost()
+              }}
+              disabled={isLoading}
+            >
+              {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Unpublish
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   )
 }

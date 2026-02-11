@@ -15,6 +15,7 @@ import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { PostComments } from '@/components/PostComments'
+import { DraftModeBanner } from '@/components/DraftModeBanner'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -52,6 +53,8 @@ export default async function Post({ params: paramsPromise }: Args) {
 
   return (
     <article className="pt-16 pb-16">
+      {draft && <DraftModeBanner postStatus={post._status || 'draft'} />}
+      
       <PageClient />
 
       {/* Allows redirects for valid pages too */}
@@ -91,16 +94,32 @@ const queryPostBySlug = cache(async ({ slug }: { slug: string }) => {
 
   const payload = await getPayload({ config: configPromise })
 
+  // If draft mode is enabled, allow viewing drafts with overrideAccess
+  // The security is already handled by the /api/draft route which checks editor/admin role
   const result = await payload.find({
     collection: 'posts',
     draft,
     limit: 1,
-    overrideAccess: draft,
+    overrideAccess: draft, // Only override access if draft mode is enabled
     pagination: false,
     where: {
-      slug: {
-        equals: slug,
-      },
+      and: [
+        {
+          slug: {
+            equals: slug,
+          },
+        },
+        // If not in draft mode, only show published posts
+        ...(draft
+          ? []
+          : [
+              {
+                _status: {
+                  equals: 'published' as const,
+                },
+              },
+            ]),
+      ],
     },
   })
 

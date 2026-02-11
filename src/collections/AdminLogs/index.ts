@@ -20,6 +20,8 @@ export const AdminLogs: CollectionConfig = {
       options: [
         { label: 'Approve Post', value: 'approve_post' },
         { label: 'Reject Post', value: 'reject_post' },
+        { label: 'Delete Post', value: 'delete_post' },
+        { label: 'Unpublish Post', value: 'unpublish_post' },
         { label: 'Approve Comment', value: 'approve_comment' },
         { label: 'Reject Comment', value: 'reject_comment' },
         { label: 'Mark Comment as Spam', value: 'spam_comment' },

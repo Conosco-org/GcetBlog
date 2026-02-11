@@ -34,7 +34,7 @@ export default async function ActivityLogsPage() {
             <p className="text-muted-foreground">Track all editorial actions and changes</p>
           </div>
           <div className="flex gap-3">
-            <select className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-background">
+            <select className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-background" title="Filter by action type">
               <option>All Actions</option>
               <option>Approvals</option>
               <option>Rejections</option>
@@ -42,7 +42,7 @@ export default async function ActivityLogsPage() {
               <option>Uploads</option>
               <option>Comments</option>
             </select>
-            <select className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-background">
+            <select className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-background" title="Filter by user role">
               <option>All Users</option>
               <option>Admins</option>
               <option>Editors</option>

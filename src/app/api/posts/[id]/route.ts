@@ -33,11 +33,12 @@ function textToLexical(text: string) {
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const payload = await getPayload({ config })
     const body = await request.json()
+    const { id } = await params
 
     // Verify user is authenticated
     const { user } = await payload.auth({ headers: request.headers })
@@ -57,7 +58,7 @@ export async function PATCH(
     // Update the post
     const post = await payload.update({
       collection: 'posts',
-      id: params.id,
+      id: id,
       data: {
         title: body.title,
         content: lexicalContent,

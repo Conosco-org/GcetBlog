@@ -6,12 +6,13 @@ import type { User } from '@/payload-types'
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const payload = await getPayload({ config: configPromise })
     const requestHeaders = await headers()
     const { user } = await payload.auth({ headers: requestHeaders })
+    const { id } = await params
 
     if (!user) {
       return NextResponse.json(
@@ -29,7 +30,7 @@ export async function PATCH(
       )
     }
 
-    const categoryId = params.id
+    const categoryId = id
     const body = await request.json()
     const { title } = body
 
@@ -81,12 +82,13 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const payload = await getPayload({ config: configPromise })
     const requestHeaders = await headers()
     const { user } = await payload.auth({ headers: requestHeaders })
+    const { id } = await params
 
     if (!user) {
       return NextResponse.json(
@@ -104,7 +106,7 @@ export async function DELETE(
       )
     }
 
-    const categoryId = params.id
+    const categoryId = id
 
     // Check if category has posts
     const postsWithCategory = await payload.find({

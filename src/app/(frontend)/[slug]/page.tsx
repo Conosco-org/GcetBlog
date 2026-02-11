@@ -68,7 +68,7 @@ export default async function Page({ params: paramsPromise }: Args) {
   if (slug === 'home') {
     const payload = await getPayload({ config: configPromise })
     
-    // Fetch latest 10 published posts
+    // Fetch latest 10 published posts, sorted by most recently updated
     const postsResult = await payload.find({
       collection: 'posts',
       depth: 2,
@@ -79,8 +79,25 @@ export default async function Page({ params: paramsPromise }: Args) {
           equals: 'published',
         },
       },
-      sort: '-publishedAt',
+      sort: '-updatedAt',
     })
+
+    // Get total counts for stats
+    const totalPosts = await payload.count({
+      collection: 'posts',
+      where: {
+        _status: {
+          equals: 'published',
+        },
+      },
+    })
+
+    const totalUsers = await payload.count({
+      collection: 'users',
+    })
+
+    // Get latest post for the floating card
+    const latestPost = postsResult.docs[0]
 
     return (
       <main className="min-h-screen" data-hide-footer="true">
@@ -88,7 +105,11 @@ export default async function Page({ params: paramsPromise }: Args) {
         <PayloadRedirects disableNotFound url={url} />
         {draft && <LivePreviewListener />}
         
-        <HeroSection />
+        <HeroSection 
+          totalPosts={totalPosts.totalDocs} 
+          totalUsers={totalUsers.totalDocs}
+          latestPost={latestPost}
+        />
         <HomePosts posts={postsResult.docs} />
       </main>
     )
