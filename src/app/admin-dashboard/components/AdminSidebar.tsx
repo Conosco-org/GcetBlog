@@ -44,46 +44,45 @@ export function AdminSidebar({ user, stats, isOpen }: AdminSidebarProps) {
     { name: 'User Management', href: '/admin-dashboard/users', icon: Users, badge: stats.totalUsers },
     { name: 'Role Requests', href: '/admin-dashboard/requests', icon: Shield, badge: stats.pendingRequests },
     { name: 'All Posts', href: '/admin-dashboard/posts', icon: FileText, badge: stats.totalPosts },
-    { name: 'Review Queue', href: '/editor/queue', icon: ClipboardList, badge: stats.pendingReviews },
-    { name: 'Comments', href: '/editor/comments', icon: MessageSquare, badge: stats.totalComments },
+    { name: 'Review Queue', href: '/admin-dashboard/queue', icon: ClipboardList, badge: stats.pendingReviews },
+    { name: 'Comments', href: '/admin-dashboard/comments', icon: MessageSquare, badge: stats.totalComments },
     { name: 'Activity Logs', href: '/admin-dashboard/logs', icon: Activity },
   ]
 
   const externalLinks = [
-    { name: 'Payload CMS', href: '/admin', icon: Shield },
     { name: 'Editor View', href: '/editor', icon: Edit3 },
     { name: 'Public Blog', href: '/', icon: Globe },
   ]
 
   return (
     <aside className={cn(
-      "fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 border-r bg-card transition-transform duration-300 z-30",
+      "fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 border-r bg-card transition-transform duration-300 z-30 overflow-hidden",
       !isOpen && "-translate-x-full"
     )}>
-      <div className="flex h-full flex-col">
+      <div className="flex h-full flex-col overflow-y-auto">
         {/* User Role Breakdown */}
-        <div className="p-4 border-b">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+        <div className="p-3 border-b flex-shrink-0">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">
             Platform Overview
           </p>
-          <div className="grid grid-cols-3 gap-2">
-            <div className="text-center p-2 rounded-md bg-muted/50">
-              <p className="text-lg font-bold">{stats.admins}</p>
+          <div className="grid grid-cols-3 gap-1.5">
+            <div className="text-center p-1.5 rounded-md bg-muted/50">
+              <p className="text-base font-bold leading-tight">{stats.admins}</p>
               <p className="text-[10px] text-muted-foreground">Admins</p>
             </div>
-            <div className="text-center p-2 rounded-md bg-muted/50">
-              <p className="text-lg font-bold">{stats.editors}</p>
+            <div className="text-center p-1.5 rounded-md bg-muted/50">
+              <p className="text-base font-bold leading-tight">{stats.editors}</p>
               <p className="text-[10px] text-muted-foreground">Editors</p>
             </div>
-            <div className="text-center p-2 rounded-md bg-muted/50">
-              <p className="text-lg font-bold">{stats.contributors}</p>
+            <div className="text-center p-1.5 rounded-md bg-muted/50">
+              <p className="text-base font-bold leading-tight">{stats.contributors}</p>
               <p className="text-[10px] text-muted-foreground">Writers</p>
             </div>
           </div>
         </div>
 
         {/* Main Navigation */}
-        <nav className="flex-1 overflow-y-auto p-4">
+        <nav className="flex-1 min-h-0 overflow-y-auto p-3">
           <div className="space-y-1">
             {navigation.map((item) => {
               const isActive = pathname === item.href
@@ -139,20 +138,20 @@ export function AdminSidebar({ user, stats, isOpen }: AdminSidebarProps) {
         </nav>
 
         {/* Quick Actions */}
-        <div className="border-t p-4">
-          <div className="space-y-2">
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">
-              Admin Actions
-            </p>
+        <div className="border-t p-3 flex-shrink-0">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+            Admin Actions
+          </p>
+          <div className="space-y-1.5">
             <Button className="w-full justify-start gap-2" size="sm" asChild>
-              <Link href="/admin">
-                <Shield className="h-4 w-4" />
-                Open Payload CMS
+              <Link href="/admin-dashboard/queue">
+                <ClipboardList className="h-4 w-4" />
+                Review Queue
               </Link>
             </Button>
             <Button variant="outline" className="w-full justify-start gap-2" size="sm" asChild>
               <Link href="/admin-dashboard/requests">
-                <ClipboardList className="h-4 w-4" />
+                <Shield className="h-4 w-4" />
                 Review Requests
               </Link>
             </Button>
@@ -160,9 +159,9 @@ export function AdminSidebar({ user, stats, isOpen }: AdminSidebarProps) {
         </div>
 
         {/* Logout */}
-        <div className="border-t p-4">
+        <div className="border-t p-3 flex-shrink-0">
           <LogoutButton className="w-full justify-start gap-2" />
-          <p className="mt-3 text-xs text-muted-foreground text-center">
+          <p className="mt-2 text-xs text-muted-foreground text-center">
             v2.4.1 - Admin
           </p>
         </div>

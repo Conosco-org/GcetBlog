@@ -14,13 +14,13 @@ export async function middleware(request: NextRequest) {
     return new NextResponse(null, { status: 404 })
   }
 
-  // Require authentication AND admin role for /admin routes
-  if (pathname.startsWith('/admin')) {
+  // Block direct /admin access - redirect admins to /admin-dashboard
+  // Allow /admin-dashboard routes to pass through
+  if (pathname.startsWith('/admin-dashboard')) {
     if (!token) {
       return NextResponse.redirect(new URL('/login', request.url))
     }
-    
-    // Verify user role by calling /api/users/me
+
     try {
       const apiUrl = new URL('/api/users/me', request.url)
       const meResponse = await fetch(apiUrl, {
@@ -30,21 +30,50 @@ export async function middleware(request: NextRequest) {
       })
 
       if (!meResponse.ok) {
-        // Token invalid or expired, redirect to login
         return NextResponse.redirect(new URL('/login?message=Session expired', request.url))
       }
 
       const { user } = await meResponse.json()
 
-      // Only admins can access /admin routes
       if (user?.role !== 'admin') {
-        // Redirect non-admins to their appropriate dashboard
         const redirectUrl = user?.role === 'editor' ? '/editor' : '/dashboard'
         return NextResponse.redirect(new URL(redirectUrl, request.url))
       }
 
-      // Admin verified, allow access
       return NextResponse.next()
+    } catch (error) {
+      console.error('Error verifying admin-dashboard access:', error)
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
+  }
+
+  // Block direct /admin URL access - redirect to /admin-dashboard
+  if (pathname.startsWith('/admin')) {
+    if (!token) {
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
+
+    try {
+      const apiUrl = new URL('/api/users/me', request.url)
+      const meResponse = await fetch(apiUrl, {
+        headers: {
+          Cookie: `payload-token=${token}`,
+        },
+      })
+
+      if (!meResponse.ok) {
+        return NextResponse.redirect(new URL('/login?message=Session expired', request.url))
+      }
+
+      const { user } = await meResponse.json()
+
+      if (user?.role !== 'admin') {
+        const redirectUrl = user?.role === 'editor' ? '/editor' : '/dashboard'
+        return NextResponse.redirect(new URL(redirectUrl, request.url))
+      }
+
+      // Admin user trying to access /admin directly - redirect to admin-dashboard
+      return NextResponse.redirect(new URL('/admin-dashboard', request.url))
     } catch (error) {
       console.error('Error verifying admin access:', error)
       return NextResponse.redirect(new URL('/login', request.url))
@@ -124,7 +153,7 @@ export async function middleware(request: NextRequest) {
       // Only contributors can access /contributor routes
       if (user?.role !== 'contributor') {
         // Redirect to appropriate dashboard
-        const redirectUrl = user?.role === 'admin' ? '/admin' : user?.role === 'editor' ? '/editor' : '/dashboard/user'
+        const redirectUrl = user?.role === 'admin' ? '/admin-dashboard' : user?.role === 'editor' ? '/editor' : '/dashboard/user'
         return NextResponse.redirect(new URL(redirectUrl, request.url))
       }
 
