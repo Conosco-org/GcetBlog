@@ -9,6 +9,7 @@ import React from 'react'
 import { cn } from '@/utilities/ui'
 import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
+import { Analytics } from '@vercel/analytics/next'
 import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
 import '@/app/(frontend)/globals.css'
@@ -98,6 +99,7 @@ export default async function ContributorLayout({
         <Providers>
           <ContributorLayoutClient user={typedUser} stats={stats}>{children}</ContributorLayoutClient>
         </Providers>
+        <Analytics />
       </body>
     </html>
   )

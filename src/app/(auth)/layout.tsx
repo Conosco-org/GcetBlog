@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { cn } from '@/utilities/ui'
 import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
+import { Analytics } from '@vercel/analytics/next'
 import { Logo } from '@/components/Logo/Logo'
 import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
@@ -44,6 +45,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             </footer>
           </div>
         </Providers>
+        <Analytics />
       </body>
     </html>
   )
