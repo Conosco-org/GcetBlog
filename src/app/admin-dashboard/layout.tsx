@@ -1,0 +1,104 @@
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
+import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
+import { AdminLayoutClient } from './components/AdminLayoutClient'
+import { PayloadBlocker } from '../contributor/components/PayloadBlocker'
+import type { User } from '@/payload-types'
+import React from 'react'
+import { cn } from '@/utilities/ui'
+import { GeistMono } from 'geist/font/mono'
+import { GeistSans } from 'geist/font/sans'
+import { Providers } from '@/providers'
+import { InitTheme } from '@/providers/Theme/InitTheme'
+import '@/app/(frontend)/globals.css'
+
+export default async function AdminDashboardLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  const payload = await getPayload({ config: configPromise })
+  const requestHeaders = await headers()
+  const { user } = await payload.auth({ headers: requestHeaders })
+
+  if (!user) {
+    redirect('/login')
+  }
+
+  const typedUser = user as User
+
+  // Only allow admins to access this area
+  if (typedUser.role !== 'admin') {
+    redirect('/dashboard')
+  }
+
+  // Fetch stats for the admin dashboard
+  const [
+    totalUsers,
+    totalPosts,
+    pendingRequests,
+    pendingReviews,
+    totalComments,
+    contributorCount,
+    editorCount,
+    adminCount,
+  ] = await Promise.all([
+    payload.find({ collection: 'users', limit: 0 }),
+    payload.find({ collection: 'posts', limit: 0 }),
+    payload.find({
+      collection: 'role-upgrade-requests',
+      where: { status: { equals: 'pending' } },
+      limit: 0,
+    }),
+    payload.find({
+      collection: 'posts',
+      where: { reviewStatus: { equals: 'pending' } },
+      limit: 0,
+    }),
+    payload.find({ collection: 'comments', limit: 0 }),
+    payload.find({
+      collection: 'users',
+      where: { role: { equals: 'contributor' } },
+      limit: 0,
+    }),
+    payload.find({
+      collection: 'users',
+      where: { role: { equals: 'editor' } },
+      limit: 0,
+    }),
+    payload.find({
+      collection: 'users',
+      where: { role: { equals: 'admin' } },
+      limit: 0,
+    }),
+  ])
+
+  const stats = {
+    totalUsers: totalUsers.totalDocs,
+    totalPosts: totalPosts.totalDocs,
+    pendingRequests: pendingRequests.totalDocs,
+    pendingReviews: pendingReviews.totalDocs,
+    totalComments: totalComments.totalDocs,
+    contributors: contributorCount.totalDocs,
+    editors: editorCount.totalDocs,
+    admins: adminCount.totalDocs,
+  }
+
+  return (
+    <html className={cn(GeistSans.variable, GeistMono.variable)} lang="en" suppressHydrationWarning>
+      <head>
+        <InitTheme />
+        <link href="https://res.cloudinary.com/dqpvhbkdd/image/upload/b_white,c_pad,w_512,h_512/v1761577830/Gcet_Logo_i9fkbt.png" rel="icon" type="image/png" />
+      </head>
+      <body className="bg-background text-foreground antialiased" suppressHydrationWarning>
+        <PayloadBlocker />
+        <Providers>
+          <AdminLayoutClient user={typedUser} stats={stats}>
+            {children}
+          </AdminLayoutClient>
+        </Providers>
+      </body>
+    </html>
+  )
+}
