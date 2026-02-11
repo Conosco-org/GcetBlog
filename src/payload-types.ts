@@ -223,6 +223,9 @@ export interface Page {
 export interface Post {
   id: string;
   title: string;
+  /**
+   * Recommended: 1920×1080 (16:9). For portraits, keep faces in top 60% of frame. Compress to <500KB.
+   */
   heroImage?: (string | null) | Media;
   content: {
     root: {
@@ -276,6 +279,8 @@ export interface Post {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * 📸 Recommended sizes: Hero 1920×1080 (16:9), Cards 900×600 (3:2), OG 1200×630. Optimize images to <500KB. See IMAGE_GUIDELINES.md for details.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
