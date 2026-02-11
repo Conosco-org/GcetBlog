@@ -23,24 +23,9 @@ import {
   Save,
   Check,
   Link as LinkIcon,
-  Bold,
-  Italic,
-  Underline,
-  Heading1,
-  Heading2,
-  Heading3,
-  Type,
-  List,
-  ListOrdered,
-  Quote,
-  Code,
-  Image as ImageIcon,
-  Video,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
 } from 'lucide-react'
 import { cn } from '@/utilities/ui'
+import { RichTextEditor, htmlToLexical, htmlToPlainText } from '@/components/RichTextEditor'
 
 const contentTypes = [
   {
@@ -191,7 +176,7 @@ export function CreateContentForm({ user, categories: dbCategories }: CreateCont
         },
         body: JSON.stringify({
           title,
-          content,
+          content: htmlToLexical(content),
           excerpt,
           categories: selectedCategories,
           tags,
@@ -254,7 +239,7 @@ export function CreateContentForm({ user, categories: dbCategories }: CreateCont
         },
         body: JSON.stringify({
           title,
-          content,
+          content: htmlToLexical(content),
           excerpt,
           categories: selectedCategories,
           tags,
@@ -419,81 +404,15 @@ export function CreateContentForm({ user, categories: dbCategories }: CreateCont
           {/* Content Editor */}
           <div className="space-y-2">
             <Label>Content *</Label>
-            <Card>
-              <CardContent className="p-0">
-                {/* Toolbar */}
-                <div className="flex flex-wrap gap-1 p-2 border-b bg-muted/50">
-                  <Button variant="ghost" size="sm" type="button" aria-label="Bold">
-                    <Bold className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm" type="button" aria-label="Italic">
-                    <Italic className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm" type="button" aria-label="Underline">
-                    <Underline className="h-4 w-4" />
-                  </Button>
-                  <div className="w-px h-6 bg-border mx-1" />
-                  <Button variant="ghost" size="sm" type="button" aria-label="Heading 1">
-                    <Heading1 className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm" type="button" aria-label="Heading 2">
-                    <Heading2 className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm" type="button" aria-label="Heading 3">
-                    <Heading3 className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm" type="button" aria-label="Paragraph">
-                    <Type className="h-4 w-4" />
-                  </Button>
-                  <div className="w-px h-6 bg-border mx-1" />
-                  <Button variant="ghost" size="sm" type="button" aria-label="Bullet list">
-                    <List className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm" type="button" aria-label="Numbered list">
-                    <ListOrdered className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm" type="button" aria-label="Block quote">
-                    <Quote className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm" type="button" aria-label="Code block">
-                    <Code className="h-4 w-4" />
-                  </Button>
-                  <div className="w-px h-6 bg-border mx-1" />
-                  <Button variant="ghost" size="sm" type="button" aria-label="Insert link">
-                    <LinkIcon className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm" type="button" aria-label="Insert image">
-                    <ImageIcon className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm" type="button" aria-label="Insert video">
-                    <Video className="h-4 w-4" />
-                  </Button>
-                  <div className="w-px h-6 bg-border mx-1" />
-                  <Button variant="ghost" size="sm" type="button" aria-label="Align left">
-                    <AlignLeft className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm" type="button" aria-label="Align center">
-                    <AlignCenter className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm" type="button" aria-label="Align right">
-                    <AlignRight className="h-4 w-4" />
-                  </Button>
-                </div>
-
-                {/* Editor */}
-                <Textarea
-                  placeholder="Start writing your story..."
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  className="min-h-[400px] border-0 focus-visible:ring-0 rounded-none resize-none"
-                />
-
-                {/* Word Count */}
-                <div className="p-2 border-t bg-muted/50 text-xs text-muted-foreground text-right">
-                  {content.split(/\s+/).filter(Boolean).length} / 3,000 words
-                </div>
-              </CardContent>
-            </Card>
+            <RichTextEditor
+              value={content}
+              onChange={setContent}
+              placeholder="Start writing your story..."
+              minHeight="400px"
+            />
+            <div className="text-xs text-muted-foreground text-right">
+              {htmlToPlainText(content).split(/\s+/).filter(Boolean).length} / 3,000 words
+            </div>
           </div>
         </div>
 
