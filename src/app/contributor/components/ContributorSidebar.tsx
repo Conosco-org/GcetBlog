@@ -12,10 +12,9 @@ import {
   PlusCircle, 
   Send, 
   MessageSquare, 
-  TrendingUp, 
   Globe, 
   Edit3,
-  LogOut
+  UserCircle
 } from 'lucide-react'
 import { cn } from '@/utilities/ui'
 
@@ -39,9 +38,8 @@ export function ContributorSidebar({ user, stats, isOpen }: ContributorSidebarPr
     { name: 'My Drafts', href: '/contributor/drafts', icon: FileText, badge: stats.drafts },
     { name: 'Submissions', href: '/contributor/submissions', icon: Send, badge: stats.submissions },
     { name: 'Feedback Center', href: '/contributor/feedback', icon: MessageSquare, badge: stats.feedback },
-    { name: 'My Stats', href: '/contributor/stats', icon: TrendingUp },
-    { name: 'Published Work', href: '/contributor/published', icon: Globe, badge: stats.published },
-    { name: 'Public Blog View', href: '/', icon: Globe },
+    { name: 'Profile', href: '/contributor/profile', icon: UserCircle },
+    { name: 'Public Blog', href: '/', icon: Globe },
   ]
 
   return (
@@ -51,7 +49,7 @@ export function ContributorSidebar({ user, stats, isOpen }: ContributorSidebarPr
     )}>
       <div className="flex h-full flex-col">
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto p-4">
+        <nav className="flex-1 overflow-y-auto p-4" aria-label="Contributor navigation">
           <div className="space-y-1">
             {navigation.map((item) => {
               const isActive = pathname === item.href
@@ -59,6 +57,7 @@ export function ContributorSidebar({ user, stats, isOpen }: ContributorSidebarPr
                 <Link
                   key={item.name}
                   href={item.href}
+                  aria-current={isActive ? 'page' : undefined}
                   className={cn(
                     'flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                     isActive
@@ -109,7 +108,7 @@ export function ContributorSidebar({ user, stats, isOpen }: ContributorSidebarPr
         <div className="border-t p-4">
           <LogoutButton className="w-full justify-start gap-2" />
           <p className="mt-3 text-xs text-muted-foreground text-center">
-            v2.4.1 - Contributor
+            Contributor Panel
           </p>
         </div>
       </div>

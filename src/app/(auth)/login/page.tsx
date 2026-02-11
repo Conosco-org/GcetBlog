@@ -35,7 +35,7 @@ export default async function LoginPage({
     } else if (user.role === 'editor') {
       redirect('/editor')
     } else {
-      redirect('/dashboard')
+      redirect('/contributor')
     }
   }
 

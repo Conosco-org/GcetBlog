@@ -186,6 +186,7 @@ export default function FeedbackCenter({ feedback, stats, user: _user }: Feedbac
                     variant={filter === 'all' ? 'default' : 'outline'}
                     size="sm"
                     onClick={() => setFilter('all')}
+                    aria-pressed={filter === 'all'}
                   >
                     All
                   </Button>
@@ -193,6 +194,7 @@ export default function FeedbackCenter({ feedback, stats, user: _user }: Feedbac
                     variant={filter === 'unread' ? 'default' : 'outline'}
                     size="sm"
                     onClick={() => setFilter('unread')}
+                    aria-pressed={filter === 'unread'}
                   >
                     Unread
                   </Button>
@@ -208,7 +210,7 @@ export default function FeedbackCenter({ feedback, stats, user: _user }: Feedbac
                   </div>
                 ) : (
                   filteredFeedback.map((item) => (
-                    <div
+                    <button
                       key={item.id}
                       className={`p-4 border-b cursor-pointer hover:bg-muted transition-colors ${
                         selectedFeedback?.id === item.id ? 'bg-primary/5 border-l-4 border-l-primary' : ''
@@ -236,7 +238,7 @@ export default function FeedbackCenter({ feedback, stats, user: _user }: Feedbac
                           </p>
                         </div>
                       </div>
-                    </div>
+                    </button>
                   ))
                 )}
               </div>
@@ -259,14 +261,22 @@ export default function FeedbackCenter({ feedback, stats, user: _user }: Feedbac
                       <span>Post: {selectedFeedback.title}</span>
                       <span>•</span>
                       <span>With Editor</span>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="ml-auto"
-                      >
-                        <Eye className="w-4 h-4 mr-1" />
-                        View Article
-                      </Button>
+                      {typeof selectedFeedback.post === 'object' && selectedFeedback.post?.slug ? (
+                        <a
+                          href={`/posts/${selectedFeedback.post.slug}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="ml-auto"
+                          >
+                            <Eye className="w-4 h-4 mr-1" />
+                            View Article
+                          </Button>
+                        </a>
+                      ) : null}
                     </div>
                   </div>
                   <Badge className={getTypeColor(selectedFeedback.type)}>

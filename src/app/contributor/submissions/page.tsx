@@ -135,7 +135,7 @@ export default async function SubmissionsPage() {
                 <div className="flex gap-2">
                   {post.reviewStatus === 'rejected' && (
                     <Button variant="default" size="sm" asChild>
-                      <Link href={`/contributor/edit/${post.id}`}>
+                      <Link href={`/editor/posts/${post.id}/edit`}>
                         <Edit className="h-4 w-4 mr-1" />
                         Edit & Resubmit
                       </Link>

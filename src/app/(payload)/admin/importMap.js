@@ -25,6 +25,7 @@ import { default as default_a94b973e04625a2034d1f418c5138318 } from '@/component
 import { default as default_314742147967cd6e64b5e4c316e92ae8 } from '@/components/AdminUI/CustomLogo'
 import { default as default_fefc63da8f85d90ebcab71904c38347e } from '@/components/AdminUI/CustomDashboard'
 import { default as default_8a7ab0eb7ab5c511aba12e68480bfe5e } from '@/components/BeforeLogin'
+import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 export const importMap = {
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
@@ -53,5 +54,6 @@ export const importMap = {
   "@/components/AdminLogout#default": default_a94b973e04625a2034d1f418c5138318,
   "@/components/AdminUI/CustomLogo#default": default_314742147967cd6e64b5e4c316e92ae8,
   "@/components/AdminUI/CustomDashboard#default": default_fefc63da8f85d90ebcab71904c38347e,
-  "@/components/BeforeLogin#default": default_8a7ab0eb7ab5c511aba12e68480bfe5e
+  "@/components/BeforeLogin#default": default_8a7ab0eb7ab5c511aba12e68480bfe5e,
+  "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }
