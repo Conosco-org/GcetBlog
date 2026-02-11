@@ -7,11 +7,11 @@ export function ConditionalLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname()
   const isEditorRoute = pathname?.startsWith('/editor')
   
-  // Landing pages without footer: home, posts list, posts pagination, contact
-  const isLandingPageWithoutFooter = 
+  // Pages without footer: home, posts list, posts pagination, individual posts, contact
+  const isPageWithoutFooter = 
     pathname === '/' || 
     pathname === '/posts' || 
-    pathname?.startsWith('/posts/page/') || 
+    pathname?.startsWith('/posts/') || 
     pathname === '/contact'
 
   // For editor routes, only show the children (which includes the editor layout)
@@ -21,8 +21,8 @@ export function ConditionalLayout({ children }: { children: ReactNode }) {
     return <>{childArray[1]}</> // Return only the {children} part, skip Header and Footer
   }
 
-  // For landing pages (home, posts list, contact), show Header + children (no Footer)
-  if (isLandingPageWithoutFooter) {
+  // For pages without footer (home, posts, contact), show Header + children only
+  if (isPageWithoutFooter) {
     const childArray = Array.isArray(children) ? children : [children]
     return (
       <>
