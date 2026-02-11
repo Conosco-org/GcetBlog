@@ -48,7 +48,7 @@ export async function loginAction(formData: FormData) {
         // Default role-based redirect
         redirectPath = user?.role === 'admin' ? '/admin' : 
                       user?.role === 'editor' ? '/editor' : 
-                      '/dashboard'
+                      '/contributor'
       }
       
       console.log('Login successful - User role:', user?.role, 'Redirecting to:', redirectPath)

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { User, Category } from '@/payload-types'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -102,6 +102,9 @@ export function CreateContentForm({ user, categories: dbCategories }: CreateCont
   const [publishDate, setPublishDate] = useState('')
   const [isSaving, setIsSaving] = useState(false)
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle')
+  const [featuredImage, setFeaturedImage] = useState<string | null>(null)
+  const [featuredImagePreview, setFeaturedImagePreview] = useState<string | null>(null)
+  const [uploadingImage, setUploadingImage] = useState(false)
 
   const toggleCategory = (category: string) => {
     setSelectedCategories((prev) =>
@@ -124,6 +127,46 @@ export function CreateContentForm({ user, categories: dbCategories }: CreateCont
     if (e.key === 'Enter') {
       e.preventDefault()
       addTag()
+    }
+  }
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (!file.type.startsWith('image/')) {
+      toast({ title: 'Error', description: 'Please select an image file.', variant: 'destructive' })
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ title: 'Error', description: 'Image must be under 5MB.', variant: 'destructive' })
+      return
+    }
+
+    setUploadingImage(true)
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('alt', title || 'Featured image')
+
+      const res = await fetch('/api/media', {
+        method: 'POST',
+        credentials: 'include',
+        body: formData,
+      })
+
+      if (!res.ok) {
+        throw new Error('Upload failed')
+      }
+
+      const data = await res.json()
+      setFeaturedImage(data.doc.id)
+      setFeaturedImagePreview(data.doc.url || URL.createObjectURL(file))
+      toast({ title: 'Image uploaded', description: 'Featured image has been set.' })
+    } catch {
+      toast({ title: 'Error', description: 'Failed to upload image.', variant: 'destructive' })
+    } finally {
+      setUploadingImage(false)
     }
   }
 
@@ -155,6 +198,7 @@ export function CreateContentForm({ user, categories: dbCategories }: CreateCont
           metaDescription,
           publishDate,
           contentType: selectedType,
+          featuredImage: featuredImage || undefined,
           isDraft: false, // Submit for review
         }),
       })
@@ -217,6 +261,7 @@ export function CreateContentForm({ user, categories: dbCategories }: CreateCont
           metaDescription,
           publishDate,
           contentType: selectedType,
+          featuredImage: featuredImage || undefined,
           isDraft: true, // Save as draft
         }),
       })
@@ -295,6 +340,7 @@ export function CreateContentForm({ user, categories: dbCategories }: CreateCont
                     <button
                       key={type.id}
                       onClick={() => setSelectedType(type.id)}
+                      aria-pressed={selectedType === type.id}
                       className={cn(
                         'flex flex-col items-start p-4 rounded-lg border-2 transition-all text-left',
                         selectedType === type.id
@@ -377,59 +423,59 @@ export function CreateContentForm({ user, categories: dbCategories }: CreateCont
               <CardContent className="p-0">
                 {/* Toolbar */}
                 <div className="flex flex-wrap gap-1 p-2 border-b bg-muted/50">
-                  <Button variant="ghost" size="sm" type="button">
+                  <Button variant="ghost" size="sm" type="button" aria-label="Bold">
                     <Bold className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="sm" type="button">
+                  <Button variant="ghost" size="sm" type="button" aria-label="Italic">
                     <Italic className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="sm" type="button">
+                  <Button variant="ghost" size="sm" type="button" aria-label="Underline">
                     <Underline className="h-4 w-4" />
                   </Button>
                   <div className="w-px h-6 bg-border mx-1" />
-                  <Button variant="ghost" size="sm" type="button">
+                  <Button variant="ghost" size="sm" type="button" aria-label="Heading 1">
                     <Heading1 className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="sm" type="button">
+                  <Button variant="ghost" size="sm" type="button" aria-label="Heading 2">
                     <Heading2 className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="sm" type="button">
+                  <Button variant="ghost" size="sm" type="button" aria-label="Heading 3">
                     <Heading3 className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="sm" type="button">
+                  <Button variant="ghost" size="sm" type="button" aria-label="Paragraph">
                     <Type className="h-4 w-4" />
                   </Button>
                   <div className="w-px h-6 bg-border mx-1" />
-                  <Button variant="ghost" size="sm" type="button">
+                  <Button variant="ghost" size="sm" type="button" aria-label="Bullet list">
                     <List className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="sm" type="button">
+                  <Button variant="ghost" size="sm" type="button" aria-label="Numbered list">
                     <ListOrdered className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="sm" type="button">
+                  <Button variant="ghost" size="sm" type="button" aria-label="Block quote">
                     <Quote className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="sm" type="button">
+                  <Button variant="ghost" size="sm" type="button" aria-label="Code block">
                     <Code className="h-4 w-4" />
                   </Button>
                   <div className="w-px h-6 bg-border mx-1" />
-                  <Button variant="ghost" size="sm" type="button">
+                  <Button variant="ghost" size="sm" type="button" aria-label="Insert link">
                     <LinkIcon className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="sm" type="button">
+                  <Button variant="ghost" size="sm" type="button" aria-label="Insert image">
                     <ImageIcon className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="sm" type="button">
+                  <Button variant="ghost" size="sm" type="button" aria-label="Insert video">
                     <Video className="h-4 w-4" />
                   </Button>
                   <div className="w-px h-6 bg-border mx-1" />
-                  <Button variant="ghost" size="sm" type="button">
+                  <Button variant="ghost" size="sm" type="button" aria-label="Align left">
                     <AlignLeft className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="sm" type="button">
+                  <Button variant="ghost" size="sm" type="button" aria-label="Align center">
                     <AlignCenter className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="sm" type="button">
+                  <Button variant="ghost" size="sm" type="button" aria-label="Align right">
                     <AlignRight className="h-4 w-4" />
                   </Button>
                 </div>
@@ -462,13 +508,51 @@ export function CreateContentForm({ user, categories: dbCategories }: CreateCont
               {/* Featured Image */}
               <div className="space-y-2">
                 <Label>Featured Image</Label>
-                <div className="border-2 border-dashed rounded-lg p-8 text-center hover:border-primary transition-colors cursor-pointer">
-                  <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground mb-2">Upload featured image</p>
-                  <Button variant="outline" size="sm" type="button">
-                    Choose File
-                  </Button>
-                </div>
+                {featuredImagePreview ? (
+                  <div className="relative rounded-lg overflow-hidden border">
+                    <img
+                      src={featuredImagePreview}
+                      alt="Featured"
+                      className="w-full h-40 object-cover"
+                    />
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      type="button"
+                      className="absolute top-2 right-2"
+                      onClick={() => {
+                        setFeaturedImage(null)
+                        setFeaturedImagePreview(null)
+                      }}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                ) : (
+                  <label className="border-2 border-dashed rounded-lg p-8 text-center hover:border-primary transition-colors cursor-pointer block">
+                    {uploadingImage ? (
+                      <>
+                        <div className="h-8 w-8 mx-auto mb-2 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                        <p className="text-sm text-muted-foreground">Uploading...</p>
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+                        <p className="text-sm text-muted-foreground mb-2">Upload featured image</p>
+                        <span className="inline-flex items-center justify-center rounded-md text-sm font-medium border border-input bg-background px-3 py-1.5">
+                          Choose File
+                        </span>
+                      </>
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="sr-only"
+                      onChange={handleImageUpload}
+                      disabled={uploadingImage}
+                    />
+                  </label>
+                )}
               </div>
 
               {/* Excerpt */}

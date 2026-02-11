@@ -33,11 +33,19 @@ export async function POST(
     }
 
     // Get the feedback conversation
-    const feedback = await payload.findByID({
-      collection: 'feedback',
-      id: feedbackId,
-      depth: 2,
-    })
+    let feedback
+    try {
+      feedback = await payload.findByID({
+        collection: 'feedback',
+        id: feedbackId,
+        depth: 2,
+      })
+    } catch {
+      return NextResponse.json(
+        { error: 'Feedback conversation not found' },
+        { status: 404 }
+      )
+    }
 
     if (!feedback) {
       return NextResponse.json(
