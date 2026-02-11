@@ -1,62 +1,54 @@
-'use client'
+﻿'use client'
 
 import React from 'react'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { PenLine, ArrowRight } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 
 export const CTASection: React.FC = () => {
   return (
-    <section className="py-20 md:py-32 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-950">
-      <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 via-cyan-600 to-teal-600 p-12 md:p-16 text-white shadow-2xl">
-            {/* Background Pattern */}
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
-              <div className="absolute bottom-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
-            </div>
+    <section className="py-24 md:py-32 relative overflow-hidden">
+      {/* Accent background strip */}
+      <div className="absolute inset-0 bg-foreground" />
+      
+      {/* Dot pattern overlay */}
+      <div className="absolute inset-0 opacity-5">
+        <svg width="100%" height="100%">
+          <pattern id="cta-dots" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
+            <circle cx="1" cy="1" r="0.5" fill="currentColor" className="text-background" />
+          </pattern>
+          <rect width="100%" height="100%" fill="url(#cta-dots)" />
+        </svg>
+      </div>
 
-            {/* Content */}
-            <div className="relative z-10 text-center">
-              <div className="inline-flex p-4 bg-white/20 backdrop-blur-sm rounded-2xl mb-6">
-                <PenLine className="w-12 h-12" />
-              </div>
+      <div className="container mx-auto px-6 relative z-10">
+        <div className="max-w-3xl mx-auto text-center">
+          <span className="text-xs tracking-widest uppercase text-accent font-medium">Students &middot; Staff &middot; Alumni</span>
+          
+          <h2 className="font-display text-4xl md:text-6xl lg:text-7xl text-background mt-6 mb-8 leading-[1.05]">
+            Got something
+            <br />
+            to say?
+          </h2>
 
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                Ready to Share Your Story?
-              </h2>
+          <p className="text-lg md:text-xl text-background/60 max-w-xl mx-auto mb-12 leading-relaxed">
+            A tutorial, a poem, a hot take, a project breakdown &mdash; whatever it is, spill it. This platform is built for your voice.
+          </p>
 
-              <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-2xl mx-auto">
-                Join our vibrant community of writers, coders, and innovators. Your voice matters, and we can&apos;t wait to hear it.
-              </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              href="/login"
+              className="group inline-flex items-center gap-3 px-8 py-4 bg-accent text-accent-foreground rounded-full text-sm font-medium tracking-wide hover:opacity-90 transition-opacity"
+            >
+              Start Contributing
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+            </Link>
 
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <Link href="/login">
-                  <Button size="lg" className="group bg-white text-blue-600 hover:bg-blue-50 text-lg px-8 py-6 shadow-xl">
-                    Start Writing Today
-                    <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
-                
-                <Link href="/posts">
-                  <Button size="lg" variant="outline" className="text-lg px-8 py-6 bg-white/10 border-white/30 text-white hover:bg-white/20 backdrop-blur-sm">
-                    Explore Articles
-                  </Button>
-                </Link>
-              </div>
-
-              {/* Additional Info */}
-              <div className="mt-12 pt-8 border-t border-white/20">
-                <p className="text-blue-100">
-                  <strong>New here?</strong> Check out our{' '}
-                  <Link href="/about" className="underline hover:text-white transition-colors">
-                    getting started guide
-                  </Link>
-                  {' '}to learn how to contribute.
-                </p>
-              </div>
-            </div>
+            <Link
+              href="/posts"
+              className="inline-flex items-center gap-3 px-8 py-4 border border-background/20 text-background rounded-full text-sm font-medium tracking-wide hover:bg-background/10 transition-colors"
+            >
+              Read Articles
+            </Link>
           </div>
         </div>
       </div>

@@ -1,100 +1,82 @@
-'use client'
+﻿'use client'
 
 import React from 'react'
-import { Code2, Pen, Trophy, Sparkles, Users2, Rocket } from 'lucide-react'
-import { Card } from '@/components/ui/card'
 
 const features = [
   {
-    icon: Code2,
-    title: 'Technical Excellence',
-    description: 'Deep dive into coding tutorials, algorithm insights, and cutting-edge technology trends.',
-    color: 'blue',
-    gradient: 'from-blue-500 to-cyan-500',
+    number: '01',
+    title: 'Multimedia Content',
+    description: 'Publish rich content across formats \u2014 articles, poems, audio recordings, videos, and PDF documents \u2014 all in one unified platform.',
   },
   {
-    icon: Pen,
+    number: '02',
     title: 'Creative Expression',
-    description: 'Showcase your literary talents through poems, stories, and thoughtful essays.',
-    color: 'purple',
-    gradient: 'from-purple-500 to-pink-500',
+    description: 'A space curated by the Literary Club for essays, poetry, short stories, and thoughtful commentary on campus life and beyond.',
   },
   {
-    icon: Trophy,
-    title: 'Student Achievements',
-    description: 'Celebrate hackathon wins, project showcases, and academic milestones.',
-    color: 'amber',
-    gradient: 'from-amber-500 to-orange-500',
+    number: '03',
+    title: 'Technical Showcase',
+    description: 'Share coding tutorials, project breakdowns, hackathon recaps, and technical deep-dives powered by the Coding Club.',
   },
   {
-    icon: Sparkles,
-    title: 'Innovation Hub',
-    description: 'Discover groundbreaking ideas and innovative solutions from our community.',
-    color: 'cyan',
-    gradient: 'from-cyan-500 to-teal-500',
+    number: '04',
+    title: 'Structured Roles',
+    description: 'Purpose-built for collaboration \u2014 Admins (Coding Club), Editors (Literary Club Leads), and Contributors from across the GCET fraternity.',
   },
   {
-    icon: Users2,
-    title: 'Collaborative Learning',
-    description: 'Connect with peers, share knowledge, and grow together in a supportive environment.',
-    color: 'green',
-    gradient: 'from-green-500 to-emerald-500',
+    number: '05',
+    title: 'Moderated Feedback',
+    description: 'Every piece of content benefits from community feedback with built-in moderation, ensuring constructive and meaningful discourse.',
   },
   {
-    icon: Rocket,
-    title: 'Career Growth',
-    description: 'Access career guidance, interview prep, and industry insights to boost your journey.',
-    color: 'red',
-    gradient: 'from-red-500 to-rose-500',
+    number: '06',
+    title: 'Open to All',
+    description: 'Students, staff, alumni, and the wider GCET fraternity can contribute \u2014 because great ideas come from every corner of our community.',
   },
 ]
 
 export const FeaturesSection: React.FC = () => {
   return (
-    <section id="about" className="py-20 md:py-32 bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto px-4">
+    <section id="about" className="py-24 md:py-32">
+      <div className="container mx-auto px-6">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 rounded-full text-sm font-medium text-blue-700 dark:text-blue-300 mb-6">
-            <Sparkles className="w-4 h-4" />
-            <span>What We Offer</span>
-          </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400">
-              Empowering Student Voices
-            </span>
+        <div className="max-w-2xl mb-16 animate-fade-up">
+          <span className="text-xs tracking-widest uppercase text-accent font-medium">What We Offer</span>
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl mt-4 mb-6 leading-[1.1]">
+            Built for the
+            <br />
+            <span className="text-accent">GCET community</span>
           </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-300">
-            A platform where technical prowess meets creative expression, fostering a community of innovators and storytellers.
+          <p className="text-lg text-muted-foreground leading-relaxed">
+            Where technical prowess meets creative expression &mdash; a platform for collaboration, storytelling, and innovation across all departments.
           </p>
         </div>
 
-        {/* Features Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {features.map((feature, index) => {
-            const Icon = feature.icon
-            return (
-              <Card
-                key={index}
-                className="group p-8 hover:shadow-2xl transition-all duration-300 border-2 hover:border-transparent hover:scale-105 cursor-pointer bg-white dark:bg-gray-800"
-              >
-                <div className={`inline-flex p-4 rounded-2xl bg-gradient-to-br ${feature.gradient} mb-6 group-hover:scale-110 transition-transform`}>
-                  <Icon className="w-8 h-8 text-white" />
-                </div>
-                
-                <h3 className="text-2xl font-bold mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+        {/* Features List - Editorial Style */}
+        <div className="space-y-0">
+          {features.map((feature, index) => (
+            <div
+              key={feature.number}
+              className={`group grid grid-cols-12 gap-4 md:gap-8 py-8 border-t border-border hover:bg-card/50 transition-colors duration-300 animate-fade-up stagger-${index + 1}`}
+            >
+              <div className="col-span-2 md:col-span-1">
+                <span className="font-display text-2xl md:text-3xl text-accent/60 group-hover:text-accent transition-colors">
+                  {feature.number}
+                </span>
+              </div>
+              <div className="col-span-10 md:col-span-4">
+                <h3 className="text-xl md:text-2xl font-semibold tracking-tight group-hover:text-accent transition-colors">
                   {feature.title}
                 </h3>
-                
-                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+              </div>
+              <div className="col-span-12 md:col-span-7 md:pl-4">
+                <p className="text-muted-foreground leading-relaxed">
                   {feature.description}
                 </p>
-                
-                {/* Hover Effect Line */}
-                <div className={`mt-6 h-1 w-0 group-hover:w-full bg-gradient-to-r ${feature.gradient} transition-all duration-300 rounded-full`}></div>
-              </Card>
-            )
-          })}
+              </div>
+            </div>
+          ))}
+          <div className="border-t border-border" />
         </div>
       </div>
     </section>
