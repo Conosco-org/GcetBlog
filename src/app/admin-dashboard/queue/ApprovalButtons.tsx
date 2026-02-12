@@ -106,7 +106,7 @@ export function AdminQueueApprovalButtons({ postId, postTitle, postSlug }: Admin
         {isRejecting ? 'Rejecting...' : 'Reject'}
       </Button>
       {postSlug && (
-        <Button variant="ghost" size="sm" asChild>
+        <Button variant="ghost" size="sm" asChild aria-label="Preview post">
           <Link href={`/posts/${postSlug}?draft=true`} target="_blank">
             <Eye className="w-4 h-4" />
           </Link>

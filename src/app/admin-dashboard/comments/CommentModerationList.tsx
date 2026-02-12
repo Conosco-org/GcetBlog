@@ -13,7 +13,6 @@ import type { Comment } from '@/payload-types'
 
 interface AdminCommentModerationListProps {
   comments: Comment[]
-  currentUser: { id: string; role: string; name: string }
 }
 
 function AdminCommentCard({ comment }: { comment: Comment }) {
@@ -86,7 +85,7 @@ function AdminCommentCard({ comment }: { comment: Comment }) {
           </div>
           <div className="flex gap-2">
             {isLongComment && (
-              <Button variant="ghost" size="sm" onClick={() => setShowFullComment(!showFullComment)}>
+              <Button variant="ghost" size="sm" onClick={() => setShowFullComment(!showFullComment)} aria-label="Toggle full comment">
                 <Eye className="w-4 h-4" />
               </Button>
             )}
@@ -150,7 +149,7 @@ function AdminCommentCard({ comment }: { comment: Comment }) {
   )
 }
 
-export function AdminCommentModerationList({ comments, currentUser }: AdminCommentModerationListProps) {
+export function AdminCommentModerationList({ comments }: AdminCommentModerationListProps) {
   if (comments.length === 0) {
     return (
       <div className="text-center py-8 text-muted-foreground bg-muted rounded-md">

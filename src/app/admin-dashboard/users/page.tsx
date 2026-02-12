@@ -1,9 +1,9 @@
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import {
   Table,
   TableBody,
@@ -24,8 +24,11 @@ export default async function AdminUsersPage() {
   const requestHeaders = await headers()
   const { user } = await payload.auth({ headers: requestHeaders })
 
-  if (!user || (user as User).role !== 'admin') {
-    return null
+  if (!user) {
+    redirect('/login')
+  }
+  if ((user as User).role !== 'admin') {
+    redirect('/admin-dashboard')
   }
 
   const currentUserId = (user as User).id
@@ -39,11 +42,10 @@ export default async function AdminUsersPage() {
   })
 
   // Role counts
-  const [adminCount, editorCount, contributorCount, userCount] = await Promise.all([
+  const [adminCount, editorCount, contributorCount] = await Promise.all([
     payload.find({ collection: 'users', where: { role: { equals: 'admin' } }, limit: 0 }),
     payload.find({ collection: 'users', where: { role: { equals: 'editor' } }, limit: 0 }),
     payload.find({ collection: 'users', where: { role: { equals: 'contributor' } }, limit: 0 }),
-    payload.find({ collection: 'users', where: { role: { equals: 'user' } }, limit: 0 }),
   ])
 
   const getRoleBadgeVariant = (role: string) => {
@@ -66,7 +68,7 @@ export default async function AdminUsersPage() {
       </div>
 
       {/* Role Stats */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Admins</CardTitle>
@@ -92,15 +94,6 @@ export default async function AdminUsersPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{contributorCount.totalDocs}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Regular Users</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{userCount.totalDocs}</div>
           </CardContent>
         </Card>
       </div>
@@ -144,8 +137,8 @@ export default async function AdminUsersPage() {
                       {typedU.email}
                     </TableCell>
                     <TableCell>
-                      <Badge variant={getRoleBadgeVariant(typedU.role || 'user')} className="capitalize">
-                        {typedU.role || 'user'}
+                      <Badge variant={getRoleBadgeVariant(typedU.role || 'contributor')} className="capitalize">
+                        {typedU.role || 'contributor'}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-muted-foreground">

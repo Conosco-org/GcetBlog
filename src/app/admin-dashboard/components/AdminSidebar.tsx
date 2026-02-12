@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { User } from '@/payload-types'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { LogoutButton } from '@/components/LogoutButton'
@@ -14,15 +13,14 @@ import {
   ClipboardList,
   MessageSquare,
   Activity,
-  Settings,
   ExternalLink,
   Globe,
   Edit3,
+  UserCircle,
 } from 'lucide-react'
 import { cn } from '@/utilities/ui'
 
 interface AdminSidebarProps {
-  user: User
   stats: {
     totalUsers: number
     totalPosts: number
@@ -36,7 +34,7 @@ interface AdminSidebarProps {
   isOpen: boolean
 }
 
-export function AdminSidebar({ user, stats, isOpen }: AdminSidebarProps) {
+export function AdminSidebar({ stats, isOpen }: AdminSidebarProps) {
   const pathname = usePathname()
 
   const navigation = [
@@ -47,6 +45,7 @@ export function AdminSidebar({ user, stats, isOpen }: AdminSidebarProps) {
     { name: 'Review Queue', href: '/admin-dashboard/queue', icon: ClipboardList, badge: stats.pendingReviews },
     { name: 'Comments', href: '/admin-dashboard/comments', icon: MessageSquare, badge: stats.totalComments },
     { name: 'Activity Logs', href: '/admin-dashboard/logs', icon: Activity },
+    { name: 'Profile', href: '/admin-dashboard/profile', icon: UserCircle },
   ]
 
   const externalLinks = [
@@ -82,7 +81,7 @@ export function AdminSidebar({ user, stats, isOpen }: AdminSidebarProps) {
         </div>
 
         {/* Main Navigation */}
-        <nav className="flex-1 min-h-0 overflow-y-auto p-3">
+        <nav className="flex-1 min-h-0 overflow-y-auto p-3" aria-label="Admin navigation">
           <div className="space-y-1">
             {navigation.map((item) => {
               const isActive = pathname === item.href
@@ -90,6 +89,7 @@ export function AdminSidebar({ user, stats, isOpen }: AdminSidebarProps) {
                 <Link
                   key={item.name}
                   href={item.href}
+                  aria-current={isActive ? 'page' : undefined}
                   className={cn(
                     'flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                     isActive
@@ -161,9 +161,6 @@ export function AdminSidebar({ user, stats, isOpen }: AdminSidebarProps) {
         {/* Logout */}
         <div className="border-t p-3 flex-shrink-0">
           <LogoutButton className="w-full justify-start gap-2" />
-          <p className="mt-2 text-xs text-muted-foreground text-center">
-            v2.4.1 - Admin
-          </p>
         </div>
       </div>
     </aside>

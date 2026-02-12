@@ -1,9 +1,10 @@
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { CheckCircle, XCircle, Edit, Upload, MessageSquare, User, Activity, Clock } from 'lucide-react'
+import { CheckCircle, XCircle, Edit, MessageSquare, User, Activity, Clock } from 'lucide-react'
 import type { User as UserType } from '@/payload-types'
 
 export const dynamic = 'force-dynamic'
@@ -14,8 +15,11 @@ export default async function AdminLogsPage() {
   const requestHeaders = await headers()
   const { user } = await payload.auth({ headers: requestHeaders })
 
-  if (!user || (user as UserType).role !== 'admin') {
-    return null
+  if (!user) {
+    redirect('/login')
+  }
+  if ((user as UserType).role !== 'admin') {
+    redirect('/admin-dashboard')
   }
 
   // Fetch admin logs
@@ -31,31 +35,31 @@ export default async function AdminLogsPage() {
   today.setHours(0, 0, 0, 0)
   const todayLogs = logs.docs.filter((log) => new Date(log.createdAt) >= today)
 
-  const approvals = logs.docs.filter((log) => log.action?.includes('approved') || log.action?.includes('published'))
-  const rejections = logs.docs.filter((log) => log.action?.includes('rejected') || log.action?.includes('deleted'))
+  const approvals = logs.docs.filter((log) => log.action === 'approve_post' || log.action === 'approve_comment')
+  const rejections = logs.docs.filter((log) => log.action === 'reject_post' || log.action === 'reject_comment' || log.action === 'delete_post')
 
   const getActivityIcon = (action: string) => {
-    if (action.includes('approved') || action.includes('published'))
+    if (action === 'approve_post' || action === 'approve_comment')
       return <CheckCircle className="w-5 h-5 text-green-500" />
-    if (action.includes('rejected') || action.includes('deleted'))
+    if (action === 'reject_post' || action === 'reject_comment' || action === 'delete_post')
       return <XCircle className="w-5 h-5 text-red-500" />
-    if (action.includes('edited') || action.includes('updated'))
+    if (action === 'unpublish_post' || action === 'content_moderation')
       return <Edit className="w-5 h-5 text-blue-500" />
-    if (action.includes('uploaded') || action.includes('created'))
-      return <Upload className="w-5 h-5 text-purple-500" />
-    if (action.includes('comment'))
+    if (action === 'role_change' || action === 'user_action')
+      return <User className="w-5 h-5 text-purple-500" />
+    if (action === 'spam_comment' || action === 'comment_reported')
       return <MessageSquare className="w-5 h-5 text-orange-500" />
     return <User className="w-5 h-5 text-muted-foreground" />
   }
 
   const getActionBadgeColor = (action: string) => {
-    if (action.includes('approved') || action.includes('published'))
+    if (action === 'approve_post' || action === 'approve_comment')
       return 'bg-green-500/10 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800'
-    if (action.includes('rejected') || action.includes('deleted'))
+    if (action === 'reject_post' || action === 'reject_comment' || action === 'delete_post')
       return 'bg-red-500/10 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800'
-    if (action.includes('edited') || action.includes('updated'))
+    if (action === 'unpublish_post' || action === 'content_moderation')
       return 'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800'
-    if (action.includes('created') || action.includes('uploaded'))
+    if (action === 'role_change' || action === 'user_action')
       return 'bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-800'
     return 'bg-muted text-muted-foreground'
   }

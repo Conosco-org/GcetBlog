@@ -1,6 +1,7 @@
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
 import { Clock, MessageSquare, Calendar } from 'lucide-react'
 import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -24,8 +25,11 @@ export default async function AdminQueuePage() {
   const requestHeaders = await headers()
   const { user } = await payload.auth({ headers: requestHeaders })
 
-  if (!user || (user as User).role !== 'admin') {
-    return null
+  if (!user) {
+    redirect('/login')
+  }
+  if ((user as User).role !== 'admin') {
+    redirect('/admin-dashboard')
   }
 
   // Get pending posts (submitted for review)

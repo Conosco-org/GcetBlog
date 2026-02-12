@@ -1,6 +1,7 @@
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Shield, CheckCircle2, XCircle, Clock } from 'lucide-react'
@@ -15,8 +16,11 @@ export default async function AdminRequestsPage() {
   const requestHeaders = await headers()
   const { user } = await payload.auth({ headers: requestHeaders })
 
-  if (!user || (user as User).role !== 'admin') {
-    return null
+  if (!user) {
+    redirect('/login')
+  }
+  if ((user as User).role !== 'admin') {
+    redirect('/admin-dashboard')
   }
 
   // Fetch all role upgrade requests

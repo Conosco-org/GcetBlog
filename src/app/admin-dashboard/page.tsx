@@ -47,7 +47,7 @@ export default async function AdminDashboardPage() {
     depth: 0,
   })
 
-  // Stats are passed via layout but we can also compute page-specific data
+  // Fetch stats (lightweight with limit: 0)
   const [totalUsers, totalPosts, pendingReviews, totalComments] = await Promise.all([
     payload.find({ collection: 'users', limit: 0 }),
     payload.find({ collection: 'posts', limit: 0 }),
@@ -149,7 +149,7 @@ export default async function AdminDashboardPage() {
                         </div>
                       </div>
                       <Badge variant="outline" className="capitalize">
-                        {typedU.role || 'user'}
+                        {typedU.role || 'contributor'}
                       </Badge>
                     </div>
                   )
