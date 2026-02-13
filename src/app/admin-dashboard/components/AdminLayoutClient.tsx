@@ -11,12 +11,10 @@ interface AdminLayoutClientProps {
   stats: {
     totalUsers: number
     totalPosts: number
-    pendingRequests: number
     pendingReviews: number
     totalComments: number
     contributors: number
     editors: number
-    admins: number
   }
   children: React.ReactNode
 }

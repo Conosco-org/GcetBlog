@@ -26,31 +26,31 @@ export default async function AdminDashboardLayout({
     redirect('/login')
   }
 
-  const typedUser = user as User
+  // Fetch full user data to ensure we have isAdmin field
+  const fullUser = await payload.findByID({
+    collection: 'users',
+    id: user.id,
+    depth: 0,
+  })
 
-  // Only allow admins to access this area
-  if (typedUser.role !== 'admin') {
-    redirect('/dashboard')
+  // Only allow admins (isAdmin flag) to access this area
+  if (!fullUser.isAdmin) {
+    // Redirect to appropriate dashboard based on role
+    const dest = fullUser.role === 'editor' ? '/editor' : '/contributor'
+    redirect(dest)
   }
 
   // Fetch stats for the admin dashboard
   const [
     totalUsers,
     totalPosts,
-    pendingRequests,
     pendingReviews,
     totalComments,
     contributorCount,
     editorCount,
-    adminCount,
   ] = await Promise.all([
     payload.find({ collection: 'users', limit: 0 }),
     payload.find({ collection: 'posts', limit: 0 }),
-    payload.find({
-      collection: 'role-upgrade-requests',
-      where: { status: { equals: 'pending' } },
-      limit: 0,
-    }),
     payload.find({
       collection: 'posts',
       where: { reviewStatus: { equals: 'pending' } },
@@ -67,22 +67,15 @@ export default async function AdminDashboardLayout({
       where: { role: { equals: 'editor' } },
       limit: 0,
     }),
-    payload.find({
-      collection: 'users',
-      where: { role: { equals: 'admin' } },
-      limit: 0,
-    }),
   ])
 
   const stats = {
     totalUsers: totalUsers.totalDocs,
     totalPosts: totalPosts.totalDocs,
-    pendingRequests: pendingRequests.totalDocs,
     pendingReviews: pendingReviews.totalDocs,
     totalComments: totalComments.totalDocs,
     contributors: contributorCount.totalDocs,
     editors: editorCount.totalDocs,
-    admins: adminCount.totalDocs,
   }
 
   return (
@@ -94,7 +87,7 @@ export default async function AdminDashboardLayout({
       <body className="bg-background text-foreground antialiased" suppressHydrationWarning>
         <PayloadBlocker />
         <Providers>
-          <AdminLayoutClient user={typedUser} stats={stats}>
+          <AdminLayoutClient user={fullUser} stats={stats}>
             {children}
           </AdminLayoutClient>
         </Providers>

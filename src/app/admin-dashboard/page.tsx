@@ -5,16 +5,13 @@ import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { AdminRoleRequestsList } from './components/AdminRoleRequestsList'
 import type { User } from '@/payload-types'
 import {
   Users,
   FileText,
-  Shield,
   ClipboardList,
   MessageSquare,
   TrendingUp,
-  ExternalLink,
   ArrowUpRight,
 } from 'lucide-react'
 
@@ -24,14 +21,6 @@ export default async function AdminDashboardPage() {
   const { user } = await payload.auth({ headers: requestHeaders })
 
   const typedUser = user as User
-
-  // Fetch pending role upgrade requests
-  const pendingRequests = await payload.find({
-    collection: 'role-upgrade-requests',
-    where: { status: { equals: 'pending' } },
-    depth: 1,
-    sort: '-createdAt',
-  })
 
   // Fetch recent users
   const recentUsers = await payload.find({
@@ -49,7 +38,7 @@ export default async function AdminDashboardPage() {
     depth: 0,
   })
 
-  // Stats are passed via layout but we can also compute page-specific data
+  // Stats
   const [totalUsers, totalPosts, pendingReviews, totalComments] = await Promise.all([
     payload.find({ collection: 'users', limit: 0 }),
     payload.find({ collection: 'posts', limit: 0 }),
@@ -120,9 +109,6 @@ export default async function AdminDashboardPage() {
 
       {/* Main Content Grid */}
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Role Upgrade Requests */}
-        <AdminRoleRequestsList requests={pendingRequests.docs} />
-
         {/* Recent Users */}
         <Card>
           <CardHeader>
@@ -172,15 +158,15 @@ export default async function AdminDashboardPage() {
           <CardDescription>Frequently used admin actions</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             <Button variant="outline" className="h-auto flex-col items-start gap-1 p-4" asChild>
-              <Link href="/admin">
+              <Link href="/admin-dashboard/users">
                 <div className="flex w-full items-center justify-between">
-                  <Shield className="h-5 w-5 text-primary" />
-                  <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                  <Users className="h-5 w-5 text-primary" />
+                  <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
                 </div>
-                <span className="text-sm font-medium">Payload CMS</span>
-                <span className="text-xs text-muted-foreground">Full admin panel</span>
+                <span className="text-sm font-medium">Manage Users</span>
+                <span className="text-xs text-muted-foreground">Roles & permissions</span>
               </Link>
             </Button>
 

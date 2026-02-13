@@ -26,12 +26,10 @@ interface AdminSidebarProps {
   stats: {
     totalUsers: number
     totalPosts: number
-    pendingRequests: number
     pendingReviews: number
     totalComments: number
     contributors: number
     editors: number
-    admins: number
   }
   isOpen: boolean
 }
@@ -42,7 +40,6 @@ export function AdminSidebar({ user, stats, isOpen }: AdminSidebarProps) {
   const navigation = [
     { name: 'Dashboard', href: '/admin-dashboard', icon: BarChart3 },
     { name: 'User Management', href: '/admin-dashboard/users', icon: Users, badge: stats.totalUsers },
-    { name: 'Role Requests', href: '/admin-dashboard/requests', icon: Shield, badge: stats.pendingRequests },
     { name: 'All Posts', href: '/admin-dashboard/posts', icon: FileText, badge: stats.totalPosts },
     { name: 'Review Queue', href: '/editor/queue', icon: ClipboardList, badge: stats.pendingReviews },
     { name: 'Comments', href: '/editor/comments', icon: MessageSquare, badge: stats.totalComments },
@@ -50,7 +47,6 @@ export function AdminSidebar({ user, stats, isOpen }: AdminSidebarProps) {
   ]
 
   const externalLinks = [
-    { name: 'Payload CMS', href: '/admin', icon: Shield },
     { name: 'Editor View', href: '/editor', icon: Edit3 },
     { name: 'Public Blog', href: '/', icon: Globe },
   ]
@@ -66,11 +62,7 @@ export function AdminSidebar({ user, stats, isOpen }: AdminSidebarProps) {
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
             Platform Overview
           </p>
-          <div className="grid grid-cols-3 gap-2">
-            <div className="text-center p-2 rounded-md bg-muted/50">
-              <p className="text-lg font-bold">{stats.admins}</p>
-              <p className="text-[10px] text-muted-foreground">Admins</p>
-            </div>
+          <div className="grid grid-cols-2 gap-2">
             <div className="text-center p-2 rounded-md bg-muted/50">
               <p className="text-lg font-bold">{stats.editors}</p>
               <p className="text-[10px] text-muted-foreground">Editors</p>
@@ -145,15 +137,15 @@ export function AdminSidebar({ user, stats, isOpen }: AdminSidebarProps) {
               Admin Actions
             </p>
             <Button className="w-full justify-start gap-2" size="sm" asChild>
-              <Link href="/admin">
-                <Shield className="h-4 w-4" />
-                Open Payload CMS
+              <Link href="/admin-dashboard/users">
+                <Users className="h-4 w-4" />
+                Manage Users
               </Link>
             </Button>
             <Button variant="outline" className="w-full justify-start gap-2" size="sm" asChild>
-              <Link href="/admin-dashboard/requests">
+              <Link href="/editor/queue">
                 <ClipboardList className="h-4 w-4" />
-                Review Requests
+                Review Queue
               </Link>
             </Button>
           </div>
