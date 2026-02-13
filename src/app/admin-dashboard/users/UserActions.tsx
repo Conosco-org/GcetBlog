@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import {
   MoreHorizontal,
   Shield,
-  ShieldCheck,
   ShieldOff,
   UserCog,
   Users,
