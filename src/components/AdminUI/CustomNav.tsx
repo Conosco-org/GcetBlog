@@ -26,13 +26,12 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/admin/collections/posts', label: 'Posts', icon: FileText, hideForAdmin: true },
+  { href: '/admin/collections/posts', label: 'Posts', icon: FileText },
   { href: '/admin/collections/pages', label: 'Pages', icon: File },
-  { href: '/admin/collections/media', label: 'Media', icon: Image, hideForAdmin: true },
-  { href: '/admin/collections/categories', label: 'Categories', icon: FolderOpen, hideForAdmin: true },
-  { href: '/admin/collections/comments', label: 'Comments', icon: MessageSquare, hideForAdmin: true },
+  { href: '/admin/collections/media', label: 'Media', icon: Image },
+  { href: '/admin/collections/categories', label: 'Categories', icon: FolderOpen },
+  { href: '/admin/collections/comments', label: 'Comments', icon: MessageSquare },
   { href: '/admin/collections/users', label: 'Users', icon: Users },
-  { href: '/admin/collections/role-upgrade-requests', label: 'Role Requests', icon: Shield },
   { href: '/admin/collections/admin-logs', label: 'Activity Logs', icon: BarChart3 },
 ]
 
@@ -43,13 +42,8 @@ export default function CustomNav() {
   // Type assertion for user role
   const userRole = (user as { role?: string })?.role
 
-  // Filter nav items based on user role
-  const filteredNavItems = navItems.filter(item => {
-    if (item.hideForAdmin && userRole === 'admin') {
-      return false
-    }
-    return true
-  })
+  // All nav items are visible now (no hideForAdmin logic needed)
+  const filteredNavItems = navItems
 
   return (
     <nav className="flex-1 overflow-y-auto py-4">

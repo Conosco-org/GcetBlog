@@ -15,13 +15,14 @@ export function AuthButton() {
   }
 
   if (user) {
+    const isAdmin = Boolean((user as unknown as { isAdmin?: boolean }).isAdmin)
     const dashboardUrl = 
-      user.role === 'admin' ? '/admin' :
+      isAdmin ? '/admin-dashboard' :
       user.role === 'editor' ? '/editor' :
       '/dashboard'
 
     const dashboardLabel = 
-      user.role === 'admin' ? 'Admin Dashboard' :
+      isAdmin ? 'Admin Dashboard' :
       user.role === 'editor' ? 'Editor Dashboard' :
       'Dashboard'
 

@@ -27,7 +27,7 @@ function CommentCard({ comment, currentUser }: CommentCardProps) {
   const [showReportForm, setShowReportForm] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
-  const isStaff = currentUser && ['editor', 'admin'].includes(currentUser.role || '')
+  const isStaff = currentUser && currentUser.role === 'editor'
   const canModerate = isStaff && comment.status === 'pending'
 
   const handleReport = async (formData: FormData) => {
@@ -231,7 +231,7 @@ export function CommentList({ comments, currentUser }: CommentListProps) {
   // Filter comments based on user role
   const visibleComments = comments.filter((comment) => {
     // Staff can see all comments
-    if (currentUser && ['editor', 'admin'].includes(currentUser.role || '')) {
+    if (currentUser && currentUser.role === 'editor') {
       return true
     }
     // Regular users only see approved comments
