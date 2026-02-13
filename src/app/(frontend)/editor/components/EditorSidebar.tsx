@@ -17,7 +17,6 @@ import {
   Eye,
   Tag,
   Users,
-  Shield,
 } from 'lucide-react'
 
 interface NavItem {
@@ -48,9 +47,10 @@ export function EditorSidebar({
   const isAdmin = (_user as unknown as { isAdmin?: boolean }).isAdmin === true
 
   const navItems: NavItem[] = [
+    // For admins: show Admin Dashboard, for others: show Editor Dashboard
     {
-      label: 'Dashboard',
-      href: '/editor',
+      label: isAdmin ? 'Admin Dashboard' : 'Dashboard',
+      href: isAdmin ? '/admin-dashboard' : '/editor',
       icon: <Home className="w-5 h-5" />,
     },
     {
@@ -101,26 +101,19 @@ export function EditorSidebar({
       href: '/',
       icon: <Eye className="w-5 h-5" />,
     },
-    // Admin-only links
+    // Admin-only link: User Management
     ...(isAdmin ? [
       {
         label: 'User Management',
         href: '/admin-dashboard/users',
         icon: <Users className="w-5 h-5" />,
       },
-      {
-        label: 'Admin Dashboard',
-        href: '/admin-dashboard',
-        icon: <Shield className="w-5 h-5" />,
-      },
     ] : []),
   ]
 
   const isActive = (href: string) => {
-    if (href === '/editor') {
-      return pathname === href
-    }
-    if (href === '/admin-dashboard') {
+    // Dashboard routes: exact match only
+    if (href === '/editor' || href === '/admin-dashboard') {
       return pathname === href
     }
     return pathname.startsWith(href)
