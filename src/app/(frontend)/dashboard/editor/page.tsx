@@ -19,8 +19,8 @@ export default async function EditorDashboardPage() {
 
   const typedUser = user as User & { role: string }
 
-  // Only editors and admins can access this page
-  if (typedUser.role !== 'editor' && typedUser.role !== 'admin') {
+  // Only editors can access this page (admins are editors with isAdmin flag)
+  if (typedUser.role !== 'editor') {
     redirect('/dashboard')
   }
 

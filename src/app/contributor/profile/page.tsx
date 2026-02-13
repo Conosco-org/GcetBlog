@@ -26,7 +26,7 @@ interface UserData {
   id: string
   name: string
   email: string
-  role: 'contributor' | 'editor' | 'admin'
+  role: 'contributor' | 'editor'
   bio: string | null
   avatar: { url: string; filename: string } | string | null
   createdAt: string
