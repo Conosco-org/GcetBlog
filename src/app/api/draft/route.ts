@@ -20,8 +20,8 @@ export async function GET(request: Request) {
     const result = await payload.auth({ headers: request.headers })
     user = result.user
     
-    if (!user || (user.role !== 'editor' && user.role !== 'admin')) {
-      return new Response('Forbidden - Editor or Admin access required. Please log in as an editor or admin.', { status: 403 })
+    if (!user || user.role !== 'editor') {
+      return new Response('Forbidden - Editor access required. Please log in as an editor.', { status: 403 })
     }
   } catch (error) {
     console.error('Auth error in draft route:', error)

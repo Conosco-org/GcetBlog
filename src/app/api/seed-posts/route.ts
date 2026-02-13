@@ -6,9 +6,10 @@ export async function GET(request: NextRequest) {
   try {
     const payload = await getPayload({ config: configPromise })
 
-    // Require authentication — only admins can seed
+    // Require authentication — only admins (isAdmin) can seed
     const { user } = await payload.auth({ headers: request.headers })
-    if (!user || user.role !== 'admin') {
+    const typedUser = user as { isAdmin?: boolean } | null
+    if (!user || !typedUser?.isAdmin) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -76,22 +77,13 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Find admin or editor user to be the author
+    // Find an editor user to be the author
     const users = await payload.find({
       collection: 'users',
       where: {
-        or: [
-          {
-            role: {
-              equals: 'admin',
-            },
-          },
-          {
-            role: {
-              equals: 'editor',
-            },
-          },
-        ],
+        role: {
+          equals: 'editor',
+        },
       },
       limit: 1,
     })
