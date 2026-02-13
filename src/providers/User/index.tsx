@@ -7,7 +7,9 @@ export interface User {
   id: string
   email: string
   name?: string
-  role: 'contributor' | 'editor' | 'admin'
+  role: 'contributor' | 'editor'
+  isAdmin?: boolean
+  canManageAdmins?: boolean
 }
 
 interface UserContextType {
