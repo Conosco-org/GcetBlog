@@ -1,17 +1,29 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, Where } from 'payload'
 import { editorOnly } from '../../access/editorOnly'
-import { isAdmin } from '../../utilities/checkUserRole'
+
+/** Field-level access helper: checks if the requesting user is an editor */
+const isEditorFieldAccess = ({ req }: { req: { user: unknown } }): boolean => {
+  const user = req.user as { role?: string } | undefined
+  return user?.role === 'editor'
+}
 
 export const Comments: CollectionConfig = {
   slug: 'comments',
   access: {
-    read: ({ req, data }) => {
-      // Editors can see all (admins cannot)
-      const user = req.user as { role: string; id: string } | undefined
-      if (user && user.role === 'editor') return true
+    read: ({ req }) => {
+      const user = req.user as { role?: string; id?: string } | undefined
+      // Editors can see all comments
+      if (user?.role === 'editor') return true
 
-      // Users can see their own comments
-      if (user && data && data.author === user.id) return true
+      // Users can see their own comments + approved ones
+      if (user && user.id) {
+        return {
+          or: [
+            { author: { equals: user.id } },
+            { status: { equals: 'approved' } },
+          ],
+        } as Where
+      }
 
       // Public can see only approved comments
       return {
@@ -23,7 +35,6 @@ export const Comments: CollectionConfig = {
     delete: editorOnly,
   },
   admin: {
-    hidden: ({ user }) => isAdmin(user),
     defaultColumns: ['post', 'author', 'content', 'status', 'createdAt'],
     useAsTitle: 'content',
   },
@@ -83,10 +94,7 @@ export const Comments: CollectionConfig = {
       ],
       defaultValue: 'pending',
       access: {
-        update: ({ req }) => {
-          const user = req.user as { role: string } | undefined
-          return user ? user.role === 'editor' : false
-        },
+        update: isEditorFieldAccess,
       },
     },
     {
@@ -96,14 +104,8 @@ export const Comments: CollectionConfig = {
         description: 'Internal notes for moderators',
       },
       access: {
-        read: ({ req }) => {
-          const user = req.user as { role: string } | undefined
-          return user ? user.role === 'editor' : false
-        },
-        update: ({ req }) => {
-          const user = req.user as { role: string } | undefined
-          return user ? user.role === 'editor' : false
-        },
+        read: isEditorFieldAccess,
+        update: isEditorFieldAccess,
       },
     },
     {
@@ -115,10 +117,7 @@ export const Comments: CollectionConfig = {
         readOnly: true,
       },
       access: {
-        read: ({ req }) => {
-          const user = req.user as { role: string } | undefined
-          return user ? user.role === 'editor' : false
-        },
+        read: isEditorFieldAccess,
       },
     },
     {
@@ -129,10 +128,7 @@ export const Comments: CollectionConfig = {
         readOnly: true,
       },
       access: {
-        read: ({ req }) => {
-          const user = req.user as { role: string } | undefined
-          return user ? user.role === 'editor' : false
-        },
+        read: isEditorFieldAccess,
       },
     },
     {
@@ -144,10 +140,7 @@ export const Comments: CollectionConfig = {
         readOnly: true,
       },
       access: {
-        read: ({ req }) => {
-          const user = req.user as { role: string } | undefined
-          return user ? user.role === 'editor' : false
-        },
+        read: isEditorFieldAccess,
       },
     },
     {
@@ -158,10 +151,7 @@ export const Comments: CollectionConfig = {
         readOnly: true,
       },
       access: {
-        read: ({ req }) => {
-          const user = req.user as { role: string } | undefined
-          return user ? user.role === 'editor' : false
-        },
+        read: isEditorFieldAccess,
       },
     },
     {
@@ -172,10 +162,7 @@ export const Comments: CollectionConfig = {
         readOnly: true,
       },
       access: {
-        read: ({ req }) => {
-          const user = req.user as { role: string } | undefined
-          return user ? user.role === 'editor' : false
-        },
+        read: isEditorFieldAccess,
       },
     },
     {
@@ -186,10 +173,7 @@ export const Comments: CollectionConfig = {
         description: 'IP address of the commenter',
       },
       access: {
-        read: ({ req }) => {
-          const user = req.user as { role: string } | undefined
-          return user ? user.role === 'editor' : false
-        },
+        read: isEditorFieldAccess,
       },
     },
     {
@@ -200,17 +184,14 @@ export const Comments: CollectionConfig = {
         description: 'User agent of the commenter',
       },
       access: {
-        read: ({ req }) => {
-          const user = req.user as { role: string } | undefined
-          return user ? user.role === 'editor' : false
-        },
+        read: isEditorFieldAccess,
       },
     },
   ],
   hooks: {
     beforeChange: [
       ({ req, operation, data }) => {
-        // Auto-approve comments from editors only
+        // Auto-approve comments from editors
         if (operation === 'create' && req.user) {
           const user = req.user as { role: string }
           if (user.role === 'editor') {

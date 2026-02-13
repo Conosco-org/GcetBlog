@@ -10,7 +10,6 @@ import { fileURLToPath } from 'url'
 
 import { anyone } from '../access/anyone'
 import { editorOnly } from '../access/editorOnly'
-import { isAdmin } from '../utilities/checkUserRole'
 import { useCloudinaryFallback } from './Media/hooks/useCloudinaryFallback'
 
 const filename = fileURLToPath(import.meta.url)
@@ -25,7 +24,6 @@ export const Media: CollectionConfig = {
     update: editorOnly,
   },
   admin: {
-    hidden: ({ user }) => isAdmin(user),
     description: '📸 Recommended sizes: Hero 1920×1080 (16:9), Cards 900×600 (3:2), OG 1200×630. Optimize images to <500KB. See IMAGE_GUIDELINES.md for details.',
   },
   hooks: {
