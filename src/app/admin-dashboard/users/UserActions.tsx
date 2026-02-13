@@ -45,7 +45,7 @@ export function UserActions({ user, currentUserId }: UserActionsProps) {
 
   const isOwnAccount = user.id === currentUserId
 
-  const handleRoleChange = async (newRole: 'contributor' | 'editor' | 'admin') => {
+  const handleRoleChange = async (newRole: 'contributor' | 'editor') => {
     setIsChangingRole(true)
     const result = await changeUserRole(user.id, newRole)
     
@@ -102,15 +102,6 @@ export function UserActions({ user, currentUserId }: UserActionsProps) {
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuLabel>Change Role</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          
-          <DropdownMenuItem
-            onClick={() => handleRoleChange('admin')}
-            disabled={user.role === 'admin' || isOwnAccount || isChangingRole}
-          >
-            <Shield className="mr-2 h-4 w-4 text-red-500" />
-            <span>Admin</span>
-            {user.role === 'admin' && <span className="ml-auto text-xs">Current</span>}
-          </DropdownMenuItem>
           
           <DropdownMenuItem
             onClick={() => handleRoleChange('editor')}

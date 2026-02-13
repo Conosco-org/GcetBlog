@@ -137,17 +137,12 @@ export function AdminSidebar({ stats, isOpen }: AdminSidebarProps) {
           </p>
           <div className="space-y-1.5">
             <Button className="w-full justify-start gap-2" size="sm" asChild>
-<<<<<<< HEAD
               <Link href="/admin-dashboard/users">
                 <Users className="h-4 w-4" />
                 Manage Users
               </Link>
             </Button>
             <Button variant="outline" className="w-full justify-start gap-2" size="sm" asChild>
-              <Link href="/editor/queue">
-                <ClipboardList className="h-4 w-4" />
-                Review Queue
-=======
               <Link href="/admin-dashboard/queue">
                 <ClipboardList className="h-4 w-4" />
                 Review Queue
@@ -157,7 +152,6 @@ export function AdminSidebar({ stats, isOpen }: AdminSidebarProps) {
               <Link href="/admin-dashboard/requests">
                 <Shield className="h-4 w-4" />
                 Review Requests
->>>>>>> origin/main
               </Link>
             </Button>
           </div>

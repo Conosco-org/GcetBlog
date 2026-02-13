@@ -21,8 +21,14 @@ export default async function AdminCommentsPage() {
     redirect('/login')
   }
 
-  const typedUser = user as User
-  if (typedUser.role !== 'admin') {
+  // Fetch full user to get isAdmin field
+  const fullUser = await payload.findByID({
+    collection: 'users',
+    id: user.id,
+    depth: 0,
+  })
+
+  if (!fullUser.isAdmin) {
     redirect('/admin-dashboard')
   }
 

@@ -5,13 +5,24 @@ import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 
-export async function changeUserRole(userId: string, newRole: 'contributor' | 'editor' | 'admin') {
+export async function changeUserRole(userId: string, newRole: 'contributor' | 'editor') {
   try {
     const payload = await getPayload({ config: configPromise })
     const requestHeaders = await headers()
     const { user } = await payload.auth({ headers: requestHeaders })
 
-    if (!user || user.role !== 'admin') {
+    if (!user) {
+      return { success: false, message: 'Unauthorized' }
+    }
+
+    // Fetch full user to check isAdmin
+    const fullUser = await payload.findByID({
+      collection: 'users',
+      id: user.id,
+      depth: 0,
+    })
+
+    if (!fullUser.isAdmin) {
       return { success: false, message: 'Unauthorized' }
     }
 
@@ -52,7 +63,18 @@ export async function deleteUser(userId: string) {
     const requestHeaders = await headers()
     const { user } = await payload.auth({ headers: requestHeaders })
 
-    if (!user || user.role !== 'admin') {
+    if (!user) {
+      return { success: false, message: 'Unauthorized' }
+    }
+
+    // Fetch full user to check isAdmin
+    const fullUser = await payload.findByID({
+      collection: 'users',
+      id: user.id,
+      depth: 0,
+    })
+
+    if (!fullUser.isAdmin) {
       return { success: false, message: 'Unauthorized' }
     }
 

@@ -108,14 +108,7 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Main Content Grid */}
-<<<<<<< HEAD
       <div className="grid gap-6 lg:grid-cols-2">
-=======
-      <div className="grid gap-6 xl:grid-cols-2">
-        {/* Role Upgrade Requests */}
-        <AdminRoleRequestsList requests={pendingRequests.docs} />
-
->>>>>>> origin/main
         {/* Recent Users */}
         <Card>
           <CardHeader>
@@ -165,24 +158,15 @@ export default async function AdminDashboardPage() {
           <CardDescription>Frequently used admin actions</CardDescription>
         </CardHeader>
         <CardContent>
-<<<<<<< HEAD
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-=======
-          <div className="grid gap-3 grid-cols-2 xl:grid-cols-4">
->>>>>>> origin/main
             <Button variant="outline" className="h-auto flex-col items-start gap-1 p-4" asChild>
               <Link href="/admin-dashboard/users">
                 <div className="flex w-full items-center justify-between">
                   <Users className="h-5 w-5 text-primary" />
                   <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
                 </div>
-<<<<<<< HEAD
                 <span className="text-sm font-medium">Manage Users</span>
                 <span className="text-xs text-muted-foreground">Roles & permissions</span>
-=======
-                <span className="text-sm font-medium">User Management</span>
-                <span className="text-xs text-muted-foreground">Manage all users</span>
->>>>>>> origin/main
               </Link>
             </Button>
 
