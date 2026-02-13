@@ -66,7 +66,7 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
                   format: 0,
                   mode: 'normal',
                   style: '',
-                  text: 'Discover cutting-edge technology insights, student innovations, and academic excellence from Government College of Engineering and Technology.',
+                  text: 'Discover cutting-edge technology insights, student innovations, and academic excellence from Geethanjali College of Engineering and Technology.',
                   version: 1,
                 },
               ],

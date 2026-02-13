@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { User } from '@/payload-types'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { LogoutButton } from '@/components/LogoutButton'
@@ -14,15 +13,14 @@ import {
   ClipboardList,
   MessageSquare,
   Activity,
-  Settings,
   ExternalLink,
   Globe,
   Edit3,
+  UserCircle,
 } from 'lucide-react'
 import { cn } from '@/utilities/ui'
 
 interface AdminSidebarProps {
-  user: User
   stats: {
     totalUsers: number
     totalPosts: number
@@ -34,16 +32,17 @@ interface AdminSidebarProps {
   isOpen: boolean
 }
 
-export function AdminSidebar({ user, stats, isOpen }: AdminSidebarProps) {
+export function AdminSidebar({ stats, isOpen }: AdminSidebarProps) {
   const pathname = usePathname()
 
   const navigation = [
     { name: 'Dashboard', href: '/admin-dashboard', icon: BarChart3 },
     { name: 'User Management', href: '/admin-dashboard/users', icon: Users, badge: stats.totalUsers },
     { name: 'All Posts', href: '/admin-dashboard/posts', icon: FileText, badge: stats.totalPosts },
-    { name: 'Review Queue', href: '/editor/queue', icon: ClipboardList, badge: stats.pendingReviews },
-    { name: 'Comments', href: '/editor/comments', icon: MessageSquare, badge: stats.totalComments },
+    { name: 'Review Queue', href: '/admin-dashboard/queue', icon: ClipboardList, badge: stats.pendingReviews },
+    { name: 'Comments', href: '/admin-dashboard/comments', icon: MessageSquare, badge: stats.totalComments },
     { name: 'Activity Logs', href: '/admin-dashboard/logs', icon: Activity },
+    { name: 'Profile', href: '/admin-dashboard/profile', icon: UserCircle },
   ]
 
   const externalLinks = [
@@ -53,13 +52,13 @@ export function AdminSidebar({ user, stats, isOpen }: AdminSidebarProps) {
 
   return (
     <aside className={cn(
-      "fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 border-r bg-card transition-transform duration-300 z-30",
+      "fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 border-r bg-card transition-transform duration-300 z-30 overflow-hidden",
       !isOpen && "-translate-x-full"
     )}>
-      <div className="flex h-full flex-col">
+      <div className="flex h-full flex-col overflow-y-auto">
         {/* User Role Breakdown */}
-        <div className="p-4 border-b">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+        <div className="p-3 border-b flex-shrink-0">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">
             Platform Overview
           </p>
           <div className="grid grid-cols-2 gap-2">
@@ -75,7 +74,7 @@ export function AdminSidebar({ user, stats, isOpen }: AdminSidebarProps) {
         </div>
 
         {/* Main Navigation */}
-        <nav className="flex-1 overflow-y-auto p-4">
+        <nav className="flex-1 min-h-0 overflow-y-auto p-3" aria-label="Admin navigation">
           <div className="space-y-1">
             {navigation.map((item) => {
               const isActive = pathname === item.href
@@ -83,6 +82,7 @@ export function AdminSidebar({ user, stats, isOpen }: AdminSidebarProps) {
                 <Link
                   key={item.name}
                   href={item.href}
+                  aria-current={isActive ? 'page' : undefined}
                   className={cn(
                     'flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                     isActive
@@ -131,12 +131,13 @@ export function AdminSidebar({ user, stats, isOpen }: AdminSidebarProps) {
         </nav>
 
         {/* Quick Actions */}
-        <div className="border-t p-4">
-          <div className="space-y-2">
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">
-              Admin Actions
-            </p>
+        <div className="border-t p-3 flex-shrink-0">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+            Admin Actions
+          </p>
+          <div className="space-y-1.5">
             <Button className="w-full justify-start gap-2" size="sm" asChild>
+<<<<<<< HEAD
               <Link href="/admin-dashboard/users">
                 <Users className="h-4 w-4" />
                 Manage Users
@@ -146,17 +147,25 @@ export function AdminSidebar({ user, stats, isOpen }: AdminSidebarProps) {
               <Link href="/editor/queue">
                 <ClipboardList className="h-4 w-4" />
                 Review Queue
+=======
+              <Link href="/admin-dashboard/queue">
+                <ClipboardList className="h-4 w-4" />
+                Review Queue
+              </Link>
+            </Button>
+            <Button variant="outline" className="w-full justify-start gap-2" size="sm" asChild>
+              <Link href="/admin-dashboard/requests">
+                <Shield className="h-4 w-4" />
+                Review Requests
+>>>>>>> origin/main
               </Link>
             </Button>
           </div>
         </div>
 
         {/* Logout */}
-        <div className="border-t p-4">
+        <div className="border-t p-3 flex-shrink-0">
           <LogoutButton className="w-full justify-start gap-2" />
-          <p className="mt-3 text-xs text-muted-foreground text-center">
-            v2.4.1 - Admin
-          </p>
         </div>
       </div>
     </aside>

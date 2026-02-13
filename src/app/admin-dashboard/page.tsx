@@ -51,17 +51,17 @@ export default async function AdminDashboardPage() {
   ])
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 lg:p-8 space-y-6 max-w-[1400px]">
       {/* Welcome Section */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Admin Dashboard</h1>
         <p className="text-muted-foreground mt-1">
           Welcome back, <span className="font-medium text-foreground">{typedUser.name || typedUser.email}</span>
         </p>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-2 xl:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Users</CardTitle>
@@ -108,7 +108,14 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Main Content Grid */}
+<<<<<<< HEAD
       <div className="grid gap-6 lg:grid-cols-2">
+=======
+      <div className="grid gap-6 xl:grid-cols-2">
+        {/* Role Upgrade Requests */}
+        <AdminRoleRequestsList requests={pendingRequests.docs} />
+
+>>>>>>> origin/main
         {/* Recent Users */}
         <Card>
           <CardHeader>
@@ -137,7 +144,7 @@ export default async function AdminDashboardPage() {
                         </div>
                       </div>
                       <Badge variant="outline" className="capitalize">
-                        {typedU.role || 'user'}
+                        {typedU.role || 'contributor'}
                       </Badge>
                     </div>
                   )
@@ -158,20 +165,29 @@ export default async function AdminDashboardPage() {
           <CardDescription>Frequently used admin actions</CardDescription>
         </CardHeader>
         <CardContent>
+<<<<<<< HEAD
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+=======
+          <div className="grid gap-3 grid-cols-2 xl:grid-cols-4">
+>>>>>>> origin/main
             <Button variant="outline" className="h-auto flex-col items-start gap-1 p-4" asChild>
               <Link href="/admin-dashboard/users">
                 <div className="flex w-full items-center justify-between">
                   <Users className="h-5 w-5 text-primary" />
                   <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
                 </div>
+<<<<<<< HEAD
                 <span className="text-sm font-medium">Manage Users</span>
                 <span className="text-xs text-muted-foreground">Roles & permissions</span>
+=======
+                <span className="text-sm font-medium">User Management</span>
+                <span className="text-xs text-muted-foreground">Manage all users</span>
+>>>>>>> origin/main
               </Link>
             </Button>
 
             <Button variant="outline" className="h-auto flex-col items-start gap-1 p-4" asChild>
-              <Link href="/editor/queue">
+              <Link href="/admin-dashboard/queue">
                 <div className="flex w-full items-center justify-between">
                   <ClipboardList className="h-5 w-5 text-primary" />
                   <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
@@ -182,7 +198,7 @@ export default async function AdminDashboardPage() {
             </Button>
 
             <Button variant="outline" className="h-auto flex-col items-start gap-1 p-4" asChild>
-              <Link href="/editor/comments">
+              <Link href="/admin-dashboard/comments">
                 <div className="flex w-full items-center justify-between">
                   <MessageSquare className="h-5 w-5 text-primary" />
                   <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
@@ -193,12 +209,12 @@ export default async function AdminDashboardPage() {
             </Button>
 
             <Button variant="outline" className="h-auto flex-col items-start gap-1 p-4" asChild>
-              <Link href="/editor">
+              <Link href="/admin-dashboard/posts">
                 <div className="flex w-full items-center justify-between">
                   <FileText className="h-5 w-5 text-primary" />
                   <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
                 </div>
-                <span className="text-sm font-medium">Editor View</span>
+                <span className="text-sm font-medium">All Posts</span>
                 <span className="text-xs text-muted-foreground">Content management</span>
               </Link>
             </Button>

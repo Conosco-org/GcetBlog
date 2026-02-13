@@ -4,8 +4,8 @@ import { cn } from '@/utilities/ui'
 import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
 import { Sora } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/next'
 
-import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
@@ -40,9 +40,9 @@ export default async function FrontendLayout({ children }: { children: React.Rea
           <ConditionalLayout>
             <Header />
             {children}
-            <Footer />
           </ConditionalLayout>
         </Providers>
+        <Analytics />
       </body>
     </html>
   )
