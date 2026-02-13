@@ -148,12 +148,6 @@ export function AdminSidebar({ stats, isOpen }: AdminSidebarProps) {
                 Review Queue
               </Link>
             </Button>
-            <Button variant="outline" className="w-full justify-start gap-2" size="sm" asChild>
-              <Link href="/admin-dashboard/requests">
-                <Shield className="h-4 w-4" />
-                Review Requests
-              </Link>
-            </Button>
           </div>
         </div>
 
