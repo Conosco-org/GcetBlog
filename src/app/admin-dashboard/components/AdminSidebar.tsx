@@ -7,9 +7,6 @@ import { LogoutButton } from '@/components/LogoutButton'
 import {
   BarChart3,
   Users,
-  FileText,
-  ClipboardList,
-  MessageSquare,
   Activity,
   ExternalLink,
   Globe,
@@ -36,9 +33,6 @@ export function AdminSidebar({ stats, isOpen }: AdminSidebarProps) {
   const navigation = [
     { name: 'Dashboard', href: '/admin-dashboard', icon: BarChart3 },
     { name: 'User Management', href: '/admin-dashboard/users', icon: Users, badge: stats.totalUsers },
-    { name: 'All Posts', href: '/admin-dashboard/posts', icon: FileText, badge: stats.totalPosts },
-    { name: 'Review Queue', href: '/admin-dashboard/queue', icon: ClipboardList, badge: stats.pendingReviews },
-    { name: 'Comments', href: '/admin-dashboard/comments', icon: MessageSquare, badge: stats.totalComments },
     { name: 'Activity Logs', href: '/admin-dashboard/logs', icon: Activity },
     { name: 'Profile', href: '/admin-dashboard/profile', icon: UserCircle },
   ]

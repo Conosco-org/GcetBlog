@@ -15,7 +15,9 @@ import {
   Activity, 
   Settings, 
   Eye,
-  Tag
+  Tag,
+  Users,
+  Shield,
 } from 'lucide-react'
 
 interface NavItem {
@@ -43,6 +45,7 @@ export function EditorSidebar({
   _onToggle
 }: EditorSidebarProps) {
   const pathname = usePathname()
+  const isAdmin = (_user as unknown as { isAdmin?: boolean }).isAdmin === true
 
   const navItems: NavItem[] = [
     {
@@ -98,10 +101,26 @@ export function EditorSidebar({
       href: '/',
       icon: <Eye className="w-5 h-5" />,
     },
+    // Admin-only links
+    ...(isAdmin ? [
+      {
+        label: 'User Management',
+        href: '/admin-dashboard/users',
+        icon: <Users className="w-5 h-5" />,
+      },
+      {
+        label: 'Admin Dashboard',
+        href: '/admin-dashboard',
+        icon: <Shield className="w-5 h-5" />,
+      },
+    ] : []),
   ]
 
   const isActive = (href: string) => {
     if (href === '/editor') {
+      return pathname === href
+    }
+    if (href === '/admin-dashboard') {
       return pathname === href
     }
     return pathname.startsWith(href)

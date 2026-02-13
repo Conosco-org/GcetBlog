@@ -13,6 +13,7 @@ import {
   MessageSquare,
   TrendingUp,
   ArrowUpRight,
+  Activity,
 } from 'lucide-react'
 
 export default async function AdminDashboardPage() {
@@ -171,7 +172,7 @@ export default async function AdminDashboardPage() {
             </Button>
 
             <Button variant="outline" className="h-auto flex-col items-start gap-1 p-4" asChild>
-              <Link href="/admin-dashboard/queue">
+              <Link href="/editor/queue">
                 <div className="flex w-full items-center justify-between">
                   <ClipboardList className="h-5 w-5 text-primary" />
                   <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
@@ -182,24 +183,24 @@ export default async function AdminDashboardPage() {
             </Button>
 
             <Button variant="outline" className="h-auto flex-col items-start gap-1 p-4" asChild>
-              <Link href="/admin-dashboard/comments">
+              <Link href="/admin-dashboard/logs">
                 <div className="flex w-full items-center justify-between">
-                  <MessageSquare className="h-5 w-5 text-primary" />
+                  <Activity className="h-5 w-5 text-primary" />
                   <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
                 </div>
-                <span className="text-sm font-medium">Comments</span>
-                <span className="text-xs text-muted-foreground">Moderate comments</span>
+                <span className="text-sm font-medium">Activity Logs</span>
+                <span className="text-xs text-muted-foreground">Recent platform activity</span>
               </Link>
             </Button>
 
             <Button variant="outline" className="h-auto flex-col items-start gap-1 p-4" asChild>
-              <Link href="/admin-dashboard/posts">
+              <Link href="/editor/content">
                 <div className="flex w-full items-center justify-between">
                   <FileText className="h-5 w-5 text-primary" />
                   <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
                 </div>
-                <span className="text-sm font-medium">All Posts</span>
-                <span className="text-xs text-muted-foreground">Content management</span>
+                <span className="text-sm font-medium">Content Manager</span>
+                <span className="text-xs text-muted-foreground">All posts & content</span>
               </Link>
             </Button>
           </div>

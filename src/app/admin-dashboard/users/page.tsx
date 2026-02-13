@@ -1,5 +1,6 @@
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
+import { headers } from 'next/headers'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -12,12 +13,20 @@ import {
 } from '@/components/ui/table'
 import { Users, Shield, ShieldCheck, Edit3, UserCheck } from 'lucide-react'
 import type { User } from '@/payload-types'
+import { UserActions } from './UserActions'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export default async function AdminUsersPage() {
   const payload = await getPayload({ config: configPromise })
+  const requestHeaders = await headers()
+  const { user: currentUser } = await payload.auth({ headers: requestHeaders })
+
+  // Fetch full current user to check canManageAdmins
+  const fullCurrentUser = currentUser
+    ? await payload.findByID({ collection: 'users', id: currentUser.id, depth: 0 })
+    : null
 
   const allUsers = await payload.find({
     collection: 'users',
@@ -93,6 +102,7 @@ export default async function AdminUsersPage() {
                 <TableHead>Role</TableHead>
                 <TableHead>Flags</TableHead>
                 <TableHead>Joined</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -135,6 +145,13 @@ export default async function AdminUsersPage() {
                     </TableCell>
                     <TableCell className="text-muted-foreground text-sm">
                       {new Date(user.createdAt).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <UserActions
+                        user={user}
+                        currentUserId={fullCurrentUser?.id || ''}
+                        currentUserCanManageAdmins={fullCurrentUser?.canManageAdmins === true}
+                      />
                     </TableCell>
                   </TableRow>
                 )

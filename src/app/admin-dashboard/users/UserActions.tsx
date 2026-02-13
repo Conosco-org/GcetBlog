@@ -5,9 +5,12 @@ import { useRouter } from 'next/navigation'
 import {
   MoreHorizontal,
   Shield,
+  ShieldCheck,
+  ShieldOff,
   UserCog,
   Users,
   Trash2,
+  Crown,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -28,19 +31,21 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { changeUserRole, deleteUser } from './actions'
+import { changeUserRole, deleteUser, toggleAdminStatus, toggleCanManageAdmins } from './actions'
 import type { User } from '@/payload-types'
 
 interface UserActionsProps {
   user: User
   currentUserId: string
+  currentUserCanManageAdmins?: boolean
 }
 
-export function UserActions({ user, currentUserId }: UserActionsProps) {
+export function UserActions({ user, currentUserId, currentUserCanManageAdmins = false }: UserActionsProps) {
   const router = useRouter()
   const [isChangingRole, setIsChangingRole] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [isTogglingAdmin, setIsTogglingAdmin] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
   const isOwnAccount = user.id === currentUserId
@@ -121,16 +126,71 @@ export function UserActions({ user, currentUserId }: UserActionsProps) {
             {user.role === 'contributor' && <span className="ml-auto text-xs">Current</span>}
           </DropdownMenuItem>
 
+          {currentUserCanManageAdmins && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel>Admin Flags</DropdownMenuLabel>
+              
+              <DropdownMenuItem
+                onClick={async () => {
+                  setIsTogglingAdmin(true)
+                  const result = await toggleAdminStatus(user.id)
+                  if (result.success) {
+                    setMessage({ type: 'success', text: result.message })
+                    setTimeout(() => { setMessage(null); router.refresh() }, 2000)
+                  } else {
+                    setMessage({ type: 'error', text: result.message })
+                    setTimeout(() => setMessage(null), 3000)
+                  }
+                  setIsTogglingAdmin(false)
+                }}
+                disabled={isOwnAccount || user.role !== 'editor' || isTogglingAdmin}
+              >
+                {user.isAdmin ? (
+                  <><ShieldOff className="mr-2 h-4 w-4 text-orange-500" /><span>Revoke Admin</span></>
+                ) : (
+                  <><Shield className="mr-2 h-4 w-4 text-blue-500" /><span>Make Admin</span></>
+                )}
+                {user.role !== 'editor' && <span className="ml-auto text-xs">Editor only</span>}
+              </DropdownMenuItem>
+
+              {user.isAdmin && (
+                <DropdownMenuItem
+                  onClick={async () => {
+                    setIsTogglingAdmin(true)
+                    const result = await toggleCanManageAdmins(user.id)
+                    if (result.success) {
+                      setMessage({ type: 'success', text: result.message })
+                      setTimeout(() => { setMessage(null); router.refresh() }, 2000)
+                    } else {
+                      setMessage({ type: 'error', text: result.message })
+                      setTimeout(() => setMessage(null), 3000)
+                    }
+                    setIsTogglingAdmin(false)
+                  }}
+                  disabled={isOwnAccount || isTogglingAdmin}
+                >
+                  {user.canManageAdmins ? (
+                    <><Crown className="mr-2 h-4 w-4 text-orange-500" /><span>Revoke Super Admin</span></>
+                  ) : (
+                    <><Crown className="mr-2 h-4 w-4 text-amber-500" /><span>Make Super Admin</span></>
+                  )}
+                </DropdownMenuItem>
+              )}
+            </>
+          )}
+
           <DropdownMenuSeparator />
           
           <DropdownMenuItem
             onClick={() => setShowDeleteDialog(true)}
-            disabled={isOwnAccount}
+            disabled={isOwnAccount || !!user.canManageAdmins}
             className="text-red-600 dark:text-red-400"
           >
             <Trash2 className="mr-2 h-4 w-4" />
             <span>Delete User</span>
             {isOwnAccount && <span className="ml-auto text-xs">Not allowed</span>}
+            {!isOwnAccount && user.canManageAdmins && <span className="ml-auto text-xs">Protected</span>}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
