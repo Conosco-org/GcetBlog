@@ -1,8 +1,6 @@
-import type { AccessArgs } from 'payload'
-import type { User } from '@/payload-types'
+import { editorOnly } from './editorOnly'
 
-type HasEditorAccess = (args: AccessArgs<User>) => boolean
-
-export const editorOrAdmin: HasEditorAccess = ({ req: { user } }) => {
-  return Boolean(user?.role === 'editor' || user?.role === 'admin')
-}
+/**
+ * @deprecated Use editorOnly instead. This was identical to editorOnly and is kept for backward compatibility.
+ */
+export const editorOrAdmin = editorOnly

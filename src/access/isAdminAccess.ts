@@ -1,10 +1,10 @@
 import type { Access } from 'payload'
 
 /**
- * @deprecated Use isAdminAccess instead. This is kept for backward compatibility.
  * Access control: allows only users with isAdmin flag.
+ * Used for user management operations (delete users, process role requests, etc.)
  */
-export const adminOnly: Access = ({ req: { user } }) => {
+export const isAdminAccess: Access = ({ req: { user } }) => {
   if (!user || typeof user !== 'object') return false
   return Boolean((user as unknown as Record<string, unknown>).isAdmin === true)
 }
