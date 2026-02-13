@@ -3,12 +3,10 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { LogoutButton } from '@/components/LogoutButton'
 import {
   BarChart3,
   Users,
-  Shield,
   FileText,
   ClipboardList,
   MessageSquare,
@@ -129,27 +127,6 @@ export function AdminSidebar({ stats, isOpen }: AdminSidebarProps) {
             </div>
           </div>
         </nav>
-
-        {/* Quick Actions */}
-        <div className="border-t p-3 flex-shrink-0">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
-            Admin Actions
-          </p>
-          <div className="space-y-1.5">
-            <Button className="w-full justify-start gap-2" size="sm" asChild>
-              <Link href="/admin-dashboard/users">
-                <Users className="h-4 w-4" />
-                Manage Users
-              </Link>
-            </Button>
-            <Button variant="outline" className="w-full justify-start gap-2" size="sm" asChild>
-              <Link href="/admin-dashboard/queue">
-                <ClipboardList className="h-4 w-4" />
-                Review Queue
-              </Link>
-            </Button>
-          </div>
-        </div>
 
         {/* Logout */}
         <div className="border-t p-3 flex-shrink-0">
