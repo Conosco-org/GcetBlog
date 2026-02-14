@@ -1984,6 +1984,40 @@ export interface CodeBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "YouTubeEmbedBlock".
+ */
+export interface YouTubeEmbedBlock {
+  /**
+   * Paste the full YouTube URL (e.g., https://www.youtube.com/watch?v=dQw4w9WgXcQ)
+   */
+  videoUrl: string;
+  /**
+   * Add a caption to describe the video
+   */
+  caption?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'youtubeEmbed';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "InstagramEmbedBlock".
+ */
+export interface InstagramEmbedBlock {
+  /**
+   * Paste the full Instagram post URL (e.g., https://www.instagram.com/p/ABC123/)
+   */
+  postUrl: string;
+  /**
+   * Add a caption to describe the post
+   */
+  caption?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'instagramEmbed';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "auth".
  */
 export interface Auth {

@@ -1,5 +1,5 @@
 import { PageSkeleton } from '@/components/base/PageSkeleton'
 
 export default function NewsletterLoading() {
-  return <PageSkeleton showStats={4} />
+  return <PageSkeleton showStats={true} />
 }
