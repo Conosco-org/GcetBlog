@@ -104,16 +104,16 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
         </CardContent>
 
         <CardFooter>
-          <Button type="submit" disabled={isLoading} className="w-full">
-            {success ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Login successful! Redirecting...
-              </>
-            ) : isLoading ? (
+          <Button type="submit" disabled={isLoading || success} className="w-full">
+            {isLoading && !success ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 Signing in...
+              </>
+            ) : success ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Login successful! Redirecting...
               </>
             ) : (
               'Sign In'
