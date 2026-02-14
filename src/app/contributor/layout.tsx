@@ -16,6 +16,9 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Contributor Dashboard',
+  icons: {
+    icon: 'https://res.cloudinary.com/dqpvhbkdd/image/upload/b_white,c_pad,w_512,h_512/v1761577830/Gcet_Logo_i9fkbt.png',
+  },
 }
 
 export default async function ContributorLayout({
@@ -69,11 +72,8 @@ export default async function ContributorLayout({
 
   return (
     <html className={cn(GeistSans.variable, GeistMono.variable)} lang="en" suppressHydrationWarning>
-      <head>
-        <InitTheme />
-        <link href="https://res.cloudinary.com/dqpvhbkdd/image/upload/b_white,c_pad,w_512,h_512/v1761577830/Gcet_Logo_i9fkbt.png" rel="icon" type="image/png" />
-      </head>
       <body className="bg-background text-foreground antialiased" suppressHydrationWarning>
+        <InitTheme />
         <PayloadBlocker />
         <Providers>
           <ContributorLayoutClient user={typedUser} stats={stats}>{children}</ContributorLayoutClient>

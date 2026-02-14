@@ -5,6 +5,8 @@ import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
 import Link from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
+import { YouTubeEmbed } from './extensions/YouTubeEmbed'
+import { InstagramEmbed } from './extensions/InstagramEmbed'
 import { useCallback, useEffect } from 'react'
 import {
   Bold,
@@ -23,8 +25,11 @@ import {
   Undo,
   Redo,
   RemoveFormatting,
+  Youtube,
+  Instagram,
 } from 'lucide-react'
 import { cn } from '@/utilities/ui'
+import './editor.css'
 
 // ── Types ───────────────────────────────────────────────────────
 
@@ -99,6 +104,8 @@ export function RichTextEditor({
           class: 'text-primary underline',
         },
       }),
+      YouTubeEmbed,
+      InstagramEmbed,
       Placeholder.configure({ placeholder }),
     ],
     content: value || '',
@@ -146,6 +153,29 @@ export function RichTextEditor({
     }
 
     editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
+  }, [editor])
+
+  const insertYouTube = useCallback(() => {
+    if (!editor) return
+
+    const url = window.prompt(
+      'Enter YouTube URL:',
+      ''
+    )
+
+    if (url && url.trim() !== '') {
+      editor.chain().focus().setYouTubeEmbed({ src: url.trim() }).run()
+    }
+  }, [editor])
+
+  const insertInstagram = useCallback(() => {
+    if (!editor) return
+
+    const url = window.prompt('Enter Instagram post URL (e.g., https://www.instagram.com/p/ABC123/):', '')
+
+    if (url && url.trim() !== '') {
+      editor.chain().focus().setInstagramEmbed({ src: url.trim() }).run()
+    }
   }, [editor])
 
   if (!editor) return null
@@ -278,6 +308,16 @@ export function RichTextEditor({
           title="Insert Link"
         >
           <LinkIcon className="h-4 w-4" />
+        </ToolbarButton>
+
+        <Divider />
+
+        {/* Embeds */}
+        <ToolbarButton onClick={insertYouTube} title="Insert YouTube Video">
+          <Youtube className="h-4 w-4" />
+        </ToolbarButton>
+        <ToolbarButton onClick={insertInstagram} title="Insert Instagram Post">
+          <Instagram className="h-4 w-4" />
         </ToolbarButton>
 
         <Divider />

@@ -25,16 +25,16 @@ export const metadata: Metadata = {
     template: '%s | GCET Blog',
   },
   description: 'Official blog platform for Geethanjali College of Engineering and Technology',
+  icons: {
+    icon: 'https://res.cloudinary.com/dqpvhbkdd/image/upload/b_white,c_pad,w_512,h_512/v1761577830/Gcet_Logo_i9fkbt.png',
+  },
 }
 
 export default async function FrontendLayout({ children }: { children: React.ReactNode }) {
   return (
     <html className={cn(GeistSans.variable, GeistMono.variable, sora.variable)} lang="en" suppressHydrationWarning>
-      <head>
-        <InitTheme />
-        <link href="https://res.cloudinary.com/dqpvhbkdd/image/upload/b_white,c_pad,w_512,h_512/v1761577830/Gcet_Logo_i9fkbt.png" rel="icon" type="image/png" />
-      </head>
       <body suppressHydrationWarning>
+        <InitTheme />
         <Providers>
           <PageViewTracker />
           <ConditionalLayout>

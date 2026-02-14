@@ -15,10 +15,9 @@ import {
   FileStack, 
   BarChart3, 
   Activity, 
-  Settings, 
-  Eye,
   Tag,
   Users,
+  Mail,
 } from 'lucide-react'
 
 interface NavItem {
@@ -58,6 +57,14 @@ export function EditorSidebar({
       href: isAdmin ? '/admin-dashboard' : '/editor',
       icon: <Home className="w-5 h-5" />,
     },
+    // Admin-only link: User Management - moved to top for priority
+    ...(isAdmin ? [
+      {
+        label: 'User Management',
+        href: '/admin-dashboard/users',
+        icon: <Users className="w-5 h-5" />,
+      },
+    ] : []),
     {
       label: 'Content Manager',
       href: '/editor/content',
@@ -86,6 +93,11 @@ export function EditorSidebar({
       icon: <FileStack className="w-5 h-5" />,
     },
     {
+      label: 'Newsletter',
+      href: '/editor/newsletter',
+      icon: <Mail className="w-5 h-5" />,
+    },
+    {
       label: 'Analytics',
       href: '/editor/analytics',
       icon: <BarChart3 className="w-5 h-5" />,
@@ -96,24 +108,6 @@ export function EditorSidebar({
       icon: <Activity className="w-5 h-5" />,
       badge: activityLogsCount,
     },
-    {
-      label: 'Workspace Settings',
-      href: '/editor/settings',
-      icon: <Settings className="w-5 h-5" />,
-    },
-    {
-      label: 'Public Blog View',
-      href: '/',
-      icon: <Eye className="w-5 h-5" />,
-    },
-    // Admin-only link: User Management
-    ...(isAdmin ? [
-      {
-        label: 'User Management',
-        href: '/admin-dashboard/users',
-        icon: <Users className="w-5 h-5" />,
-      },
-    ] : []),
   ]
 
   const isActive = useCallback((href: string) => {
