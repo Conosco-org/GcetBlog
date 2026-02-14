@@ -46,7 +46,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Search, Filter, MoreVertical, Pencil, MessageSquare, Loader2, Trash2, FileX } from 'lucide-react'
+import { Search, MoreVertical, Pencil, MessageSquare, Loader2, Trash2, FileX } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { deletePost, unpublishPost } from './actions'
@@ -61,7 +61,7 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [categoryFilter, setCategoryFilter] = useState('all')
-  const [feedbackDialog, setFeedbackDialog] = useState<{ open: boolean; post: any | null }>({
+  const [feedbackDialog, setFeedbackDialog] = useState<{ open: boolean; post: Post | null }>({
     open: false,
     post: null,
   })
@@ -233,11 +233,11 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
   }
 
   // Filter posts based on search and filters
-  const filteredPosts = posts.docs.filter((post: any) => {
+  const filteredPosts = posts.docs.filter((post) => {
     // Search filter
     const matchesSearch = searchQuery.trim() === '' || 
       post.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (Array.isArray(post.authors) && post.authors.some((author: any) => 
+      (Array.isArray(post.authors) && post.authors.some((author: string | { name?: string | null }) => 
         (typeof author === 'object' ? author.name : author)?.toLowerCase().includes(searchQuery.toLowerCase())
       ))
 
@@ -247,7 +247,7 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
 
     // Category filter
     const matchesCategory = categoryFilter === 'all' || 
-      (Array.isArray(post.categories) && post.categories.some((cat: any) => 
+      (Array.isArray(post.categories) && post.categories.some((cat: string | { id?: string }) => 
         (typeof cat === 'object' ? cat.id : cat) === categoryFilter
       ))
 
@@ -344,15 +344,15 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredPosts.map((post: any) => {
+                filteredPosts.map((post) => {
                 const status = post._status || 'draft'
                 const authors = Array.isArray(post.authors) 
-                  ? post.authors.map((author) => 
+                  ? post.authors.map((author: string | { name?: string | null }) => 
                       typeof author === 'object' ? author.name : author
                     ).join(', ') 
                   : 'Unknown'
                 const postCategories = Array.isArray(post.categories)
-                  ? post.categories.map((cat) => 
+                  ? post.categories.map((cat: string | { title: string }) => 
                       typeof cat === 'object' ? cat.title : cat
                     ).join(', ')
                   : 'Uncategorized'
