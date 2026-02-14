@@ -8,12 +8,18 @@ import { Clock, MessageSquare, Calendar } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import type { User } from '@/payload-types'
+import { PageHeader } from '@/components/base/PageHeader'
+import { EmptyState } from '@/components/base/EmptyState'
 
-export default async function CommentModerationPage() {
+interface PageProps {
+  searchParams: Promise<{ page?: string }>
+}
+
+export default async function CommentModerationPage({ searchParams }: PageProps) {
+  const params = await searchParams
   const payload = await getPayload({ config })
   const requestHeaders = await headers()
 
-  // Authenticate the request
   const { user } = await payload.auth({ headers: requestHeaders })
 
   if (!user) {
@@ -22,57 +28,46 @@ export default async function CommentModerationPage() {
 
   const typedUser = user as User & { role: string }
 
-  // Check if user has moderator permissions (admins are editors with isAdmin flag)
   if (typedUser.role !== 'editor') {
     redirect('/dashboard')
   }
 
   const currentUser = { id: typedUser.id, role: typedUser.role, name: typedUser.name || 'User' }
 
-  // Get pending posts count for navigation
-  const pendingPosts = await payload.count({
-    collection: 'posts',
-    where: {
-      _status: { equals: 'draft' },
-    },
-  })
+  const page = Math.max(1, Number(params.page) || 1)
 
-  // Get pending comments
-  const pendingComments = await payload.find({
-    collection: 'comments',
-    where: {
-      status: {
-        equals: 'pending',
+  // Parallel queries
+  const [pendingPosts, pendingComments, reportedComments] = await Promise.all([
+    payload.count({
+      collection: 'posts',
+      where: { _status: { equals: 'draft' } },
+    }),
+    payload.find({
+      collection: 'comments',
+      where: { status: { equals: 'pending' } },
+      sort: '-createdAt',
+      limit: 20,
+      page,
+    }),
+    payload.find({
+      collection: 'comments',
+      where: {
+        and: [
+          { reportedBy: { exists: true } },
+          { status: { equals: 'pending' } },
+        ],
       },
-    },
-    sort: '-createdAt',
-    limit: 50,
-  })
-
-  // Get reported comments that haven't been moderated yet
-  const reportedComments = await payload.find({
-    collection: 'comments',
-    where: {
-      and: [
-        { reportedBy: { exists: true } },
-        { status: { equals: 'pending' } },
-      ],
-    },
-    sort: '-reportedAt',
-    limit: 50,
-  })
+      sort: '-reportedAt',
+      limit: 20,
+    }),
+  ])
 
   return (
     <div className="p-8 min-h-screen">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-2">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Comment Moderation</h1>
-            <p className="text-muted-foreground">Review and moderate user comments</p>
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        title="Comment Moderation"
+        description="Review and moderate user comments"
+      />
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -167,7 +162,16 @@ export default async function CommentModerationPage() {
               {pendingComments.docs.length > 0 ? (
                 <CommentModerationList comments={pendingComments.docs} currentUser={currentUser} />
               ) : (
-                <p className="text-muted-foreground bg-muted p-4 rounded-md text-center">No pending comments</p>
+                <EmptyState
+                  icon={MessageSquare}
+                  title="No pending comments"
+                  description="All comments have been reviewed"
+                />
+              )}
+              {pendingComments.totalPages > 1 && (
+                <p className="text-sm text-muted-foreground mt-4 text-center">
+                  Showing page {pendingComments.page} of {pendingComments.totalPages} ({pendingComments.totalDocs} total)
+                </p>
               )}
             </CardContent>
           </Card>
@@ -188,7 +192,11 @@ export default async function CommentModerationPage() {
               {reportedComments.docs.length > 0 ? (
                 <CommentModerationList comments={reportedComments.docs} currentUser={currentUser} />
               ) : (
-                <p className="text-muted-foreground bg-muted p-4 rounded-md text-center">No reported comments</p>
+                <EmptyState
+                  icon={MessageSquare}
+                  title="No reported comments"
+                  description="No comments have been flagged by users"
+                />
               )}
             </CardContent>
           </Card>

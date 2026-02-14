@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { PageHeader } from '@/components/base'
 import type { User } from '@/payload-types'
 import {
   Users,
@@ -48,7 +49,7 @@ export default async function AdminDashboardPage() {
     depth: 1,
   })
 
-  // Stats
+  // Stats — use count() for efficient counting
   const [
     totalUsers,
     totalPosts,
@@ -58,14 +59,13 @@ export default async function AdminDashboardPage() {
     newUsersToday,
     recentActivity,
   ] = await Promise.all([
-    payload.find({ collection: 'users', limit: 0 }),
-    payload.find({ collection: 'posts', limit: 0 }),
-    payload.find({
+    payload.count({ collection: 'users' }),
+    payload.count({ collection: 'posts' }),
+    payload.count({
       collection: 'posts',
       where: { reviewStatus: { equals: 'pending' } },
-      limit: 0,
     }),
-    payload.find({ collection: 'comments', limit: 0 }),
+    payload.count({ collection: 'comments' }),
     payload.count({ collection: 'users', where: { isAdmin: { equals: true } } }),
     payload.count({
       collection: 'users',
@@ -80,12 +80,10 @@ export default async function AdminDashboardPage() {
   return (
     <div className="p-4 md:p-6 lg:p-8 space-y-6 max-w-[1400px]">
       {/* Welcome Section */}
-      <div>
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Admin Dashboard</h1>
-        <p className="text-muted-foreground mt-1">
-          Welcome back, <span className="font-medium text-foreground">{typedUser.name || typedUser.email}</span>
-        </p>
-      </div>
+      <PageHeader
+        title="Admin Dashboard"
+        description={`Welcome back, ${typedUser.name || typedUser.email}`}
+      />
 
       {/* Stats Grid */}
       <div className="grid gap-4 grid-cols-2 xl:grid-cols-4">
