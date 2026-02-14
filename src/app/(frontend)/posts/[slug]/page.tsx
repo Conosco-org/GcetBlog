@@ -17,6 +17,7 @@ import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { PostComments } from '@/components/PostComments'
 import { DraftModeBanner } from '@/components/DraftModeBanner'
 import { PostEngagement } from './PostEngagement'
+import { InstagramEmbedLoader } from '@/components/InstagramEmbedLoader'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -57,6 +58,7 @@ export default async function Post({ params: paramsPromise }: Args) {
       {draft && <DraftModeBanner postStatus={post._status || 'draft'} />}
       
       <PageClient />
+      <InstagramEmbedLoader />
 
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />

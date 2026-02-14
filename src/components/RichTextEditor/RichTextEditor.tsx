@@ -178,6 +178,26 @@ export function RichTextEditor({
     }
   }, [editor])
 
+  // Helper functions for stats
+  const getWordCount = (html: string) => {
+    const text = html.replace(/<[^>]+>/g, '')
+    return text.split(/\s+/).filter(word => word.length > 0).length
+  }
+
+  const getCharCount = (html: string) => {
+    const text = html.replace(/<[^>]+>/g, '')
+    return text.length
+  }
+
+  const getLineCount = (html: string) => {
+    if (!html) return 0
+    const lines = html.split(/<\/p>|<br>|<\/h[1-6]>|<\/li>|<\/blockquote>/).filter(line => {
+      const text = line.replace(/<[^>]+>/g, '').trim()
+      return text.length > 0
+    })
+    return Math.max(1, lines.length)
+  }
+
   if (!editor) return null
 
   return (
@@ -333,6 +353,15 @@ export function RichTextEditor({
 
       {/* Editor content */}
       <EditorContent editor={editor} />
+      
+      {/* Stats footer */}
+      <div className="px-4 py-2 border-t bg-muted/30 flex items-center gap-4 text-xs text-muted-foreground">
+        <span>{getCharCount(editor.getHTML())} characters</span>
+        <span className="text-border">|</span>
+        <span>{getWordCount(editor.getHTML())} words</span>
+        <span className="text-border">|</span>
+        <span>{getLineCount(editor.getHTML())} lines</span>
+      </div>
     </div>
   )
 }

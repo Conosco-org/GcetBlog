@@ -68,6 +68,63 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
       <InstagramEmbedBlock className="col-start-2 my-8" {...node.fields} />
     ),
   },
+  text: ({ node }) => {
+    const text = node.text || ''
+    
+    // Check for YouTube embed pattern: [YouTube: https://www.youtube.com/watch?v=ID]
+    const youtubeMatch = text.match(/\[YouTube: ([^\]]+)\]/)
+    if (youtubeMatch) {
+      const videoId = youtubeMatch[1].match(/[?&]v=([^&]+)/)?.[1] || 
+                      youtubeMatch[1].match(/youtu\.be\/([^?]+)/)?.[1]
+      if (videoId) {
+        return (
+          <div className="my-8">
+            <div className="relative aspect-video w-full overflow-hidden rounded-lg border bg-card">
+              <iframe
+                src={`https://www.youtube-nocookie.com/embed/${videoId}`}
+                title="YouTube video player"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                className="absolute inset-0 h-full w-full"
+              />
+            </div>
+          </div>
+        )
+      }
+    }
+
+    // Check for Instagram embed pattern: [Instagram: https://www.instagram.com/p/ID/]
+    const instagramMatch = text.match(/\[Instagram: ([^\]]+)\]/)
+    if (instagramMatch) {
+      const postUrl = instagramMatch[1]
+      const postId = postUrl.match(/\/p\/([^/]+)/)?.[1]
+      if (postId) {
+        return (
+          <div className="my-8 flex justify-center">
+            <blockquote
+              className="instagram-media"
+              data-instgrm-permalink={postUrl}
+              data-instgrm-version="14"
+              style={{
+                background: '#FFF',
+                border: '0',
+                borderRadius: '8px',
+                boxShadow: '0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15)',
+                margin: '1px',
+                maxWidth: '540px',
+                minWidth: '326px',
+                padding: '0',
+                width: 'calc(100% - 2px)',
+              }}
+            />
+          </div>
+        )
+      }
+    }
+
+    // Default text rendering - just return the text as is
+    return <>{text}</>
+  },
 })
 
 type Props = {

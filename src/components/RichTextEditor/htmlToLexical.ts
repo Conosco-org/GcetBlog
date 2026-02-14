@@ -345,6 +345,48 @@ function convertElement(el: Element): LexicalBlockNode[] {
     return blocks
   }
 
+  // YouTube embed
+  if (tag === 'div' && el.hasAttribute('data-youtube-embed')) {
+    const videoId = el.getAttribute('data-youtube-id') || ''
+    if (videoId) {
+      blocks.push(
+        makeParagraph([
+          {
+            type: 'text',
+            text: `[YouTube: https://www.youtube.com/watch?v=${videoId}]`,
+            detail: 0,
+            format: 0,
+            mode: 'normal',
+            style: '',
+            version: 1,
+          },
+        ])
+      )
+    }
+    return blocks
+  }
+
+  // Instagram embed
+  if (tag === 'div' && el.hasAttribute('data-instagram-embed')) {
+    const url = el.getAttribute('data-instagram-url') || ''
+    if (url) {
+      blocks.push(
+        makeParagraph([
+          {
+            type: 'text',
+            text: `[Instagram: ${url}]`,
+            detail: 0,
+            format: 0,
+            mode: 'normal',
+            style: '',
+            version: 1,
+          },
+        ])
+      )
+    }
+    return blocks
+  }
+
   // Div or other wrapper – recurse into children
   if (tag === 'div' || tag === 'section' || tag === 'article') {
     el.childNodes.forEach((child) => {
