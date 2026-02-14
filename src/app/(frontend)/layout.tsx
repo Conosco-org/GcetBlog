@@ -10,6 +10,7 @@ import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
 import { ConditionalLayout } from './ConditionalLayout'
+import { PageViewTracker } from '@/components/PageViewTracker'
 
 const sora = Sora({
   subsets: ['latin'],
@@ -35,6 +36,7 @@ export default async function FrontendLayout({ children }: { children: React.Rea
       <body suppressHydrationWarning>
         <InitTheme />
         <Providers>
+          <PageViewTracker />
           <ConditionalLayout>
             <Header />
             {children}

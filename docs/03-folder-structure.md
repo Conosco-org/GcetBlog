@@ -303,7 +303,7 @@ collections/
 ├── AdminLogs/                 # Activity logging
 │   ├── index.ts
 │   └── hooks/
-└── RoleUpgradeRequests/       # Role change requests
+
     └── index.ts
 ```
 

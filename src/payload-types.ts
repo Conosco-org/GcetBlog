@@ -72,6 +72,8 @@ export interface Config {
     media: Media;
     categories: Category;
     users: User;
+    votes: Vote;
+    'page-views': PageView;
     'admin-logs': AdminLog;
     comments: Comment;
     feedback: Feedback;
@@ -92,6 +94,8 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    votes: VotesSelect<false> | VotesSelect<true>;
+    'page-views': PageViewsSelect<false> | PageViewsSelect<true>;
     'admin-logs': AdminLogsSelect<false> | AdminLogsSelect<true>;
     comments: CommentsSelect<false> | CommentsSelect<true>;
     feedback: FeedbackSelect<false> | FeedbackSelect<true>;
@@ -250,6 +254,30 @@ export interface Post {
     image?: (string | null) | Media;
     description?: string | null;
   };
+  /**
+   * Free-form tags (comma-separated). E.g: tech, campus, events
+   */
+  tags?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * Start date for featuring this post (e.g., event start)
+   */
+  featuredFrom?: string | null;
+  /**
+   * End date for featuring this post (e.g., event end)
+   */
+  featuredUntil?: string | null;
+  /**
+   * Calculated vote score (upvotes - downvotes)
+   */
+  voteScore?: number | null;
   publishedAt?: string | null;
   authors?: (string | User)[] | null;
   populatedAuthors?:
@@ -402,13 +430,13 @@ export interface Category {
 export interface User {
   id: string;
   name: string;
-  role?: ('contributor' | 'editor') | null;
+  role?: ('contributor' | 'editor' | 'admin') | null;
   /**
-   * Grants user management capabilities (manage users, process role requests, view logs)
+   * Grant admin privileges for user management, logs, and system oversight
    */
   isAdmin?: boolean | null;
   /**
-   * Can manage admin users and cannot be deleted. Only other canManageAdmins users can grant this.
+   * Can grant/revoke admin privileges. Protected from deletion.
    */
   canManageAdmins?: boolean | null;
   /**
@@ -416,6 +444,35 @@ export interface User {
    */
   bio?: string | null;
   avatar?: (string | null) | Media;
+  /**
+   * Department or branch (e.g., CSE, ECE, ME)
+   */
+  department?: string | null;
+  /**
+   * Year of study or designation
+   */
+  year?: string | null;
+  /**
+   * Social media profiles
+   */
+  socialLinks?: {
+    /**
+     * Twitter/X profile URL
+     */
+    twitter?: string | null;
+    /**
+     * LinkedIn profile URL
+     */
+    linkedin?: string | null;
+    /**
+     * GitHub profile URL
+     */
+    github?: string | null;
+    /**
+     * Personal website URL
+     */
+    website?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -779,6 +836,55 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "votes".
+ */
+export interface Vote {
+  id: string;
+  post: string | Post;
+  user: string | User;
+  value: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "page-views".
+ */
+export interface PageView {
+  id: string;
+  /**
+   * The URL path that was viewed
+   */
+  path: string;
+  /**
+   * The post that was viewed (null for non-post pages)
+   */
+  post?: (string | null) | Post;
+  /**
+   * Slug of the post (for fast lookups without join)
+   */
+  postSlug?: string | null;
+  /**
+   * Anonymous session identifier for unique visitor tracking
+   */
+  sessionId?: string | null;
+  /**
+   * The referrer URL
+   */
+  referrer?: string | null;
+  userAgent?: string | null;
+  /**
+   * Country from geo lookup (if available)
+   */
+  country?: string | null;
+  device?: ('desktop' | 'mobile' | 'tablet' | 'unknown') | null;
+  browser?: string | null;
+  viewedAt: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "admin-logs".
  */
 export interface AdminLog {
@@ -1118,6 +1224,14 @@ export interface PayloadLockedDocument {
         value: string | User;
       } | null)
     | ({
+        relationTo: 'votes';
+        value: string | Vote;
+      } | null)
+    | ({
+        relationTo: 'page-views';
+        value: string | PageView;
+      } | null)
+    | ({
         relationTo: 'admin-logs';
         value: string | AdminLog;
       } | null)
@@ -1339,6 +1453,10 @@ export interface PostsSelect<T extends boolean = true> {
         image?: T;
         description?: T;
       };
+  tags?: T;
+  featuredFrom?: T;
+  featuredUntil?: T;
+  voteScore?: T;
   publishedAt?: T;
   authors?: T;
   populatedAuthors?:
@@ -1481,6 +1599,16 @@ export interface UsersSelect<T extends boolean = true> {
   canManageAdmins?: T;
   bio?: T;
   avatar?: T;
+  department?: T;
+  year?: T;
+  socialLinks?:
+    | T
+    | {
+        twitter?: T;
+        linkedin?: T;
+        github?: T;
+        website?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -1497,6 +1625,35 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "votes_select".
+ */
+export interface VotesSelect<T extends boolean = true> {
+  post?: T;
+  user?: T;
+  value?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "page-views_select".
+ */
+export interface PageViewsSelect<T extends boolean = true> {
+  path?: T;
+  post?: T;
+  postSlug?: T;
+  sessionId?: T;
+  referrer?: T;
+  userAgent?: T;
+  country?: T;
+  device?: T;
+  browser?: T;
+  viewedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

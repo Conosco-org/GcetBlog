@@ -35,9 +35,10 @@ export async function GET(request: NextRequest) {
     })
 
     return NextResponse.json(result)
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Failed to fetch media'
     return NextResponse.json(
-      { message: error.message || 'Failed to fetch media' },
+      { message },
       { status: 500 }
     )
   }
@@ -85,7 +86,7 @@ export async function POST(request: NextRequest) {
             else resolve(result)
           }
         ).end(buffer)
-      }) as any
+      }) as unknown as { secure_url: string; public_id: string; bytes: number; width: number; height: number }
 
       // Create media document with Cloudinary URL
       const media = await payload.create({
@@ -130,12 +131,13 @@ export async function POST(request: NextRequest) {
         message: 'Image uploaded successfully (local storage)',
       })
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error uploading media:', error)
+    const message = error instanceof Error ? error.message : 'Failed to upload image'
     return NextResponse.json(
       { 
         success: false,
-        message: error.message || 'Failed to upload image' 
+        message 
       },
       { status: 500 }
     )

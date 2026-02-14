@@ -1,10 +1,10 @@
 import { formatDateTime } from 'src/utilities/formatDateTime'
 import React from 'react'
+import Link from 'next/link'
 
 import type { Post } from '@/payload-types'
 
 import { Media } from '@/components/Media'
-import { formatAuthors } from '@/utilities/formatAuthors'
 
 export const PostHero: React.FC<{
   post: Post
@@ -12,7 +12,7 @@ export const PostHero: React.FC<{
   const { categories, heroImage, populatedAuthors, publishedAt, title } = post
 
   const hasAuthors =
-    populatedAuthors && populatedAuthors.length > 0 && formatAuthors(populatedAuthors) !== ''
+    populatedAuthors && populatedAuthors.length > 0 && populatedAuthors.some(a => a?.name)
 
   return (
     <div className="relative pt-16 flex items-end">
@@ -48,7 +48,20 @@ export const PostHero: React.FC<{
                 <div className="flex flex-col gap-1">
                   <p className="text-[10px] sm:text-xs tracking-widest uppercase text-white/50">Author</p>
 
-                  <p className="text-sm sm:text-base font-medium">{formatAuthors(populatedAuthors)}</p>
+                  <p className="text-sm sm:text-base font-medium">
+                    {populatedAuthors.filter(a => a?.name).map((author, index, arr) => (
+                      <React.Fragment key={author.id || index}>
+                        <Link
+                          href={`/profile/${author.id}`}
+                          className="hover:underline hover:text-white/90 transition"
+                        >
+                          {author.name}
+                        </Link>
+                        {index < arr.length - 2 && ', '}
+                        {index === arr.length - 2 && (arr.length > 2 ? ', and ' : ' and ')}
+                      </React.Fragment>
+                    ))}
+                  </p>
                 </div>
               </div>
             )}

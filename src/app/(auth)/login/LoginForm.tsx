@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/card'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import { loginAction } from './actions'
+import { GoogleSignInButton } from '@/components/GoogleSignInButton'
 
 interface LoginFormProps {
   redirectTo?: string
@@ -103,7 +104,7 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
           )}
         </CardContent>
 
-        <CardFooter>
+        <CardFooter className="flex flex-col gap-3">
           <Button type="submit" disabled={isLoading || success} className="w-full">
             {isLoading && !success ? (
               <>
@@ -119,6 +120,17 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
               'Sign In'
             )}
           </Button>
+
+          <div className="relative w-full">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-card px-2 text-muted-foreground">Or</span>
+            </div>
+          </div>
+
+          <GoogleSignInButton redirectTo={redirectTo} />
         </CardFooter>
       </form>
     </Card>

@@ -1,10 +1,6 @@
 import { getPayload, type Where } from 'payload'
 import configPromise from '@payload-config'
-import { Badge } from '@/components/ui/badge'
-import { Card } from '@/components/ui/card'
-import { CheckCircle, XCircle, Edit, Upload, MessageSquare, User, Activity } from 'lucide-react'
 import { PageHeader } from '@/components/base/PageHeader'
-import { EmptyState } from '@/components/base/EmptyState'
 import { LogsClient } from './LogsClient'
 
 export const dynamic = 'force-dynamic'

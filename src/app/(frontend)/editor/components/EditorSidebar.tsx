@@ -11,7 +11,7 @@ import {
   Home, 
   FileText, 
   Clock, 
-  Image, 
+  Image as ImageIcon, 
   FileStack, 
   BarChart3, 
   Activity, 
@@ -80,7 +80,7 @@ export function EditorSidebar({
     {
       label: 'Media Manager',
       href: '/editor/media',
-      icon: <Image className="w-5 h-5" />,
+      icon: <ImageIcon className="w-5 h-5" />,
     },
     {
       label: 'Categories',
@@ -110,13 +110,13 @@ export function EditorSidebar({
     },
   ]
 
-  const isActive = (href: string) => {
+  const isActive = useCallback((href: string) => {
     // Dashboard routes: exact match only
     if (href === '/editor' || href === '/admin-dashboard') {
       return pathname === href
     }
     return pathname.startsWith(href)
-  }
+  }, [pathname])
 
   const handleNavClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     // Don't intercept external links
@@ -131,7 +131,7 @@ export function EditorSidebar({
     startTransition(() => {
       router.push(href)
     })
-  }, [pathname, router, startTransition])
+  }, [isActive, router, startTransition])
 
   // Clear navigating state when pathname changes
   useEffect(() => {

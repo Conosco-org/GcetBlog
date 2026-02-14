@@ -46,29 +46,30 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Search, Filter, MoreVertical, Pencil, MessageSquare, Loader2, Trash2, FileX } from 'lucide-react'
+import { Search, MoreVertical, Pencil, MessageSquare, Loader2, Trash2, FileX } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { deletePost, unpublishPost } from './actions'
+import type { Post, Category } from '@/payload-types'
 
 interface ContentManagerClientProps {
-  posts: any
-  categories: any
+  posts: { docs: Post[]; totalDocs: number; totalPages: number; page?: number; hasPrevPage?: boolean; hasNextPage?: boolean }
+  categories: { docs: Category[] }
 }
 
 export default function ContentManagerClient({ posts, categories }: ContentManagerClientProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [categoryFilter, setCategoryFilter] = useState('all')
-  const [feedbackDialog, setFeedbackDialog] = useState<{ open: boolean; post: any | null }>({
+  const [feedbackDialog, setFeedbackDialog] = useState<{ open: boolean; post: Post | null }>({
     open: false,
     post: null,
   })
-  const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; post: any | null }>({
+  const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; post: Post | null }>({
     open: false,
     post: null,
   })
-  const [unpublishDialog, setUnpublishDialog] = useState<{ open: boolean; post: any | null }>({
+  const [unpublishDialog, setUnpublishDialog] = useState<{ open: boolean; post: Post | null }>({
     open: false,
     post: null,
   })
@@ -95,8 +96,9 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
     try {
       // Get the post author (contributor)
       const post = feedbackDialog.post
-      const contributorId = typeof post.authors === 'object' && post.authors.length > 0 
-        ? (typeof post.authors[0] === 'object' ? post.authors[0].id : post.authors[0])
+      const authors = post?.authors as Array<{ id: string; name?: string }> | null | undefined
+      const contributorId = Array.isArray(authors) && authors.length > 0 
+        ? (typeof authors[0] === 'object' ? authors[0].id : authors[0])
         : null
 
       if (!contributorId) {
@@ -140,7 +142,7 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
     }
   }
 
-  const openFeedbackDialog = (post: any) => {
+  const openFeedbackDialog = (post: Post) => {
     setFeedbackDialog({ open: true, post })
     setFeedbackForm({
       title: `Feedback for: ${post.title}`,
@@ -170,7 +172,7 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
           variant: 'destructive',
         })
       }
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: 'Error',
         description: 'Failed to delete post',
@@ -202,7 +204,7 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
           variant: 'destructive',
         })
       }
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: 'Error',
         description: 'Failed to unpublish post',
@@ -231,11 +233,11 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
   }
 
   // Filter posts based on search and filters
-  const filteredPosts = posts.docs.filter((post: any) => {
+  const filteredPosts = posts.docs.filter((post) => {
     // Search filter
     const matchesSearch = searchQuery.trim() === '' || 
       post.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (Array.isArray(post.authors) && post.authors.some((author: any) => 
+      (Array.isArray(post.authors) && post.authors.some((author: string | { name?: string | null }) => 
         (typeof author === 'object' ? author.name : author)?.toLowerCase().includes(searchQuery.toLowerCase())
       ))
 
@@ -245,7 +247,7 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
 
     // Category filter
     const matchesCategory = categoryFilter === 'all' || 
-      (Array.isArray(post.categories) && post.categories.some((cat: any) => 
+      (Array.isArray(post.categories) && post.categories.some((cat: string | { id?: string }) => 
         (typeof cat === 'object' ? cat.id : cat) === categoryFilter
       ))
 
@@ -289,7 +291,7 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
-                {categories.docs.map((category: any) => (
+                {categories.docs.map((category) => (
                   <SelectItem key={category.id} value={category.id}>
                     {category.title}
                   </SelectItem>
@@ -342,15 +344,15 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredPosts.map((post: any) => {
+                filteredPosts.map((post) => {
                 const status = post._status || 'draft'
                 const authors = Array.isArray(post.authors) 
-                  ? post.authors.map((author: any) => 
+                  ? post.authors.map((author: string | { name?: string | null }) => 
                       typeof author === 'object' ? author.name : author
                     ).join(', ') 
                   : 'Unknown'
-                const categories = Array.isArray(post.categories)
-                  ? post.categories.map((cat: any) => 
+                const postCategories = Array.isArray(post.categories)
+                  ? post.categories.map((cat: string | { title: string }) => 
                       typeof cat === 'object' ? cat.title : cat
                     ).join(', ')
                   : 'Uncategorized'
@@ -367,7 +369,7 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
                     </TableCell>
                     <TableCell>{authors}</TableCell>
                     <TableCell>
-                      <Badge variant="outline">{categories}</Badge>
+                      <Badge variant="outline">{postCategories}</Badge>
                     </TableCell>
                     <TableCell>
                       <Badge variant={getStatusVariant(status)}>
@@ -483,7 +485,7 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
               <Label htmlFor="feedback-type">Type *</Label>
               <Select 
                 value={feedbackForm.type} 
-                onValueChange={(value: any) => setFeedbackForm({ ...feedbackForm, type: value })}
+                onValueChange={(value: 'critical' | 'suggestions' | 'praise' | 'questions') => setFeedbackForm({ ...feedbackForm, type: value })}
                 disabled={isLoading}
               >
                 <SelectTrigger>

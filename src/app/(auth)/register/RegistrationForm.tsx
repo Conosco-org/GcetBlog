@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/card'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import { registerAction } from './actions'
+import { GoogleSignInButton } from '@/components/GoogleSignInButton'
 
 export function RegistrationForm() {
   const [isLoading, setIsLoading] = useState(false)
@@ -139,7 +140,7 @@ export function RegistrationForm() {
           )}
         </CardContent>
 
-        <CardFooter>
+        <CardFooter className="flex flex-col gap-3">
           <Button type="submit" disabled={isLoading} className="w-full">
             {isLoading ? (
               <>
@@ -150,6 +151,17 @@ export function RegistrationForm() {
               'Create Account'
             )}
           </Button>
+
+          <div className="relative w-full">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-card px-2 text-muted-foreground">Or</span>
+            </div>
+          </div>
+
+          <GoogleSignInButton label="Sign up with Google" />
         </CardFooter>
       </form>
     </Card>

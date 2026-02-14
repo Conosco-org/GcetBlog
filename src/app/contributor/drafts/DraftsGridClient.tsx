@@ -25,7 +25,7 @@ export function DraftsGridClient({
   totalPages,
   currentPage,
   totalItems,
-  pageSize,
+  pageSize: _pageSize,
   query,
 }: DraftsGridClientProps) {
   const router = useRouter()

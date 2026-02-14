@@ -29,8 +29,7 @@ export function DataTableSkeleton({
             {Array.from({ length: columns }).map((_, i) => (
               <div
                 key={`header-${i}`}
-                className="h-4 bg-muted animate-pulse rounded flex-1"
-                style={{ maxWidth: i === 0 ? '200px' : undefined }}
+                className={`h-4 bg-muted animate-pulse rounded flex-1${i === 0 ? ' max-w-[200px]' : ''}`}
               />
             ))}
           </div>
@@ -44,11 +43,7 @@ export function DataTableSkeleton({
               {Array.from({ length: columns }).map((_, colIdx) => (
                 <div
                   key={`cell-${rowIdx}-${colIdx}`}
-                  className="h-4 bg-muted animate-pulse rounded flex-1"
-                  style={{
-                    maxWidth: colIdx === 0 ? '200px' : undefined,
-                    animationDelay: `${(rowIdx * columns + colIdx) * 50}ms`,
-                  }}
+                  className={`h-4 bg-muted animate-pulse rounded flex-1${colIdx === 0 ? ' max-w-[200px]' : ''}`}
                 />
               ))}
             </div>

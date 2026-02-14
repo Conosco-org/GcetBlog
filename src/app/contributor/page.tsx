@@ -268,11 +268,11 @@ export default async function ContributorDashboardPage() {
                   <span className="text-sm text-muted-foreground">Published</span>
                   <span className="text-sm font-semibold">{publishedCount.totalDocs}</span>
                 </div>
-                <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                <div className="h-2 w-full bg-muted rounded-full overflow-hidden" aria-hidden="true">
                   <div 
                     className="h-full bg-green-500 rounded-full"
                     style={{ width: `${totalSubmissions.totalDocs > 0 ? (publishedCount.totalDocs / totalSubmissions.totalDocs) * 100 : 0}%` }}
-                  ></div>
+                  />
                 </div>
               </div>
 
@@ -281,11 +281,11 @@ export default async function ContributorDashboardPage() {
                   <span className="text-sm text-muted-foreground">In Review</span>
                   <span className="text-sm font-semibold">{submittedCount.totalDocs}</span>
                 </div>
-                <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                <div className="h-2 w-full bg-muted rounded-full overflow-hidden" aria-hidden="true">
                   <div 
                     className="h-full bg-blue-500 rounded-full"
                     style={{ width: `${totalSubmissions.totalDocs > 0 ? (submittedCount.totalDocs / totalSubmissions.totalDocs) * 100 : 0}%` }}
-                  ></div>
+                  />
                 </div>
               </div>
 
@@ -294,11 +294,11 @@ export default async function ContributorDashboardPage() {
                   <span className="text-sm text-muted-foreground">Drafts</span>
                   <span className="text-sm font-semibold">{draftCount.totalDocs}</span>
                 </div>
-                <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                <div className="h-2 w-full bg-muted rounded-full overflow-hidden" aria-hidden="true">
                   <div 
                     className="h-full bg-orange-500 rounded-full"
                     style={{ width: `${totalSubmissions.totalDocs > 0 ? (draftCount.totalDocs / totalSubmissions.totalDocs) * 100 : 0}%` }}
-                  ></div>
+                  />
                 </div>
               </div>
             </CardContent>

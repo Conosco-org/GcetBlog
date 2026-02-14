@@ -1,7 +1,7 @@
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import Link from 'next/link'
-import { Clock, CheckCircle2, MessageSquare, Image, Calendar, ChevronRight } from 'lucide-react'
+import { Clock, CheckCircle2, MessageSquare, Image as ImageIcon, ChevronRight } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -228,7 +228,7 @@ export default async function EditorDashboardPage() {
                 <CardDescription>Files this week</CardDescription>
               </div>
               <div className="w-12 h-12 bg-purple-500/10 rounded-full flex items-center justify-center">
-                <Image className="w-6 h-6 text-purple-500" />
+                <ImageIcon className="w-6 h-6 text-purple-500" />
               </div>
             </div>
           </CardHeader>

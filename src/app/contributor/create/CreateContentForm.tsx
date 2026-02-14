@@ -73,7 +73,7 @@ interface CreateContentFormProps {
   categories: Category[]
 }
 
-export function CreateContentForm({ user, categories: dbCategories }: CreateContentFormProps) {
+export function CreateContentForm({ user: _user, categories: dbCategories }: CreateContentFormProps) {
   const router = useRouter()
   const { toast } = useToast()
   const [selectedType, setSelectedType] = useState<string>('')
@@ -325,7 +325,7 @@ export function CreateContentForm({ user, categories: dbCategories }: CreateCont
                     <button
                       key={type.id}
                       onClick={() => setSelectedType(type.id)}
-                      aria-pressed={selectedType === type.id}
+                      data-selected={selectedType === type.id}
                       className={cn(
                         'flex flex-col items-start p-4 rounded-lg border-2 transition-all text-left',
                         selectedType === type.id
@@ -429,6 +429,7 @@ export function CreateContentForm({ user, categories: dbCategories }: CreateCont
                 <Label>Featured Image</Label>
                 {featuredImagePreview ? (
                   <div className="relative rounded-lg overflow-hidden border">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={featuredImagePreview}
                       alt="Featured"

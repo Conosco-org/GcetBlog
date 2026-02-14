@@ -14,7 +14,6 @@ import {
   ArrowRight,
   Sun,
   Moon,
-  Shield,
   File
 } from 'lucide-react'
 
