@@ -6,15 +6,20 @@ import { GeistSans } from 'geist/font/sans'
 import { Logo } from '@/components/Logo/Logo'
 import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'GCET Blog',
+  icons: {
+    icon: 'https://res.cloudinary.com/dqpvhbkdd/image/upload/b_white,c_pad,w_512,h_512/v1761577830/Gcet_Logo_i9fkbt.png',
+  },
+}
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <html className={cn(GeistSans.variable, GeistMono.variable)} lang="en" suppressHydrationWarning>
-      <head>
-        <InitTheme />
-        <link href="https://res.cloudinary.com/dqpvhbkdd/image/upload/b_white,c_pad,w_512,h_512/v1761577830/Gcet_Logo_i9fkbt.png" rel="icon" type="image/png" />
-      </head>
       <body suppressHydrationWarning>
+        <InitTheme />
         <Providers>
           <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-background dark:via-background dark:to-background">
             {/* Simple header with logo and back button */}

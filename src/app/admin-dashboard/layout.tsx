@@ -12,6 +12,14 @@ import { GeistSans } from 'geist/font/sans'
 import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
 import '@/app/(frontend)/globals.css'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Admin Dashboard',
+  icons: {
+    icon: 'https://res.cloudinary.com/dqpvhbkdd/image/upload/b_white,c_pad,w_512,h_512/v1761577830/Gcet_Logo_i9fkbt.png',
+  },
+}
 
 export default async function AdminDashboardLayout({
   children,
@@ -59,11 +67,8 @@ export default async function AdminDashboardLayout({
 
   return (
     <html className={cn(GeistSans.variable, GeistMono.variable)} lang="en" suppressHydrationWarning>
-      <head>
-        <InitTheme />
-        <link href="https://res.cloudinary.com/dqpvhbkdd/image/upload/b_white,c_pad,w_512,h_512/v1761577830/Gcet_Logo_i9fkbt.png" rel="icon" type="image/png" />
-      </head>
       <body className="bg-background text-foreground antialiased" suppressHydrationWarning>
+        <InitTheme />
         <PayloadBlocker />
         <Providers>
           <EditorLayoutClient
