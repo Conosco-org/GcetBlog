@@ -72,11 +72,11 @@ export const YouTubeEmbed = Node.create<YouTubeEmbedOptions>({
         }),
         [
           'div',
-          { class: 'rounded-lg border border-destructive bg-destructive/10 p-4 text-center' },
+          { class: 'rounded-lg border border-red-500 bg-red-50 p-4 text-center my-4' },
           [
             'p',
-            { class: 'text-sm text-destructive' },
-            'Invalid YouTube URL',
+            { class: 'text-sm text-red-600 font-medium' },
+            'Invalid YouTube URL. Please use format: https://www.youtube.com/watch?v=VIDEO_ID',
           ],
         ],
       ]
@@ -86,6 +86,7 @@ export const YouTubeEmbed = Node.create<YouTubeEmbedOptions>({
       'div',
       mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
         'data-youtube-embed': '',
+        'data-youtube-id': videoId,
         class: 'youtube-embed my-8',
       }),
       [

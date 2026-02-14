@@ -1,0 +1,29 @@
+/* YouTube and Instagram embed styles for TipTap editor */
+
+.ProseMirror [data-youtube-embed] {
+  cursor: default;
+  margin: 2rem 0;
+}
+
+.ProseMirror [data-youtube-embed] iframe {
+  pointer-events: none;
+}
+
+.ProseMirror [data-instagram-embed] {
+  cursor: default;
+  user-select: none;
+  margin: 2rem auto;
+  max-width: 540px;
+}
+
+.ProseMirror [data-youtube-embed].ProseMirror-selectednode,
+.ProseMirror [data-instagram-embed].ProseMirror-selectednode {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+}
+
+/* Make embeds non-editable but selectable */
+.ProseMirror [data-youtube-embed]:hover,
+.ProseMirror [data-instagram-embed]:hover {
+  opacity: 0.9;
+}

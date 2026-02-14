@@ -29,6 +29,7 @@ import {
   Instagram,
 } from 'lucide-react'
 import { cn } from '@/utilities/ui'
+import './editor.css'
 
 // ── Types ───────────────────────────────────────────────────────
 
@@ -139,26 +140,6 @@ export function RichTextEditor({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []) // Only on mount
 
-  // Load Instagram embed script
-  useEffect(() => {
-    const script = document.createElement('script')
-    script.src = 'https://www.instagram.com/embed.js'
-    script.async = true
-    document.body.appendChild(script)
-
-    script.onload = () => {
-      if ((window as any).instgrm) {
-        (window as any).instgrm.Embeds.process()
-      }
-    }
-
-    return () => {
-      if (document.body.contains(script)) {
-        document.body.removeChild(script)
-      }
-    }
-  }, [])
-
   const setLink = useCallback(() => {
     if (!editor) return
 
@@ -179,21 +160,21 @@ export function RichTextEditor({
 
     const url = window.prompt(
       'Enter YouTube URL:',
-      'https://www.youtube.com/watch?v='
+      ''
     )
 
-    if (url && url !== 'https://www.youtube.com/watch?v=') {
-      editor.chain().focus().setYouTubeEmbed({ src: url }).run()
+    if (url && url.trim() !== '') {
+      editor.chain().focus().setYouTubeEmbed({ src: url.trim() }).run()
     }
   }, [editor])
 
   const insertInstagram = useCallback(() => {
     if (!editor) return
 
-    const url = window.prompt('Enter Instagram post URL:', 'https://www.instagram.com/p/')
+    const url = window.prompt('Enter Instagram post URL (e.g., https://www.instagram.com/p/ABC123/):', '')
 
-    if (url && url !== 'https://www.instagram.com/p/') {
-      editor.chain().focus().setInstagramEmbed({ src: url }).run()
+    if (url && url.trim() !== '') {
+      editor.chain().focus().setInstagramEmbed({ src: url.trim() }).run()
     }
   }, [editor])
 

@@ -62,11 +62,11 @@ export const InstagramEmbed = Node.create<InstagramEmbedOptions>({
         }),
         [
           'div',
-          { class: 'rounded-lg border border-destructive bg-destructive/10 p-4 text-center' },
+          { class: 'rounded-lg border border-red-500 bg-red-50 p-4 text-center my-4' },
           [
             'p',
-            { class: 'text-sm text-destructive' },
-            'Invalid Instagram URL',
+            { class: 'text-sm text-red-600 font-medium' },
+            'Invalid Instagram URL. Please use format: https://www.instagram.com/p/POST_ID/',
           ],
         ],
       ]
@@ -74,20 +74,33 @@ export const InstagramEmbed = Node.create<InstagramEmbedOptions>({
 
     const postUrl = HTMLAttributes.src
 
+    // Simpler rendering - just a placeholder div that Instagram's script will replace
     return [
       'div',
-      mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
+      mergeAttributes(this.options.HTMLAttributes, {
         'data-instagram-embed': '',
-        class: 'instagram-embed my-8 mx-auto max-w-xl',
+        'data-instagram-url': postUrl,
+        class: 'instagram-embed-container my-8',
+        style: 'min-height: 500px; display: flex; align-items: center; justify-content: center; border: 2px dashed #ccc; border-radius: 8px; padding: 20px;',
       }),
       [
-        'blockquote',
-        {
-          class: 'instagram-media',
-          'data-instgrm-permalink': postUrl,
-          'data-instgrm-version': '14',
-          style: 'background:#FFF; border:0; border-radius:8px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin:1px; max-width:540px; min-width:326px; padding:0; width:calc(100% - 2px);',
-        },
+        'div',
+        { class: 'text-center' },
+        [
+          'p',
+          { class: 'text-sm text-gray-600 mb-2' },
+          '📸 Instagram Post',
+        ],
+        [
+          'p',
+          { class: 'text-xs text-gray-400 break-all px-4' },
+          postUrl,
+        ],
+        [
+          'p',
+          { class: 'text-xs text-gray-500 mt-2' },
+          '(Preview will show after publishing)',
+        ],
       ],
     ]
   },
