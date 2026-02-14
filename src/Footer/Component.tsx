@@ -54,7 +54,7 @@ export async function Footer() {
             >
               {/* eslint-disable @next/next/no-img-element */}
               <img
-                src="https://www.conosco.in/logo/Web/logo_header.png"
+                src="/conosco-logo.png"
                 alt="Conosco"
                 className="h-4 w-auto"
                 loading="lazy"

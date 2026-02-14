@@ -13,7 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Eye, EyeOff, LogIn } from 'lucide-react'
+import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import { loginAction } from './actions'
 
 interface LoginFormProps {
@@ -23,12 +23,14 @@ interface LoginFormProps {
 export function LoginForm({ redirectTo }: LoginFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState(false)
   const router = useRouter()
 
   async function handleSubmit(formData: FormData) {
     setIsLoading(true)
-    setMessage(null)
+    setError(null)
+    setSuccess(false)
 
     // Add redirect parameter if present
     if (redirectTo) {
@@ -38,11 +40,11 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
     const result = await loginAction(formData)
 
     if (result?.error) {
-      setMessage({ type: 'error', text: result.error })
+      setError(result.error)
       setIsLoading(false)
     } else if (result?.success && result?.redirectPath) {
-      // Login successful - redirect to the appropriate page
-      setMessage({ type: 'success', text: 'Login successful! Redirecting...' })
+      // Login successful - show in button, then redirect
+      setSuccess(true)
       router.push(result.redirectPath)
     }
   }
@@ -94,31 +96,27 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
             </div>
           </div>
 
-          {message && (
-            <div
-              className={`p-3 rounded-md ${
-                message.type === 'success'
-                  ? 'bg-success/20 text-foreground border border-success'
-                  : 'bg-destructive/10 text-foreground border border-destructive'
-              }`}
-            >
-              {message.text}
+          {error && (
+            <div className="p-3 rounded-md bg-destructive/10 text-foreground border border-destructive">
+              {error}
             </div>
           )}
         </CardContent>
 
         <CardFooter>
           <Button type="submit" disabled={isLoading} className="w-full">
-            {isLoading ? (
+            {success ? (
               <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Login successful! Redirecting...
+              </>
+            ) : isLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 Signing in...
               </>
             ) : (
-              <>
-                <LogIn className="w-4 h-4 mr-2" />
-                Sign In
-              </>
+              'Sign In'
             )}
           </Button>
         </CardFooter>
