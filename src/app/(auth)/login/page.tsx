@@ -1,6 +1,6 @@
 import { getCurrentUser } from './actions'
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
+import { RegisterLink } from './RegisterLink'
 import { LoginForm } from './LoginForm'
 import type { Metadata } from 'next'
 
@@ -63,10 +63,7 @@ export default async function LoginPage({
 
         <div className="text-center">
           <p className="text-sm text-muted-foreground">
-            Don&apos;t have an account?{' '}
-            <Link href="/register" className="font-medium text-primary hover:text-primary/80">
-              Apply to become a contributor
-            </Link>
+            Don&apos;t have an account? <RegisterLink />
           </p>
         </div>
       </div>

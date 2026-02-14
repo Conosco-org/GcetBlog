@@ -1,12 +1,18 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useState, useTransition } from 'react'
 import { Button } from '@/components/ui/button'
 import { LogoutButton } from '@/components/LogoutButton'
 import { useUser } from '@/providers/User'
+import { Loader2 } from 'lucide-react'
 
 export function AuthButton() {
   const { user, loading } = useUser()
+  const router = useRouter()
+  const [isPending, startTransition] = useTransition()
+  const [isNavigating, setIsNavigating] = useState(false)
 
   if (loading) {
     return (
@@ -38,11 +44,28 @@ export function AuthButton() {
     )
   }
 
+  const handleSignIn = () => {
+    setIsNavigating(true)
+    startTransition(() => {
+      router.push('/login')
+    })
+  }
+
   return (
-    <Link href="/login">
-      <Button variant="default" size="sm">
-        Sign In
-      </Button>
-    </Link>
+    <Button 
+      variant="default" 
+      size="sm"
+      onClick={handleSignIn}
+      disabled={isPending || isNavigating}
+    >
+      {isPending || isNavigating ? (
+        <>
+          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+          Loading...
+        </>
+      ) : (
+        'Sign In'
+      )}
+    </Button>
   )
 }
