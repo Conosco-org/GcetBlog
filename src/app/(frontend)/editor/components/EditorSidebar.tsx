@@ -15,10 +15,9 @@ import {
   FileStack, 
   BarChart3, 
   Activity, 
-  Settings, 
-  Eye,
   Tag,
   Users,
+  Mail,
 } from 'lucide-react'
 
 interface NavItem {
@@ -87,6 +86,16 @@ export function EditorSidebar({
       label: 'Categories',
       href: '/editor/categories',
       icon: <Tag className="w-5 h-5" />,
+    },
+    {
+      label: 'Templates',
+      href: '/editor/templates',
+      icon: <FileStack className="w-5 h-5" />,
+    },
+    {
+      label: 'Newsletter',
+      href: '/editor/newsletter',
+      icon: <Mail className="w-5 h-5" />,
     },
     {
       label: 'Analytics',
