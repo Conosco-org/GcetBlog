@@ -1,8 +1,8 @@
 'use client'
 
-import React from 'react'
-import Link from 'next/link'
-import { TrendingUp, FileText, Users, Award } from 'lucide-react'
+import React, { useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
+import { TrendingUp, FileText, Users, Award, Loader2 } from 'lucide-react'
 
 const stats = [
   {
@@ -36,6 +36,15 @@ const stats = [
 ]
 
 export const StatsSection: React.FC = () => {
+  const router = useRouter()
+  const [isPending, startTransition] = useTransition()
+
+  const handleNavigate = () => {
+    startTransition(() => {
+      router.push('/login')
+    })
+  }
+
   return (
     <section className="py-20 md:py-32 bg-gradient-to-br from-blue-600 via-cyan-600 to-teal-600 text-white relative overflow-hidden">
       {/* Animated Background Patterns */}
@@ -87,12 +96,20 @@ export const StatsSection: React.FC = () => {
         {/* Bottom CTA */}
         <div className="text-center mt-16">
           <p className="text-xl mb-2">Want to be part of our success story?</p>
-          <Link
-            href="/login"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-blue-600 rounded-full font-semibold hover:bg-blue-50 transition-all hover:scale-105 shadow-xl"
+          <button
+            onClick={handleNavigate}
+            disabled={isPending}
+            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-blue-600 rounded-full font-semibold hover:bg-blue-50 transition-all hover:scale-105 shadow-xl disabled:opacity-70 disabled:scale-100"
           >
-            Start Contributing Today
-          </Link>
+            {isPending ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Loading...
+              </>
+            ) : (
+              'Start Contributing Today'
+            )}
+          </button>
         </div>
       </div>
     </section>

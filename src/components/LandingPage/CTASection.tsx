@@ -1,10 +1,21 @@
 ﻿'use client'
 
-import React from 'react'
+import React, { useState, useTransition } from 'react'
 import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { ArrowRight, Loader2 } from 'lucide-react'
 
 export const CTASection: React.FC = () => {
+  const router = useRouter()
+  const [isPending, startTransition] = useTransition()
+  const [navigatingTo, setNavigatingTo] = useState<string | null>(null)
+
+  const handleNavigate = (href: string) => {
+    setNavigatingTo(href)
+    startTransition(() => {
+      router.push(href)
+    })
+  }
   return (
     <section className="py-24 md:py-32 relative overflow-hidden">
       {/* Accent background strip */}
@@ -35,20 +46,38 @@ export const CTASection: React.FC = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              href="/login"
-              className="group inline-flex items-center gap-3 px-8 py-4 bg-accent text-accent-foreground rounded-full text-sm font-medium tracking-wide hover:opacity-90 transition-opacity"
+            <button
+              onClick={() => handleNavigate('/login')}
+              disabled={isPending && navigatingTo === '/login'}
+              className="group inline-flex items-center gap-3 px-8 py-4 bg-accent text-accent-foreground rounded-full text-sm font-medium tracking-wide hover:opacity-90 transition-opacity disabled:opacity-70"
             >
-              Start Contributing
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-            </Link>
+              {isPending && navigatingTo === '/login' ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Loading...
+                </>
+              ) : (
+                <>
+                  Start Contributing
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                </>
+              )}
+            </button>
 
-            <Link
-              href="/posts"
-              className="inline-flex items-center gap-3 px-8 py-4 border border-background/20 text-background rounded-full text-sm font-medium tracking-wide hover:bg-background/10 transition-colors"
+            <button
+              onClick={() => handleNavigate('/posts')}
+              disabled={isPending && navigatingTo === '/posts'}
+              className="inline-flex items-center gap-3 px-8 py-4 border border-background/20 text-background rounded-full text-sm font-medium tracking-wide hover:bg-background/10 transition-colors disabled:opacity-70"
             >
-              Read Articles
-            </Link>
+              {isPending && navigatingTo === '/posts' ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Loading...
+                </>
+              ) : (
+                'Read Articles'
+              )}
+            </button>
           </div>
         </div>
 
@@ -67,7 +96,7 @@ export const CTASection: React.FC = () => {
               >
                 {/* eslint-disable @next/next/no-img-element */}
                 <img
-                  src="https://www.conosco.in/logo/Web/logo_header.png"
+                  src="/conosco-logo.png"
                   alt="Conosco"
                   className="h-4 w-auto brightness-0 invert"
                   loading="lazy"
