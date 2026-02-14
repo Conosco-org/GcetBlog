@@ -2,7 +2,7 @@
 import { useHeaderTheme } from '@/providers/HeaderTheme'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, Suspense } from 'react'
 import Image from 'next/image'
 import { Menu, X } from 'lucide-react'
 
@@ -98,7 +98,9 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data: _data, categor
               </Link>
             </nav>
 
-            <GlobalSearchBar categories={categories} variant="header" />
+            <Suspense fallback={null}>
+              <GlobalSearchBar categories={categories} variant="header" />
+            </Suspense>
 
             <div className="w-px h-5 bg-border hidden md:block" />
 
