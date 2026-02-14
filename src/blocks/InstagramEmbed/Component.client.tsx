@@ -7,6 +7,14 @@ interface InstagramEmbedComponentProps {
   caption?: string | null
 }
 
+interface InstagramWindow extends Window {
+  instgrm?: {
+    Embeds: {
+      process: () => void
+    }
+  }
+}
+
 // Extract Instagram post ID from URL
 function getInstagramPostId(url: string): string | null {
   const pattern = /instagram\.com\/p\/([A-Za-z0-9_-]+)/
@@ -30,8 +38,8 @@ export const InstagramEmbedComponent: React.FC<InstagramEmbedComponentProps> = (
 
     // Process embeds when script loads
     script.onload = () => {
-      if ((window as any).instgrm) {
-        (window as any).instgrm.Embeds.process()
+      if ((window as InstagramWindow).instgrm) {
+        (window as InstagramWindow).instgrm?.Embeds.process()
       }
     }
 

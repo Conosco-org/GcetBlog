@@ -103,7 +103,7 @@ export default async function NewsletterPage() {
 }
 
 function StatCard({ icon: Icon, label, value, color }: {
-  icon: any
+  icon: React.ComponentType<{ className?: string }>
   label: string
   value: string
   color: string

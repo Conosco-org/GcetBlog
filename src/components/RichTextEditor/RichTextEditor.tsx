@@ -164,6 +164,7 @@ export function RichTextEditor({
     )
 
     if (url && url.trim() !== '') {
+      // @ts-ignore - Custom TipTap extension command
       editor.chain().focus().setYouTubeEmbed({ src: url.trim() }).run()
     }
   }, [editor])
@@ -174,6 +175,7 @@ export function RichTextEditor({
     const url = window.prompt('Enter Instagram post URL (e.g., https://www.instagram.com/p/ABC123/):', '')
 
     if (url && url.trim() !== '') {
+      // @ts-ignore - Custom TipTap extension command
       editor.chain().focus().setInstagramEmbed({ src: url.trim() }).run()
     }
   }, [editor])
