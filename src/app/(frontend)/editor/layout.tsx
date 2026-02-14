@@ -32,28 +32,22 @@ export default async function EditorLayout({
     redirect('/')
   }
 
-  // Get real counts for sidebar badges
-  const pendingPosts = await payload.count({
-    collection: 'posts',
-    where: {
-      _status: {
-        equals: 'draft',
+  // Get real counts for sidebar badges — parallelized
+  const [pendingPosts, totalPosts, recentLogs] = await Promise.all([
+    payload.count({
+      collection: 'posts',
+      where: { _status: { equals: 'draft' } },
+    }),
+    payload.count({ collection: 'posts' }),
+    payload.count({
+      collection: 'admin-logs',
+      where: {
+        createdAt: {
+          greater_than: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+        },
       },
-    },
-  })
-
-  const totalPosts = await payload.count({
-    collection: 'posts',
-  })
-
-  const recentLogs = await payload.count({
-    collection: 'admin-logs',
-    where: {
-      createdAt: {
-        greater_than: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), // Last 7 days
-      },
-    },
-  })
+    }),
+  ])
 
   return (
     <EditorLayoutClient

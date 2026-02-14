@@ -1,7 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { useState, useTransition, useCallback, useEffect } from 'react'
 import { User } from '@/payload-types'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -14,7 +15,8 @@ import {
   MessageSquare, 
   Globe, 
   Edit3,
-  UserCircle
+  UserCircle,
+  Loader2,
 } from 'lucide-react'
 import { cn } from '@/utilities/ui'
 
@@ -31,6 +33,9 @@ interface ContributorSidebarProps {
 
 export function ContributorSidebar({ user, stats, isOpen }: ContributorSidebarProps) {
   const pathname = usePathname()
+  const router = useRouter()
+  const [isPending, startTransition] = useTransition()
+  const [navigatingTo, setNavigatingTo] = useState<string | null>(null)
 
   const navigation = [
     { name: 'Dashboard', href: '/contributor', icon: BarChart3 },
@@ -41,6 +46,26 @@ export function ContributorSidebar({ user, stats, isOpen }: ContributorSidebarPr
     { name: 'Profile', href: '/contributor/profile', icon: UserCircle },
     { name: 'Public Blog', href: '/', icon: Globe },
   ]
+
+  const handleNavClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    // Don't intercept external links (Public Blog)
+    if (href === '/') return
+    // Don't intercept if already on that page
+    if (pathname === href) {
+      e.preventDefault()
+      return
+    }
+    e.preventDefault()
+    setNavigatingTo(href)
+    startTransition(() => {
+      router.push(href)
+    })
+  }, [pathname, router, startTransition])
+
+  // Clear navigating state when pathname changes
+  useEffect(() => {
+    setNavigatingTo(null)
+  }, [pathname])
 
   return (
     <aside className={cn(
@@ -53,20 +78,29 @@ export function ContributorSidebar({ user, stats, isOpen }: ContributorSidebarPr
           <div className="space-y-1">
             {navigation.map((item) => {
               const isActive = pathname === item.href
+              const isLoading = isPending && navigatingTo === item.href
               return (
                 <Link
                   key={item.name}
                   href={item.href}
+                  onClick={(e) => handleNavClick(e, item.href)}
                   aria-current={isActive ? 'page' : undefined}
+                  aria-busy={isLoading}
                   className={cn(
                     'flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                     isActive
                       ? 'bg-primary text-primary-foreground'
-                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                      : isLoading
+                        ? 'bg-muted/70 text-foreground'
+                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                   )}
                 >
                   <div className="flex items-center gap-3">
-                    <item.icon className="h-4 w-4" />
+                    {isLoading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <item.icon className="h-4 w-4" />
+                    )}
                     <span>{item.name}</span>
                   </div>
                   {item.badge !== undefined && item.badge > 0 && (

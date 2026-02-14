@@ -38,53 +38,33 @@ export default async function ContributorLayout({
     redirect('/dashboard')
   }
 
-  // Fetch badge counts for sidebar
-  const [draftPosts, submittedPosts, publishedPosts] = await Promise.all([
-    // Drafts count
-    payload.find({
+  // Fetch badge counts for sidebar — use count() for efficiency
+  const authorWhere = { authors: { equals: typedUser.id } }
+
+  const [draftCount, submittedCount, publishedCount, feedbackCount] = await Promise.all([
+    payload.count({
       collection: 'posts',
-      where: {
-        and: [
-          { authors: { equals: typedUser.id } },
-          { _status: { equals: 'draft' } },
-        ],
-      },
-      limit: 0,
+      where: { ...authorWhere, _status: { equals: 'draft' } },
     }),
-    // Submissions (under review) count
-    payload.find({
+    payload.count({
       collection: 'posts',
-      where: {
-        and: [
-          { authors: { equals: typedUser.id } },
-          { reviewStatus: { equals: 'pending_review' } },
-        ],
-      },
-      limit: 0,
+      where: { ...authorWhere, reviewStatus: { equals: 'pending_review' } },
     }),
-    // Published posts count
-    payload.find({
+    payload.count({
       collection: 'posts',
-      where: {
-        and: [
-          { authors: { equals: typedUser.id } },
-          { _status: { equals: 'published' } },
-        ],
-      },
-      limit: 0,
+      where: { ...authorWhere, _status: { equals: 'published' } },
+    }),
+    payload.count({
+      collection: 'feedback',
+      where: { contributor: { equals: typedUser.id } },
     }),
   ])
 
   const stats = {
-    drafts: draftPosts.totalDocs,
-    submissions: submittedPosts.totalDocs,
-    published: publishedPosts.totalDocs,
-    // Get feedback count for this contributor
-    feedback: (await payload.find({
-      collection: 'feedback',
-      where: { contributor: { equals: typedUser.id } },
-      limit: 0,
-    })).totalDocs,
+    drafts: draftCount.totalDocs,
+    submissions: submittedCount.totalDocs,
+    published: publishedCount.totalDocs,
+    feedback: feedbackCount.totalDocs,
   }
 
   return (
