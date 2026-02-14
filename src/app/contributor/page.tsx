@@ -26,6 +26,10 @@ export const metadata: Metadata = {
   title: 'Contributor Dashboard',
 }
 
+// Force dynamic rendering for real-time data
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function ContributorDashboardPage() {
   const payload = await getPayload({ config: configPromise })
   const requestHeaders = await headers()

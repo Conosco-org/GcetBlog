@@ -5,6 +5,10 @@ import { redirect } from 'next/navigation'
 import type { User, Feedback } from '@/payload-types'
 import FeedbackCenter from './FeedbackCenter'
 
+// Force dynamic rendering for real-time data
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function FeedbackCenterPage() {
   const payload = await getPayload({ config: configPromise })
   const requestHeaders = await headers()

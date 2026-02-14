@@ -5,6 +5,10 @@ import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import ContentManagerClient from './ContentManagerClient'
 
+// Force dynamic rendering for real-time data
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function ContentManagerPage() {
   const payload = await getPayload({ config: configPromise })
 

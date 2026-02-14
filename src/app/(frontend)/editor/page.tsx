@@ -13,6 +13,10 @@ export const metadata: Metadata = {
   title: 'Editor Dashboard',
 }
 
+// Force dynamic rendering for real-time data
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function EditorDashboardPage() {
   try {
     const payload = await getPayload({ config: configPromise })

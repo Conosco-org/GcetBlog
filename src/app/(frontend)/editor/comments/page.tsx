@@ -11,6 +11,10 @@ import type { User } from '@/payload-types'
 import { PageHeader } from '@/components/base/PageHeader'
 import { EmptyState } from '@/components/base/EmptyState'
 
+// Force dynamic rendering for real-time data
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 interface PageProps {
   searchParams: Promise<{ page?: string }>
 }
