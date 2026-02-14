@@ -57,6 +57,9 @@ interface ContentManagerClientProps {
 }
 
 export default function ContentManagerClient({ posts, categories }: ContentManagerClientProps) {
+  const [searchQuery, setSearchQuery] = useState('')
+  const [statusFilter, setStatusFilter] = useState('all')
+  const [categoryFilter, setCategoryFilter] = useState('all')
   const [feedbackDialog, setFeedbackDialog] = useState<{ open: boolean; post: any | null }>({
     open: false,
     post: null,
@@ -227,6 +230,28 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
     }
   }
 
+  // Filter posts based on search and filters
+  const filteredPosts = posts.docs.filter((post: any) => {
+    // Search filter
+    const matchesSearch = searchQuery.trim() === '' || 
+      post.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (Array.isArray(post.authors) && post.authors.some((author: any) => 
+        (typeof author === 'object' ? author.name : author)?.toLowerCase().includes(searchQuery.toLowerCase())
+      ))
+
+    // Status filter
+    const postStatus = post._status || 'draft'
+    const matchesStatus = statusFilter === 'all' || postStatus === statusFilter
+
+    // Category filter
+    const matchesCategory = categoryFilter === 'all' || 
+      (Array.isArray(post.categories) && post.categories.some((cat: any) => 
+        (typeof cat === 'object' ? cat.id : cat) === categoryFilter
+      ))
+
+    return matchesSearch && matchesStatus && matchesCategory
+  })
+
   return (
     <>
       {/* Search and Filters */}
@@ -239,12 +264,14 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
                 type="text"
                 placeholder="Search posts, authors..."
                 className="pl-10"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
           </div>
           
           <div className="flex gap-2">
-            <Select>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-[150px]">
                 <SelectValue placeholder="All Posts" />
               </SelectTrigger>
@@ -256,7 +283,7 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
               </SelectContent>
             </Select>
             
-            <Select>
+            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
@@ -270,10 +297,18 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
               </SelectContent>
             </Select>
             
-            <Button variant="outline">
-              <Filter className="w-4 h-4 mr-2" />
-              More Filters
-            </Button>
+            {(searchQuery || statusFilter !== 'all' || categoryFilter !== 'all') && (
+              <Button 
+                variant="outline"
+                onClick={() => {
+                  setSearchQuery('')
+                  setStatusFilter('all')
+                  setCategoryFilter('all')
+                }}
+              >
+                Clear Filters
+              </Button>
+            )}
           </div>
         </div>
       </div>
@@ -283,7 +318,7 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
         <div className="px-6 py-4 border-b">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">Content Overview</h2>
-            <p className="text-sm text-muted-foreground">Showing {posts.docs.length} of {posts.totalDocs} posts</p>
+            <p className="text-sm text-muted-foreground">Showing {filteredPosts.length} of {posts.totalDocs} posts</p>
           </div>
         </div>
         
@@ -300,7 +335,14 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
               </TableRow>
             </TableHeader>
             <TableBody>
-              {posts.docs.map((post: any) => {
+              {filteredPosts.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-12 text-muted-foreground">
+                    No posts found matching your filters
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredPosts.map((post: any) => {
                 const status = post._status || 'draft'
                 const authors = Array.isArray(post.authors) 
                   ? post.authors.map((author: any) => 
@@ -385,7 +427,7 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
                     </TableCell>
                   </TableRow>
                 )
-              })}
+              }))}
             </TableBody>
           </Table>
         </div>
@@ -393,7 +435,7 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
         {/* Pagination */}
         <div className="px-6 py-4 border-t flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
-            Showing {posts.docs.length} of {posts.totalDocs} posts
+            Showing {filteredPosts.length} of {posts.totalDocs} posts
           </p>
           <div className="flex gap-2">
             <Button 

@@ -62,11 +62,21 @@ const columns: Column<AdminLog>[] = [
   {
     key: 'resource',
     header: 'Resource',
-    render: (log) => (
-      <span className="text-sm text-muted-foreground">
-        {log.resourceType} — {log.resourceId}
-      </span>
-    ),
+    render: (log) => {
+      const resourceType = log.resourceType
+        ? log.resourceType.charAt(0).toUpperCase() + log.resourceType.slice(1)
+        : 'Unknown'
+      const shortId = log.resourceId ? `...${log.resourceId.slice(-8)}` : ''
+      
+      return (
+        <div className="flex flex-col">
+          <span className="text-sm font-medium">{resourceType}</span>
+          {shortId && (
+            <span className="text-xs text-muted-foreground font-mono">{shortId}</span>
+          )}
+        </div>
+      )
+    },
   },
   {
     key: 'date',
