@@ -53,12 +53,12 @@ export const Media: CollectionConfig = {
     },
   ],
   upload: {
-    // On Vercel (read-only filesystem), local storage must be disabled.
-    // All images are served via Cloudinary CDN (useCloudinaryFallback hook).
+    // Note: disableLocalStorage requires a storage adapter plugin
+    // Using default storage with afterRead hook for Cloudinary fallback
     staticDir: path.resolve(dirname, '../../public/media'),
     adminThumbnail: 'thumbnail',
     focalPoint: true,
-    disableLocalStorage: true, // Vercel has read-only filesystem; use Cloudinary only
+    // disableLocalStorage: true, // Commented out - requires storage adapter plugin
     imageSizes: [
       {
         name: 'thumbnail',
