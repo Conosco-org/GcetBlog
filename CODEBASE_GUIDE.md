@@ -170,7 +170,7 @@ collections/
 ├── Categories.ts          # Post categories
 ├── Comments/              # User comments
 ├── AdminLogs/             # Admin activity logs
-└── RoleUpgradeRequests/   # User role upgrade requests
+
 ```
 
 **Think of collections as database tables**, but more powerful.

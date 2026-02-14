@@ -1,7 +1,6 @@
 'use client'
 
 import { Badge } from '@/components/ui/badge'
-import { Card } from '@/components/ui/card'
 import { SearchInput } from '@/components/base/SearchInput'
 import { FilterBar } from '@/components/base/FilterBar'
 import { DataTable, type Column } from '@/components/base/DataTable'

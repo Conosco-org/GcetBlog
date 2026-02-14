@@ -1,8 +1,6 @@
 import { getPayload, type Where } from 'payload'
 import configPromise from '@payload-config'
-import { Upload } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { PageHeader } from '@/components/base/PageHeader'
 import { MediaGridClient } from './MediaGridClient'
 
@@ -58,12 +56,6 @@ export default async function MediaManagerPage({ searchParams }: PageProps) {
       <PageHeader
         title="Media Manager"
         description="Organize and manage your media files"
-        action={
-          <Button>
-            <Upload className="w-4 h-4 mr-2" />
-            Upload Files
-          </Button>
-        }
       />
 
       {/* Storage Usage */}
@@ -74,7 +66,7 @@ export default async function MediaManagerPage({ searchParams }: PageProps) {
             <span className="text-sm font-medium text-green-600">{Math.round(storagePercent)}% Used</span>
           </div>
           <p className="text-sm text-muted-foreground mb-3">{storageUsed.toFixed(2)} GB of {storageLimit} GB used ({storageQuery.totalDocs} files)</p>
-          <div className="w-full bg-secondary rounded-full h-3 overflow-hidden">
+          <div className="w-full bg-secondary rounded-full h-3 overflow-hidden" aria-hidden="true">
             <div
               className="bg-gradient-to-r from-blue-500 to-blue-600 h-full rounded-full transition-all"
               style={{ width: `${Math.min(storagePercent, 100)}%` }}

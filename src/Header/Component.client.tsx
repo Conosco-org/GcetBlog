@@ -9,12 +9,14 @@ import { Menu, X } from 'lucide-react'
 import type { Header } from '@/payload-types'
 
 import { AuthButton } from '@/components/Header/AuthButton'
+import { GlobalSearchBar } from '@/components/GlobalSearchBar'
 
 interface HeaderClientProps {
   data: Header
+  categories?: Array<{ id: string; title: string; slug: string }>
 }
 
-export const HeaderClient: React.FC<HeaderClientProps> = ({ data: _data }) => {
+export const HeaderClient: React.FC<HeaderClientProps> = ({ data: _data, categories = [] }) => {
   const [theme, setTheme] = useState<string | null>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -95,6 +97,8 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data: _data }) => {
                 Contact
               </Link>
             </nav>
+
+            <GlobalSearchBar categories={categories} variant="header" />
 
             <div className="w-px h-5 bg-border hidden md:block" />
 

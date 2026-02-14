@@ -79,12 +79,13 @@ export async function PATCH(
       post,
       message: body._status === 'published' ? 'Post published successfully!' : 'Draft saved successfully!',
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error updating post:', error)
+    const message = error instanceof Error ? error.message : 'Failed to update post'
     return NextResponse.json(
       { 
         success: false,
-        message: error.message || 'Failed to update post' 
+        message 
       },
       { status: 500 }
     )

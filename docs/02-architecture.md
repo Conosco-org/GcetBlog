@@ -152,7 +152,7 @@ src/collections/
 ├── Media.ts              # Uploaded files
 ├── Comments.ts           # Post comments
 ├── AdminLogs.ts          # Activity logging
-└── RoleUpgradeRequests.ts # User role requests
+
 ```
 
 ### Access Control

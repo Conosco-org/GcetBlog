@@ -11,6 +11,8 @@ import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
 import { Users } from './collections/Users'
+import { Votes } from './collections/Votes'
+import { PageViews } from './collections/PageViews'
 import { AdminLogs } from './collections/AdminLogs'
 import { Comments } from './collections/Comments'
 import { Feedback } from './collections/Feedback'
@@ -84,7 +86,7 @@ export default buildConfig({
   db: mongooseAdapter({
     url: process.env.DATABASE_URI || '',
   }),
-  collections: [Pages, Posts, Media, Categories, Users, AdminLogs, Comments, Feedback],
+  collections: [Pages, Posts, Media, Categories, Users, Votes, PageViews, AdminLogs, Comments, Feedback],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins: [

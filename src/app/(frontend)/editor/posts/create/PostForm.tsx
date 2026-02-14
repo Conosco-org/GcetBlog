@@ -2,12 +2,13 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Save, ArrowLeft, Eye, Upload, X, Send } from 'lucide-react'
+import { Save, ArrowLeft, Eye, Upload, X, Send, Clock, Tag, Star, Plus } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
 import { useToast } from '@/hooks/use-toast'
 import { RichTextEditor, htmlToLexical, htmlToPlainText } from '@/components/RichTextEditor'
 import type { Category, User } from '@/payload-types'
@@ -19,6 +20,10 @@ interface PostFormProps {
     title?: string
     content?: string
     categories?: string[]
+    tags?: string[]
+    publishedAt?: string
+    featuredFrom?: string
+    featuredUntil?: string
     meta?: {
       title?: string
       description?: string
@@ -37,10 +42,39 @@ export function PostForm({ categories, user, initialData, postId, isEdit = false
   const [selectedCategories, setSelectedCategories] = useState<string[]>(initialData?.categories || [])
   const [metaTitle, setMetaTitle] = useState(initialData?.meta?.title || '')
   const [metaDescription, setMetaDescription] = useState(initialData?.meta?.description || '')
+  const [tags, setTags] = useState<string[]>(initialData?.tags || [])
+  const [tagInput, setTagInput] = useState('')
+  const [publishedAt, setPublishedAt] = useState(initialData?.publishedAt || '')
+  const [featuredFrom, setFeaturedFrom] = useState(initialData?.featuredFrom || '')
+  const [featuredUntil, setFeaturedUntil] = useState(initialData?.featuredUntil || '')
   const [heroImageId, setHeroImageId] = useState<string | undefined>(initialData?.heroImage)
   const [heroImagePreview, setHeroImagePreview] = useState<string | undefined>(undefined)
   const [isUploadingImage, setIsUploadingImage] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const isEditor = user.role === 'editor'
+
+  const handleAddTag = () => {
+    const newTag = tagInput.trim().toLowerCase()
+    if (newTag && !tags.includes(newTag)) {
+      setTags(prev => [...prev, newTag])
+    }
+    setTagInput('')
+  }
+
+  const handleRemoveTag = (tag: string) => {
+    setTags(prev => prev.filter(t => t !== tag))
+  }
+
+  const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault()
+      handleAddTag()
+    }
+    if (e.key === 'Backspace' && !tagInput && tags.length > 0) {
+      setTags(prev => prev.slice(0, -1))
+    }
+  }
 
   const getWordCount = (html: string) => {
     const text = htmlToPlainText(html).trim()
@@ -152,6 +186,7 @@ export function PostForm({ categories, user, initialData, postId, isEdit = false
           title: title.trim(),
           content: htmlToLexical(content),
           categories: selectedCategories,
+          tags,
           authors: [user.id],
           _status: 'draft',
           submittedForReviewAt: new Date().toISOString(),
@@ -229,8 +264,12 @@ export function PostForm({ categories, user, initialData, postId, isEdit = false
           title: title.trim(),
           content: htmlToLexical(content),
           categories: selectedCategories,
+          tags,
           authors: [user.id],
           _status: status,
+          ...(publishedAt ? { publishedAt: new Date(publishedAt).toISOString() } : {}),
+          ...(isEditor && featuredFrom ? { featuredFrom: new Date(featuredFrom).toISOString() } : {}),
+          ...(isEditor && featuredUntil ? { featuredUntil: new Date(featuredUntil).toISOString() } : {}),
           heroImage: heroImageId,
           meta: {
             title: metaTitle.trim() || title.trim(),
@@ -450,6 +489,112 @@ export function PostForm({ categories, user, initialData, postId, isEdit = false
           </div>
           {selectedCategories.length === 0 && (
             <p className="text-xs text-muted-foreground mt-2">Select at least one category</p>
+          )}
+        </div>
+
+        {/* Tags */}
+        <div>
+          <label className="block text-sm font-semibold mb-2">
+            <Tag className="w-4 h-4 inline mr-1" />
+            Tags
+          </label>
+          <div className="flex flex-wrap gap-2 mb-2">
+            {tags.map((tag) => (
+              <span
+                key={tag}
+                className="inline-flex items-center gap-1 px-3 py-1 bg-secondary text-secondary-foreground rounded-full text-sm"
+              >
+                {tag}
+                <button
+                  type="button"
+                  onClick={() => handleRemoveTag(tag)}
+                  className="hover:text-destructive transition"
+                  aria-label={`Remove tag ${tag}`}
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <Input
+              type="text"
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={handleTagKeyDown}
+              placeholder="Type a tag and press Enter..."
+              className="flex-1"
+            />
+            <Button type="button" variant="outline" size="sm" onClick={handleAddTag} disabled={!tagInput.trim()}>
+              <Plus className="w-4 h-4 mr-1" />
+              Add
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">
+            Press Enter or comma to add. Tags help readers discover your post.
+          </p>
+        </div>
+
+        {/* Scheduling & Featured (editors only for featured) */}
+        <div className="border-t pt-6">
+          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <Clock className="w-5 h-5" />
+            Publishing Options
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="publishedAt" className="text-sm font-semibold">
+                Schedule Publish Date
+              </Label>
+              <Input
+                type="datetime-local"
+                id="publishedAt"
+                value={publishedAt}
+                onChange={(e) => setPublishedAt(e.target.value)}
+                className="mt-1"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Leave empty to publish immediately, or set a future date to schedule.
+              </p>
+            </div>
+          </div>
+
+          {isEditor && (
+            <div className="mt-4 p-4 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+              <h4 className="text-sm font-semibold mb-3 flex items-center gap-2 text-amber-700 dark:text-amber-400">
+                <Star className="w-4 h-4" />
+                Feature This Post
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="featuredFrom" className="text-sm">
+                    Featured From
+                  </Label>
+                  <Input
+                    type="datetime-local"
+                    id="featuredFrom"
+                    value={featuredFrom}
+                    onChange={(e) => setFeaturedFrom(e.target.value)}
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="featuredUntil" className="text-sm">
+                    Featured Until
+                  </Label>
+                  <Input
+                    type="datetime-local"
+                    id="featuredUntil"
+                    value={featuredUntil}
+                    onChange={(e) => setFeaturedUntil(e.target.value)}
+                    className="mt-1"
+                  />
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Post will appear in the Featured section on the homepage during this date range.
+              </p>
+            </div>
           )}
         </div>
 

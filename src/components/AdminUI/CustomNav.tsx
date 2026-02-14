@@ -13,7 +13,6 @@ import {
   MessageSquare,
   Settings,
   BarChart3,
-  Shield,
   File
 } from 'lucide-react'
 
@@ -40,7 +39,7 @@ export default function CustomNav() {
   const { user } = useAuth()
   
   // Type assertion for user role
-  const userRole = (user as { role?: string })?.role
+  const _userRole = (user as { role?: string })?.role
 
   // All nav items are visible now (no hideForAdmin logic needed)
   const filteredNavItems = navItems

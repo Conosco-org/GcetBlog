@@ -1,6 +1,6 @@
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
-import { notFound, redirect } from 'next/navigation'
+import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
 import { PostForm } from '../../create/PostForm'
 import type { User } from '@/payload-types'
@@ -44,13 +44,13 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
   // Convert Lexical content to plain text for editing
   let plainTextContent = ''
   if (post.content && typeof post.content === 'object' && 'root' in post.content) {
-    const root = post.content.root as any
+    const root = post.content.root as Record<string, unknown>
     if (root.children && Array.isArray(root.children)) {
       plainTextContent = root.children
-        .map((child: any) => {
+        .map((child: Record<string, unknown>) => {
           if (child.children && Array.isArray(child.children)) {
             return child.children
-              .map((textNode: any) => textNode.text || '')
+              .map((textNode: Record<string, unknown>) => (textNode.text as string) || '')
               .join('')
           }
           return ''

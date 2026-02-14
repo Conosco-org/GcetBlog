@@ -130,7 +130,7 @@ function CommentCard({ comment, currentUser }: CommentCardProps) {
             <form action={handleReport} className="space-y-3">
               <input type="hidden" name="commentId" value={comment.id} />
               <div>
-                <select name="reason" required className="w-full p-2 border rounded-md">
+                <select name="reason" required className="w-full p-2 border rounded-md" aria-label="Report reason">
                   <option value="">Select a reason</option>
                   <option value="spam">Spam</option>
                   <option value="inappropriate">Inappropriate content</option>

@@ -24,9 +24,10 @@ export async function GET(request: NextRequest) {
     })
 
     return NextResponse.json(result)
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Failed to fetch posts'
     return NextResponse.json(
-      { message: error.message || 'Failed to fetch posts' },
+      { message },
       { status: 500 }
     )
   }
@@ -106,12 +107,13 @@ export async function POST(request: NextRequest) {
       post,
       message: body._status === 'published' ? 'Post published successfully!' : 'Draft saved successfully!',
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error creating post:', error)
+    const message = error instanceof Error ? error.message : 'Failed to create post'
     return NextResponse.json(
       { 
         success: false,
-        message: error.message || 'Failed to create post' 
+        message 
       },
       { status: 500 }
     )
