@@ -23,6 +23,19 @@ interface GoogleUserInfo {
 /**
  * Google OAuth - Step 2: Handle callback from Google
  * GET /api/auth/google/callback
+ *
+ * Scenarios:
+ *   A) New user (no account) → create with authProvider='google', googleSubId set.
+ *   B) Existing local-only user → link Google, upgrade authProvider to 'both',
+ *      **preserve** their original password so email login still works.
+ *   C) Existing google/both user → just log them in, password untouched.
+ *
+ * Token strategy:
+ *   We need a Payload-minted JWT so the middleware trusts it. For
+ *   existing users whose password we must not lose, we:
+ *     1. Read the raw hash+salt from MongoDB.
+ *     2. Set a temp password → call payload.login() → get JWT.
+ *     3. Restore the original hash+salt immediately after.
  */
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl
@@ -58,7 +71,7 @@ export async function GET(request: NextRequest) {
       process.env.GOOGLE_REDIRECT_URI ||
       `${getBaseUrl(request)}/api/auth/google/callback`
 
-    // Exchange code for tokens
+    // ── Exchange authorisation code for tokens ───────────────────────────
     const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -80,7 +93,7 @@ export async function GET(request: NextRequest) {
 
     const tokens: GoogleTokenResponse = await tokenResponse.json()
 
-    // Get user info from Google
+    // ── Fetch Google profile ─────────────────────────────────────────────
     const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
       headers: { Authorization: `Bearer ${tokens.access_token}` },
     })
@@ -101,48 +114,72 @@ export async function GET(request: NextRequest) {
 
     const payload = await getPayload({ config })
 
-    // Check if user already exists
+    // ── Find existing user by email ──────────────────────────────────────
     const existingUsers = await payload.find({
       collection: 'users',
       where: { email: { equals: googleUser.email } },
       limit: 1,
+      overrideAccess: true,
     })
 
+    const tempPassword = generateSecurePassword()
     let user
-    let _isNewUser = false
+    let savedHash: string | null = null
+    let savedSalt: string | null = null
+    let isNewUser = false
 
     if (existingUsers.docs.length > 0) {
-      // Existing user — update Google info if needed
+      // ── Existing user ────────────────────────────────────────────────
       user = existingUsers.docs[0]
-      if (user) {
-        // Update avatar from Google if user doesn't have one
-        if (!user.avatar && googleUser.picture) {
-          await payload.update({
-            collection: 'users',
-            id: user.id,
-            data: {
-              // Store Google picture URL in a way we can use later
-              // Note: We don't upload to media here to keep it simple
-            },
-          })
+      const currentProvider = (user as unknown as Record<string, unknown>).authProvider as
+        | string
+        | undefined
+
+      // 1. Read original hash+salt from MongoDB so we can restore them
+      //    after the temp-password login.
+      const db = (payload.db as unknown as { connection: { db: { collection: (n: string) => { findOne: (q: Record<string, unknown>) => Promise<Record<string, unknown> | null> } } } }).connection?.db
+      if (db) {
+        const rawUser = await db.collection('users').findOne({ email: googleUser.email })
+        if (rawUser) {
+          savedHash = (rawUser.hash as string) ?? null
+          savedSalt = (rawUser.salt as string) ?? null
         }
       }
+
+      // 2. Set temp password so payload.login() works
+      const updateData: Record<string, unknown> = {
+        password: tempPassword,
+        googleSubId: googleUser.sub,
+      }
+
+      // Upgrade authProvider: local → both, undefined → both
+      if (!currentProvider || currentProvider === 'local') {
+        updateData.authProvider = 'both'
+      }
+      // If already 'google' or 'both', leave as-is
+
+      await payload.update({
+        collection: 'users',
+        id: user.id,
+        data: updateData,
+        overrideAccess: true,
+      })
     } else {
-      // Create new user with Google info
-      // Generate a random password since Google users won't use it
-      const randomPassword = generateSecurePassword()
-      
+      // ── New user (Google-only) ─────────────────────────────────────────
       user = await payload.create({
         collection: 'users',
         data: {
           name: googleUser.name,
           email: googleUser.email,
-          password: randomPassword,
+          password: tempPassword,
           role: 'contributor',
           bio: '',
+          authProvider: 'google',
+          googleSubId: googleUser.sub,
         },
+        overrideAccess: true,
       })
-      _isNewUser = true
+      isNewUser = true
     }
 
     if (!user) {
@@ -151,45 +188,27 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Log the user in by creating a Payload token
-    // We use payload.login with the email to generate a proper JWT
-    // Since Google users have random passwords, we use the internal login mechanism
+    // ── Log in via Payload to get a valid JWT ────────────────────────────
     const loginResult = await payload.login({
       collection: 'users',
       data: {
         email: googleUser.email,
-        password: '', // Won't work with regular login
+        password: tempPassword,
       },
-    }).catch(async () => {
-      // If regular login fails (expected for Google-created users),
-      // we generate a token directly
-      return null
     })
 
-    // Generate token manually if login failed
-    let token: string | undefined
+    const token = loginResult?.token
 
-    if (loginResult?.token) {
-      token = loginResult.token
-    } else {
-      // For Google SSO, we need to generate the token ourselves
-      // This uses Payload's internal auth mechanism
-      const jwt = await import('jsonwebtoken')
-      const payloadSecret = process.env.PAYLOAD_SECRET
-
-      if (!payloadSecret) {
-        throw new Error('PAYLOAD_SECRET is required')
+    // ── Restore original password hash for existing users ────────────────
+    // This ensures their email/password login still works.
+    if (savedHash && savedSalt) {
+      const db = (payload.db as unknown as { connection: { db: { collection: (n: string) => { updateOne: (q: Record<string, unknown>, u: Record<string, unknown>) => Promise<unknown> } } } }).connection?.db
+      if (db) {
+        await db.collection('users').updateOne(
+          { email: googleUser.email },
+          { $set: { hash: savedHash, salt: savedSalt } },
+        )
       }
-
-      token = jwt.default.sign(
-        {
-          id: user.id,
-          email: user.email,
-          collection: 'users',
-        },
-        payloadSecret,
-        { expiresIn: '7d' },
-      )
     }
 
     if (!token) {
@@ -198,17 +217,25 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Determine redirect path
-    const savedRedirect = request.cookies.get('google-oauth-redirect')?.value
-    const typedUser = user as unknown as { isAdmin?: boolean; role?: string }
-    const redirectPath =
-      savedRedirect && savedRedirect.startsWith('/')
-        ? savedRedirect
-        : typedUser?.isAdmin
-          ? '/admin-dashboard'
-          : typedUser?.role === 'editor'
-            ? '/editor'
-            : '/contributor'
+    // ── Determine redirect path ──────────────────────────────────────────
+    // New users go to /set-password to create their email login credentials.
+    // Existing users go to their dashboard (or saved redirect).
+    let redirectPath: string
+
+    if (isNewUser) {
+      redirectPath = '/set-password'
+    } else {
+      const savedRedirect = request.cookies.get('google-oauth-redirect')?.value
+      const typedUser = user as unknown as { isAdmin?: boolean; role?: string }
+      redirectPath =
+        savedRedirect && savedRedirect.startsWith('/')
+          ? savedRedirect
+          : typedUser?.isAdmin
+            ? '/admin-dashboard'
+            : typedUser?.role === 'editor'
+              ? '/editor'
+              : '/contributor'
+    }
 
     const response = NextResponse.redirect(new URL(redirectPath, request.url))
 

@@ -22,6 +22,18 @@ export const Users: CollectionConfig = {
     useAsTitle: 'name',
   },
   auth: true,
+  hooks: {
+    beforeChange: [
+      // When a Google-only user sets a password via the profile page,
+      // upgrade their authProvider to 'both' so email login works too.
+      ({ data, originalDoc }) => {
+        if (data?.password && originalDoc?.authProvider === 'google') {
+          data.authProvider = 'both'
+        }
+        return data
+      },
+    ],
+  },
   fields: [
     {
       name: 'name',
@@ -98,6 +110,38 @@ export const Users: CollectionConfig = {
       type: 'text',
       admin: {
         description: 'Year of study or designation',
+      },
+    },
+    {
+      name: 'authProvider',
+      type: 'select',
+      options: [
+        { label: 'Local (Email/Password)', value: 'local' },
+        { label: 'Google', value: 'google' },
+        { label: 'Both', value: 'both' },
+      ],
+      defaultValue: 'local',
+      admin: {
+        description: 'How the user authenticates (managed automatically)',
+        position: 'sidebar',
+        readOnly: true,
+      },
+      access: {
+        // Only server-side code (overrideAccess) can change this
+        update: () => false,
+      },
+    },
+    {
+      name: 'googleSubId',
+      type: 'text',
+      unique: true,
+      admin: {
+        description: 'Google account unique ID (set automatically on Google sign-in)',
+        position: 'sidebar',
+        readOnly: true,
+      },
+      access: {
+        update: () => false,
       },
     },
     {

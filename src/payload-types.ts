@@ -453,6 +453,14 @@ export interface User {
    */
   year?: string | null;
   /**
+   * How the user authenticates (managed automatically)
+   */
+  authProvider?: ('local' | 'google' | 'both') | null;
+  /**
+   * Google account unique ID (set automatically on Google sign-in)
+   */
+  googleSubId?: string | null;
+  /**
    * Social media profiles
    */
   socialLinks?: {
@@ -1601,6 +1609,8 @@ export interface UsersSelect<T extends boolean = true> {
   avatar?: T;
   department?: T;
   year?: T;
+  authProvider?: T;
+  googleSubId?: T;
   socialLinks?:
     | T
     | {
