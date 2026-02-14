@@ -72,7 +72,6 @@ export interface Config {
     media: Media;
     categories: Category;
     users: User;
-    'role-upgrade-requests': RoleUpgradeRequest;
     'admin-logs': AdminLog;
     comments: Comment;
     feedback: Feedback;
@@ -93,7 +92,6 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
-    'role-upgrade-requests': RoleUpgradeRequestsSelect<false> | RoleUpgradeRequestsSelect<true>;
     'admin-logs': AdminLogsSelect<false> | AdminLogsSelect<true>;
     comments: CommentsSelect<false> | CommentsSelect<true>;
     feedback: FeedbackSelect<false> | FeedbackSelect<true>;
@@ -404,7 +402,15 @@ export interface Category {
 export interface User {
   id: string;
   name: string;
-  role?: ('contributor' | 'editor' | 'admin') | null;
+  role?: ('contributor' | 'editor') | null;
+  /**
+   * Grants user management capabilities (manage users, process role requests, view logs)
+   */
+  isAdmin?: boolean | null;
+  /**
+   * Can manage admin users and cannot be deleted. Only other canManageAdmins users can grant this.
+   */
+  canManageAdmins?: boolean | null;
   /**
    * Short bio for author pages
    */
@@ -773,27 +779,6 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "role-upgrade-requests".
- */
-export interface RoleUpgradeRequest {
-  id: string;
-  user: string | User;
-  requestedRole: 'editor' | 'admin';
-  /**
-   * Explain why you should be granted this role
-   */
-  message?: string | null;
-  status?: ('pending' | 'approved' | 'rejected') | null;
-  /**
-   * Internal notes for admin review
-   */
-  adminNotes?: string | null;
-  processedAt?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "admin-logs".
  */
 export interface AdminLog {
@@ -810,7 +795,7 @@ export interface AdminLog {
     | 'role_change'
     | 'user_action'
     | 'content_moderation';
-  resourceType: 'posts' | 'comments' | 'users' | 'role-upgrade-requests' | 'media';
+  resourceType: 'posts' | 'comments' | 'users' | 'media';
   /**
    * ID of the affected resource
    */
@@ -1131,10 +1116,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'users';
         value: string | User;
-      } | null)
-    | ({
-        relationTo: 'role-upgrade-requests';
-        value: string | RoleUpgradeRequest;
       } | null)
     | ({
         relationTo: 'admin-logs';
@@ -1496,6 +1477,8 @@ export interface CategoriesSelect<T extends boolean = true> {
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
   role?: T;
+  isAdmin?: T;
+  canManageAdmins?: T;
   bio?: T;
   avatar?: T;
   updatedAt?: T;
@@ -1514,20 +1497,6 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "role-upgrade-requests_select".
- */
-export interface RoleUpgradeRequestsSelect<T extends boolean = true> {
-  user?: T;
-  requestedRole?: T;
-  message?: T;
-  status?: T;
-  adminNotes?: T;
-  processedAt?: T;
-  updatedAt?: T;
-  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

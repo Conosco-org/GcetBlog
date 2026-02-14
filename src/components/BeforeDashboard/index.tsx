@@ -26,13 +26,10 @@ const BeforeDashboard: React.FC = () => {
           Create and manage blog posts, pages, and media files from the collections in the sidebar.
         </li>
         <li>
-          Review and approve role upgrade requests from contributors who want to become editors.
-        </li>
-        <li>
           Monitor activity through the Admin Logs collection to track changes made by team members.
         </li>
         <li>
-          Manage user accounts and permissions based on roles (Admin, Editor, Contributor).
+          Manage user accounts and permissions based on roles (Editor, Contributor) and admin flags.
         </li>
       </ul>
       {'For questions or support, contact the GCET IT department or visit '}

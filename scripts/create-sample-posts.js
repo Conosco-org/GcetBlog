@@ -70,28 +70,19 @@ async function createSamplePosts() {
     }
   }
 
-  // Find admin or editor user to be the author
+  // Find an editor user to be the author
   const users = await payload.find({
     collection: 'users',
     where: {
-      or: [
-        {
-          role: {
-            equals: 'admin',
-          },
-        },
-        {
-          role: {
-            equals: 'editor',
-          },
-        },
-      ],
+      role: {
+        equals: 'editor',
+      },
     },
     limit: 1,
   })
 
   if (users.docs.length === 0) {
-    console.error('❌ No admin or editor user found. Please create a user first.')
+    console.error('❌ No editor user found. Please create a user first.')
     process.exit(1)
   }
 

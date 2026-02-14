@@ -6,7 +6,9 @@ interface User {
   id: string
   email: string
   name?: string
-  role: 'admin' | 'editor' | 'contributor'
+  role: 'contributor' | 'editor'
+  isAdmin?: boolean
+  canManageAdmins?: boolean
 }
 
 interface AuthContextType {

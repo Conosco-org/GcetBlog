@@ -11,7 +11,6 @@ import {
 
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { editorOnly } from '../../access/editorOnly'
-import { isAdmin } from '../../utilities/checkUserRole'
 import { Banner } from '../../blocks/Banner/config'
 import { Code } from '../../blocks/Code/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
@@ -49,7 +48,6 @@ export const Posts: CollectionConfig<'posts'> = {
     },
   },
   admin: {
-    hidden: ({ user }) => isAdmin(user),
     defaultColumns: ['title', 'slug', 'updatedAt'],
     livePreview: {
       url: ({ data, req }) => {
@@ -231,16 +229,16 @@ export const Posts: CollectionConfig<'posts'> = {
       },
       access: {
         read: ({ req }) => {
-          // Authors can see feedback on their own posts, editors/admins can see all
+          // Authors can see feedback on their own posts, editors can see all
           const user = req.user as { role: string; id: string } | undefined
           if (!user) return false
-          if (['editor', 'admin'].includes(user.role)) return true
+          if (user.role === 'editor') return true
           // TODO: Add author check when we have proper author relationships
           return true
         },
         update: ({ req }) => {
           const user = req.user as { role: string } | undefined
-          return user ? ['editor', 'admin'].includes(user.role) : false
+          return user ? user.role === 'editor' : false
         },
       },
     },
@@ -274,8 +272,8 @@ export const Posts: CollectionConfig<'posts'> = {
         read: () => true,
         update: ({ req }) => {
           const user = req.user as { role: string } | undefined
-          // Only editors and admins can change review status
-          return user ? ['editor', 'admin'].includes(user.role) : false
+          // Only editors can change review status
+          return user ? user.role === 'editor' : false
         },
       },
     },

@@ -1,24 +1,20 @@
-import type { AccessArgs } from 'payload'
-import type { User } from '@/payload-types'
+import type { Access } from 'payload'
 
 /**
- * Contributors can only access their own content
- * Editors and admins have full access
+ * Contributors can only access their own content.
+ * Editors have full access to all content.
  */
-type ContributorOwnAccess = (args: AccessArgs<User>) => boolean | object
-
-export const contributorOwn: ContributorOwnAccess = ({ req: { user } }) => {
+export const contributorOwn: Access = ({ req: { user } }) => {
   if (!user) return false
 
-  const typedUser = user as User & { role: string }
+  const typedUser = user as unknown as Record<string, unknown>
 
-  // Admins and editors can access everything
-  if (['admin', 'editor'].includes(typedUser.role)) {
+  // Editors can access everything
+  if (typedUser.role === 'editor') {
     return true
   }
 
   // Contributors can only access their own content
-  // This returns a query constraint that filters by author/user ID
   return {
     'authors.id': { equals: user.id },
   }

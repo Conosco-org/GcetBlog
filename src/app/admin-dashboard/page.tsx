@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { AdminRoleRequestsList } from './components/AdminRoleRequestsList'
 import type { User } from '@/payload-types'
 import {
   Users,
@@ -14,6 +13,10 @@ import {
   MessageSquare,
   TrendingUp,
   ArrowUpRight,
+  Activity,
+  Shield,
+  ShieldCheck,
+  Clock,
 } from 'lucide-react'
 
 export default async function AdminDashboardPage() {
@@ -23,13 +26,11 @@ export default async function AdminDashboardPage() {
 
   const typedUser = user as User
 
-  // Fetch pending role upgrade requests
-  const pendingRequests = await payload.find({
-    collection: 'role-upgrade-requests',
-    where: { status: { equals: 'pending' } },
-    depth: 1,
-    sort: '-createdAt',
-  })
+  // Date ranges
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const weekAgo = new Date()
+  weekAgo.setDate(weekAgo.getDate() - 7)
 
   // Fetch recent users
   const recentUsers = await payload.find({
@@ -39,16 +40,24 @@ export default async function AdminDashboardPage() {
     depth: 0,
   })
 
-  // Fetch recent posts
-  const recentPosts = await payload.find({
-    collection: 'posts',
+  // Fetch recent admin logs
+  const recentLogs = await payload.find({
+    collection: 'admin-logs',
     sort: '-createdAt',
     limit: 5,
-    depth: 0,
+    depth: 1,
   })
 
-  // Fetch stats (lightweight with limit: 0)
-  const [totalUsers, totalPosts, pendingReviews, totalComments] = await Promise.all([
+  // Stats
+  const [
+    totalUsers,
+    totalPosts,
+    pendingReviews,
+    totalComments,
+    adminCount,
+    newUsersToday,
+    recentActivity,
+  ] = await Promise.all([
     payload.find({ collection: 'users', limit: 0 }),
     payload.find({ collection: 'posts', limit: 0 }),
     payload.find({
@@ -57,6 +66,15 @@ export default async function AdminDashboardPage() {
       limit: 0,
     }),
     payload.find({ collection: 'comments', limit: 0 }),
+    payload.count({ collection: 'users', where: { isAdmin: { equals: true } } }),
+    payload.count({
+      collection: 'users',
+      where: { createdAt: { greater_than: today.toISOString() } },
+    }),
+    payload.count({
+      collection: 'admin-logs',
+      where: { createdAt: { greater_than: weekAgo.toISOString() } },
+    }),
   ])
 
   return (
@@ -71,86 +89,92 @@ export default async function AdminDashboardPage() {
 
       {/* Stats Grid */}
       <div className="grid gap-4 grid-cols-2 xl:grid-cols-4">
-        <Card>
+        <Card className="border-t-4 border-t-blue-500">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Users</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalUsers.totalDocs}</div>
-            <p className="text-xs text-muted-foreground">Registered users</p>
+            {newUsersToday.totalDocs > 0 && (
+              <p className="text-xs text-green-600 dark:text-green-400 mt-1">
+                +{newUsersToday.totalDocs} new today
+              </p>
+            )}
+            <p className="text-xs text-muted-foreground mt-1">Registered users</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-t-4 border-t-red-500">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Admins</CardTitle>
+            <Shield className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{adminCount.totalDocs}</div>
+            <p className="text-xs text-muted-foreground mt-1">Platform administrators</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-t-4 border-t-purple-500">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Posts</CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalPosts.totalDocs}</div>
-            <p className="text-xs text-muted-foreground">Published & drafts</p>
+            <p className="text-xs text-muted-foreground mt-1">Published & drafts</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-t-4 border-t-orange-500">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Pending Reviews</CardTitle>
             <ClipboardList className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{pendingReviews.totalDocs}</div>
-            <p className="text-xs text-muted-foreground">Awaiting approval</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Comments</CardTitle>
-            <MessageSquare className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalComments.totalDocs}</div>
-            <p className="text-xs text-muted-foreground">Total comments</p>
+            <p className="text-xs text-muted-foreground mt-1">Awaiting approval</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Main Content Grid */}
-      <div className="grid gap-6 xl:grid-cols-2">
-        {/* Role Upgrade Requests */}
-        <AdminRoleRequestsList requests={pendingRequests.docs} />
-
-        {/* Recent Users */}
-        <Card>
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* Recent Admin Activity */}
+        <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
-              Recent Users
+              <Activity className="h-5 w-5" />
+              Recent Admin Activity
             </CardTitle>
-            <CardDescription>Latest registered users</CardDescription>
+            <CardDescription>Latest administrative actions (last 7 days: {recentActivity.totalDocs})</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {recentUsers.docs.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No users yet.</p>
+              {recentLogs.docs.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-8">No recent admin activity</p>
               ) : (
-                recentUsers.docs.map((u) => {
-                  const typedU = u as User
+                recentLogs.docs.map((log) => {
+                  const logUser = typeof log.user === 'object' && log.user ? log.user : null
+                  const initials = logUser?.name 
+                    ? logUser.name.split(' ').map(n => n[0]).join('').toUpperCase() 
+                    : 'A'
+                  
                   return (
-                    <div key={typedU.id} className="flex items-center justify-between rounded-lg border p-3">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-sm font-semibold text-white">
-                          {(typedU.name || typedU.email || 'U').charAt(0).toUpperCase()}
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium">{typedU.name || 'Unnamed'}</p>
-                          <p className="text-xs text-muted-foreground">{typedU.email}</p>
-                        </div>
+                    <div key={log.id} className="flex items-start gap-3 pb-3 border-b last:border-0">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-red-500 to-orange-600 text-sm font-semibold text-white flex-shrink-0">
+                        {initials}
                       </div>
-                      <Badge variant="outline" className="capitalize">
-                        {typedU.role || 'contributor'}
-                      </Badge>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium">{logUser?.name || 'Unknown Admin'}</p>
+                        <p className="text-xs text-muted-foreground capitalize">
+                          {log.action?.replace(/_/g, ' ')} • {log.resourceType}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {new Date(log.createdAt).toLocaleString()}
+                        </p>
+                      </div>
+                      <Activity className="h-4 w-4 text-muted-foreground" />
                     </div>
                   )
                 })
@@ -158,96 +182,146 @@ export default async function AdminDashboardPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Quick Actions */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5" />
+              Quick Actions
+            </CardTitle>
+            <CardDescription>Frequently used admin actions</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Button variant="secondary" className="w-full justify-between" asChild>
+              <Link href="/admin-dashboard/users">
+                <span className="flex items-center gap-2">
+                  <Users className="h-4 w-4" />
+                  Manage Users
+                </span>
+                <ArrowUpRight className="h-4 w-4" />
+              </Link>
+            </Button>
+            
+            <Button variant="outline" className="w-full justify-between" asChild>
+              <Link href="/editor/queue">
+                <span className="flex items-center gap-2">
+                  <ClipboardList className="h-4 w-4" />
+                  Review Queue
+                </span>
+                <ArrowUpRight className="h-4 w-4" />
+              </Link>
+            </Button>
+
+            <Button variant="outline" className="w-full justify-between" asChild>
+              <Link href="/admin-dashboard/logs">
+                <span className="flex items-center gap-2">
+                  <Activity className="h-4 w-4" />
+                  Activity Logs
+                </span>
+                <ArrowUpRight className="h-4 w-4" />
+              </Link>
+            </Button>
+
+            <Button variant="outline" className="w-full justify-between" asChild>
+              <Link href="/editor/content">
+                <span className="flex items-center gap-2">
+                  <FileText className="h-4 w-4" />
+                  Content Manager
+                </span>
+                <ArrowUpRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Quick Actions */}
+      {/* Recent Users */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5" />
-            Quick Actions
-          </CardTitle>
-          <CardDescription>Frequently used admin actions</CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                Recent Users
+              </CardTitle>
+              <CardDescription>Latest registered users</CardDescription>
+            </div>
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/admin-dashboard/users">View All</Link>
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-3 grid-cols-2 xl:grid-cols-4">
-            <Button variant="outline" className="h-auto flex-col items-start gap-1 p-4" asChild>
-              <Link href="/admin-dashboard/users">
-                <div className="flex w-full items-center justify-between">
-                  <Users className="h-5 w-5 text-primary" />
-                  <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
-                </div>
-                <span className="text-sm font-medium">User Management</span>
-                <span className="text-xs text-muted-foreground">Manage all users</span>
-              </Link>
-            </Button>
-
-            <Button variant="outline" className="h-auto flex-col items-start gap-1 p-4" asChild>
-              <Link href="/admin-dashboard/queue">
-                <div className="flex w-full items-center justify-between">
-                  <ClipboardList className="h-5 w-5 text-primary" />
-                  <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
-                </div>
-                <span className="text-sm font-medium">Review Queue</span>
-                <span className="text-xs text-muted-foreground">Approve posts</span>
-              </Link>
-            </Button>
-
-            <Button variant="outline" className="h-auto flex-col items-start gap-1 p-4" asChild>
-              <Link href="/admin-dashboard/comments">
-                <div className="flex w-full items-center justify-between">
-                  <MessageSquare className="h-5 w-5 text-primary" />
-                  <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
-                </div>
-                <span className="text-sm font-medium">Comments</span>
-                <span className="text-xs text-muted-foreground">Moderate comments</span>
-              </Link>
-            </Button>
-
-            <Button variant="outline" className="h-auto flex-col items-start gap-1 p-4" asChild>
-              <Link href="/admin-dashboard/posts">
-                <div className="flex w-full items-center justify-between">
-                  <FileText className="h-5 w-5 text-primary" />
-                  <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
-                </div>
-                <span className="text-sm font-medium">All Posts</span>
-                <span className="text-xs text-muted-foreground">Content management</span>
-              </Link>
-            </Button>
+          <div className="space-y-3">
+            {recentUsers.docs.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-8">No users yet.</p>
+            ) : (
+              recentUsers.docs.map((u) => {
+                const userTyped = u as User
+                return (
+                  <div key={userTyped.id} className="flex items-center justify-between rounded-lg border p-3">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-sm font-semibold text-white">
+                        {(userTyped.name || userTyped.email || 'U').charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium">{userTyped.name || 'Unnamed'}</p>
+                        <p className="text-xs text-muted-foreground">{userTyped.email}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {userTyped.isAdmin && (
+                        <Badge variant="destructive" className="text-xs">
+                          <Shield className="h-3 w-3 mr-1" />
+                          Admin
+                        </Badge>
+                      )}
+                      {userTyped.canManageAdmins && (
+                        <Badge variant="outline" className="text-xs border-amber-500 text-amber-600">
+                          <ShieldCheck className="h-3 w-3 mr-1" />
+                          Super
+                        </Badge>
+                      )}
+                      <Badge variant="outline" className="capitalize text-xs">
+                        {userTyped.role || 'contributor'}
+                      </Badge>
+                    </div>
+                  </div>
+                )
+              })
+            )}
           </div>
         </CardContent>
       </Card>
 
-      {/* Recent Posts */}
+      {/* System Stats Overview */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <FileText className="h-5 w-5" />
-            Recent Posts
+            <TrendingUp className="h-5 w-5" />
+            System Overview
           </CardTitle>
-          <CardDescription>Latest content across the platform</CardDescription>
+          <CardDescription>Platform statistics at a glance</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
-            {recentPosts.docs.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No posts yet.</p>
-            ) : (
-              recentPosts.docs.map((post) => (
-                <div key={post.id} className="flex items-center justify-between rounded-lg border p-3">
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium truncate">{post.title}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {new Date(post.createdAt).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2 ml-4">
-                    <Badge variant={post._status === 'published' ? 'default' : 'secondary'}>
-                      {post._status || 'draft'}
-                    </Badge>
-                  </div>
-                </div>
-              ))
-            )}
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="flex flex-col gap-1 p-3 rounded-md bg-muted/50">
+              <p className="text-sm text-muted-foreground">Total Comments</p>
+              <p className="text-2xl font-bold">{totalComments.totalDocs}</p>
+            </div>
+            <div className="flex flex-col gap-1 p-3 rounded-md bg-muted/50">
+              <p className="text-sm text-muted-foreground">Pending Reviews</p>
+              <p className="text-2xl font-bold text-orange-600">{pendingReviews.totalDocs}</p>
+            </div>
+            <div className="flex flex-col gap-1 p-3 rounded-md bg-muted/50">
+              <p className="text-sm text-muted-foreground">Admin Actions (7d)</p>
+              <p className="text-2xl font-bold">{recentActivity.totalDocs}</p>
+            </div>
+            <div className="flex flex-col gap-1 p-3 rounded-md bg-muted/50">
+              <p className="text-sm text-muted-foreground">New Users Today</p>
+              <p className="text-2xl font-bold text-green-600">{newUsersToday.totalDocs}</p>
+            </div>
           </div>
         </CardContent>
       </Card>

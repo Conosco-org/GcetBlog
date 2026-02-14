@@ -131,11 +131,11 @@ export function EditorHeader({ user, isOpen, onToggle }: EditorHeaderProps) {
                   Workspace Settings
                 </Link>
               </DropdownMenuItem>
-              {user.role === 'admin' && (
+              {(user as unknown as { isAdmin?: boolean }).isAdmin && (
                 <DropdownMenuItem asChild>
-                  <Link href="/admin" className="cursor-pointer">
+                  <Link href="/admin-dashboard" className="cursor-pointer">
                     <Shield className="mr-2 h-4 w-4" />
-                    Admin Panel
+                    Admin Dashboard
                   </Link>
                 </DropdownMenuItem>
               )}

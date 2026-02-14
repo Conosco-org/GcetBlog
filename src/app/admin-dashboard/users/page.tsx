@@ -1,8 +1,7 @@
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
-import { redirect } from 'next/navigation'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import {
   Table,
@@ -12,9 +11,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Users, Shield, UserCog } from 'lucide-react'
-import { UserActions } from './UserActions'
+import { Users, Shield, ShieldCheck, Edit3, UserCheck } from 'lucide-react'
 import type { User } from '@/payload-types'
+import { UserActions } from './UserActions'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -22,78 +21,69 @@ export const revalidate = 0
 export default async function AdminUsersPage() {
   const payload = await getPayload({ config: configPromise })
   const requestHeaders = await headers()
-  const { user } = await payload.auth({ headers: requestHeaders })
+  const { user: currentUser } = await payload.auth({ headers: requestHeaders })
 
-  if (!user) {
-    redirect('/login')
-  }
-  if ((user as User).role !== 'admin') {
-    redirect('/admin-dashboard')
-  }
+  // Fetch full current user to check canManageAdmins
+  const fullCurrentUser = currentUser
+    ? await payload.findByID({ collection: 'users', id: currentUser.id, depth: 0 })
+    : null
 
-  const currentUserId = (user as User).id
-
-  // Fetch all users with pagination
   const allUsers = await payload.find({
     collection: 'users',
+    limit: 100,
     sort: '-createdAt',
-    limit: 50,
     depth: 0,
   })
 
-  // Role counts
-  const [adminCount, editorCount, contributorCount] = await Promise.all([
-    payload.find({ collection: 'users', where: { role: { equals: 'admin' } }, limit: 0 }),
-    payload.find({ collection: 'users', where: { role: { equals: 'editor' } }, limit: 0 }),
-    payload.find({ collection: 'users', where: { role: { equals: 'contributor' } }, limit: 0 }),
+  const [totalEditors, totalContributors, totalAdmins] = await Promise.all([
+    payload.count({ collection: 'users', where: { role: { equals: 'editor' } } }),
+    payload.count({ collection: 'users', where: { role: { equals: 'contributor' } } }),
+    payload.count({ collection: 'users', where: { isAdmin: { equals: true } } }),
   ])
-
-  const getRoleBadgeVariant = (role: string) => {
-    switch (role) {
-      case 'admin': return 'destructive' as const
-      case 'editor': return 'default' as const
-      case 'contributor': return 'secondary' as const
-      default: return 'outline' as const
-    }
-  }
 
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
       <div>
         <h1 className="text-3xl font-bold tracking-tight">User Management</h1>
-        <p className="text-muted-foreground mt-1">
-          Manage all registered users and their roles
-        </p>
+        <p className="text-muted-foreground mt-1">Manage all platform users, roles, and permissions</p>
       </div>
 
-      {/* Role Stats */}
-      <div className="grid gap-4 md:grid-cols-3">
+      {/* Stats */}
+      <div className="grid gap-4 md:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{allUsers.totalDocs}</div>
+          </CardContent>
+        </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Admins</CardTitle>
-            <Shield className="h-4 w-4 text-red-500" />
+            <ShieldCheck className="h-4 w-4 text-red-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{adminCount.totalDocs}</div>
+            <div className="text-2xl font-bold">{totalAdmins.totalDocs}</div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Editors</CardTitle>
-            <UserCog className="h-4 w-4 text-blue-500" />
+            <Edit3 className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{editorCount.totalDocs}</div>
+            <div className="text-2xl font-bold">{totalEditors.totalDocs}</div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Contributors</CardTitle>
-            <Users className="h-4 w-4 text-green-500" />
+            <UserCheck className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{contributorCount.totalDocs}</div>
+            <div className="text-2xl font-bold">{totalContributors.totalDocs}</div>
           </CardContent>
         </Card>
       </div>
@@ -101,13 +91,7 @@ export default async function AdminUsersPage() {
       {/* Users Table */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5" />
-            All Users
-          </CardTitle>
-          <CardDescription>
-            Showing {allUsers.docs.length} of {allUsers.totalDocs} users
-          </CardDescription>
+          <CardTitle>All Users</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
@@ -116,48 +100,64 @@ export default async function AdminUsersPage() {
                 <TableHead>User</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Role</TableHead>
+                <TableHead>Flags</TableHead>
                 <TableHead>Joined</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {allUsers.docs.map((u) => {
-                const typedU = u as User
+                const user = u as User
                 return (
-                  <TableRow key={typedU.id}>
+                  <TableRow key={user.id}>
                     <TableCell>
                       <div className="flex items-center gap-3">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-sm font-semibold text-white">
-                          {(typedU.name || typedU.email || 'U').charAt(0).toUpperCase()}
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-xs font-semibold text-white">
+                          {(user.name || user.email || 'U').charAt(0).toUpperCase()}
                         </div>
-                        <span className="font-medium">{typedU.name || 'Unnamed'}</span>
+                        <span className="font-medium">{user.name || 'Unnamed'}</span>
                       </div>
                     </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {typedU.email}
-                    </TableCell>
+                    <TableCell className="text-muted-foreground">{user.email}</TableCell>
                     <TableCell>
-                      <Badge variant={getRoleBadgeVariant(typedU.role || 'contributor')} className="capitalize">
-                        {typedU.role || 'contributor'}
+                      <Badge
+                        variant={user.role === 'editor' ? 'default' : 'secondary'}
+                        className="capitalize"
+                      >
+                        {user.role || 'unknown'}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {new Date(typedU.createdAt).toLocaleDateString()}
+                    <TableCell>
+                      <div className="flex gap-1">
+                        {user.isAdmin && (
+                          <Badge variant="destructive" className="text-xs">
+                            <Shield className="h-3 w-3 mr-1" />
+                            Admin
+                          </Badge>
+                        )}
+                        {user.canManageAdmins && (
+                          <Badge variant="outline" className="text-xs border-amber-500 text-amber-600">
+                            <ShieldCheck className="h-3 w-3 mr-1" />
+                            Super
+                          </Badge>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm">
+                      {new Date(user.createdAt).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="text-right">
-                      <UserActions user={typedU} currentUserId={currentUserId} />
+                      <UserActions
+                        user={user}
+                        currentUserId={fullCurrentUser?.id || ''}
+                        currentUserCanManageAdmins={fullCurrentUser?.canManageAdmins === true}
+                      />
                     </TableCell>
                   </TableRow>
                 )
               })}
             </TableBody>
           </Table>
-
-          {allUsers.totalDocs === 0 && (
-            <div className="text-center py-8 text-muted-foreground">
-              No users found.
-            </div>
-          )}
         </CardContent>
       </Card>
     </div>

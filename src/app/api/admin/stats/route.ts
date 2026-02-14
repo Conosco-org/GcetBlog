@@ -15,9 +15,9 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Only admins can access stats
-    const typedUser = user as { role?: string }
-    if (typedUser.role !== 'admin') {
+    // Only admins (isAdmin=true) can access stats
+    const typedUser = user as { isAdmin?: boolean }
+    if (!typedUser.isAdmin) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
@@ -25,15 +25,10 @@ export async function GET() {
     const [
       totalPosts,
       totalUsers,
-      pendingApprovals,
       totalMedia,
     ] = await Promise.all([
       payload.count({ collection: 'posts' }),
       payload.count({ collection: 'users' }),
-      payload.count({
-        collection: 'role-upgrade-requests',
-        where: { status: { equals: 'pending' } },
-      }),
       payload.count({ collection: 'media' }),
     ])
 
@@ -51,7 +46,6 @@ export async function GET() {
     return NextResponse.json({
       totalPosts: totalPosts.totalDocs,
       totalUsers: totalUsers.totalDocs,
-      pendingApprovals: pendingApprovals.totalDocs,
       publishedToday: publishedToday.totalDocs,
       totalMedia: totalMedia.totalDocs,
     })

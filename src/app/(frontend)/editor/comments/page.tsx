@@ -22,8 +22,8 @@ export default async function CommentModerationPage() {
 
   const typedUser = user as User & { role: string }
 
-  // Check if user has moderator permissions
-  if (typedUser.role !== 'editor' && typedUser.role !== 'admin') {
+  // Check if user has moderator permissions (admins are editors with isAdmin flag)
+  if (typedUser.role !== 'editor') {
     redirect('/dashboard')
   }
 

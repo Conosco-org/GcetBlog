@@ -19,9 +19,9 @@ export async function POST(request: NextRequest) {
 
     const typedUser = user as User & { role: string }
 
-    if (!['editor', 'admin'].includes(typedUser.role)) {
+    if (typedUser.role !== 'editor') {
       return NextResponse.json(
-        { error: 'Forbidden: Only editors and admins can create feedback' },
+        { error: 'Forbidden: Only editors can create feedback' },
         { status: 403 }
       )
     }

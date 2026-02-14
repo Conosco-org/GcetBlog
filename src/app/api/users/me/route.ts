@@ -1,6 +1,7 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { NextRequest } from 'next/server'
+import { User } from '@/payload-types'
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,12 +12,17 @@ export async function GET(request: NextRequest) {
       return Response.json({ error: 'Unauthorized', sessionExpired: true }, { status: 401 })
     }
 
+    // Type assertion to access custom fields
+    const typedUser = user as User
+
     return Response.json({
       user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        role: user.role,
+        id: typedUser.id,
+        email: typedUser.email,
+        name: typedUser.name,
+        role: typedUser.role,
+        isAdmin: typedUser.isAdmin,
+        canManageAdmins: typedUser.canManageAdmins,
       },
     })
   } catch (error) {

@@ -141,7 +141,9 @@ export const seed = async ({
         name: 'Admin User',
         email: 'admin@gcet.edu.in',
         password: 'admin123',
-        role: 'admin',
+        role: 'editor',
+        isAdmin: true,
+        canManageAdmins: true,
       },
     }),
     payload.create({

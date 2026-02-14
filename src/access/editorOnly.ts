@@ -1,10 +1,10 @@
-import type { AccessArgs } from 'payload'
-import type { User } from '@/payload-types'
+import type { Access } from 'payload'
 
-type HasEditorAccess = (args: AccessArgs<User>) => boolean
-
-// Allow access to editors and admins
-export const editorOnly: HasEditorAccess = ({ req: { user } }) => {
-  // Allow both editor and admin roles
-  return Boolean(user?.role === 'editor' || user?.role === 'admin')
+/**
+ * Access control: allows editors (role === 'editor').
+ * Since admins are now editors with isAdmin=true, this covers all content managers.
+ */
+export const editorOnly: Access = ({ req: { user } }) => {
+  if (!user || typeof user !== 'object') return false
+  return Boolean((user as unknown as Record<string, unknown>).role === 'editor')
 }

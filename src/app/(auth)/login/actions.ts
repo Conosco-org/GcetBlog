@@ -46,12 +46,13 @@ export async function loginAction(formData: FormData) {
         redirectPath = redirectTo
       } else {
         // Default role-based redirect
-        redirectPath = user?.role === 'admin' ? '/admin-dashboard' : 
-                      user?.role === 'editor' ? '/editor' : 
+        const typedUser = user as unknown as { isAdmin?: boolean; role?: string }
+        redirectPath = typedUser?.isAdmin ? '/admin-dashboard' : 
+                      typedUser?.role === 'editor' ? '/editor' : 
                       '/contributor'
       }
       
-      console.log('Login successful - User role:', user?.role, 'Redirecting to:', redirectPath)
+      console.log('Login successful - User role:', (user as { role?: string })?.role, 'isAdmin:', (user as { isAdmin?: boolean })?.isAdmin, 'Redirecting to:', redirectPath)
       
       // Return success with redirect path for client-side handling
       return { success: true, redirectPath }

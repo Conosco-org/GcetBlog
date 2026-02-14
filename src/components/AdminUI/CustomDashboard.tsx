@@ -21,7 +21,6 @@ import {
 interface DashboardStats {
   totalPosts: number
   totalUsers: number
-  pendingApprovals: number
   publishedToday: number
   totalMedia: number
 }
@@ -30,7 +29,6 @@ export default function CustomDashboard() {
   const [stats, setStats] = useState<DashboardStats>({
     totalPosts: 0,
     totalUsers: 0,
-    pendingApprovals: 0,
     publishedToday: 0,
     totalMedia: 0,
   })
@@ -114,18 +112,6 @@ export default function CustomDashboard() {
       href: '/admin/collections/users'
     },
     {
-      title: 'Role Requests',
-      value: stats.pendingApprovals || 0,
-      icon: Shield,
-      gradient: 'from-purple-500 to-purple-600',
-      change: stats.pendingApprovals > 0 ? `${stats.pendingApprovals} pending` : 'All clear',
-      changeType: stats.pendingApprovals > 0 ? 'alert' : 'neutral',
-      subtitle: 'Upgrade requests',
-      bgColor: 'bg-purple-50',
-      iconColor: 'text-purple-600',
-      href: '/admin/collections/role-upgrade-requests'
-    },
-    {
       title: 'Admin Logs',
       value: stats.totalMedia || 0,
       icon: Activity,
@@ -155,14 +141,6 @@ export default function CustomDashboard() {
       href: '/admin/collections/users',
       gradient: 'from-green-500 to-green-600',
       hoverGradient: 'hover:from-green-600 hover:to-green-700'
-    },
-    {
-      title: 'Role Requests',
-      description: 'Review upgrade requests',
-      icon: Shield,
-      href: '/admin/collections/role-upgrade-requests',
-      gradient: 'from-purple-500 to-purple-600',
-      hoverGradient: 'hover:from-purple-600 hover:to-purple-700'
     },
     {
       title: 'Admin Logs',

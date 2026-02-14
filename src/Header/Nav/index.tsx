@@ -31,33 +31,15 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
         </Link>
       )}
       
-      {user && user.role === 'admin' && (
-        <>
-          <Link 
-            href="/editor" 
-            className="flex items-center gap-1 text-sm hover:text-primary transition-colors"
-            title="Editor Dashboard"
-          >
-            <FileText className="w-4 h-4" />
-            <span className="hidden sm:inline">Editor</span>
-          </Link>
-          <Link 
-            href="/admin" 
-            className="flex items-center gap-1 text-sm hover:text-primary transition-colors"
-            title="Admin Panel"
-          >
-            <Settings className="w-4 h-4" />
-            <span className="hidden sm:inline">Admin</span>
-          </Link>
-          <Link 
-            href="/dashboard/admin" 
-            className="flex items-center gap-1 text-sm hover:text-primary transition-colors"
-            title="User Management"
-          >
-            <Users className="w-4 h-4" />
-            <span className="hidden sm:inline">Users</span>
-          </Link>
-        </>
+      {user && (user as unknown as { isAdmin?: boolean }).isAdmin && (
+        <Link 
+          href="/admin-dashboard" 
+          className="flex items-center gap-1 text-sm hover:text-primary transition-colors"
+          title="Admin Dashboard"
+        >
+          <Settings className="w-4 h-4" />
+          <span className="hidden sm:inline">Admin</span>
+        </Link>
       )}
       
       <Link href="/search">

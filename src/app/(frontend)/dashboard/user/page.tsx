@@ -19,13 +19,6 @@ export default async function UserDashboardPage() {
 
   const typedUser = user as User
 
-  // Get role upgrade requests
-  const roleRequests = await payload.find({ 
-    collection: 'role-upgrade-requests', 
-    where: { user: { equals: user.id } }, 
-    sort: '-createdAt' 
-  })
-
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-start mb-8">
@@ -53,12 +46,7 @@ export default async function UserDashboardPage() {
             <Button className="w-full justify-start" variant="ghost" asChild>
               <Link href="/posts">Browse Posts</Link>
             </Button>
-            {typedUser.role === 'admin' && (
-              <Button className="w-full justify-start" variant="ghost" asChild>
-                <Link href="/admin">Admin Panel</Link>
-              </Button>
-            )}
-            {(typedUser.role === 'editor' || typedUser.role === 'admin') && (
+            {typedUser.role === 'editor' && (
               <Button className="w-full justify-start" variant="ghost" asChild>
                 <Link href="/editor">Editor Dashboard</Link>
               </Button>
@@ -66,49 +54,6 @@ export default async function UserDashboardPage() {
             {typedUser.role === 'contributor' && (
               <Button className="w-full justify-start" variant="ghost" asChild>
                 <Link href="/contributor">Contributor Dashboard</Link>
-              </Button>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Role Requests */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Role Requests</CardTitle>
-            <CardDescription>Your role upgrade requests</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {roleRequests.docs.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No requests</p>
-            ) : (
-              <div className="space-y-3">
-                {roleRequests.docs.map((req) => (
-                  <div key={req.id} className="border rounded p-3">
-                    <div className="flex justify-between">
-                      <span className="font-medium text-sm capitalize">{req.requestedRole}</span>
-                      <Badge 
-                        variant={
-                          req.status === 'approved' 
-                            ? 'default' 
-                            : req.status === 'rejected' 
-                            ? 'destructive' 
-                            : 'secondary'
-                        } 
-                        className="text-xs"
-                      >
-                        {req.status}
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {new Date(req.createdAt).toLocaleDateString()}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            )}
-            {typedUser.role !== 'admin' && typedUser.role !== 'editor' && (
-              <Button className="w-full mt-4" size="sm" asChild>
-                <Link href="/dashboard/requests">Request Upgrade</Link>
               </Button>
             )}
           </CardContent>

@@ -1,11 +1,11 @@
 import type { CollectionConfig } from 'payload'
-import { editorOrAdmin } from '../../access/editorOrAdmin'
+import { editorOnly } from '../../access/editorOnly'
 
 export const AdminLogs: CollectionConfig = {
   slug: 'admin-logs',
   access: {
-    read: editorOrAdmin,
-    create: editorOrAdmin,
+    read: editorOnly,
+    create: editorOnly,
     update: () => false, // Logs should be immutable
     delete: () => false, // Logs should not be deleted
   },
@@ -39,7 +39,6 @@ export const AdminLogs: CollectionConfig = {
         { label: 'Posts', value: 'posts' },
         { label: 'Comments', value: 'comments' },
         { label: 'Users', value: 'users' },
-        { label: 'Role Requests', value: 'role-upgrade-requests' },
         { label: 'Media', value: 'media' },
       ],
       required: true,

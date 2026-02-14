@@ -16,7 +16,7 @@ export default async function CategoriesPage() {
 
   const typedUser = user as User & { role: string }
 
-  if (!['editor', 'admin'].includes(typedUser.role)) {
+  if (typedUser.role !== 'editor') {
     redirect('/dashboard')
   }
 

@@ -2,7 +2,6 @@ import type { CollectionConfig } from 'payload'
 
 import { anyone } from '../access/anyone'
 import { editorOnly } from '../access/editorOnly'
-import { isAdmin } from '../utilities/checkUserRole'
 import { slugField } from '@/fields/slug'
 
 export const Categories: CollectionConfig = {
@@ -14,7 +13,6 @@ export const Categories: CollectionConfig = {
     update: editorOnly,
   },
   admin: {
-    hidden: ({ user }) => isAdmin(user),
     useAsTitle: 'title',
   },
   fields: [

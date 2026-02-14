@@ -14,9 +14,10 @@ export default async function RegisterPage() {
   const user = await getCurrentUser()
 
   if (user) {
-    if (user.role === 'admin') {
-      redirect('/admin')
-    } else if (user.role === 'editor') {
+    const typedUser = user as unknown as { isAdmin?: boolean; role?: string }
+    if (typedUser.isAdmin) {
+      redirect('/admin-dashboard')
+    } else if (typedUser.role === 'editor') {
       redirect('/editor')
     } else {
       redirect('/dashboard')
