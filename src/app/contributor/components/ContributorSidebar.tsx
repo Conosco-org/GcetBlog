@@ -144,6 +144,17 @@ export function ContributorSidebar({ user, stats, isOpen }: ContributorSidebarPr
           <p className="mt-3 text-xs text-muted-foreground text-center">
             Contributor Panel
           </p>
+          <p className="text-[11px] text-muted-foreground text-center mt-1">
+            Powered by{' '}
+            <a
+              href="https://conosco.in"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-foreground transition-colors"
+            >
+              Conosco
+            </a>
+          </p>
         </div>
       </div>
     </aside>

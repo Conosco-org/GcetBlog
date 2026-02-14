@@ -195,6 +195,17 @@ export function EditorSidebar({
           <div className="p-4 border-t">
             <LogoutButton className="w-full" />
             <p className="text-xs text-muted-foreground text-center mt-3">v2.4.1</p>
+            <p className="text-[11px] text-muted-foreground text-center mt-1">
+              Powered by{' '}
+              <a
+                href="https://conosco.in"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-foreground transition-colors"
+              >
+                Conosco
+              </a>
+            </p>
           </div>
         </aside>
       )}

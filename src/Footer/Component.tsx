@@ -43,9 +43,25 @@ export async function Footer() {
           <p className="text-xs text-background/40">
             &copy; {new Date().getFullYear()} GCET. All rights reserved.
           </p>
-          <p className="text-xs text-background/40">
-            Built by the GCET community
-          </p>
+          <div className="flex items-center gap-2 text-xs text-background/40 text-center md:text-right">
+            <span>Built for the GCET community • Powered by</span>
+            <a
+              href="https://conosco.in"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center hover:opacity-90 transition-opacity"
+              aria-label="Conosco"
+            >
+              {/* eslint-disable @next/next/no-img-element */}
+              <img
+                src="https://www.conosco.in/logo/Web/logo_header.png"
+                alt="Conosco"
+                className="h-4 w-auto"
+                loading="lazy"
+                decoding="async"
+              />
+            </a>
+          </div>
         </div>
       </div>
     </footer>
