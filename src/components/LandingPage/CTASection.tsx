@@ -51,6 +51,32 @@ export const CTASection: React.FC = () => {
             </Link>
           </div>
         </div>
+
+        {/* Attribution Footer */}
+        <div className="mt-24 pt-12 border-t border-background/10">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-background/40">
+            <p>© {new Date().getFullYear()} GCET. All rights reserved.</p>
+            <div className="flex items-center gap-2">
+              <span>Built for the GCET community • Powered by</span>
+              <a
+                href="https://conosco.in"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center hover:opacity-90 transition-opacity"
+                aria-label="Conosco"
+              >
+                {/* eslint-disable @next/next/no-img-element */}
+                <img
+                  src="https://www.conosco.in/logo/Web/logo_header.png"
+                  alt="Conosco"
+                  className="h-4 w-auto brightness-0 invert"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   )

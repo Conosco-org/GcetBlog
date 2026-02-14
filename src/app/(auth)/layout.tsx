@@ -41,6 +41,17 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               <p className="text-center text-sm text-muted-foreground">
                 © {new Date().getFullYear()} Geethanjali College of Engineering and Technology. All rights reserved.
               </p>
+              <p className="text-center text-xs text-muted-foreground mt-2">
+                Built for the GCET community • Powered by{' '}
+                <a
+                  href="https://conosco.in"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-foreground transition-colors"
+                >
+                  Conosco
+                </a>
+              </p>
             </footer>
           </div>
         </Providers>

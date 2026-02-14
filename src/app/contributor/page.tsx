@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { PageHeader } from '@/components/base'
 import type { Metadata } from 'next'
 import { 
   FileText, 
@@ -25,6 +26,10 @@ export const metadata: Metadata = {
   title: 'Contributor Dashboard',
 }
 
+// Force dynamic rendering for real-time data
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function ContributorDashboardPage() {
   const payload = await getPayload({ config: configPromise })
   const requestHeaders = await headers()
@@ -36,46 +41,44 @@ export default async function ContributorDashboardPage() {
 
   const typedUser = user as User
 
-  // Fetch real data from MongoDB
-  const allPosts = await payload.find({
-    collection: 'posts',
-    where: {
-      authors: {
-        equals: user.id,
-      },
-    },
-    limit: 1000,
-  })
+  const authorFilter = { authors: { equals: user.id } }
 
-  // Calculate stats
-  const totalSubmissions = allPosts.totalDocs
-  const publishedPosts = allPosts.docs.filter(post => post._status === 'published')
-  const draftPosts = allPosts.docs.filter(post => post._status === 'draft')
-  const approvedPosts = allPosts.docs.filter(post => post.reviewStatus === 'approved')
-  const rejectedPosts = allPosts.docs.filter(post => post.reviewStatus === 'rejected')
-  const submittedPosts = allPosts.docs.filter(post => post.reviewStatus === 'pending_review')
-  
-  const totalReviewed = approvedPosts.length + rejectedPosts.length
-  const approvalRate = totalReviewed > 0 ? Math.round((approvedPosts.length / totalReviewed) * 100) : 0
-  const readyToSubmit = draftPosts.filter(post => post.title && post.content).length
+  // Efficient parallel count queries instead of fetching all posts
+  const [
+    totalSubmissions,
+    publishedCount,
+    draftCount,
+    approvedCount,
+    rejectedCount,
+    submittedCount,
+    recentActivity,
+  ] = await Promise.all([
+    payload.count({ collection: 'posts', where: authorFilter }),
+    payload.count({ collection: 'posts', where: { ...authorFilter, _status: { equals: 'published' } } }),
+    payload.count({ collection: 'posts', where: { ...authorFilter, _status: { equals: 'draft' } } }),
+    payload.count({ collection: 'posts', where: { ...authorFilter, reviewStatus: { equals: 'approved' } } }),
+    payload.count({ collection: 'posts', where: { ...authorFilter, reviewStatus: { equals: 'rejected' } } }),
+    payload.count({ collection: 'posts', where: { ...authorFilter, reviewStatus: { equals: 'pending_review' } } }),
+    // Recent activity — only need 5 docs for the feed
+    payload.find({
+      collection: 'posts',
+      where: authorFilter,
+      sort: '-updatedAt',
+      limit: 5,
+    }),
+  ])
 
-  // Get recent activity
-  const recentActivity = await payload.find({
-    collection: 'posts',
-    where: {
-      authors: {
-        equals: user.id,
-      },
-    },
-    sort: '-updatedAt',
-    limit: 5,
-  })
+  // Calculate stats from counts
+  const totalReviewed = approvedCount.totalDocs + rejectedCount.totalDocs
+  const approvalRate = totalReviewed > 0 ? Math.round((approvedCount.totalDocs / totalReviewed) * 100) : 0
 
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Welcome back, {typedUser.name || 'Contributor'}!</h1>
-        <p className="text-muted-foreground">Here&apos;s your writing journey overview</p>
+        <PageHeader
+          title={`Welcome back, ${typedUser.name || 'Contributor'}!`}
+          description="Here's your writing journey overview"
+        />
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
@@ -85,7 +88,7 @@ export default async function ContributorDashboardPage() {
             <FileText className="h-5 w-5 text-blue-600 dark:text-blue-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{totalSubmissions}</div>
+            <div className="text-3xl font-bold">{totalSubmissions.totalDocs}</div>
             <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
               <TrendingUp className="h-3 w-3" />
               All time submissions
@@ -102,7 +105,7 @@ export default async function ContributorDashboardPage() {
             <div className="text-3xl font-bold">{approvalRate}%</div>
             <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
               <CheckCircle className="h-3 w-3" />
-              {approvedPosts.length} approved / {totalReviewed} reviewed
+              {approvedCount.totalDocs} approved / {totalReviewed} reviewed
             </p>
           </CardContent>
         </Card>
@@ -113,10 +116,10 @@ export default async function ContributorDashboardPage() {
             <Edit className="h-5 w-5 text-orange-600 dark:text-orange-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{draftPosts.length}</div>
+            <div className="text-3xl font-bold">{draftCount.totalDocs}</div>
             <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
               <Clock className="h-3 w-3" />
-              {readyToSubmit} ready to submit
+              Works in progress
             </p>
           </CardContent>
         </Card>
@@ -127,7 +130,7 @@ export default async function ContributorDashboardPage() {
             <Eye className="h-5 w-5 text-purple-600 dark:text-purple-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{publishedPosts.length}</div>
+            <div className="text-3xl font-bold">{publishedCount.totalDocs}</div>
             <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
               <Eye className="h-3 w-3" />
               Live on blog
@@ -246,7 +249,7 @@ export default async function ContributorDashboardPage() {
                     <Send className="h-4 w-4" />
                     View Submissions
                   </span>
-                  <Badge variant="outline" className="h-5">{submittedPosts.length}</Badge>
+                  <Badge variant="outline" className="h-5">{submittedCount.totalDocs}</Badge>
                 </Link>
               </Button>
             </CardContent>
@@ -263,12 +266,12 @@ export default async function ContributorDashboardPage() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Published</span>
-                  <span className="text-sm font-semibold">{publishedPosts.length}</span>
+                  <span className="text-sm font-semibold">{publishedCount.totalDocs}</span>
                 </div>
                 <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
                   <div 
                     className="h-full bg-green-500 rounded-full"
-                    style={{ width: `${totalSubmissions > 0 ? (publishedPosts.length / totalSubmissions) * 100 : 0}%` }}
+                    style={{ width: `${totalSubmissions.totalDocs > 0 ? (publishedCount.totalDocs / totalSubmissions.totalDocs) * 100 : 0}%` }}
                   ></div>
                 </div>
               </div>
@@ -276,12 +279,12 @@ export default async function ContributorDashboardPage() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">In Review</span>
-                  <span className="text-sm font-semibold">{submittedPosts.length}</span>
+                  <span className="text-sm font-semibold">{submittedCount.totalDocs}</span>
                 </div>
                 <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
                   <div 
                     className="h-full bg-blue-500 rounded-full"
-                    style={{ width: `${totalSubmissions > 0 ? (submittedPosts.length / totalSubmissions) * 100 : 0}%` }}
+                    style={{ width: `${totalSubmissions.totalDocs > 0 ? (submittedCount.totalDocs / totalSubmissions.totalDocs) * 100 : 0}%` }}
                   ></div>
                 </div>
               </div>
@@ -289,12 +292,12 @@ export default async function ContributorDashboardPage() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Drafts</span>
-                  <span className="text-sm font-semibold">{draftPosts.length}</span>
+                  <span className="text-sm font-semibold">{draftCount.totalDocs}</span>
                 </div>
                 <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
                   <div 
                     className="h-full bg-orange-500 rounded-full"
-                    style={{ width: `${totalSubmissions > 0 ? (draftPosts.length / totalSubmissions) * 100 : 0}%` }}
+                    style={{ width: `${totalSubmissions.totalDocs > 0 ? (draftCount.totalDocs / totalSubmissions.totalDocs) * 100 : 0}%` }}
                   ></div>
                 </div>
               </div>

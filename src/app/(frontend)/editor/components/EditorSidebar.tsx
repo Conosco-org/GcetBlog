@@ -1,10 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { useTransition, useCallback, useState, useEffect } from 'react'
 import { LogoutButton } from '@/components/LogoutButton'
 import type { User } from '@/payload-types'
 import { Badge } from '@/components/ui/badge'
+import { Loader2 } from 'lucide-react'
 import { 
   Home, 
   FileText, 
@@ -44,6 +46,9 @@ export function EditorSidebar({
   _onToggle
 }: EditorSidebarProps) {
   const pathname = usePathname()
+  const router = useRouter()
+  const [isPending, startTransition] = useTransition()
+  const [navigatingTo, setNavigatingTo] = useState<string | null>(null)
   const isAdmin = (_user as unknown as { isAdmin?: boolean }).isAdmin === true
 
   const navItems: NavItem[] = [
@@ -119,30 +124,59 @@ export function EditorSidebar({
     return pathname.startsWith(href)
   }
 
+  const handleNavClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    // Don't intercept external links
+    if (href === '/') return
+    // Don't intercept if already on that page
+    if (isActive(href)) {
+      e.preventDefault()
+      return
+    }
+    e.preventDefault()
+    setNavigatingTo(href)
+    startTransition(() => {
+      router.push(href)
+    })
+  }, [pathname, router, startTransition])
+
+  // Clear navigating state when pathname changes
+  useEffect(() => {
+    setNavigatingTo(null)
+  }, [pathname])
+
   return (
     <>
       {/* Sidebar - Fixed positioning */}
       {isOpen && (
         <aside className="w-64 border-r bg-background flex flex-col fixed left-0 top-16 bottom-0 z-30">
           {/* Navigation */}
-          <nav className="flex-1 p-4">
+          <nav className="flex-1 p-4 overflow-y-auto">
             <ul className="space-y-1">
               {navItems.map((item) => {
                 const active = isActive(item.href)
+                const isLoading = isPending && navigatingTo === item.href
                 return (
                   <li key={item.href}>
                     <Link
                       href={item.href}
+                      onClick={(e) => handleNavClick(e, item.href)}
                       className={`
                         flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
                         ${active 
                           ? 'bg-primary/10 text-primary' 
-                          : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                          : isLoading
+                            ? 'bg-accent/50 text-accent-foreground'
+                            : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                         }
                       `}
+                      aria-busy={isLoading}
                     >
-                      <span>
-                        {item.icon}
+                      <span className="relative">
+                        {isLoading ? (
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                        ) : (
+                          item.icon
+                        )}
                       </span>
                       <span className="flex-1">{item.label}</span>
                       {item.badge !== undefined && (
@@ -161,6 +195,17 @@ export function EditorSidebar({
           <div className="p-4 border-t">
             <LogoutButton className="w-full" />
             <p className="text-xs text-muted-foreground text-center mt-3">v2.4.1</p>
+            <p className="text-[11px] text-muted-foreground text-center mt-1">
+              Powered by{' '}
+              <a
+                href="https://conosco.in"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-foreground transition-colors"
+              >
+                Conosco
+              </a>
+            </p>
           </div>
         </aside>
       )}

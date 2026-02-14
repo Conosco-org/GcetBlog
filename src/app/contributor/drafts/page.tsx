@@ -1,4 +1,4 @@
-import { getPayload } from 'payload'
+import { getPayload, type Where } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
@@ -9,8 +9,23 @@ import { Button } from '@/components/ui/button'
 import { formatDateTime } from '@/utilities/formatDateTime'
 import Link from 'next/link'
 import { Edit, FileText } from 'lucide-react'
+import { PageHeader } from '@/components/base/PageHeader'
+import { EmptyState } from '@/components/base/EmptyState'
+import { SearchInput } from '@/components/base/SearchInput'
+import { DraftsGridClient } from './DraftsGridClient'
 
-export default async function DraftsPage() {
+const PAGE_SIZE = 12
+
+// Force dynamic rendering for real-time data
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
+interface PageProps {
+  searchParams: Promise<{ q?: string; page?: string }>
+}
+
+export default async function DraftsPage({ searchParams }: PageProps) {
+  const params = await searchParams
   const payload = await getPayload({ config: configPromise })
   const requestHeaders = await headers()
   const { user } = await payload.auth({ headers: requestHeaders })
@@ -25,78 +40,51 @@ export default async function DraftsPage() {
     redirect('/dashboard')
   }
 
-  // Fetch drafts
+  const query = params.q || ''
+  const page = Math.max(1, Number(params.page) || 1)
+
+  const conditions: Where[] = [
+    { authors: { equals: typedUser.id } },
+    { reviewStatus: { equals: 'draft' } },
+  ]
+
+  if (query) {
+    conditions.push({ title: { like: query } })
+  }
+
   const drafts = await payload.find({
     collection: 'posts',
-    where: {
-      and: [
-        { authors: { equals: typedUser.id } },
-        { reviewStatus: { equals: 'draft' } },
-      ],
-    },
+    where: { and: conditions },
     sort: '-updatedAt',
-    limit: 50,
+    limit: PAGE_SIZE,
+    page,
   })
 
   return (
     <div className="container max-w-6xl mx-auto p-6">
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">My Drafts</h1>
-            <p className="text-muted-foreground mt-1">
-              Continue working on your unfinished posts
-            </p>
-          </div>
+      <PageHeader
+        title="My Drafts"
+        description="Continue working on your unfinished posts"
+        action={
           <Button asChild>
             <Link href="/contributor/create">
               <FileText className="h-4 w-4 mr-2" />
               New Draft
             </Link>
           </Button>
-        </div>
-      </div>
+        }
+      />
 
-      {drafts.docs.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-16">
-            <FileText className="h-16 w-16 text-muted-foreground mb-4" />
-            <h3 className="text-xl font-semibold mb-2">No Drafts</h3>
-            <p className="text-muted-foreground mb-4">
-              All your draft posts will appear here
-            </p>
-            <Button asChild>
-              <Link href="/contributor/create">Create New Draft</Link>
-            </Button>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {drafts.docs.map((post) => (
-            <Card key={post.id} className="hover:border-primary transition-colors">
-              <CardHeader>
-                <div className="flex items-start justify-between gap-2">
-                  <CardTitle className="text-lg line-clamp-2">{post.title}</CardTitle>
-                  <Badge variant="outline" className="flex-shrink-0">Draft</Badge>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Last edited: {formatDateTime(post.updatedAt)}
-                </p>
-              </CardHeader>
-              <CardContent>
-                <div className="flex gap-2">
-                  <Button variant="default" size="sm" asChild className="flex-1">
-                    <Link href={`/editor/posts/${post.id}/edit`}>
-                      <Edit className="h-4 w-4 mr-1" />
-                      Continue
-                    </Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+      <div className="mt-6">
+        <DraftsGridClient
+          drafts={drafts.docs}
+          totalPages={drafts.totalPages}
+          currentPage={drafts.page || page}
+          totalItems={drafts.totalDocs}
+          pageSize={PAGE_SIZE}
+          query={query}
+        />
+      </div>
     </div>
   )
 }

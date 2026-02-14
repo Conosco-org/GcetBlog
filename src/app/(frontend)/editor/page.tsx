@@ -5,12 +5,17 @@ import { Clock, CheckCircle2, MessageSquare, Image, Calendar, ChevronRight } fro
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { PageHeader } from '@/components/base'
 import { DashboardErrorFallback } from './components/DashboardErrorFallback'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Editor Dashboard',
 }
+
+// Force dynamic rendering for real-time data
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export default async function EditorDashboardPage() {
   try {
@@ -88,10 +93,12 @@ export default async function EditorDashboardPage() {
         collection: 'media',
         where: { createdAt: { greater_than: weekAgo.toISOString() } },
       }),
-      // All media for storage calculation
+      // Media storage sample (limited for performance — full calc is on media page)
       payload.find({
         collection: 'media',
-        limit: 1000,
+        limit: 500,
+        depth: 0,
+        select: { filesize: true },
       }),
       // Recent posts for activity feed
       payload.find({
@@ -122,17 +129,15 @@ export default async function EditorDashboardPage() {
     <div className="p-8 min-h-screen bg-background">
       {/* Header */}
       <div className="mb-8">
-        <div className="flex items-center justify-between mb-2">
-          <h1 className="text-3xl font-bold text-foreground">Editor Dashboard</h1>
-          <div className="flex items-center gap-3">
+        <PageHeader
+          title="Editor Dashboard"
+          description="Welcome back! Here's what's happening with your content today."
+          action={
             <Button asChild>
-              <Link href="/editor/posts/create">
-                + New Post
-              </Link>
+              <Link href="/editor/posts/create">+ New Post</Link>
             </Button>
-          </div>
-        </div>
-        <p className="text-muted-foreground">Welcome back! Here&apos;s what&apos;s happening with your content today.</p>
+          }
+        />
       </div>
 
       {/* Stats Cards */}
@@ -426,15 +431,6 @@ export default async function EditorDashboardPage() {
           ) : (
             <p className="text-center py-8 text-muted-foreground">No recent approvals</p>
           )}
-          
-          <div className="flex items-center justify-between mt-6 pt-4 border-t">
-            <Button variant="outline" size="sm" disabled>
-              Previous
-            </Button>
-            <Button variant="outline" size="sm">
-              Next
-            </Button>
-          </div>
         </CardContent>
       </Card>
     </div>

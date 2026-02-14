@@ -40,28 +40,22 @@ export default async function AdminDashboardLayout({
     redirect(dest)
   }
 
-  // Fetch counts for sidebar badges (same as editor layout)
-  const pendingPosts = await payload.count({
-    collection: 'posts',
-    where: {
-      _status: {
-        equals: 'draft',
+  // Fetch counts for sidebar badges — parallelized
+  const [pendingPosts, totalPosts, recentLogs] = await Promise.all([
+    payload.count({
+      collection: 'posts',
+      where: { _status: { equals: 'draft' } },
+    }),
+    payload.count({ collection: 'posts' }),
+    payload.count({
+      collection: 'admin-logs',
+      where: {
+        createdAt: {
+          greater_than: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+        },
       },
-    },
-  })
-
-  const totalPosts = await payload.count({
-    collection: 'posts',
-  })
-
-  const recentLogs = await payload.count({
-    collection: 'admin-logs',
-    where: {
-      createdAt: {
-        greater_than: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-    },
-  })
+    }),
+  ])
 
   return (
     <html className={cn(GeistSans.variable, GeistMono.variable)} lang="en" suppressHydrationWarning>
