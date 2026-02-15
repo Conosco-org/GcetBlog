@@ -16,6 +16,16 @@ import { PageViews } from './collections/PageViews'
 import { AdminLogs } from './collections/AdminLogs'
 import { Comments } from './collections/Comments'
 import { Feedback } from './collections/Feedback'
+import { NewsletterSubscribers } from './collections/NewsletterSubscribers'
+import { Newsletters } from './collections/Newsletters'
+import { NewsletterEvents } from './collections/NewsletterEvents'
+import {
+  newsletterDailyDigest,
+  newsletterWeeklyDigest,
+  newsletterMonthlyDigest,
+  newsletterScheduledSend,
+  newsletterStatsRollup,
+} from './jobs/newsletter'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { plugins } from './plugins'
@@ -86,7 +96,21 @@ export default buildConfig({
   db: mongooseAdapter({
     url: process.env.DATABASE_URI || '',
   }),
-  collections: [Pages, Posts, Media, Categories, Users, Votes, PageViews, AdminLogs, Comments, Feedback],
+  collections: [
+    Pages,
+    Posts,
+    Media,
+    Categories,
+    Users,
+    Votes,
+    PageViews,
+    AdminLogs,
+    Comments,
+    Feedback,
+    NewsletterSubscribers,
+    Newsletters,
+    NewsletterEvents,
+  ],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins: [
@@ -111,6 +135,32 @@ export default buildConfig({
         return authHeader === `Bearer ${process.env.CRON_SECRET}`
       },
     },
-    tasks: [],
+    tasks: [
+      {
+        slug: 'newsletter-daily-digest',
+        handler: newsletterDailyDigest as any,
+        schedule: [{ cron: '0 6 * * *', queue: 'default' }], // Every day at 6:00 AM
+      },
+      {
+        slug: 'newsletter-weekly-digest',
+        handler: newsletterWeeklyDigest as any,
+        schedule: [{ cron: '0 7 * * 1', queue: 'default' }], // Every Monday at 7:00 AM
+      },
+      {
+        slug: 'newsletter-monthly-digest',
+        handler: newsletterMonthlyDigest as any,
+        schedule: [{ cron: '0 8 1 * *', queue: 'default' }], // 1st of every month at 8:00 AM
+      },
+      {
+        slug: 'newsletter-scheduled-send',
+        handler: newsletterScheduledSend as any,
+        schedule: [{ cron: '*/15 * * * *', queue: 'default' }], // Every 15 minutes
+      },
+      {
+        slug: 'newsletter-stats-rollup',
+        handler: newsletterStatsRollup as any,
+        schedule: [{ cron: '0 */6 * * *', queue: 'default' }], // Every 6 hours
+      },
+    ],
   },
 })
