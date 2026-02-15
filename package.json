@@ -4,6 +4,7 @@
   "description": "Official blog platform for Geethanjali College of Engineering and Technology (GCET)",
   "license": "MIT",
   "type": "module",
+  "packageManager": "pnpm@10.18.2",
   "scripts": {
     "build": "cross-env NODE_OPTIONS=--no-deprecation next build",
     "postbuild": "next-sitemap --config next-sitemap.config.cjs",
@@ -111,8 +112,8 @@
     "vitest": "3.2.3"
   },
   "engines": {
-    "node": "^18.20.2 || >=20.9.0",
-    "pnpm": "^9 || ^10"
+    "node": ">=20.9.0 <25.0.0",
+    "pnpm": ">=10.0.0"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
