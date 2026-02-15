@@ -173,6 +173,41 @@ export const Users: CollectionConfig = {
         },
       ],
     },
+    {
+      name: 'newsletterOptIn',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        description: 'Opt-in to receive the GCET Blog newsletter',
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'newsletterFrequency',
+      type: 'select',
+      options: [
+        { label: 'Daily', value: 'daily' },
+        { label: 'Weekly', value: 'weekly' },
+        { label: 'Monthly', value: 'monthly' },
+      ],
+      defaultValue: 'weekly',
+      admin: {
+        description: 'How often you want to receive newsletters',
+        position: 'sidebar',
+        condition: (data) => data?.newsletterOptIn === true,
+      },
+    },
+    {
+      name: 'newsletterCategories',
+      type: 'relationship',
+      relationTo: 'categories',
+      hasMany: true,
+      admin: {
+        description: 'Only receive newsletters about these categories (leave empty for all)',
+        position: 'sidebar',
+        condition: (data) => data?.newsletterOptIn === true,
+      },
+    },
   ],
   timestamps: true,
 }

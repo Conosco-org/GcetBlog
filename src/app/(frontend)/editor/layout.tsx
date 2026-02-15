@@ -33,7 +33,7 @@ export default async function EditorLayout({
   }
 
   // Get real counts for sidebar badges — parallelized
-  const [pendingPosts, totalPosts, recentLogs] = await Promise.all([
+  const [pendingPosts, totalPosts, recentLogs, activeSubscribers] = await Promise.all([
     payload.count({
       collection: 'posts',
       where: { _status: { equals: 'draft' } },
@@ -47,6 +47,10 @@ export default async function EditorLayout({
         },
       },
     }),
+    payload.count({
+      collection: 'newsletter-subscribers',
+      where: { status: { equals: 'active' } },
+    }),
   ])
 
   return (
@@ -55,6 +59,7 @@ export default async function EditorLayout({
       pendingPostsCount={pendingPosts.totalDocs}
       totalPostsCount={totalPosts.totalDocs}
       activityLogsCount={recentLogs.totalDocs}
+      subscribersCount={activeSubscribers.totalDocs}
     >
       {children}
     </EditorLayoutClient>

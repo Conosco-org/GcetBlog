@@ -77,6 +77,9 @@ export interface Config {
     'admin-logs': AdminLog;
     comments: Comment;
     feedback: Feedback;
+    'newsletter-subscribers': NewsletterSubscriber;
+    newsletters: Newsletter;
+    'newsletter-events': NewsletterEvent;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -99,6 +102,9 @@ export interface Config {
     'admin-logs': AdminLogsSelect<false> | AdminLogsSelect<true>;
     comments: CommentsSelect<false> | CommentsSelect<true>;
     feedback: FeedbackSelect<false> | FeedbackSelect<true>;
+    'newsletter-subscribers': NewsletterSubscribersSelect<false> | NewsletterSubscribersSelect<true>;
+    newsletters: NewslettersSelect<false> | NewslettersSelect<true>;
+    'newsletter-events': NewsletterEventsSelect<false> | NewsletterEventsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -116,15 +122,22 @@ export interface Config {
   globals: {
     header: Header;
     footer: Footer;
+    'payload-jobs-stats': PayloadJobsStat;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
+    'payload-jobs-stats': PayloadJobsStatsSelect<false> | PayloadJobsStatsSelect<true>;
   };
   locale: null;
   user: User;
   jobs: {
     tasks: {
+      'newsletter-daily-digest': TaskNewsletterDailyDigest;
+      'newsletter-weekly-digest': TaskNewsletterWeeklyDigest;
+      'newsletter-monthly-digest': TaskNewsletterMonthlyDigest;
+      'newsletter-scheduled-send': TaskNewsletterScheduledSend;
+      'newsletter-stats-rollup': TaskNewsletterStatsRollup;
       schedulePublish: TaskSchedulePublish;
       inline: {
         input: unknown;
@@ -481,6 +494,18 @@ export interface User {
      */
     website?: string | null;
   };
+  /**
+   * Opt-in to receive the GCET Blog newsletter
+   */
+  newsletterOptIn?: boolean | null;
+  /**
+   * How often you want to receive newsletters
+   */
+  newsletterFrequency?: ('daily' | 'weekly' | 'monthly') | null;
+  /**
+   * Only receive newsletters about these categories (leave empty for all)
+   */
+  newsletterCategories?: (string | Category)[] | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -908,8 +933,15 @@ export interface AdminLog {
     | 'comment_reported'
     | 'role_change'
     | 'user_action'
-    | 'content_moderation';
-  resourceType: 'posts' | 'comments' | 'users' | 'media';
+    | 'content_moderation'
+    | 'newsletter_sent'
+    | 'newsletter_scheduled'
+    | 'newsletter_deleted'
+    | 'digest_generated'
+    | 'subscriber_imported'
+    | 'subscriber_exported'
+    | 'subscriber_status_changed';
+  resourceType: 'posts' | 'comments' | 'users' | 'media' | 'newsletters' | 'newsletter-subscribers';
   /**
    * ID of the affected resource
    */
@@ -1018,6 +1050,177 @@ export interface Feedback {
         id?: string | null;
       }[]
     | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Email subscribers for the GCET Blog newsletter
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "newsletter-subscribers".
+ */
+export interface NewsletterSubscriber {
+  id: string;
+  email: string;
+  /**
+   * Display name (optional)
+   */
+  name?: string | null;
+  /**
+   * Subscription status. New subscribers start as "pending" until confirmed.
+   */
+  status: 'pending' | 'active' | 'unsubscribed' | 'bounced' | 'complained';
+  /**
+   * How this subscriber was added
+   */
+  source: 'public_form' | 'user_registration' | 'admin_import' | 'api';
+  /**
+   * Linked registered user (if applicable)
+   */
+  user?: (string | null) | User;
+  /**
+   * Content preferences — only receive digests about these categories
+   */
+  categories?: (string | Category)[] | null;
+  /**
+   * How often they want digest emails
+   */
+  frequency?: ('daily' | 'weekly' | 'monthly') | null;
+  /**
+   * Unique token for one-click unsubscribe (auto-generated)
+   */
+  unsubscribeToken?: string | null;
+  /**
+   * When the subscriber confirmed their email (double opt-in)
+   */
+  confirmedAt?: string | null;
+  /**
+   * When the subscriber unsubscribed
+   */
+  unsubscribedAt?: string | null;
+  /**
+   * Extensible metadata (UTM source, signup page, etc.)
+   */
+  metadata?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Newsletter campaigns — manual compose or auto-generated digests
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "newsletters".
+ */
+export interface Newsletter {
+  id: string;
+  /**
+   * Internal campaign name (not shown to subscribers)
+   */
+  title: string;
+  /**
+   * Email subject line — seen in inbox
+   */
+  subject: string;
+  /**
+   * Inbox preview snippet (appears after subject in most email clients)
+   */
+  previewText?: string | null;
+  type: 'manual' | 'auto_digest';
+  /**
+   * Digest frequency (only for auto-digest type)
+   */
+  frequency?: ('daily' | 'weekly' | 'monthly') | null;
+  status: 'draft' | 'scheduled' | 'sending' | 'sent' | 'failed';
+  /**
+   * When to send this campaign
+   */
+  scheduledFor?: string | null;
+  /**
+   * Newsletter body (for manual compose)
+   */
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Posts included in this newsletter (auto-populated for digests)
+   */
+  posts?: (string | Post)[] | null;
+  /**
+   * Target specific subscriber segments by category. Leave empty to send to all.
+   */
+  targetCategories?: (string | Category)[] | null;
+  sentAt?: string | null;
+  sentBy?: (string | null) | User;
+  /**
+   * Comma-separated emails for test sends
+   */
+  testRecipients?: string | null;
+  /**
+   * Campaign statistics (auto-updated)
+   */
+  stats?: {
+    totalRecipients?: number | null;
+    delivered?: number | null;
+    opened?: number | null;
+    clicked?: number | null;
+    bounced?: number | null;
+    unsubscribed?: number | null;
+  };
+  /**
+   * React Email template identifier
+   */
+  templateId?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Immutable event log for newsletter analytics (opens, clicks, bounces)
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "newsletter-events".
+ */
+export interface NewsletterEvent {
+  id: string;
+  newsletter: string | Newsletter;
+  /**
+   * Null for anonymized/aggregated events
+   */
+  subscriber?: (string | null) | NewsletterSubscriber;
+  type: 'sent' | 'delivered' | 'opened' | 'clicked' | 'bounced' | 'complained' | 'unsubscribed';
+  /**
+   * Clicked URL (for click events only)
+   */
+  url?: string | null;
+  /**
+   * Browser/email client info
+   */
+  userAgent?: string | null;
+  /**
+   * IP address (for geographic context)
+   */
+  ipAddress?: string | null;
+  timestamp: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -1164,7 +1367,14 @@ export interface PayloadJob {
     | {
         executedAt: string;
         completedAt: string;
-        taskSlug: 'inline' | 'schedulePublish';
+        taskSlug:
+          | 'inline'
+          | 'newsletter-daily-digest'
+          | 'newsletter-weekly-digest'
+          | 'newsletter-monthly-digest'
+          | 'newsletter-scheduled-send'
+          | 'newsletter-stats-rollup'
+          | 'schedulePublish';
         taskID: string;
         input?:
           | {
@@ -1197,10 +1407,29 @@ export interface PayloadJob {
         id?: string | null;
       }[]
     | null;
-  taskSlug?: ('inline' | 'schedulePublish') | null;
+  taskSlug?:
+    | (
+        | 'inline'
+        | 'newsletter-daily-digest'
+        | 'newsletter-weekly-digest'
+        | 'newsletter-monthly-digest'
+        | 'newsletter-scheduled-send'
+        | 'newsletter-stats-rollup'
+        | 'schedulePublish'
+      )
+    | null;
   queue?: string | null;
   waitUntil?: string | null;
   processing?: boolean | null;
+  meta?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1250,6 +1479,18 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'feedback';
         value: string | Feedback;
+      } | null)
+    | ({
+        relationTo: 'newsletter-subscribers';
+        value: string | NewsletterSubscriber;
+      } | null)
+    | ({
+        relationTo: 'newsletters';
+        value: string | Newsletter;
+      } | null)
+    | ({
+        relationTo: 'newsletter-events';
+        value: string | NewsletterEvent;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -1619,6 +1860,9 @@ export interface UsersSelect<T extends boolean = true> {
         github?: T;
         website?: T;
       };
+  newsletterOptIn?: T;
+  newsletterFrequency?: T;
+  newsletterCategories?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -1721,6 +1965,73 @@ export interface FeedbackSelect<T extends boolean = true> {
         timestamp?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "newsletter-subscribers_select".
+ */
+export interface NewsletterSubscribersSelect<T extends boolean = true> {
+  email?: T;
+  name?: T;
+  status?: T;
+  source?: T;
+  user?: T;
+  categories?: T;
+  frequency?: T;
+  unsubscribeToken?: T;
+  confirmedAt?: T;
+  unsubscribedAt?: T;
+  metadata?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "newsletters_select".
+ */
+export interface NewslettersSelect<T extends boolean = true> {
+  title?: T;
+  subject?: T;
+  previewText?: T;
+  type?: T;
+  frequency?: T;
+  status?: T;
+  scheduledFor?: T;
+  content?: T;
+  posts?: T;
+  targetCategories?: T;
+  sentAt?: T;
+  sentBy?: T;
+  testRecipients?: T;
+  stats?:
+    | T
+    | {
+        totalRecipients?: T;
+        delivered?: T;
+        opened?: T;
+        clicked?: T;
+        bounced?: T;
+        unsubscribed?: T;
+      };
+  templateId?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "newsletter-events_select".
+ */
+export interface NewsletterEventsSelect<T extends boolean = true> {
+  newsletter?: T;
+  subscriber?: T;
+  type?: T;
+  url?: T;
+  userAgent?: T;
+  ipAddress?: T;
+  timestamp?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1952,6 +2263,7 @@ export interface PayloadJobsSelect<T extends boolean = true> {
   queue?: T;
   waitUntil?: T;
   processing?: T;
+  meta?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2047,6 +2359,24 @@ export interface Footer {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-jobs-stats".
+ */
+export interface PayloadJobsStat {
+  id: string;
+  stats?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
@@ -2090,6 +2420,56 @@ export interface FooterSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-jobs-stats_select".
+ */
+export interface PayloadJobsStatsSelect<T extends boolean = true> {
+  stats?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskNewsletter-daily-digest".
+ */
+export interface TaskNewsletterDailyDigest {
+  input?: unknown;
+  output?: unknown;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskNewsletter-weekly-digest".
+ */
+export interface TaskNewsletterWeeklyDigest {
+  input?: unknown;
+  output?: unknown;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskNewsletter-monthly-digest".
+ */
+export interface TaskNewsletterMonthlyDigest {
+  input?: unknown;
+  output?: unknown;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskNewsletter-scheduled-send".
+ */
+export interface TaskNewsletterScheduledSend {
+  input?: unknown;
+  output?: unknown;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskNewsletter-stats-rollup".
+ */
+export interface TaskNewsletterStatsRollup {
+  input?: unknown;
+  output?: unknown;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

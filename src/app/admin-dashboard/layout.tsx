@@ -76,6 +76,7 @@ export default async function AdminDashboardLayout({
             pendingPostsCount={pendingPosts.totalDocs}
             totalPostsCount={totalPosts.totalDocs}
             activityLogsCount={recentLogs.totalDocs}
+            subscribersCount={0}
           >
             {children}
           </EditorLayoutClient>

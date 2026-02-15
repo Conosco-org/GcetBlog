@@ -32,6 +32,7 @@ interface EditorSidebarProps {
   pendingPostsCount?: number
   totalPostsCount?: number
   activityLogsCount?: number
+  subscribersCount?: number
   isOpen: boolean
   _onToggle?: () => void
 }
@@ -41,6 +42,7 @@ export function EditorSidebar({
   pendingPostsCount = 0,
   totalPostsCount = 0,
   activityLogsCount = 0,
+  subscribersCount = 0,
   isOpen,
   _onToggle
 }: EditorSidebarProps) {
@@ -96,6 +98,7 @@ export function EditorSidebar({
       label: 'Newsletter',
       href: '/editor/newsletter',
       icon: <Mail className="w-5 h-5" />,
+      badge: subscribersCount,
     },
     {
       label: 'Analytics',
