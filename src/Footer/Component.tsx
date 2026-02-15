@@ -7,6 +7,7 @@ import type { Footer } from '@/payload-types'
 import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
 import { CMSLink } from '@/components/Link'
 import { Logo } from '@/components/Logo/Logo'
+import { NewsletterSignup } from '@/components/NewsletterSignup'
 
 export async function Footer() {
   const footerData: Footer = await getCachedGlobal('footer', 1)()
@@ -36,6 +37,15 @@ export async function Footer() {
               })}
             </nav>
           </div>
+        </div>
+
+        {/* Newsletter Signup */}
+        <div className="mt-12 max-w-md">
+          <h3 className="text-lg font-bold text-background mb-2">Subscribe to the Newsletter</h3>
+          <p className="text-sm text-background/60 mb-4">
+            Get the latest posts and updates delivered to your inbox.
+          </p>
+          <NewsletterSignup variant="compact" />
         </div>
 
         {/* Bottom bar */}
