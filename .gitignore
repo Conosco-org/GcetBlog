@@ -1,15 +1,13 @@
-build
-dist / media
+﻿build
+dist/media
 node_modules
 .DS_Store
 .env
 .next
 .vercel
 
-
 public/robots.txt
 public/sitemap*.xml
-
 
 # Playwright
 node_modules/
@@ -17,3 +15,7 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# Build artifacts & logs
+*.log
+tsconfig.tsbuildinfo
