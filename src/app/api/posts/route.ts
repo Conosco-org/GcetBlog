@@ -107,6 +107,7 @@ export async function POST(request: NextRequest) {
     const draft = await payload.create({
       collection: 'posts',
       data: postData,
+      draft: true,
     })
 
     let post = draft
