@@ -3,28 +3,36 @@ import type { Where } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { TemplatesPageClient } from './TemplatesPageClient'
+import type { User } from '@/payload-types'
+import { ContributorTemplatesClient } from './ContributorTemplatesClient'
 
-export default async function TemplatesPage({
+export default async function ContributorTemplatesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; category?: string; page?: string }>
+  searchParams: Promise<{ q?: string; category?: string }>
 }) {
   const payload = await getPayload({ config: configPromise })
   const requestHeaders = await headers()
   const { user } = await payload.auth({ headers: requestHeaders })
 
-  if (!user || user.role !== 'editor') {
+  if (!user) {
     redirect('/login')
+  }
+
+  const typedUser = user as User
+  if (typedUser.role !== 'contributor') {
+    redirect('/dashboard')
   }
 
   const params = await searchParams
   const query = params.q || ''
   const category = params.category || ''
-  const page = Math.max(1, Number(params.page) || 1)
 
-  // Build where clause
-  const conditions: Where[] = []
+  // Fetch templates visible to contributors (only published ones)
+  const conditions: Where[] = [
+    { or: [{ audience: { equals: 'all' } }, { audience: { equals: 'contributor_only' } }] },
+    { status: { equals: 'published' } },
+  ]
 
   if (query) {
     conditions.push({
@@ -39,20 +47,15 @@ export default async function TemplatesPage({
     conditions.push({ category: { equals: category } })
   }
 
-  const finalWhere: Where | undefined = conditions.length > 0
-    ? { and: conditions }
-    : undefined
-
   const templates = await payload.find({
     collection: 'templates',
-    page,
-    limit: 12,
+    limit: 50,
     sort: '-usageCount',
-    where: finalWhere,
+    where: { and: conditions },
   })
 
   return (
-    <TemplatesPageClient
+    <ContributorTemplatesClient
       templates={templates.docs.map((doc) => ({
         id: doc.id,
         name: doc.name,
@@ -65,13 +68,7 @@ export default async function TemplatesPage({
         content: doc.content,
         suggestedTitle: doc.suggestedTitle || null,
         suggestedTags: (doc.suggestedTags as string[] | null) || null,
-        status: (doc.status as 'draft' | 'published') || 'draft',
-        createdAt: doc.createdAt,
-        updatedAt: doc.updatedAt,
       }))}
-      totalPages={templates.totalPages}
-      currentPage={templates.page || 1}
-      totalDocs={templates.totalDocs}
       query={query}
       category={category}
     />

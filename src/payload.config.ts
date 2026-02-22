@@ -16,6 +16,7 @@ import { PageViews } from './collections/PageViews'
 import { AdminLogs } from './collections/AdminLogs'
 import { Comments } from './collections/Comments'
 import { Feedback } from './collections/Feedback'
+import { Templates } from './collections/Templates'
 import { NewsletterSubscribers } from './collections/NewsletterSubscribers'
 import { Newsletters } from './collections/Newsletters'
 import { NewsletterEvents } from './collections/NewsletterEvents'
@@ -107,6 +108,7 @@ export default buildConfig({
     AdminLogs,
     Comments,
     Feedback,
+    Templates,
     NewsletterSubscribers,
     Newsletters,
     NewsletterEvents,

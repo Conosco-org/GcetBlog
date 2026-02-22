@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
+import { revalidatePath } from 'next/cache'
 import config from '@/payload.config'
 
 // GET handler — list posts (proxies to Payload's built-in REST)
@@ -82,30 +83,56 @@ export async function POST(request: NextRequest) {
       ? textToLexical(body.content)
       : body.content
 
-    // Create the post
-    const post = await payload.create({
-      collection: 'posts',
-      data: {
+    const isPublishing = body._status === 'published'
+
+    const postData: Record<string, unknown> = {
+      title: body.title,
+      content: lexicalContent,
+      categories: body.categories || [],
+      authors: body.authors || [user.id],
+      _status: 'draft', // Always create as draft first
+      reviewStatus: body.reviewStatus || 'draft',
+      submittedForReviewAt: body.submittedForReviewAt,
+      heroImage: body.heroImage || undefined,
+      tags: body.tags || undefined,
+      featuredFrom: body.featuredFrom || undefined,
+      featuredUntil: body.featuredUntil || undefined,
+      meta: body.meta || {
         title: body.title,
-        content: lexicalContent,
-        categories: body.categories || [],
-        authors: body.authors || [user.id],
-        _status: body._status || 'draft',
-        reviewStatus: body.reviewStatus || 'draft',
-        submittedForReviewAt: body.submittedForReviewAt,
-        heroImage: body.heroImage || undefined,
-        meta: body.meta || {
-          title: body.title,
-          description: typeof body.content === 'string' ? body.content.substring(0, 160) : '',
-        },
-        publishedAt: body._status === 'published' ? new Date().toISOString() : undefined,
+        description: typeof body.content === 'string' ? body.content.substring(0, 160) : '',
       },
+    }
+
+    // Create the post as a draft first
+    const draft = await payload.create({
+      collection: 'posts',
+      data: postData,
     })
+
+    let post = draft
+
+    // If publishing, update with draft: false to properly create a published version
+    if (isPublishing) {
+      post = await payload.update({
+        collection: 'posts',
+        id: draft.id,
+        data: {
+          _status: 'published',
+          publishedAt: body.publishedAt || new Date().toISOString(),
+        },
+        draft: false,
+      })
+
+      // Revalidate public pages
+      revalidatePath('/')
+      revalidatePath('/posts')
+      if (post.slug) revalidatePath(`/posts/${post.slug}`)
+    }
 
     return NextResponse.json({
       success: true,
       post,
-      message: body._status === 'published' ? 'Post published successfully!' : 'Draft saved successfully!',
+      message: isPublishing ? 'Post published successfully!' : 'Draft saved successfully!',
     })
   } catch (error: unknown) {
     console.error('Error creating post:', error)

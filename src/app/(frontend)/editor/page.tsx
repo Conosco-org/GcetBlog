@@ -1,7 +1,7 @@
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import Link from 'next/link'
-import { Clock, CheckCircle2, MessageSquare, Image as ImageIcon, ChevronRight } from 'lucide-react'
+import { Clock, CheckCircle2, MessageSquare, Image as ImageIcon, ChevronRight, LayoutTemplate } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -41,6 +41,7 @@ export default async function EditorDashboardPage() {
       allMedia,
       allPosts,
       allComments,
+      recentLogs,
     ] = await Promise.all([
       // Pending posts for review
       payload.find({
@@ -113,6 +114,28 @@ export default async function EditorDashboardPage() {
         limit: 5,
         sort: '-createdAt',
         depth: 1,
+      }),
+      // Recent admin logs (includes template activity)
+      payload.find({
+        collection: 'admin-logs',
+        limit: 5,
+        sort: '-timestamp',
+        depth: 1,
+        where: {
+          action: {
+            in: [
+              'template_created',
+              'template_published',
+              'template_unpublished',
+              'template_updated',
+              'template_deleted',
+              'approve_post',
+              'reject_post',
+              'delete_post',
+              'unpublish_post',
+            ],
+          },
+        },
       }),
     ])
 
@@ -259,10 +282,46 @@ export default async function EditorDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {allPosts.docs.length === 0 && allComments.docs.length === 0 ? (
+              {allPosts.docs.length === 0 && allComments.docs.length === 0 && recentLogs.docs.length === 0 ? (
                 <p className="text-center py-8 text-muted-foreground">No recent activity</p>
               ) : (
                 <>
+                  {/* Show recent admin logs (template activity, moderation, etc.) */}
+                  {recentLogs.docs.slice(0, 3).map((log) => {
+                    const logUser = typeof log.user === 'object' && log.user ? log.user : null
+                    const initials = logUser?.name ? logUser.name.split(' ').map((n: string) => n[0]).join('').toUpperCase() : 'S'
+                    const isTemplate = String(log.action).startsWith('template_')
+                    const actionLabel = String(log.action).replace(/_/g, ' ').replace(/^\w/, (c: string) => c.toUpperCase())
+                    
+                    return (
+                      <div key={log.id} className="flex items-start gap-3 pb-4 border-b last:border-0">
+                        <div className={`w-10 h-10 ${isTemplate ? 'bg-indigo-500/10' : 'bg-primary/10'} rounded-full flex items-center justify-center flex-shrink-0`} role="img" aria-label={`${logUser?.name || 'System'} avatar`}>
+                          {isTemplate ? (
+                            <LayoutTemplate className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                          ) : (
+                            <span className="text-primary font-semibold text-sm">{initials}</span>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-foreground">
+                            <span className="font-semibold">{logUser?.name || 'System'}</span>{' '}
+                            {log.details || actionLabel}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {new Date(log.timestamp).toLocaleString()}
+                          </p>
+                        </div>
+                        {isTemplate ? (
+                          <Badge variant="secondary" className="text-[10px] bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 shrink-0">
+                            Template
+                          </Badge>
+                        ) : (
+                          <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
+                        )}
+                      </div>
+                    )
+                  })}
+
                   {/* Show recent posts */}
                   {allPosts.docs.slice(0, 2).map((post) => {
                     const author = Array.isArray(post.authors) && post.authors.length > 0 && typeof post.authors[0] === 'object'

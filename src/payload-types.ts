@@ -77,6 +77,7 @@ export interface Config {
     'admin-logs': AdminLog;
     comments: Comment;
     feedback: Feedback;
+    templates: Template;
     'newsletter-subscribers': NewsletterSubscriber;
     newsletters: Newsletter;
     'newsletter-events': NewsletterEvent;
@@ -102,6 +103,7 @@ export interface Config {
     'admin-logs': AdminLogsSelect<false> | AdminLogsSelect<true>;
     comments: CommentsSelect<false> | CommentsSelect<true>;
     feedback: FeedbackSelect<false> | FeedbackSelect<true>;
+    templates: TemplatesSelect<false> | TemplatesSelect<true>;
     'newsletter-subscribers': NewsletterSubscribersSelect<false> | NewsletterSubscribersSelect<true>;
     newsletters: NewslettersSelect<false> | NewslettersSelect<true>;
     'newsletter-events': NewsletterEventsSelect<false> | NewsletterEventsSelect<true>;
@@ -940,8 +942,13 @@ export interface AdminLog {
     | 'digest_generated'
     | 'subscriber_imported'
     | 'subscriber_exported'
-    | 'subscriber_status_changed';
-  resourceType: 'posts' | 'comments' | 'users' | 'media' | 'newsletters' | 'newsletter-subscribers';
+    | 'subscriber_status_changed'
+    | 'template_created'
+    | 'template_updated'
+    | 'template_published'
+    | 'template_unpublished'
+    | 'template_deleted';
+  resourceType: 'posts' | 'comments' | 'users' | 'media' | 'newsletters' | 'newsletter-subscribers' | 'templates';
   /**
    * ID of the affected resource
    */
@@ -1050,6 +1057,68 @@ export interface Feedback {
         id?: string | null;
       }[]
     | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "templates".
+ */
+export interface Template {
+  id: string;
+  name: string;
+  /**
+   * Only published templates are visible to contributors.
+   */
+  status: 'draft' | 'published';
+  /**
+   * A short description of what this template is for
+   */
+  description?: string | null;
+  category: 'academic' | 'general' | 'editorial' | 'news';
+  /**
+   * Maps to contributor content types
+   */
+  contentType?: ('news' | 'event' | 'literary' | 'media' | 'tutorial' | 'academic') | null;
+  audience: 'all' | 'editor_only' | 'contributor_only';
+  /**
+   * Tiptap-compatible HTML content that will be pre-filled in the editor
+   */
+  content: string;
+  /**
+   * Pre-filled title placeholder (user will modify)
+   */
+  suggestedTitle?: string | null;
+  /**
+   * Array of tag strings, e.g. ["gcet", "event", "2026"]
+   */
+  suggestedTags?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  icon?:
+    | (
+        | 'calendar'
+        | 'graduation'
+        | 'file-text'
+        | 'lightbulb'
+        | 'users'
+        | 'trophy'
+        | 'book'
+        | 'code'
+        | 'megaphone'
+        | 'star'
+        | 'briefcase'
+        | 'list'
+      )
+    | null;
+  usageCount?: number | null;
+  createdBy?: (string | null) | User;
   updatedAt: string;
   createdAt: string;
 }
@@ -1479,6 +1548,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'feedback';
         value: string | Feedback;
+      } | null)
+    | ({
+        relationTo: 'templates';
+        value: string | Template;
       } | null)
     | ({
         relationTo: 'newsletter-subscribers';
@@ -1965,6 +2038,26 @@ export interface FeedbackSelect<T extends boolean = true> {
         timestamp?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "templates_select".
+ */
+export interface TemplatesSelect<T extends boolean = true> {
+  name?: T;
+  status?: T;
+  description?: T;
+  category?: T;
+  contentType?: T;
+  audience?: T;
+  content?: T;
+  suggestedTitle?: T;
+  suggestedTags?: T;
+  icon?: T;
+  usageCount?: T;
+  createdBy?: T;
   updatedAt?: T;
   createdAt?: T;
 }

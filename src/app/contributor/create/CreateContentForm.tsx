@@ -23,9 +23,12 @@ import {
   Save,
   Check,
   Link as LinkIcon,
+  FileStack,
+  XCircle,
 } from 'lucide-react'
 import { cn } from '@/utilities/ui'
 import { RichTextEditor, htmlToLexical, htmlToPlainText } from '@/components/RichTextEditor'
+import { TemplateSelector, type TemplateCardData } from '@/components/templates'
 
 const contentTypes = [
   {
@@ -71,17 +74,24 @@ const contentTypes = [
 interface CreateContentFormProps {
   user: User
   categories: Category[]
+  initialTemplate?: {
+    name: string
+    content: string
+    suggestedTitle?: string
+    suggestedTags?: string[]
+    contentType?: string
+  } | null
 }
 
-export function CreateContentForm({ user: _user, categories: dbCategories }: CreateContentFormProps) {
+export function CreateContentForm({ user: _user, categories: dbCategories, initialTemplate }: CreateContentFormProps) {
   const router = useRouter()
   const { toast } = useToast()
-  const [selectedType, setSelectedType] = useState<string>('')
-  const [title, setTitle] = useState('')
-  const [content, setContent] = useState('')
+  const [selectedType, setSelectedType] = useState<string>(initialTemplate?.contentType || '')
+  const [title, setTitle] = useState(initialTemplate?.suggestedTitle || '')
+  const [content, setContent] = useState(initialTemplate?.content || '')
   const [excerpt, setExcerpt] = useState('')
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
-  const [tags, setTags] = useState<string[]>([])
+  const [tags, setTags] = useState<string[]>(initialTemplate?.suggestedTags || [])
   const [tagInput, setTagInput] = useState('')
   const [metaDescription, setMetaDescription] = useState('')
   const [publishDate, setPublishDate] = useState('')
@@ -90,11 +100,31 @@ export function CreateContentForm({ user: _user, categories: dbCategories }: Cre
   const [featuredImage, setFeaturedImage] = useState<string | null>(null)
   const [featuredImagePreview, setFeaturedImagePreview] = useState<string | null>(null)
   const [uploadingImage, setUploadingImage] = useState(false)
+  const [showTemplateSelector, setShowTemplateSelector] = useState(false)
+  const [activeTemplateName, setActiveTemplateName] = useState<string | null>(initialTemplate?.name || null)
 
   const toggleCategory = (category: string) => {
     setSelectedCategories((prev) =>
       prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category]
     )
+  }
+
+  const handleTemplateSelect = (template: TemplateCardData) => {
+    if (template.suggestedTitle) setTitle(template.suggestedTitle)
+    setContent(template.content)
+    if (template.suggestedTags && Array.isArray(template.suggestedTags)) {
+      setTags(template.suggestedTags)
+    }
+    if (template.contentType) setSelectedType(template.contentType)
+    setActiveTemplateName(template.name)
+    toast({
+      title: 'Template applied',
+      description: `"${template.name}" loaded \u2014 feel free to edit everything.`,
+    })
+  }
+
+  const handleClearTemplate = () => {
+    setActiveTemplateName(null)
   }
 
   const addTag = () => {
@@ -287,6 +317,16 @@ export function CreateContentForm({ user: _user, categories: dbCategories }: Cre
 
   return (
     <div className="container max-w-7xl mx-auto p-6">
+      {/* Template Selector Modal */}
+      <TemplateSelector
+        open={showTemplateSelector}
+        onOpenChange={setShowTemplateSelector}
+        userRole="contributor"
+        contentType={selectedType || undefined}
+        onSelect={handleTemplateSelect}
+        onStartBlank={() => setShowTemplateSelector(false)}
+      />
+
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between">
@@ -294,20 +334,52 @@ export function CreateContentForm({ user: _user, categories: dbCategories }: Cre
             <h1 className="text-3xl font-bold">Create New Content</h1>
             <p className="text-muted-foreground mt-1">Share your ideas with the GCET community</p>
           </div>
-          {saveStatus === 'saving' && (
-            <div className="flex items-center gap-2 text-orange-500">
-              <div className="h-2 w-2 bg-orange-500 rounded-full animate-pulse" />
-              <span className="text-sm font-medium">Saving...</span>
-            </div>
-          )}
-          {saveStatus === 'saved' && (
-            <div className="flex items-center gap-2 text-green-500">
-              <Check className="h-4 w-4" />
-              <span className="text-sm font-medium">Saved</span>
-            </div>
-          )}
+          <div className="flex items-center gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setShowTemplateSelector(true)}
+              className="gap-1.5"
+            >
+              <FileStack className="w-4 h-4" />
+              Use Template
+            </Button>
+            {saveStatus === 'saving' && (
+              <div className="flex items-center gap-2 text-orange-500">
+                <div className="h-2 w-2 bg-orange-500 rounded-full animate-pulse" />
+                <span className="text-sm font-medium">Saving...</span>
+              </div>
+            )}
+            {saveStatus === 'saved' && (
+              <div className="flex items-center gap-2 text-green-500">
+                <Check className="h-4 w-4" />
+                <span className="text-sm font-medium">Saved</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
+
+      {/* Template banner */}
+      {activeTemplateName && (
+        <div className="mb-6 flex items-center justify-between px-4 py-2.5 rounded-lg bg-primary/5 border border-primary/20">
+          <div className="flex items-center gap-2 text-sm">
+            <FileStack className="w-4 h-4 text-primary" />
+            <span>
+              Using template: <strong>{activeTemplateName}</strong>
+            </span>
+            <span className="text-muted-foreground">&mdash; edit freely</span>
+          </div>
+          <button
+            type="button"
+            onClick={handleClearTemplate}
+            className="text-muted-foreground hover:text-foreground transition"
+            aria-label="Dismiss template banner"
+          >
+            <XCircle className="w-4 h-4" />
+          </button>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Content - Left Column */}

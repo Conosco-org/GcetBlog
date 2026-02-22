@@ -132,13 +132,12 @@ export function RichTextEditor({
     immediatelyRender: false,
   })
 
-  // Sync external value changes (e.g., loading existing post)
+  // Sync external value changes (e.g., template applied, loading existing post)
   useEffect(() => {
-    if (editor && value && editor.getHTML() !== value) {
+    if (editor && value != null && editor.getHTML() !== value) {
       editor.commands.setContent(value, { emitUpdate: false })
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []) // Only on mount
+  }, [editor, value])
 
   const setLink = useCallback(() => {
     if (!editor) return
