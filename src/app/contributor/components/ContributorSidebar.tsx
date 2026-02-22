@@ -17,6 +17,7 @@ import {
   Edit3,
   UserCircle,
   Loader2,
+  FileStack,
 } from 'lucide-react'
 import { cn } from '@/utilities/ui'
 
@@ -40,6 +41,7 @@ export function ContributorSidebar({ user: _user, stats, isOpen }: ContributorSi
   const navigation = [
     { name: 'Dashboard', href: '/contributor', icon: BarChart3 },
     { name: 'Add Content', href: '/contributor/create', icon: PlusCircle },
+    { name: 'Templates', href: '/contributor/templates', icon: FileStack },
     { name: 'My Drafts', href: '/contributor/drafts', icon: FileText, badge: stats.drafts },
     { name: 'Submissions', href: '/contributor/submissions', icon: Send, badge: stats.submissions },
     { name: 'Feedback Center', href: '/contributor/feedback', icon: MessageSquare, badge: stats.feedback },

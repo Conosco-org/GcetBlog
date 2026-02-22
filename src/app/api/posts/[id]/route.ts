@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
+import { revalidatePath } from 'next/cache'
 import config from '@/payload.config'
 
 // Convert plain text to Lexical JSON format
@@ -55,7 +56,9 @@ export async function PATCH(
       ? textToLexical(body.content)
       : body.content
 
-    // Update the post
+    const isPublishing = body._status === 'published'
+
+    // Update the post — use draft: false when publishing to properly create a published version
     const post = await payload.update({
       collection: 'posts',
       id: id,
@@ -67,17 +70,28 @@ export async function PATCH(
         reviewStatus: body.reviewStatus,
         submittedForReviewAt: body.submittedForReviewAt,
         heroImage: body.heroImage,
+        tags: body.tags,
+        featuredFrom: body.featuredFrom,
+        featuredUntil: body.featuredUntil,
         meta: body.meta,
-        publishedAt: body._status === 'published' && !body.publishedAt 
+        publishedAt: isPublishing && !body.publishedAt 
           ? new Date().toISOString() 
           : body.publishedAt,
       },
+      draft: !isPublishing, // draft: false when publishing to create proper published version
     })
+
+    // Revalidate if publishing
+    if (isPublishing) {
+      revalidatePath('/')
+      revalidatePath('/posts')
+      if (post.slug) revalidatePath(`/posts/${post.slug}`)
+    }
 
     return NextResponse.json({
       success: true,
       post,
-      message: body._status === 'published' ? 'Post published successfully!' : 'Draft saved successfully!',
+      message: isPublishing ? 'Post published successfully!' : 'Draft saved successfully!',
     })
   } catch (error: unknown) {
     console.error('Error updating post:', error)

@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { SearchInput } from '@/components/base/SearchInput'
 import { FilterBar } from '@/components/base/FilterBar'
 import { DataTable, type Column } from '@/components/base/DataTable'
-import { Activity, CheckCircle, XCircle, Edit, Upload, MessageSquare, User } from 'lucide-react'
+import { Activity, CheckCircle, XCircle, Edit, Upload, MessageSquare, User, LayoutTemplate } from 'lucide-react'
 import type { AdminLog } from '@/payload-types'
 
 interface ActivityClientProps {
@@ -18,6 +18,8 @@ interface ActivityClientProps {
 }
 
 function getActivityIcon(action: string) {
+  if (action.startsWith('template_'))
+    return <LayoutTemplate className="w-4 h-4 text-indigo-500 flex-shrink-0" />
   if (action.includes('approved') || action.includes('published'))
     return <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
   if (action.includes('rejected') || action.includes('deleted'))
@@ -119,6 +121,7 @@ export function ActivityClient({
                 { label: 'Created', value: 'created' },
                 { label: 'Updated', value: 'updated' },
                 { label: 'Deleted', value: 'deleted' },
+                { label: 'Template', value: 'template' },
               ],
             },
           ]}

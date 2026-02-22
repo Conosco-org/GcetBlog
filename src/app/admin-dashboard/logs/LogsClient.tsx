@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { SearchInput } from '@/components/base/SearchInput'
 import { FilterBar } from '@/components/base/FilterBar'
 import { DataTable, type Column } from '@/components/base/DataTable'
-import { Activity, CheckCircle, XCircle, Edit, Upload, MessageSquare, User } from 'lucide-react'
+import { Activity, CheckCircle, XCircle, Edit, Upload, MessageSquare, User, LayoutTemplate } from 'lucide-react'
 import type { AdminLog } from '@/payload-types'
 
 interface LogsClientProps {
@@ -18,6 +18,8 @@ interface LogsClientProps {
 }
 
 function getActivityIcon(action: string) {
+  if (action.startsWith('template_'))
+    return <LayoutTemplate className="w-4 h-4 text-indigo-500 flex-shrink-0" />
   if (action.includes('approved') || action.includes('published'))
     return <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
   if (action.includes('rejected') || action.includes('deleted'))
@@ -62,11 +64,19 @@ const columns: Column<AdminLog>[] = [
   {
     key: 'resource',
     header: 'Resource',
-    render: (log) => (
-      <span className="text-sm text-muted-foreground">
-        {log.resourceType} — {log.resourceId}
-      </span>
-    ),
+    render: (log) => {
+      const resourceType = log.resourceType
+        ? log.resourceType.charAt(0).toUpperCase() + log.resourceType.slice(1)
+        : 'Unknown'
+      return (
+        <div className="flex flex-col">
+          <span className="text-sm font-medium">{resourceType}</span>
+          {log.details && (
+            <span className="text-xs text-muted-foreground line-clamp-1">{log.details}</span>
+          )}
+        </div>
+      )
+    },
   },
   {
     key: 'date',
@@ -109,6 +119,7 @@ export function LogsClient({
                 { label: 'Created', value: 'created' },
                 { label: 'Updated', value: 'updated' },
                 { label: 'Deleted', value: 'deleted' },
+                { label: 'Template', value: 'template' },
               ],
             },
           ]}

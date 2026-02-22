@@ -7,6 +7,8 @@ import { draftMode } from 'next/headers'
 import React, { cache } from 'react'
 import { homeStatic } from '@/endpoints/seed/home-static'
 
+export const dynamic = 'force-dynamic'
+
 import { RenderBlocks } from '@/blocks/RenderBlocks'
 import { RenderHero } from '@/heros/RenderHero'
 import { generateMeta } from '@/utilities/generateMeta'
@@ -68,7 +70,7 @@ export default async function Page({ params: paramsPromise }: Args) {
   if (slug === 'home') {
     const payload = await getPayload({ config: configPromise })
     
-    // Fetch latest 10 published posts, sorted by most recently updated
+    // Fetch latest 10 published posts, sorted by publish date
     const postsResult = await payload.find({
       collection: 'posts',
       depth: 2,
@@ -79,7 +81,7 @@ export default async function Page({ params: paramsPromise }: Args) {
           equals: 'published',
         },
       },
-      sort: '-updatedAt',
+      sort: '-publishedAt',
     })
 
     // Get total counts for stats

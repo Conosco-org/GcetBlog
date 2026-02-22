@@ -18,6 +18,7 @@ import {
   Tag,
   Users,
   Mail,
+  PenSquare,
 } from 'lucide-react'
 
 interface NavItem {
@@ -67,6 +68,11 @@ export function EditorSidebar({
         icon: <Users className="w-5 h-5" />,
       },
     ] : []),
+    {
+      label: 'Create Post',
+      href: '/editor/posts/create',
+      icon: <PenSquare className="w-5 h-5" />,
+    },
     {
       label: 'Content Manager',
       href: '/editor/content',

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Save, ArrowLeft, Eye, Upload, X, Send, Clock, Tag, Star, Plus } from 'lucide-react'
+import { Save, ArrowLeft, Eye, Upload, X, Send, Clock, Tag, Star, Plus, FileStack, XCircle } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { useToast } from '@/hooks/use-toast'
 import { RichTextEditor, htmlToLexical, htmlToPlainText } from '@/components/RichTextEditor'
+import { TemplateSelector, type TemplateCardData } from '@/components/templates'
 import type { Category, User } from '@/payload-types'
 
 interface PostFormProps {
@@ -30,19 +31,26 @@ interface PostFormProps {
     }
     heroImage?: string
   }
+  /** Pre-loaded template data (from URL param ?template=<id>) */
+  initialTemplate?: {
+    name: string
+    content: string
+    suggestedTitle?: string
+    suggestedTags?: string[]
+  }
   postId?: string
   isEdit?: boolean
 }
 
-export function PostForm({ categories, user, initialData, postId, isEdit = false }: PostFormProps) {
+export function PostForm({ categories, user, initialData, initialTemplate, postId, isEdit = false }: PostFormProps) {
   const router = useRouter()
   const { toast } = useToast()
-  const [title, setTitle] = useState(initialData?.title || '')
-  const [content, setContent] = useState(initialData?.content || '')
+  const [title, setTitle] = useState(initialData?.title || initialTemplate?.suggestedTitle || '')
+  const [content, setContent] = useState(initialData?.content || initialTemplate?.content || '')
   const [selectedCategories, setSelectedCategories] = useState<string[]>(initialData?.categories || [])
   const [metaTitle, setMetaTitle] = useState(initialData?.meta?.title || '')
   const [metaDescription, setMetaDescription] = useState(initialData?.meta?.description || '')
-  const [tags, setTags] = useState<string[]>(initialData?.tags || [])
+  const [tags, setTags] = useState<string[]>(initialData?.tags || initialTemplate?.suggestedTags || [])
   const [tagInput, setTagInput] = useState('')
   const [publishedAt, setPublishedAt] = useState(initialData?.publishedAt || '')
   const [featuredFrom, setFeaturedFrom] = useState(initialData?.featuredFrom || '')
@@ -51,8 +59,27 @@ export function PostForm({ categories, user, initialData, postId, isEdit = false
   const [heroImagePreview, setHeroImagePreview] = useState<string | undefined>(undefined)
   const [isUploadingImage, setIsUploadingImage] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showTemplateSelector, setShowTemplateSelector] = useState(false)
+  const [activeTemplateName, setActiveTemplateName] = useState<string | null>(initialTemplate?.name || null)
 
   const isEditor = user.role === 'editor'
+
+  const handleTemplateSelect = (template: TemplateCardData) => {
+    setTitle(template.suggestedTitle || '')
+    setContent(template.content)
+    if (template.suggestedTags && Array.isArray(template.suggestedTags)) {
+      setTags(template.suggestedTags)
+    }
+    setActiveTemplateName(template.name)
+    toast({
+      title: 'Template applied',
+      description: `"${template.name}" loaded — feel free to edit everything.`,
+    })
+  }
+
+  const handleClearTemplate = () => {
+    setActiveTemplateName(null)
+  }
 
   const handleAddTag = () => {
     const newTag = tagInput.trim().toLowerCase()
@@ -330,15 +357,38 @@ export function PostForm({ categories, user, initialData, postId, isEdit = false
 
   return (
     <div className="bg-card rounded-xl shadow-sm border">
+      {/* Template Selector Modal */}
+      <TemplateSelector
+        open={showTemplateSelector}
+        onOpenChange={setShowTemplateSelector}
+        userRole="editor"
+        onSelect={handleTemplateSelect}
+        onStartBlank={() => setShowTemplateSelector(false)}
+      />
+
       {/* Header */}
       <div className="px-6 py-4 border-b flex items-center justify-between">
-        <Link
-          href="/editor/content"
-          className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Content
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/editor/content"
+            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Content
+          </Link>
+          {!isEdit && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setShowTemplateSelector(true)}
+              className="gap-1.5"
+            >
+              <FileStack className="w-4 h-4" />
+              Use Template
+            </Button>
+          )}
+        </div>
         <div className="flex gap-3">
           <Button
             type="button"
@@ -376,6 +426,27 @@ export function PostForm({ categories, user, initialData, postId, isEdit = false
 
       {/* Form */}
       <div className="p-6 space-y-6">
+        {/* Template banner */}
+        {activeTemplateName && (
+          <div className="flex items-center justify-between px-4 py-2.5 rounded-lg bg-primary/5 border border-primary/20">
+            <div className="flex items-center gap-2 text-sm">
+              <FileStack className="w-4 h-4 text-primary" />
+              <span>
+                Using template: <strong>{activeTemplateName}</strong>
+              </span>
+              <span className="text-muted-foreground">— edit freely</span>
+            </div>
+            <button
+              type="button"
+              onClick={handleClearTemplate}
+              className="text-muted-foreground hover:text-foreground transition"
+              aria-label="Dismiss template banner"
+            >
+              <XCircle className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
         {/* Title */}
         <div>
           <label htmlFor="title" className="block text-sm font-semibold mb-2">
