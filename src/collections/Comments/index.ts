@@ -98,6 +98,14 @@ export const Comments: CollectionConfig = {
       },
     },
     {
+      name: 'parent',
+      type: 'relationship',
+      relationTo: 'comments',
+      admin: {
+        description: 'Parent comment (for replies/threading)',
+      },
+    },
+    {
       name: 'moderatorNotes',
       type: 'textarea',
       admin: {
