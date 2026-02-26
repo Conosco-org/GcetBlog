@@ -15,71 +15,76 @@ export const PostHero: React.FC<{
     populatedAuthors && populatedAuthors.length > 0 && populatedAuthors.some(a => a?.name)
 
   return (
-    <div className="relative pt-16 flex items-end">
-      <div className="container z-10 relative lg:grid lg:grid-cols-[1fr_48rem_1fr] text-white px-5 sm:px-6 pb-6 sm:pb-8">
-        <div className="col-start-1 col-span-1 md:col-start-2 md:col-span-2">
-          <div className="text-[10px] sm:text-xs tracking-widest uppercase mb-4 sm:mb-6 text-white/70 font-medium">
-            {categories?.map((category, index) => {
-              if (typeof category === 'object' && category !== null) {
-                const { title: categoryTitle } = category
+    <div className="relative flex items-end min-h-[55vh] sm:min-h-[65vh]">
+      {/* Background image / color */}
+      {heroImage && typeof heroImage !== 'string' ? (
+        <Media
+          fill
+          priority
+          imgClassName="object-cover object-top sm:object-center"
+          resource={heroImage}
+        />
+      ) : (
+        <div className="absolute inset-0 bg-gradient-to-br from-foreground/80 to-foreground/60" />
+      )}
+      {/* Dark overlay gradient */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
 
-                const titleToUse = categoryTitle || 'Untitled category'
+      {/* Content */}
+      <div className="container relative z-10 px-5 sm:px-6 pb-8 sm:pb-12 pt-24 lg:grid lg:grid-cols-[1fr_48rem_1fr]">
+        <div className="lg:col-start-2 lg:col-span-1">
+          {/* Categories */}
+          {categories && categories.length > 0 && (
+            <div className="text-[10px] sm:text-xs tracking-widest uppercase mb-3 text-white/60 font-medium">
+              {categories.map((category, index) => {
+                if (typeof category === 'object' && category !== null) {
+                  const isLast = index === categories.length - 1
+                  return (
+                    <React.Fragment key={index}>
+                      {category.title || 'Untitled category'}
+                      {!isLast && <React.Fragment>, &nbsp;</React.Fragment>}
+                    </React.Fragment>
+                  )
+                }
+                return null
+              })}
+            </div>
+          )}
 
-                const isLast = index === categories.length - 1
+          <h1 className="font-display text-2xl sm:text-4xl md:text-5xl text-white mb-5 sm:mb-7 leading-[1.1] max-w-2xl">
+            {title}
+          </h1>
 
-                return (
-                  <React.Fragment key={index}>
-                    {titleToUse}
-                    {!isLast && <React.Fragment>, &nbsp;</React.Fragment>}
-                  </React.Fragment>
-                )
-              }
-              return null
-            })}
-          </div>
-
-          <div className="">
-            <h1 className="font-display mb-4 sm:mb-6 text-2xl sm:text-3xl md:text-5xl lg:text-6xl leading-[1.1]">{title}</h1>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 md:gap-16">
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-8">
             {hasAuthors && (
-              <div className="flex flex-col gap-3 sm:gap-4">
-                <div className="flex flex-col gap-1">
-                  <p className="text-[10px] sm:text-xs tracking-widest uppercase text-white/50">Author</p>
-
-                  <p className="text-sm sm:text-base font-medium">
-                    {populatedAuthors.filter(a => a?.name).map((author, index, arr) => (
-                      <React.Fragment key={author.id || index}>
-                        <Link
-                          href={`/profile/${author.id}`}
-                          className="hover:underline hover:text-white/90 transition"
-                        >
-                          {author.name}
-                        </Link>
-                        {index < arr.length - 2 && ', '}
-                        {index === arr.length - 2 && (arr.length > 2 ? ', and ' : ' and ')}
-                      </React.Fragment>
-                    ))}
-                  </p>
-                </div>
+              <div className="flex flex-col gap-1">
+                <p className="text-[10px] sm:text-xs tracking-widest uppercase text-white/50">Author</p>
+                <p className="text-sm sm:text-base font-medium text-white">
+                  {populatedAuthors.filter(a => a?.name).map((author, index, arr) => (
+                    <React.Fragment key={author.id || index}>
+                      <Link
+                        href={`/profile/${author.id}`}
+                        className="hover:underline hover:text-white/90 transition"
+                      >
+                        {author.name}
+                      </Link>
+                      {index < arr.length - 2 && ', '}
+                      {index === arr.length - 2 && (arr.length > 2 ? ', and ' : ' and ')}
+                    </React.Fragment>
+                  ))}
+                </p>
               </div>
             )}
             {publishedAt && (
               <div className="flex flex-col gap-1">
-                <p className="text-[10px] sm:text-xs tracking-widest uppercase text-white/50">Date Published</p>
-
-                <time dateTime={publishedAt} className="text-sm sm:text-base font-medium">{formatDateTime(publishedAt)}</time>
+                <p className="text-[10px] sm:text-xs tracking-widest uppercase text-white/50">Published</p>
+                <time dateTime={publishedAt} className="text-sm sm:text-base font-medium text-white">
+                  {formatDateTime(publishedAt)}
+                </time>
               </div>
             )}
           </div>
         </div>
-      </div>
-      <div className="min-h-[60vh] sm:min-h-[80vh] select-none">
-        {heroImage && typeof heroImage !== 'string' && (
-          <Media fill priority imgClassName="-z-10 object-cover object-top sm:object-center" resource={heroImage} />
-        )}
-        <div className="absolute pointer-events-none left-0 bottom-0 w-full h-1/2 bg-gradient-to-t from-black to-transparent" />
       </div>
     </div>
   )
