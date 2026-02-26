@@ -1,4 +1,5 @@
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
+import React from 'react'
 import {
   DefaultNodeTypes,
   SerializedBlockNode,
@@ -68,17 +69,23 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
       <InstagramEmbedBlock className="col-start-2 my-8" {...node.fields} />
     ),
   },
+  // Override the text converter to:
+  //  1. Detect inline embed shortcodes (e.g. [YouTube: url]) and render the embed
+  //  2. Preserve text formatting (bold, italic, underline, code, strikethrough)
   text: ({ node }) => {
     const text = node.text || ''
-    
-    // Check for YouTube embed pattern: [YouTube: https://www.youtube.com/watch?v=ID]
-    const youtubeMatch = text.match(/\[YouTube: ([^\]]+)\]/)
+
+    // ── YouTube embed shortcode ────────────────────────────────────────────
+    const youtubeMatch = text.match(/^\[YouTube:\s*([^\]]+)\]$/)
     if (youtubeMatch) {
-      const videoId = youtubeMatch[1].match(/[?&]v=([^&]+)/)?.[1] || 
-                      youtubeMatch[1].match(/youtu\.be\/([^?]+)/)?.[1]
+      const url = youtubeMatch[1].trim()
+      const videoId =
+        url.match(/[?&]v=([^&]+)/)?.[1] ||
+        url.match(/youtu\.be\/([^?#]+)/)?.[1] ||
+        url.match(/youtube\.com\/embed\/([^?]+)/)?.[1]
       if (videoId) {
         return (
-          <div className="my-8">
+          <div className="my-8 col-start-2">
             <div className="relative aspect-video w-full overflow-hidden rounded-lg border bg-card">
               <iframe
                 src={`https://www.youtube-nocookie.com/embed/${videoId}`}
@@ -93,14 +100,13 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
       }
     }
 
-    // Check for Instagram embed pattern: [Instagram: https://www.instagram.com/p/ID/]
-    const instagramMatch = text.match(/\[Instagram: ([^\]]+)\]/)
+    // ── Instagram embed shortcode ──────────────────────────────────────────
+    const instagramMatch = text.match(/^\[Instagram:\s*([^\]]+)\]$/)
     if (instagramMatch) {
-      const postUrl = instagramMatch[1]
-      const postId = postUrl.match(/\/p\/([^/]+)/)?.[1]
-      if (postId) {
+      const postUrl = instagramMatch[1].trim()
+      if (postUrl.includes('instagram.com')) {
         return (
-          <div className="my-8 flex justify-center">
+          <div className="my-8 flex justify-center col-start-2">
             <blockquote
               className="instagram-media"
               data-instgrm-permalink={postUrl}
@@ -122,8 +128,18 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
       }
     }
 
-    // Default text rendering - just return the text as is
-    return <>{text}</>
+    // ── Regular text with formatting bits applied ──────────────────────────
+    // Format bitmask: 1=BOLD 2=ITALIC 4=STRIKETHROUGH 8=UNDERLINE 16=CODE
+    const fmt: number = node.format || 0
+    let rendered: React.ReactNode = text
+
+    if (fmt & 16) rendered = <code>{rendered}</code>       // CODE (innermost)
+    if (fmt & 1) rendered = <strong>{rendered}</strong>    // BOLD
+    if (fmt & 2) rendered = <em>{rendered}</em>            // ITALIC
+    if (fmt & 4) rendered = <s>{rendered}</s>              // STRIKETHROUGH
+    if (fmt & 8) rendered = <u>{rendered}</u>              // UNDERLINE
+
+    return <>{rendered}</>
   },
 })
 
