@@ -129,7 +129,8 @@
       "esbuild": ">=0.25.0",
       "glob": ">=11.0.1",
       "vite": ">=6.3.3",
-      "@smithy/config-resolver": ">=4.1.4"
+      "@smithy/config-resolver": ">=4.1.4",
+      "fast-xml-parser": ">=5.4.1"
     }
   }
 }
