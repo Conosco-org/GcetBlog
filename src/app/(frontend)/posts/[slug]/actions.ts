@@ -12,6 +12,7 @@ export async function submitComment(formData: FormData) {
   const content = formData.get('content') as string
   const authorName = formData.get('authorName') as string
   const authorEmail = formData.get('authorEmail') as string
+  const parentId = (formData.get('parentId') as string) || null
 
   if (!postId || !content || !authorName || !authorEmail) {
     return { error: 'All fields are required' }
@@ -37,13 +38,14 @@ export async function submitComment(formData: FormData) {
         authorName,
         authorEmail,
         status: 'pending', // All comments start as pending
-        ipAddress: 'server', // Will be handled by middleware in production
+        ipAddress: 'server',
         userAgent: 'server',
+        ...(parentId ? { parent: parentId } : {}),
       },
     })
 
     revalidatePath(`/posts/${post.slug}`)
-    return { success: 'Comment submitted for review' }
+    return { success: parentId ? 'Reply submitted for review' : 'Comment submitted for review' }
   } catch (error) {
     console.error('Error submitting comment:', error)
     return { error: 'Failed to submit comment' }
