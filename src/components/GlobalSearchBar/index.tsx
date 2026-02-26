@@ -90,8 +90,20 @@ export function GlobalSearchBar({ categories = [], className, variant = 'header'
     if (selectedCategory) params.category = selectedCategory
     if (selectedTag) params.tag = selectedTag
     if (sortBy && sortBy !== 'latest') params.sort = sortBy
-    navigateToSearch(params)
-    if (variant === 'header') setIsOpen(false)
+
+    if (variant === 'header') {
+      // Close modal first, then navigate with a small delay to ensure
+      // the router.push takes effect even when the component re-renders
+      setIsOpen(false)
+      const url = new URLSearchParams()
+      Object.entries(params).forEach(([key, value]) => {
+        if (value) url.set(key, value)
+      })
+      // Use window.location for reliable cross-page navigation from home
+      window.location.href = `/posts?${url.toString()}`
+    } else {
+      navigateToSearch(params)
+    }
   }
 
   const clearSearch = () => {
@@ -127,8 +139,11 @@ export function GlobalSearchBar({ categories = [], className, variant = 'header'
 
     return (
       <div ref={containerRef} className="fixed inset-0 z-50 flex items-start justify-center pt-20 bg-black/50 backdrop-blur-sm">
-        <div className="w-full max-w-2xl mx-4 bg-background rounded-xl border border-border shadow-2xl overflow-hidden">
-          <form onSubmit={handleSubmit} className="flex items-center gap-2 p-4 border-b border-border">
+        <form
+          onSubmit={handleSubmit}
+          className="w-full max-w-2xl mx-4 bg-background rounded-xl border border-border shadow-2xl overflow-hidden"
+        >
+          <div className="flex items-center gap-2 p-4 border-b border-border">
             <Search className="h-5 w-5 text-muted-foreground shrink-0" />
             <Input
               ref={inputRef}
@@ -146,7 +161,7 @@ export function GlobalSearchBar({ categories = [], className, variant = 'header'
             <Button type="button" variant="ghost" size="sm" onClick={() => setIsOpen(false)}>
               <kbd className="text-xs text-muted-foreground">ESC</kbd>
             </Button>
-          </form>
+          </div>
 
           {/* Quick filters */}
           {categories.length > 0 && (
@@ -156,6 +171,7 @@ export function GlobalSearchBar({ categories = [], className, variant = 'header'
                 {categories.slice(0, 8).map((cat) => (
                   <button
                     key={cat.id}
+                    type="button"
                     onClick={() => {
                       setSelectedCategory(cat.slug === selectedCategory ? '' : cat.slug)
                     }}
@@ -174,11 +190,11 @@ export function GlobalSearchBar({ categories = [], className, variant = 'header'
 
           <div className="p-3 flex justify-between items-center text-xs text-muted-foreground">
             <span>Press Enter to search</span>
-            <Button type="button" variant="ghost" size="sm" className="text-xs" onClick={handleSubmit}>
-              Go to results →
+            <Button type="submit" variant="ghost" size="sm" className="text-xs">
+              Go to results &rarr;
             </Button>
           </div>
-        </div>
+        </form>
       </div>
     )
   }

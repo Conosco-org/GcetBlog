@@ -88,14 +88,6 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data: _data, categor
               >
                 Posts
               </Link>
-              <Link
-                href="/contact"
-                className={`text-sm font-medium tracking-wide transition-colors hover:text-accent ${
-                  pathname === '/contact' ? 'text-accent' : 'text-muted-foreground'
-                }`}
-              >
-                Contact
-              </Link>
             </nav>
 
             <Suspense fallback={null}>
@@ -119,13 +111,6 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data: _data, categor
               onClick={() => setMobileMenuOpen(false)}
             >
               Posts
-            </Link>
-            <Link
-              href="/contact"
-              className="text-lg font-medium py-4 px-4 rounded-xl hover:bg-card transition-colors border-b border-border"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Contact
             </Link>
           </nav>
         </div>
