@@ -50,7 +50,7 @@ export function NewsletterSignup({ className = '', variant = 'default' }: Newsle
     return (
       <div className={`flex items-center gap-2 text-sm ${className}`}>
         <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 shrink-0" />
-        <p className="text-background/70">
+        <p className="text-green-700 dark:text-green-400 font-medium">
           Check your email to confirm your subscription!
         </p>
       </div>
