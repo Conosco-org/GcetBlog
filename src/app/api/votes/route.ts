@@ -75,28 +75,30 @@ export async function POST(request: NextRequest) {
       action = 'created'
     }
 
-    // Recalculate post vote counts
-    const allVotes = await payload.find({
-      collection: 'votes',
-      where: { post: { equals: postId } },
-      limit: 10000,
-      pagination: false,
-    })
+    // Recalculate post vote counts using COUNT queries (no doc loading)
+    const [upvotes, downvotes] = await Promise.all([
+      payload.count({
+        collection: 'votes',
+        where: { and: [{ post: { equals: postId } }, { value: { equals: 1 } }] },
+      }),
+      payload.count({
+        collection: 'votes',
+        where: { and: [{ post: { equals: postId } }, { value: { equals: -1 } }] },
+      }),
+    ])
 
-    const upvotes = allVotes.docs.filter((v) => v.value === 1).length
-    const downvotes = allVotes.docs.filter((v) => v.value === -1).length
-    const score = upvotes - downvotes
+    const score = upvotes.totalDocs - downvotes.totalDocs
 
     // Update cached counts on the post document
     await payload.update({
       collection: 'posts',
       id: postId,
-      data: { voteScore: score, likesCount: upvotes },
+      data: { voteScore: score, likesCount: upvotes.totalDocs },
     })
 
     return NextResponse.json({
       action,
-      upvotes,
+      upvotes: upvotes.totalDocs,
       userVote: vote ? value : null,
     })
   } catch (error) {

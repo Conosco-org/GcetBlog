@@ -45,6 +45,7 @@ export const Votes: CollectionConfig = {
       name: 'value',
       type: 'number',
       required: true,
+      index: true,
       min: -1,
       max: 1,
       validate: (val: number | null | undefined) => {
