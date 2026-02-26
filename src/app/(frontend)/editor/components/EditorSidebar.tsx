@@ -104,6 +104,11 @@ export function EditorSidebar({
       label: 'Newsletter',
       href: '/editor/newsletter',
       icon: <Mail className="w-5 h-5" />,
+    },
+    {
+      label: 'Subscribers',
+      href: '/editor/newsletter/subscribers',
+      icon: <Users className="w-5 h-5" />,
       badge: subscribersCount,
     },
     {
@@ -120,8 +125,8 @@ export function EditorSidebar({
   ]
 
   const isActive = useCallback((href: string) => {
-    // Dashboard routes: exact match only
-    if (href === '/editor' || href === '/admin-dashboard') {
+    // Exact match for top-level dashboard routes and parent routes with sub-pages
+    if (href === '/editor' || href === '/admin-dashboard' || href === '/editor/newsletter') {
       return pathname === href
     }
     return pathname.startsWith(href)
