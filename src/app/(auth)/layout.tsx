@@ -1,9 +1,8 @@
-import { ArrowLeft } from 'lucide-react'
-import Link from 'next/link'
 import { cn } from '@/utilities/ui'
 import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
-import { Logo } from '@/components/Logo/Logo'
+import { Sora } from 'next/font/google'
+import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
 import type { Metadata } from 'next'
@@ -15,50 +14,37 @@ export const metadata: Metadata = {
   },
 }
 
+const sora = Sora({
+  subsets: ['latin'],
+  weight: ['400', '600', '700', '800'],
+  variable: '--font-sora',
+  display: 'swap',
+})
+
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html className={cn(GeistSans.variable, GeistMono.variable)} lang="en" suppressHydrationWarning>
+    <html className={cn(GeistSans.variable, GeistMono.variable, sora.variable)} lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
         <InitTheme />
         <Providers>
-          <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-background dark:via-background dark:to-background">
-            {/* Simple header with logo and back button */}
-            <div className="container mx-auto px-4 py-6">
-              <div className="flex items-center justify-between">
-                <Link href="/" className="flex items-center gap-2">
-                  <Logo loading="eager" priority="high" className="invert dark:invert-0 h-8" />
-                </Link>
-                <Link 
-                  href="/" 
-                  className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  <span>Back to Home</span>
-                </Link>
-              </div>
-            </div>
-
-            {/* Auth content */}
-            <main>{children}</main>
-
-            {/* Simple footer */}
-            <footer className="container mx-auto px-4 py-6 mt-8">
-              <p className="text-center text-sm text-muted-foreground">
-                © {new Date().getFullYear()} Geethanjali College of Engineering and Technology. All rights reserved.
-              </p>
-              <p className="text-center text-xs text-muted-foreground mt-2">
-                Built for the GCET community • Powered by{' '}
-                <a
-                  href="https://conosco.in"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-foreground transition-colors"
-                >
-                  Conosco
-                </a>
-              </p>
-            </footer>
-          </div>
+          <Header />
+          <main className="min-h-screen">{children}</main>
+          <footer className="container mx-auto px-4 py-6">
+            <p className="text-center text-sm text-muted-foreground">
+              © {new Date().getFullYear()} Geethanjali College of Engineering and Technology. All rights reserved.
+            </p>
+            <p className="text-center text-xs text-muted-foreground mt-2">
+              Built for the GCET community • Powered by{' '}
+              <a
+                href="https://conosco.in"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-foreground transition-colors"
+              >
+                Conosco
+              </a>
+            </p>
+          </footer>
         </Providers>
       </body>
     </html>
