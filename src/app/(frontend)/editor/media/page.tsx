@@ -24,27 +24,24 @@ export default async function MediaManagerPage({ searchParams }: PageProps) {
     ? { or: [{ filename: { like: query } }, { alt: { like: query } }] as Where[] }
     : undefined
 
-  const allMedia = await payload.find({
-    collection: 'media',
-    limit: PAGE_SIZE,
-    page,
-    sort: sortParam,
-    where,
-  })
-
-  // Compute storage from total media (separate lightweight query)
-  const storageQuery = await payload.find({
-    collection: 'media',
-    limit: 0, // just get totalDocs
-    where: {},
-  })
-
-  // Get a sample of files for storage calc (limit to recent 500)
-  const storageSample = await payload.find({
-    collection: 'media',
-    limit: 500,
-    select: { filesize: true },
-  })
+  const [allMedia, storageCount, storageSample] = await Promise.all([
+    payload.find({
+      collection: 'media',
+      limit: PAGE_SIZE,
+      page,
+      sort: sortParam,
+      where,
+    }),
+    // count() is a single DB aggregation — no docs loaded
+    payload.count({ collection: 'media' }),
+    // Sample recent files for storage estimate
+    payload.find({
+      collection: 'media',
+      limit: 500,
+      select: { filesize: true },
+      depth: 0,
+    }),
+  ])
 
   const totalBytes = storageSample.docs.reduce((acc, media) => acc + (media.filesize || 0), 0)
   const storageUsed = totalBytes / (1024 * 1024 * 1024)
@@ -65,7 +62,7 @@ export default async function MediaManagerPage({ searchParams }: PageProps) {
             <h2 className="text-lg font-semibold">Storage Usage</h2>
             <span className="text-sm font-medium text-green-600">{Math.round(storagePercent)}% Used</span>
           </div>
-          <p className="text-sm text-muted-foreground mb-3">{storageUsed.toFixed(2)} GB of {storageLimit} GB used ({storageQuery.totalDocs} files)</p>
+          <p className="text-sm text-muted-foreground mb-3">{storageUsed.toFixed(2)} GB of {storageLimit} GB used ({storageCount.totalDocs} files)</p>
           <div className="w-full bg-secondary rounded-full h-3 overflow-hidden" aria-hidden="true">
             <div
               className="bg-gradient-to-r from-blue-500 to-blue-600 h-full rounded-full transition-all"
