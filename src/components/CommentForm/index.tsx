@@ -1,18 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
 import { submitComment } from '@/app/(frontend)/posts/[slug]/actions'
 
 interface CommentFormProps {
@@ -22,6 +13,7 @@ interface CommentFormProps {
 export function CommentForm({ postId }: CommentFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const formRef = useRef<HTMLFormElement>(null)
 
   async function handleSubmit(formData: FormData) {
     setIsSubmitting(true)
@@ -32,81 +24,67 @@ export function CommentForm({ postId }: CommentFormProps) {
     if (result.error) {
       setMessage({ type: 'error', text: result.error })
     } else {
-      setMessage({ type: 'success', text: result.success || 'Comment submitted successfully!' })
-      // Reset form
-      const form = document.getElementById('comment-form') as HTMLFormElement
-      if (form) form.reset()
+      setMessage({ type: 'success', text: result.success || 'Comment submitted for review!' })
+      formRef.current?.reset()
     }
 
     setIsSubmitting(false)
   }
 
   return (
-    <Card className="mt-8">
-      <CardHeader>
-        <CardTitle>Leave a Comment</CardTitle>
-        <CardDescription>Your comment will be reviewed before being published.</CardDescription>
-      </CardHeader>
-      <form id="comment-form" action={handleSubmit}>
-        <CardContent className="space-y-4">
-          <input type="hidden" name="postId" value={postId} />
+    <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+      <div>
+        <h3 className="text-base font-semibold">Leave a comment</h3>
+        <p className="text-xs text-muted-foreground mt-0.5">Your comment will be reviewed before being published.</p>
+      </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="authorName">Name *</Label>
-              <Input
-                id="authorName"
-                name="authorName"
-                required
-                placeholder="Your name"
-                disabled={isSubmitting}
-              />
-            </div>
+      <form ref={formRef} action={handleSubmit} className="space-y-3">
+        <input type="hidden" name="postId" value={postId} />
 
-            <div className="space-y-2">
-              <Label htmlFor="authorEmail">Email *</Label>
-              <Input
-                id="authorEmail"
-                name="authorEmail"
-                type="email"
-                required
-                placeholder="Your email (not displayed publicly)"
-                disabled={isSubmitting}
-              />
-            </div>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <Input
+            name="authorName"
+            required
+            placeholder="Your name *"
+            disabled={isSubmitting}
+            className="h-9"
+          />
+          <Input
+            name="authorEmail"
+            type="email"
+            required
+            placeholder="Email (not displayed publicly) *"
+            disabled={isSubmitting}
+            className="h-9"
+          />
+        </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="content">Comment *</Label>
-            <Textarea
-              id="content"
-              name="content"
-              required
-              placeholder="Write your comment here..."
-              rows={4}
-              disabled={isSubmitting}
-            />
-          </div>
+        <Textarea
+          name="content"
+          required
+          placeholder="Write your comment…"
+          rows={4}
+          disabled={isSubmitting}
+          className="resize-none"
+        />
 
-          {message && (
-            <div
-              className={`p-3 rounded-md ${
-                message.type === 'success'
-                  ? 'bg-green-50 text-green-800 border border-green-200'
-                  : 'bg-red-50 text-red-800 border border-red-200'
-              }`}
-            >
-              {message.text}
-            </div>
-          )}
-        </CardContent>
+        {message && (
+          <p
+            className={`text-sm rounded-md px-3 py-2 ${
+              message.type === 'success'
+                ? 'bg-green-50 text-green-700 dark:bg-green-950/30 dark:text-green-400'
+                : 'bg-destructive/10 text-destructive'
+            }`}
+          >
+            {message.text}
+          </p>
+        )}
 
-        <CardFooter>
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Submitting...' : 'Submit Comment'}
-          </Button>
-        </CardFooter>
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? 'Submitting…' : 'Submit Comment'}
+        </Button>
       </form>
-    </Card>
+    </div>
   )
 }
+

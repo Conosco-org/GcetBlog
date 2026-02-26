@@ -5,9 +5,11 @@ import { PageRange } from '@/components/PageRange'
 import { Pagination } from '@/components/Pagination'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
-import React from 'react'
+import React, { Suspense } from 'react'
 import Link from 'next/link'
 import PageClient from './page.client'
+import { PostsFilterBar } from './PostsFilterBar'
+import { NewsletterSignup } from '@/components/NewsletterSignup'
 import type { Where } from 'payload'
 
 export const dynamic = 'force-dynamic'
@@ -62,7 +64,6 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
 
   // Category filter
   if (categorySlug) {
-    // Find the category by slug first
     const category = await payload.find({
       collection: 'categories',
       where: { slug: { equals: categorySlug } },
@@ -138,14 +139,11 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
   return (
     <div className="min-h-screen">
       <PageClient />
-      
-      {/* Editorial Header */}
-      <div className="container mx-auto px-5 sm:px-6 pt-24 pb-12 md:pt-36 md:pb-20">
-        <div className="max-w-3xl animate-fade-up">
-          <span className="text-[10px] sm:text-xs tracking-widest uppercase text-accent font-medium">
-            {query ? 'Search Results' : categorySlug ? 'Category' : tag ? 'Tagged' : 'All Articles'}
-          </span>
-          <h1 className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl mt-3 sm:mt-4 mb-4 sm:mb-6 leading-[1.05]">
+
+      {/* Compact Header */}
+      <div className="container mx-auto px-5 sm:px-6 pt-20 pb-4 md:pt-24 md:pb-6">
+        <div className="max-w-3xl">
+          <h1 className="font-display text-2xl sm:text-3xl md:text-4xl mb-2 leading-tight">
             {query
               ? `Results for "${query}"`
               : categorySlug
@@ -154,31 +152,26 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
                   ? `#${tag}`
                   : 'Posts'}
           </h1>
-          <p className="text-sm sm:text-lg text-muted-foreground leading-relaxed max-w-xl">
+          <p className="text-sm text-muted-foreground">
             {hasActiveFilters
-              ? `Showing ${posts.totalDocs} ${posts.totalDocs === 1 ? 'result' : 'results'}`
-              : 'Discover insights, tutorials, creative writing, and student achievements from the GCET community.'}
+              ? `${posts.totalDocs} ${posts.totalDocs === 1 ? 'result' : 'results'}`
+              : 'Insights, tutorials, and stories from the GCET community.'}
           </p>
         </div>
-        
-        {/* Divider */}
-        <div className="h-px bg-border mt-12" />
       </div>
 
-      {/* Filters Bar */}
-      <div className="container mx-auto px-5 sm:px-6 mb-8">
-        <PostsFilterBar
-          categories={categories}
-          allTags={Array.from(allTags)}
-          currentCategory={categorySlug}
-          currentTag={tag}
-          currentSort={sort}
-          currentQuery={query}
-        />
+      {/* Filters Bar (client-side for instant interaction) */}
+      <div className="container mx-auto px-5 sm:px-6 mb-4">
+        <Suspense fallback={null}>
+          <PostsFilterBar
+            categories={categories}
+            allTags={Array.from(allTags)}
+          />
+        </Suspense>
       </div>
 
       {/* Post Count */}
-      <div className="container mx-auto px-6 mb-8">
+      <div className="container mx-auto px-5 sm:px-6 mb-4">
         <PageRange
           collection="posts"
           currentPage={posts.page}
@@ -191,10 +184,10 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
       {posts.totalDocs > 0 ? (
         <CollectionArchive posts={posts.docs} />
       ) : (
-        <div className="container mx-auto px-6 py-20">
+        <div className="container mx-auto px-6 py-12">
           <div className="text-center">
-            <h3 className="text-xl font-semibold mb-2">No posts found</h3>
-            <p className="text-muted-foreground mb-4">
+            <h3 className="text-lg font-semibold mb-2">No posts found</h3>
+            <p className="text-muted-foreground text-sm mb-3">
               {hasActiveFilters
                 ? 'Try adjusting your search or filters.'
                 : 'No posts have been published yet.'}
@@ -204,15 +197,30 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
                 href="/posts"
                 className="text-accent hover:underline text-sm"
               >
-                Clear all filters →
+                Clear all filters
               </Link>
             )}
           </div>
         </div>
       )}
 
+      {/* Newsletter signup banner */}
+      <div className="container mx-auto px-5 sm:px-6 py-10">
+        <div className="rounded-2xl bg-accent/5 dark:bg-accent/10 border border-accent/20 px-6 py-8 sm:px-10 flex flex-col sm:flex-row sm:items-center gap-6">
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold leading-snug">Never miss a post</h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              Subscribe to get new articles from GCET students directly in your inbox.
+            </p>
+          </div>
+          <div className="sm:w-80 shrink-0">
+            <NewsletterSignup variant="inline" />
+          </div>
+        </div>
+      </div>
+
       {/* Pagination */}
-      <div className="container mx-auto px-6 pb-24">
+      <div className="container mx-auto px-5 sm:px-6 pb-12">
         {posts.totalPages > 1 && posts.page && (
           <Pagination page={posts.page} totalPages={posts.totalPages} />
         )}
@@ -221,120 +229,9 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
   )
 }
 
-/* Inline filter bar component (server rendered) */
-function PostsFilterBar({
-  categories,
-  allTags,
-  currentCategory,
-  currentTag,
-  currentSort,
-  currentQuery,
-}: {
-  categories: Array<{ id: string; title: string; slug: string }>
-  allTags: string[]
-  currentCategory: string
-  currentTag: string
-  currentSort: string
-  currentQuery: string
-}) {
-  function buildUrl(params: Record<string, string>) {
-    const url = new URLSearchParams()
-    if (currentQuery && !('q' in params)) url.set('q', currentQuery)
-    if (params.q) url.set('q', params.q)
-    if (params.category !== undefined) {
-      if (params.category) url.set('category', params.category)
-    } else if (currentCategory) {
-      url.set('category', currentCategory)
-    }
-    if (params.tag !== undefined) {
-      if (params.tag) url.set('tag', params.tag)
-    } else if (currentTag) {
-      url.set('tag', currentTag)
-    }
-    if (params.sort !== undefined) {
-      if (params.sort && params.sort !== 'latest') url.set('sort', params.sort)
-    } else if (currentSort && currentSort !== 'latest') {
-      url.set('sort', currentSort)
-    }
-    const str = url.toString()
-    return `/posts${str ? `?${str}` : ''}`
-  }
-
-  return (
-    <div className="space-y-4">
-      {/* Categories */}
-      <div className="flex flex-wrap gap-2">
-        <Link
-          href="/posts"
-          className={`px-3 py-1.5 text-xs rounded-full border transition-colors ${
-            !currentCategory && !currentTag
-              ? 'bg-accent text-accent-foreground border-accent'
-              : 'border-border hover:bg-muted text-muted-foreground'
-          }`}
-        >
-          All
-        </Link>
-        {categories.map((cat) => (
-          <Link
-            key={cat.id}
-            href={buildUrl({ category: cat.slug === currentCategory ? '' : cat.slug, tag: '' })}
-            className={`px-3 py-1.5 text-xs rounded-full border transition-colors ${
-              currentCategory === cat.slug
-                ? 'bg-accent text-accent-foreground border-accent'
-                : 'border-border hover:bg-muted text-muted-foreground'
-            }`}
-          >
-            {cat.title}
-          </Link>
-        ))}
-      </div>
-
-      {/* Popular Tags */}
-      {allTags.length > 0 && (
-        <div className="flex flex-wrap gap-1.5">
-          {allTags.slice(0, 15).map((t) => (
-            <Link
-              key={t}
-              href={buildUrl({ tag: t === currentTag ? '' : t, category: '' })}
-              className={`px-2 py-1 text-[11px] rounded-md transition-colors ${
-                currentTag === t
-                  ? 'bg-foreground text-background'
-                  : 'bg-muted text-muted-foreground hover:bg-muted/80'
-              }`}
-            >
-              #{t}
-            </Link>
-          ))}
-        </div>
-      )}
-
-      {/* Sort */}
-      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-        <span>Sort:</span>
-        {[
-          { label: 'Latest', value: 'latest' },
-          { label: 'Most Voted', value: 'votes' },
-          { label: 'Oldest', value: 'oldest' },
-        ].map((opt) => (
-          <Link
-            key={opt.value}
-            href={buildUrl({ sort: opt.value })}
-            className={`px-2 py-1 rounded transition-colors ${
-              currentSort === opt.value
-                ? 'bg-accent text-accent-foreground'
-                : 'hover:bg-muted'
-            }`}
-          >
-            {opt.label}
-          </Link>
-        ))}
-      </div>
-    </div>
-  )
-}
-
 export function generateMetadata(): Metadata {
   return {
-    title: `GCET Blog Posts`,
+    title: 'Posts',
+    description: 'Browse all posts from the GCET Blog community.',
   }
 }

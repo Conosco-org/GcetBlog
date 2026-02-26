@@ -1,48 +1,62 @@
 'use client'
 
-import React, { useState, useEffect, useCallback } from 'react'
-import { ThumbsUp, ThumbsDown, Loader2 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import React, { useState, useRef } from 'react'
+import { ThumbsUp, ThumbsDown } from 'lucide-react'
+import { cn } from '@/utilities/ui'
 
 interface VoteButtonsProps {
   postId: string
+  /** Like count from the post document (no separate GET needed) */
+  initialLikes?: number
+  /** Whether the current user has already voted (fetched server-side) */
+  initialUserVote?: 1 | -1 | null
   className?: string
   variant?: 'compact' | 'full'
 }
 
-interface VoteData {
-  score: number
-  upvotes: number
-  downvotes: number
-  userVote: number | null
+interface VoteState {
+  likes: number
+  userVote: 1 | -1 | null
 }
 
-export function VoteButtons({ postId, className, variant = 'full' }: VoteButtonsProps) {
-  const [data, setData] = useState<VoteData>({ score: 0, upvotes: 0, downvotes: 0, userVote: null })
-  const [isLoading, setIsLoading] = useState(false)
-  const [isInitialized, setIsInitialized] = useState(false)
-
-  // Fetch current vote data
-  const fetchVotes = useCallback(async () => {
-    try {
-      const res = await fetch(`/api/votes?postId=${postId}`)
-      if (res.ok) {
-        const result = await res.json()
-        setData(result)
-      }
-    } catch {
-      // Silently fail
-    } finally {
-      setIsInitialized(true)
-    }
-  }, [postId])
-
-  useEffect(() => {
-    fetchVotes()
-  }, [fetchVotes])
+export function VoteButtons({
+  postId,
+  initialLikes = 0,
+  initialUserVote = null,
+  className,
+  variant = 'full',
+}: VoteButtonsProps) {
+  const [state, setState] = useState<VoteState>({
+    likes: initialLikes,
+    userVote: initialUserVote,
+  })
+  const pendingRef = useRef(false)
 
   const handleVote = async (value: 1 | -1) => {
-    setIsLoading(true)
+    if (pendingRef.current) return
+
+    // Optimistic update — instant feedback
+    const prev = { ...state }
+    setState((s) => {
+      const isSame = s.userVote === value
+
+      if (isSame) {
+        // Toggle off
+        return { likes: value === 1 ? Math.max(0, s.likes - 1) : s.likes, userVote: null }
+      }
+
+      const wasLiked = s.userVote === 1
+      const nowLiking = value === 1
+
+      // Switching from like→dislike
+      if (wasLiked && !nowLiking) return { likes: Math.max(0, s.likes - 1), userVote: value }
+      // Switching from dislike→like or new like
+      if (nowLiking) return { likes: s.likes + 1, userVote: value }
+      // New dislike
+      return { likes: s.likes, userVote: value }
+    })
+
+    pendingRef.current = true
     try {
       const res = await fetch('/api/votes', {
         method: 'POST',
@@ -52,108 +66,98 @@ export function VoteButtons({ postId, className, variant = 'full' }: VoteButtons
 
       if (res.ok) {
         const result = await res.json()
-        setData({
-          score: result.score,
-          upvotes: result.upvotes,
-          downvotes: result.downvotes,
-          userVote: result.userVote,
-        })
+        setState({ likes: result.upvotes, userVote: result.userVote })
       } else if (res.status === 401) {
-        // Redirect to login
+        setState(prev)
         window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}&message=Sign in to vote`
+      } else {
+        setState(prev)
       }
     } catch {
-      // Silently fail
+      setState(prev)
     } finally {
-      setIsLoading(false)
+      pendingRef.current = false
     }
   }
 
+  const liked = state.userVote === 1
+  const disliked = state.userVote === -1
+
   if (variant === 'compact') {
     return (
-      <div className={`flex items-center gap-1 ${className || ''}`}>
+      <div className={cn('flex flex-col items-center gap-3', className)}>
+        {/* Like */}
         <button
           onClick={() => handleVote(1)}
-          disabled={isLoading}
-          className={`p-1 rounded transition-colors ${
-            data.userVote === 1
-              ? 'text-green-600 dark:text-green-400'
-              : 'text-muted-foreground hover:text-green-600'
-          }`}
-          aria-label="Upvote"
+          className={cn(
+            'flex flex-col items-center gap-1 p-2 rounded-full transition-all duration-150 active:scale-90',
+            liked ? 'text-accent' : 'text-muted-foreground hover:text-accent',
+          )}
+          aria-label="Like"
+          aria-pressed={liked}
         >
-          <ThumbsUp className="h-3.5 w-3.5" fill={data.userVote === 1 ? 'currentColor' : 'none'} />
+          <ThumbsUp className="h-4 w-4" fill={liked ? 'currentColor' : 'none'} />
+          <span className="text-xs font-medium tabular-nums leading-none">{state.likes}</span>
         </button>
-        <span className={`text-xs font-medium min-w-[1.5rem] text-center ${
-          data.score > 0 ? 'text-green-600 dark:text-green-400' :
-          data.score < 0 ? 'text-red-600 dark:text-red-400' :
-          'text-muted-foreground'
-        }`}>
-          {isInitialized ? data.score : '—'}
-        </span>
+
+        {/* Dislike — no count */}
         <button
           onClick={() => handleVote(-1)}
-          disabled={isLoading}
-          className={`p-1 rounded transition-colors ${
-            data.userVote === -1
-              ? 'text-red-600 dark:text-red-400'
-              : 'text-muted-foreground hover:text-red-600'
-          }`}
-          aria-label="Downvote"
+          className={cn(
+            'p-2 rounded-full transition-all duration-150 active:scale-90',
+            disliked ? 'text-destructive' : 'text-muted-foreground hover:text-destructive',
+          )}
+          aria-label="Dislike"
+          aria-pressed={disliked}
         >
-          <ThumbsDown className="h-3.5 w-3.5" fill={data.userVote === -1 ? 'currentColor' : 'none'} />
+          <ThumbsDown className="h-4 w-4" fill={disliked ? 'currentColor' : 'none'} />
         </button>
       </div>
     )
   }
 
+  // Full variant
   return (
-    <div className={`flex items-center gap-2 ${className || ''}`}>
-      <Button
-        variant={data.userVote === 1 ? 'default' : 'outline'}
-        size="sm"
+    <div className={cn('flex items-center gap-1', className)}>
+      {/* Like button with count */}
+      <button
         onClick={() => handleVote(1)}
-        disabled={isLoading}
-        className={`gap-1.5 ${
-          data.userVote === 1
-            ? 'bg-green-600 hover:bg-green-700 text-white border-green-600'
-            : 'hover:border-green-600 hover:text-green-600'
-        }`}
-      >
-        {isLoading ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
-        ) : (
-          <ThumbsUp className="h-4 w-4" fill={data.userVote === 1 ? 'currentColor' : 'none'} />
+        aria-label="Like"
+        aria-pressed={liked}
+        className={cn(
+          'inline-flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium transition-all duration-150 active:scale-95',
+          liked
+            ? 'bg-accent text-accent-foreground border-accent shadow-sm'
+            : 'border-border text-muted-foreground hover:border-accent hover:text-accent hover:bg-accent/5',
         )}
-        <span>{data.upvotes}</span>
-      </Button>
+      >
+        <ThumbsUp
+          className={cn('h-4 w-4 transition-transform duration-150', liked && 'scale-110')}
+          fill={liked ? 'currentColor' : 'none'}
+        />
+        <span className="tabular-nums">{state.likes}</span>
+      </button>
 
-      <span className={`text-lg font-bold min-w-[2rem] text-center ${
-        data.score > 0 ? 'text-green-600 dark:text-green-400' :
-        data.score < 0 ? 'text-red-600 dark:text-red-400' :
-        'text-muted-foreground'
-      }`}>
-        {isInitialized ? (data.score > 0 ? `+${data.score}` : data.score) : '—'}
-      </span>
+      {/* Divider */}
+      <div className="w-px h-6 bg-border mx-1" />
 
-      <Button
-        variant={data.userVote === -1 ? 'default' : 'outline'}
-        size="sm"
+      {/* Dislike — no count */}
+      <button
         onClick={() => handleVote(-1)}
-        disabled={isLoading}
-        className={`gap-1.5 ${
-          data.userVote === -1
-            ? 'bg-red-600 hover:bg-red-700 text-white border-red-600'
-            : 'hover:border-red-600 hover:text-red-600'
-        }`}
-      >
-        {isLoading ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
-        ) : (
-          <ThumbsDown className="h-4 w-4" fill={data.userVote === -1 ? 'currentColor' : 'none'} />
+        aria-label="Dislike"
+        aria-pressed={disliked}
+        className={cn(
+          'p-2 rounded-full border text-sm transition-all duration-150 active:scale-95',
+          disliked
+            ? 'bg-destructive/10 text-destructive border-destructive/30'
+            : 'border-border text-muted-foreground hover:border-destructive/40 hover:text-destructive hover:bg-destructive/5',
         )}
-        <span>{data.downvotes}</span>
-      </Button>
+      >
+        <ThumbsDown
+          className={cn('h-4 w-4 transition-transform duration-150', disliked && 'scale-110')}
+          fill={disliked ? 'currentColor' : 'none'}
+        />
+      </button>
     </div>
   )
 }

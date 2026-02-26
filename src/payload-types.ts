@@ -293,6 +293,10 @@ export interface Post {
    * Calculated vote score (upvotes - downvotes)
    */
   voteScore?: number | null;
+  /**
+   * Total number of upvotes (likes)
+   */
+  likesCount?: number | null;
   publishedAt?: string | null;
   authors?: (string | User)[] | null;
   populatedAuthors?:
@@ -990,6 +994,10 @@ export interface Comment {
   authorEmail?: string | null;
   content: string;
   status?: ('pending' | 'approved' | 'rejected' | 'spam') | null;
+  /**
+   * Parent comment (for replies/threading)
+   */
+  parent?: (string | null) | Comment;
   /**
    * Internal notes for moderators
    */
@@ -1779,6 +1787,7 @@ export interface PostsSelect<T extends boolean = true> {
   featuredFrom?: T;
   featuredUntil?: T;
   voteScore?: T;
+  likesCount?: T;
   publishedAt?: T;
   authors?: T;
   populatedAuthors?:
@@ -2008,6 +2017,7 @@ export interface CommentsSelect<T extends boolean = true> {
   authorEmail?: T;
   content?: T;
   status?: T;
+  parent?: T;
   moderatorNotes?: T;
   moderatedBy?: T;
   moderatedAt?: T;

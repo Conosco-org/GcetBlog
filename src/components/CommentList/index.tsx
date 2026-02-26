@@ -3,255 +3,289 @@
 import { useState } from 'react'
 import { formatDistanceToNow } from 'date-fns'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
-import { AlertTriangle, Flag, CheckCircle, XCircle, Trash } from 'lucide-react'
-import { moderateComment, reportComment } from '@/app/(frontend)/posts/[slug]/actions'
+import { Input } from '@/components/ui/input'
+import { MessageCircle, Flag, ChevronDown, ChevronUp, CheckCircle, XCircle, Trash, AlertTriangle } from 'lucide-react'
+import { submitComment, reportComment, moderateComment } from '@/app/(frontend)/posts/[slug]/actions'
 import type { Comment, User } from '@/payload-types'
 
 interface CommentListProps {
   comments: Comment[]
+  postId: string
   currentUser?: User | null
 }
 
-interface CommentCardProps {
-  comment: Comment
-  currentUser?: User | null
+// ─── Inline reply form ────────────────────────────────────────────────────────
+
+interface ReplyFormProps {
+  postId: string
+  parentId: string
+  onCancel: () => void
 }
 
-function CommentCard({ comment, currentUser }: CommentCardProps) {
-  const [isReporting, setIsReporting] = useState(false)
-  const [isModerating, setIsModerating] = useState(false)
-  const [showModerationForm, setShowModerationForm] = useState(false)
-  const [showReportForm, setShowReportForm] = useState(false)
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+function ReplyForm({ postId, parentId, onCancel }: ReplyFormProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [msg, setMsg] = useState<string | null>(null)
+  const [success, setSuccess] = useState(false)
 
-  const isStaff = currentUser && currentUser.role === 'editor'
-  const canModerate = isStaff && comment.status === 'pending'
-
-  const handleReport = async (formData: FormData) => {
-    setIsReporting(true)
-    const result = await reportComment(formData)
-
+  async function handleSubmit(formData: FormData) {
+    setIsSubmitting(true)
+    setMsg(null)
+    const result = await submitComment(formData)
     if (result.error) {
-      setMessage({ type: 'error', text: result.error })
+      setMsg(result.error)
+      setIsSubmitting(false)
     } else {
-      setMessage({ type: 'success', text: result.success || 'Comment reported successfully' })
-      setShowReportForm(false)
+      setSuccess(true)
+      setMsg(result.success || 'Reply submitted for review!')
+      setTimeout(onCancel, 1600)
     }
-    setIsReporting(false)
   }
 
-  const handleModeration = async (formData: FormData) => {
+  return (
+    <form action={handleSubmit} className="mt-3 pl-4 border-l-2 border-border space-y-2">
+      <input type="hidden" name="postId" value={postId} />
+      <input type="hidden" name="parentId" value={parentId} />
+      <div className="grid grid-cols-2 gap-2">
+        <Input name="authorName" placeholder="Your name *" required disabled={isSubmitting || success} className="h-8 text-sm" />
+        <Input name="authorEmail" type="email" placeholder="Email (private) *" required disabled={isSubmitting || success} className="h-8 text-sm" />
+      </div>
+      <Textarea name="content" placeholder="Write a reply…" required disabled={isSubmitting || success} rows={2} className="text-sm resize-none" />
+      {msg && (
+        <p className={`text-xs ${success ? 'text-green-600 dark:text-green-400' : 'text-destructive'}`}>{msg}</p>
+      )}
+      <div className="flex gap-2">
+        <Button type="submit" size="sm" disabled={isSubmitting || success} className="h-7 text-xs px-3">
+          {isSubmitting ? 'Posting…' : 'Post Reply'}
+        </Button>
+        <Button type="button" variant="ghost" size="sm" onClick={onCancel} className="h-7 text-xs px-3">
+          Cancel
+        </Button>
+      </div>
+    </form>
+  )
+}
+
+// ─── Single comment item (recursive for replies) ──────────────────────────────
+
+interface CommentItemProps {
+  comment: Comment
+  replies: Comment[]
+  postId: string
+  isEditor: boolean
+  depth?: number
+}
+
+function CommentItem({ comment, replies, postId, isEditor, depth = 0 }: CommentItemProps) {
+  const [showReplyForm, setShowReplyForm] = useState(false)
+  const [showReplies, setShowReplies] = useState(true)
+  const [reporting, setReporting] = useState(false)
+  const [reported, setReported] = useState(false)
+  const [showModerate, setShowModerate] = useState(false)
+  const [isModerating, setIsModerating] = useState(false)
+  const [modMsg, setModMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+
+  const authorDisplay = comment.authorName || 'Anonymous'
+  const timeAgo = formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })
+  const initial = authorDisplay.charAt(0).toUpperCase()
+
+  const handleReport = async () => {
+    if (reported) return
+    setReporting(true)
+    const fd = new FormData()
+    fd.append('commentId', String(comment.id))
+    fd.append('reason', 'inappropriate')
+    await reportComment(fd)
+    setReported(true)
+    setReporting(false)
+  }
+
+  const handleModerate = async (formData: FormData) => {
     setIsModerating(true)
     const result = await moderateComment(formData)
-
     if (result.error) {
-      setMessage({ type: 'error', text: result.error })
+      setModMsg({ type: 'error', text: result.error })
     } else {
-      setMessage({ type: 'success', text: result.success || 'Comment moderated successfully' })
-      setShowModerationForm(false)
+      setModMsg({ type: 'success', text: result.success || 'Done' })
+      setTimeout(() => setShowModerate(false), 1200)
     }
     setIsModerating(false)
   }
 
-  const getStatusBadge = () => {
-    switch (comment.status) {
-      case 'approved':
-        return (
-          <Badge variant="default" className="bg-green-100 text-green-800">
-            Approved
-          </Badge>
-        )
-      case 'pending':
-        return <Badge variant="secondary">Pending Review</Badge>
-      case 'rejected':
-        return <Badge variant="destructive">Rejected</Badge>
-      case 'spam':
-        return (
-          <Badge variant="destructive" className="bg-orange-100 text-orange-800">
-            Spam
-          </Badge>
-        )
-      default:
-        return null
-    }
-  }
-
   return (
-    <Card
-      className={`mb-4 ${comment.status === 'pending' ? 'border-yellow-200 bg-yellow-50' : ''}`}
-    >
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-start">
-          <div>
-            <div className="flex items-center gap-2">
-              <h4 className="font-medium">{comment.authorName}</h4>
-              {getStatusBadge()}
-            </div>
-            <p className="text-sm text-gray-500 mt-1">
-              {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
-            </p>
-          </div>
-
-          <div className="flex gap-2">
-            {currentUser && !isStaff && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-gray-500"
-                onClick={() => setShowReportForm(!showReportForm)}
-              >
-                <Flag className="w-4 h-4" />
-              </Button>
-            )}
-
-            {canModerate && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowModerationForm(!showModerationForm)}
-              >
-                <AlertTriangle className="w-4 h-4 mr-1" />
-                Moderate
-              </Button>
-            )}
-          </div>
+    <div className={depth > 0 ? 'ml-5 pl-4 border-l border-border/60' : ''}>
+      <div className="flex gap-3 group">
+        {/* Avatar initial */}
+        <div
+          className="flex-shrink-0 mt-0.5 w-8 h-8 rounded-full bg-accent/10 dark:bg-accent/20 flex items-center justify-center font-semibold text-sm text-accent select-none"
+          aria-hidden="true"
+        >
+          {initial}
         </div>
-      </CardHeader>
 
-      <CardContent>
-        <p className="whitespace-pre-wrap">{comment.content}</p>
+        {/* Body */}
+        <div className="flex-1 min-w-0 pb-4">
+          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 mb-1">
+            <span className="text-sm font-semibold leading-snug">{authorDisplay}</span>
+            {/* Status badge — editors only */}
+            {isEditor && comment.status !== 'approved' && (
+              <span
+                className={`text-[10px] px-1.5 py-0.5 rounded font-medium leading-none ${
+                  comment.status === 'pending'
+                    ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-400'
+                    : comment.status === 'rejected'
+                      ? 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400'
+                      : 'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-400'
+                }`}
+              >
+                {comment.status}
+              </span>
+            )}
+            <span className="text-xs text-muted-foreground leading-snug">{timeAgo}</span>
+          </div>
 
-        {showReportForm && (
-          <div className="mt-4 p-4 border rounded-md bg-gray-50">
-            <h4 className="font-medium mb-2">Report Comment</h4>
-            <form action={handleReport} className="space-y-3">
+          <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap break-words">
+            {comment.content}
+          </p>
+
+          {/* Action row — visible on hover */}
+          <div className="flex items-center gap-4 mt-1.5 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+            {depth < 2 && (
+              <button
+                type="button"
+                onClick={() => setShowReplyForm((v) => !v)}
+                className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-accent transition-colors"
+              >
+                <MessageCircle className="h-3.5 w-3.5" />
+                Reply
+              </button>
+            )}
+            {!reported ? (
+              <button
+                type="button"
+                onClick={handleReport}
+                disabled={reporting}
+                className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors disabled:opacity-50"
+                aria-label="Report comment"
+              >
+                <Flag className="h-3.5 w-3.5" />
+                {reporting ? 'Reporting…' : 'Report'}
+              </button>
+            ) : (
+              <span className="text-xs text-muted-foreground">Reported</span>
+            )}
+            {isEditor && comment.status === 'pending' && (
+              <button
+                type="button"
+                onClick={() => setShowModerate((v) => !v)}
+                className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <AlertTriangle className="h-3.5 w-3.5" />
+                Moderate
+              </button>
+            )}
+          </div>
+
+          {/* Moderation panel (editors only) */}
+          {showModerate && isEditor && (
+            <form action={handleModerate} className="mt-2 p-3 rounded-lg bg-muted/40 border border-border space-y-2">
               <input type="hidden" name="commentId" value={comment.id} />
-              <div>
-                <select name="reason" required className="w-full p-2 border rounded-md" aria-label="Report reason">
-                  <option value="">Select a reason</option>
-                  <option value="spam">Spam</option>
-                  <option value="inappropriate">Inappropriate content</option>
-                  <option value="harassment">Harassment</option>
-                  <option value="misinformation">Misinformation</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-              <div className="flex gap-2">
-                <Button type="submit" size="sm" disabled={isReporting}>
-                  {isReporting ? 'Reporting...' : 'Report'}
+              <Textarea name="moderationNotes" placeholder="Moderation notes (optional)" rows={2} className="text-xs resize-none" />
+              {modMsg && (
+                <p className={`text-xs ${modMsg.type === 'success' ? 'text-green-600' : 'text-destructive'}`}>{modMsg.text}</p>
+              )}
+              <div className="flex flex-wrap gap-2">
+                <Button type="submit" name="action" value="approve" size="sm" disabled={isModerating} className="h-7 text-xs bg-green-600 hover:bg-green-700">
+                  <CheckCircle className="h-3 w-3 mr-1" />Approve
                 </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowReportForm(false)}
-                >
-                  Cancel
+                <Button type="submit" name="action" value="reject" variant="destructive" size="sm" disabled={isModerating} className="h-7 text-xs">
+                  <XCircle className="h-3 w-3 mr-1" />Reject
+                </Button>
+                <Button type="submit" name="action" value="spam" variant="outline" size="sm" disabled={isModerating} className="h-7 text-xs border-orange-300 text-orange-700">
+                  <Trash className="h-3 w-3 mr-1" />Spam
                 </Button>
               </div>
             </form>
-          </div>
-        )}
+          )}
 
-        {message && (
-          <div
-            className={`mt-3 p-3 rounded-md ${
-              message.type === 'success'
-                ? 'bg-green-50 text-green-800 border border-green-200'
-                : 'bg-red-50 text-red-800 border border-red-200'
-            }`}
-          >
-            {message.text}
-          </div>
-        )}
-      </CardContent>
+          {/* Inline reply form */}
+          {showReplyForm && (
+            <ReplyForm postId={postId} parentId={String(comment.id)} onCancel={() => setShowReplyForm(false)} />
+          )}
 
-      {showModerationForm && canModerate && (
-        <CardFooter className="bg-gray-50 border-t">
-          <form action={handleModeration} className="w-full space-y-4">
-            <input type="hidden" name="commentId" value={comment.id} />
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Moderation Notes (optional)</label>
-              <Textarea
-                name="moderationNotes"
-                placeholder="Add notes about your decision..."
-                rows={2}
-              />
+          {/* Replies toggle + list */}
+          {replies.length > 0 && (
+            <div className="mt-3">
+              <button
+                type="button"
+                onClick={() => setShowReplies((v) => !v)}
+                className="inline-flex items-center gap-1 text-xs text-accent hover:text-accent/70 transition-colors mb-2"
+              >
+                {showReplies ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+                {replies.length} {replies.length === 1 ? 'reply' : 'replies'}
+              </button>
+              {showReplies && (
+                <div className="space-y-3">
+                  {replies.map((reply) => (
+                    <CommentItem
+                      key={reply.id}
+                      comment={reply}
+                      replies={[]}
+                      postId={postId}
+                      isEditor={isEditor}
+                      depth={depth + 1}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
-
-            <div className="flex gap-2">
-              <Button
-                type="submit"
-                name="action"
-                value="approve"
-                variant="default"
-                size="sm"
-                disabled={isModerating}
-                className="bg-green-600 hover:bg-green-700"
-              >
-                <CheckCircle className="w-4 h-4 mr-1" />
-                Approve
-              </Button>
-              <Button
-                type="submit"
-                name="action"
-                value="reject"
-                variant="destructive"
-                size="sm"
-                disabled={isModerating}
-              >
-                <XCircle className="w-4 h-4 mr-1" />
-                Reject
-              </Button>
-              <Button
-                type="submit"
-                name="action"
-                value="spam"
-                variant="outline"
-                size="sm"
-                disabled={isModerating}
-                className="border-orange-300 text-orange-700 hover:bg-orange-50"
-              >
-                <Trash className="w-4 h-4 mr-1" />
-                Mark as Spam
-              </Button>
-            </div>
-          </form>
-        </CardFooter>
-      )}
-    </Card>
+          )}
+        </div>
+      </div>
+    </div>
   )
 }
 
-export function CommentList({ comments, currentUser }: CommentListProps) {
-  // Filter comments based on user role
-  const visibleComments = comments.filter((comment) => {
-    // Staff can see all comments
-    if (currentUser && currentUser.role === 'editor') {
-      return true
-    }
-    // Regular users only see approved comments
-    return comment.status === 'approved'
-  })
+// ─── Public list ──────────────────────────────────────────────────────────────
 
-  if (visibleComments.length === 0) {
+export function CommentList({ comments, postId, currentUser }: CommentListProps) {
+  const isEditor = currentUser?.role === 'editor'
+
+  // Editors see all; public sees only approved
+  const visible = isEditor ? comments : comments.filter((c) => c.status === 'approved')
+
+  // Split top-level vs replies
+  const topLevel = visible.filter((c) => !c.parent)
+  const repliesMap: Record<string, Comment[]> = {}
+  visible
+    .filter((c) => !!c.parent)
+    .forEach((c) => {
+      const pid = typeof c.parent === 'object' && c.parent !== null ? String((c.parent as Comment).id) : String(c.parent)
+      ;(repliesMap[pid] ??= []).push(c)
+    })
+
+  if (topLevel.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500">
-        No comments yet. Be the first to comment!
-      </div>
+      <p className="text-center py-8 text-sm text-muted-foreground">
+        No comments yet — be the first to share your thoughts!
+      </p>
     )
   }
 
   return (
-    <div className="space-y-4">
-      <h3 className="text-xl font-bold mb-4">Comments ({visibleComments.length})</h3>
-
-      {visibleComments.map((comment) => (
-        <CommentCard key={comment.id} comment={comment} currentUser={currentUser} />
+    <div className="space-y-1">
+      <p className="text-sm font-medium text-muted-foreground mb-4">
+        {topLevel.length} {topLevel.length === 1 ? 'comment' : 'comments'}
+      </p>
+      {topLevel.map((comment) => (
+        <CommentItem
+          key={comment.id}
+          comment={comment}
+          replies={repliesMap[String(comment.id)] ?? []}
+          postId={postId}
+          isEditor={!!isEditor}
+          depth={0}
+        />
       ))}
     </div>
   )
