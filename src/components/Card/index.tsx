@@ -2,7 +2,8 @@
 import { cn } from '@/utilities/ui'
 import useClickableCard from '@/utilities/useClickableCard'
 import Link from 'next/link'
-import React, { Fragment } from 'react'
+import React, { Fragment, useState, useCallback } from 'react'
+import { Copy, Check } from 'lucide-react'
 
 import type { Post, Media as MediaType } from '@/payload-types'
 
@@ -28,6 +29,20 @@ export const Card: React.FC<{
   const titleToUse = titleFromProps || title
   const sanitizedDescription = description?.replace(/\s/g, ' ')
   const href = `/${relationTo}/${slug}`
+
+  const [copied, setCopied] = useState(false)
+  const handleCopy = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      const url = typeof window !== 'undefined' ? `${window.location.origin}${href}` : href
+      navigator.clipboard.writeText(url).then(() => {
+        setCopied(true)
+        setTimeout(() => setCopied(false), 1800)
+      })
+    },
+    [href],
+  )
 
   const categoryLabel = hasCategories && typeof categories[0] === 'object'
     ? categories[0].title || 'Uncategorized'
@@ -107,12 +122,22 @@ export const Card: React.FC<{
           </p>
         )}
 
-        {/* Read indicator - visible on mobile since no hover */}
-        <div className="mt-3 pt-3 sm:mt-4 sm:pt-4 border-t border-border flex items-center gap-2 text-xs font-medium tracking-wider uppercase text-accent sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-          Read Article
-          <svg className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
+        {/* Bottom action bar */}
+        <div className="mt-3 pt-3 sm:mt-4 sm:pt-4 border-t border-border flex items-center justify-between">
+          <div className="flex items-center gap-2 text-xs font-medium tracking-wider uppercase text-accent sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+            Read Article
+            <svg className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
+          <button
+            type="button"
+            onClick={handleCopy}
+            aria-label={copied ? 'Link copied!' : 'Copy link to post'}
+            className="sm:opacity-0 sm:group-hover:opacity-100 transition-opacity p-1.5 rounded-md hover:bg-accent/10 text-muted-foreground hover:text-accent"
+          >
+            {copied ? <Check className="h-3.5 w-3.5 text-green-500" /> : <Copy className="h-3.5 w-3.5" />}
+          </button>
         </div>
       </div>
     </article>
