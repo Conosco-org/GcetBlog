@@ -228,6 +228,19 @@ export const Posts: CollectionConfig<'posts'> = {
       },
     },
     {
+      name: 'likesCount',
+      type: 'number',
+      defaultValue: 0,
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description: 'Total number of upvotes (likes)',
+      },
+      access: {
+        update: () => false, // Only updated programmatically
+      },
+    },
+    {
       name: 'publishedAt',
       type: 'date',
       admin: {
