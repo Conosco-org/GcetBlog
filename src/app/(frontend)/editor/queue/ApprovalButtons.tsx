@@ -97,10 +97,12 @@ export function ApprovalButtons({ postId, postTitle, postSlug }: ApprovalButtons
         asChild
         size="sm"
         variant="outline"
+        title="Preview"
+        aria-label="Preview"
       >
         <Link href={`/api/draft?slug=${postSlug}`} target="_blank">
-          <Eye className="w-4 h-4 mr-1" />
-          Preview
+          <Eye className="w-4 h-4 sm:mr-1" />
+          <span className="hidden sm:inline">Preview</span>
         </Link>
       </Button>
       <Button
@@ -108,18 +110,22 @@ export function ApprovalButtons({ postId, postTitle, postSlug }: ApprovalButtons
         disabled={isApproving || isRejecting}
         size="sm"
         className="bg-green-600 hover:bg-green-700"
+        title="Approve"
+        aria-label="Approve"
       >
-        <CheckCircle className="w-4 h-4 mr-1" />
-        {isApproving ? 'Approving...' : 'Approve'}
+        <CheckCircle className="w-4 h-4 sm:mr-1" />
+        <span className="hidden sm:inline">{isApproving ? 'Approving...' : 'Approve'}</span>
       </Button>
       <Button
         onClick={handleReject}
         disabled={isApproving || isRejecting}
         size="sm"
         variant="destructive"
+        title="Reject"
+        aria-label="Reject"
       >
-        <XCircle className="w-4 h-4 mr-1" />
-        {isRejecting ? 'Rejecting...' : 'Reject'}
+        <XCircle className="w-4 h-4 sm:mr-1" />
+        <span className="hidden sm:inline">{isRejecting ? 'Rejecting...' : 'Reject'}</span>
       </Button>
     </div>
   )

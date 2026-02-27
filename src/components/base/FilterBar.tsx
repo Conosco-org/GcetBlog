@@ -50,12 +50,12 @@ export function FilterBar({ filters, className }: FilterBarProps) {
   }
 
   return (
-    <div className={cn('flex flex-wrap items-center gap-3', className)}>
+    <div className={cn('flex items-center gap-3 overflow-x-auto pb-1 md:overflow-visible md:pb-0 md:flex-wrap', className)}>
       {filters.map((filter) => {
         const currentValue = searchParams.get(filter.paramName) || ''
         return (
-          <div key={filter.paramName} className="flex items-center gap-2">
-            <label className="text-sm font-medium text-muted-foreground whitespace-nowrap">
+          <div key={filter.paramName} className="flex items-center gap-2 flex-shrink-0">
+            <label className="text-sm font-medium text-muted-foreground whitespace-nowrap hidden sm:block">
               {filter.label}:
             </label>
             <Select

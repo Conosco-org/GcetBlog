@@ -8,7 +8,6 @@ import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { Skeleton } from '@/components/ui/skeleton'
 import {
   Dialog,
   DialogContent,
@@ -31,6 +30,7 @@ import {
   Clock,
   ArrowUpRight,
   ArrowRight,
+  X,
 } from 'lucide-react'
 import { cn } from '@/utilities/ui'
 import {
@@ -95,7 +95,7 @@ export function TemplatesPageClient({
   const [search, setSearch] = useState(query)
   const [previewTemplate, setPreviewTemplate] = useState<TemplateData | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
-  const [isDeleting, startDeleteTransition] = useTransition()
+  const [_isDeleting, startDeleteTransition] = useTransition()
 
   /* ── URL helpers ────────────────────────────────────────────── */
   const updateParams = (updates: Record<string, string>) => {
@@ -208,18 +208,20 @@ export function TemplatesPageClient({
                   </span>
                   <div className="flex gap-2">
                     <Link href={`/editor/templates/${previewTemplate.id}/edit`}>
-                      <Button variant="outline" size="sm">
-                        <Pencil className="w-3.5 h-3.5 mr-1.5" /> Edit
+                      <Button variant="outline" size="sm" title="Edit" aria-label="Edit">
+                        <Pencil className="w-3.5 h-3.5 sm:mr-1.5" /> <span className="hidden sm:inline">Edit</span>
                       </Button>
                     </Link>
                     <Button
                       size="sm"
+                      title="Use Template"
+                      aria-label="Use Template"
                       onClick={() => {
                         router.push(`/editor/posts/create?template=${previewTemplate.id}`)
                         setPreviewTemplate(null)
                       }}
                     >
-                      Use Template <ArrowUpRight className="w-3.5 h-3.5 ml-1.5" />
+                      <span className="hidden sm:inline">Use Template</span> <ArrowUpRight className="w-3.5 h-3.5 sm:ml-1.5" />
                     </Button>
                   </div>
                 </div>
@@ -245,9 +247,9 @@ export function TemplatesPageClient({
             </p>
           </div>
           <Link href="/editor/templates/create">
-            <Button className="gap-1.5 shadow-sm">
+            <Button className="gap-1.5 shadow-sm" title="New Template" aria-label="New Template">
               <Plus className="w-4 h-4" />
-              New Template
+              <span className="hidden sm:inline">New Template</span>
             </Button>
           </Link>
         </div>
@@ -302,13 +304,14 @@ export function TemplatesPageClient({
                 : 'Get started by creating your first template.'}
             </p>
             {query ? (
-              <Button variant="outline" onClick={() => updateParams({ q: '', category: '' })}>
-                Clear Filters
+              <Button variant="outline" onClick={() => updateParams({ q: '', category: '' })} title="Clear Filters" aria-label="Clear Filters">
+                <X className="w-4 h-4 sm:mr-1.5" />
+                <span className="hidden sm:inline">Clear Filters</span>
               </Button>
             ) : (
               <Link href="/editor/templates/create">
                 <Button>
-                  <Plus className="w-4 h-4 mr-1.5" /> Create Template
+                  <Plus className="w-4 h-4 sm:mr-1.5" /> <span className="hidden sm:inline">Create Template</span>
                 </Button>
               </Link>
             )}
@@ -456,8 +459,11 @@ export function TemplatesPageClient({
                         <Button
                           size="sm"
                           className="w-full h-8 text-xs gap-1 shadow-sm"
+                          title="Use Template"
                         >
-                          Use Template <ArrowRight className="w-3 h-3" />
+                          <span className="hidden sm:inline">Use Template</span>
+                          <span className="sm:hidden">Use</span>
+                          <ArrowRight className="w-3 h-3" />
                         </Button>
                       </Link>
                     </div>
@@ -478,15 +484,15 @@ export function TemplatesPageClient({
               onClick={() => updateParams({ page: String(currentPage - 1) })}
               className="gap-1"
             >
-              <ChevronLeft className="w-4 h-4" /> Previous
+              <ChevronLeft className="w-4 h-4" /> <span className="hidden sm:inline">Previous</span>
             </Button>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 overflow-x-auto max-w-[200px] sm:max-w-none">
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
                 <button
                   key={p}
                   onClick={() => updateParams({ page: String(p) })}
                   className={cn(
-                    'w-8 h-8 rounded-lg text-sm font-medium transition-colors',
+                    'w-8 h-8 rounded-lg text-sm font-medium transition-colors flex-shrink-0',
                     p === currentPage
                       ? 'bg-primary text-primary-foreground shadow-sm'
                       : 'text-muted-foreground hover:bg-muted'
@@ -503,7 +509,7 @@ export function TemplatesPageClient({
               onClick={() => updateParams({ page: String(currentPage + 1) })}
               className="gap-1"
             >
-              Next <ChevronRight className="w-4 h-4" />
+              <span className="hidden sm:inline">Next</span> <ChevronRight className="w-4 h-4" />
             </Button>
           </div>
         )}

@@ -40,9 +40,10 @@ export function LogoutButton({ className = '' }: { className?: string }) {
       variant="destructive"
       className={`w-full ${className}`}
       title="Sign out"
+      aria-label="Sign out"
     >
-      <LogOut className="w-4 h-4 mr-2" />
-      <span>{loading ? 'Logging out...' : 'Logout'}</span>
+      <LogOut className="w-4 h-4 sm:mr-2" />
+      <span className="hidden sm:inline">{loading ? 'Logging out...' : 'Logout'}</span>
     </Button>
   )
 }

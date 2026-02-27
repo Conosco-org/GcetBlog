@@ -48,7 +48,7 @@ export const CTASection: React.FC = () => {
             <button
               onClick={() => handleNavigate('/login')}
               disabled={isPending && navigatingTo === '/login'}
-              className="group inline-flex items-center gap-3 px-8 py-4 bg-accent text-accent-foreground rounded-full text-sm font-medium tracking-wide hover:opacity-90 transition-opacity disabled:opacity-70"
+              className="w-full sm:w-auto group inline-flex items-center justify-center gap-3 px-8 py-4 bg-accent text-accent-foreground rounded-full text-sm font-medium tracking-wide hover:opacity-90 transition-opacity disabled:opacity-70"
             >
               {isPending && navigatingTo === '/login' ? (
                 <>
@@ -66,7 +66,7 @@ export const CTASection: React.FC = () => {
             <button
               onClick={() => handleNavigate('/posts')}
               disabled={isPending && navigatingTo === '/posts'}
-              className="inline-flex items-center gap-3 px-8 py-4 border border-background/20 text-background rounded-full text-sm font-medium tracking-wide hover:bg-background/10 transition-colors disabled:opacity-70"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 border border-background/20 text-background rounded-full text-sm font-medium tracking-wide hover:bg-background/10 transition-colors disabled:opacity-70"
             >
               {isPending && navigatingTo === '/posts' ? (
                 <>

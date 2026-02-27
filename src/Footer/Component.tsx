@@ -16,7 +16,7 @@ export async function Footer() {
 
   return (
     <footer className="mt-auto border-t border-border bg-foreground text-background">
-      <div className="container mx-auto px-6 py-12">
+      <div className="container mx-auto px-4 md:px-6 py-8 md:py-12">
         <div className="flex flex-col gap-8 md:flex-row md:justify-between md:items-start">
           {/* Brand */}
           <div className="flex flex-col gap-3">
