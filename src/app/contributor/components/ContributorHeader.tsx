@@ -67,20 +67,20 @@ export function ContributorHeader({ user, isOpen, onToggle }: ContributorHeaderP
 
         {/* Left side - GCET Blog Logo */}
         <div className="flex items-center gap-2">
-          <Link href="/" className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-2 sm:gap-3">
             <Image 
               src="https://res.cloudinary.com/dqpvhbkdd/image/upload/v1761577830/Gcet_Logo_i9fkbt.png"
               alt="GCET Logo"
               width={40}
               height={40}
-              className="object-contain"
+              className="object-contain w-8 h-8 sm:w-10 sm:h-10"
             />
-            <span className="text-xl font-bold">GCET Blog</span>
+            <span className="hidden sm:inline text-xl font-bold">GCET Blog</span>
           </Link>
         </div>
 
         {/* Right side - Theme Toggle & User Menu */}
-        <div className="ml-auto flex items-center gap-3">
+        <div className="ml-auto flex items-center gap-2 sm:gap-3">
           {/* Theme Toggle Button */}
           <Button
             variant="outline"

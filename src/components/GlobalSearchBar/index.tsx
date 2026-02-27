@@ -125,12 +125,12 @@ export function GlobalSearchBar({ categories = [], className, variant = 'header'
             setIsOpen(true)
             setTimeout(() => inputRef.current?.focus(), 100)
           }}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-card hover:bg-muted transition-colors text-muted-foreground text-sm"
+          className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl border border-border/60 bg-card hover:bg-muted/80 transition-all duration-150 text-muted-foreground text-sm shadow-sm hover:shadow"
           aria-label="Search posts (Ctrl+K)"
         >
           <Search className="h-4 w-4" />
-          <span className="hidden sm:inline">Search...</span>
-          <kbd className="hidden sm:inline-flex h-5 items-center gap-0.5 rounded border bg-muted px-1.5 text-[10px] font-medium text-muted-foreground">
+          <span className="hidden sm:inline text-muted-foreground/70">Search...</span>
+          <kbd className="hidden sm:inline-flex h-5 items-center gap-0.5 rounded-md border border-border bg-muted/60 px-1.5 text-[10px] font-medium text-muted-foreground/70 ml-4">
             ⌘K
           </kbd>
         </button>
@@ -138,36 +138,42 @@ export function GlobalSearchBar({ categories = [], className, variant = 'header'
     }
 
     return (
-      <div ref={containerRef} className="fixed inset-0 z-50 flex items-start justify-center pt-20 bg-black/50 backdrop-blur-sm">
+      <div ref={containerRef} className="fixed inset-0 z-50 flex items-start justify-center pt-[12vh] bg-black/60 animate-in fade-in duration-150">
         <form
           onSubmit={handleSubmit}
-          className="w-full max-w-2xl mx-4 bg-background rounded-xl border border-border shadow-2xl overflow-hidden"
+          className="w-full max-w-xl mx-4 bg-background rounded-2xl border border-border/60 shadow-[0_25px_60px_-12px_rgba(0,0,0,0.35)] overflow-hidden animate-in slide-in-from-top-4 fade-in duration-200"
         >
-          <div className="flex items-center gap-2 p-4 border-b border-border">
-            <Search className="h-5 w-5 text-muted-foreground shrink-0" />
+          {/* Search input */}
+          <div className="flex items-center gap-3 px-5 py-4">
+            <Search className="h-5 w-5 text-muted-foreground/70 shrink-0" />
             <Input
               ref={inputRef}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search posts, tags, categories..."
-              className="border-0 bg-transparent text-lg focus-visible:ring-0 focus-visible:ring-offset-0"
+              className="border-0 bg-transparent text-base font-medium placeholder:font-normal focus-visible:ring-0 focus-visible:ring-offset-0 p-0 h-auto"
               autoFocus
             />
             {query && (
-              <Button type="button" variant="ghost" size="sm" onClick={clearSearch}>
+              <button type="button" onClick={clearSearch} className="shrink-0 p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
                 <X className="h-4 w-4" />
-              </Button>
+              </button>
             )}
-            <Button type="button" variant="ghost" size="sm" onClick={() => setIsOpen(false)}>
-              <kbd className="text-xs text-muted-foreground">ESC</kbd>
-            </Button>
+            <button type="button" onClick={() => setIsOpen(false)} className="shrink-0 ml-1">
+              <kbd className="inline-flex h-6 items-center rounded-md border border-border bg-muted/60 px-2 text-[11px] font-medium text-muted-foreground select-none">
+                ESC
+              </kbd>
+            </button>
           </div>
+
+          {/* Divider */}
+          <div className="mx-5 h-px bg-border/60" />
 
           {/* Quick filters */}
           {categories.length > 0 && (
-            <div className="p-4 border-b border-border">
-              <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wider">Categories</p>
-              <div className="flex flex-wrap gap-1.5">
+            <div className="px-5 py-4">
+              <p className="text-[11px] font-semibold text-muted-foreground/70 mb-3 uppercase tracking-widest">Categories</p>
+              <div className="flex flex-wrap gap-2">
                 {categories.slice(0, 8).map((cat) => (
                   <button
                     key={cat.id}
@@ -175,10 +181,10 @@ export function GlobalSearchBar({ categories = [], className, variant = 'header'
                     onClick={() => {
                       setSelectedCategory(cat.slug === selectedCategory ? '' : cat.slug)
                     }}
-                    className={`px-2.5 py-1 text-xs rounded-full border transition-colors ${
+                    className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-all duration-150 ${
                       selectedCategory === cat.slug
-                        ? 'bg-accent text-accent-foreground border-accent'
-                        : 'border-border hover:bg-muted'
+                        ? 'bg-accent text-accent-foreground border-accent shadow-sm'
+                        : 'border-border/60 text-muted-foreground hover:bg-muted hover:text-foreground hover:border-border'
                     }`}
                   >
                     {cat.title}
@@ -188,10 +194,20 @@ export function GlobalSearchBar({ categories = [], className, variant = 'header'
             </div>
           )}
 
-          <div className="p-3 flex justify-between items-center text-xs text-muted-foreground">
-            <span>Press Enter to search</span>
-            <Button type="submit" variant="ghost" size="sm" className="text-xs">
-              Go to results &rarr;
+          {/* Footer */}
+          <div className="px-5 py-3 bg-muted/30 border-t border-border/60 flex justify-between items-center">
+            <div className="flex items-center gap-3 text-[11px] text-muted-foreground/70">
+              <span className="inline-flex items-center gap-1.5">
+                <kbd className="inline-flex h-5 items-center rounded border border-border bg-background px-1.5 text-[10px] font-medium">↵</kbd>
+                Search
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <kbd className="inline-flex h-5 items-center rounded border border-border bg-background px-1.5 text-[10px] font-medium">ESC</kbd>
+                Close
+              </span>
+            </div>
+            <Button type="submit" variant="ghost" size="sm" className="text-xs font-medium text-muted-foreground hover:text-foreground -mr-2">
+              Go to results →
             </Button>
           </div>
         </form>

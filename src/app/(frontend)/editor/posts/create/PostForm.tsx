@@ -367,14 +367,16 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
       />
 
       {/* Header */}
-      <div className="px-6 py-4 border-b flex items-center justify-between">
-        <div className="flex items-center gap-3">
+      <div className="px-4 sm:px-6 py-3 sm:py-4 border-b flex items-center justify-between gap-2">
+        <div className="flex items-center gap-1 sm:gap-3">
           <Link
             href="/editor/content"
-            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition"
+            className="inline-flex items-center justify-center h-8 w-8 sm:w-auto sm:px-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition"
+            title="Back to Content"
+            aria-label="Back to Content"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Content
+            <span className="hidden sm:inline ml-1 text-sm">Back</span>
           </Link>
           {!isEdit && (
             <Button
@@ -382,22 +384,26 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
               variant="outline"
               size="sm"
               onClick={() => setShowTemplateSelector(true)}
-              className="gap-1.5"
+              title="Use Template"
+              aria-label="Use Template"
             >
-              <FileStack className="w-4 h-4" />
-              Use Template
+              <FileStack className="w-4 h-4 sm:mr-1.5" />
+              <span className="hidden sm:inline">Template</span>
             </Button>
           )}
         </div>
-        <div className="flex gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3">
           <Button
             type="button"
             onClick={() => handleSubmit('draft')}
             disabled={isSubmitting}
             variant="outline"
+            size="sm"
+            title="Save as Draft"
+            aria-label="Save as Draft"
           >
-            <Save className="w-4 h-4 mr-2" />
-            {isSubmitting ? 'Saving...' : 'Save as Draft'}
+            <Save className="w-4 h-4 sm:mr-1.5" />
+            <span className="hidden sm:inline">{isSubmitting ? 'Saving...' : 'Save Draft'}</span>
           </Button>
           
           {/* Show different buttons based on user role */}
@@ -407,18 +413,24 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
               onClick={handleSendForReview}
               disabled={isSubmitting}
               className="bg-blue-600 hover:bg-blue-700"
+              size="sm"
+              title="Send for Review"
+              aria-label="Send for Review"
             >
-              <Send className="w-4 h-4 mr-2" />
-              {isSubmitting ? 'Submitting...' : 'Send for Review'}
+              <Send className="w-4 h-4 sm:mr-1.5" />
+              <span className="hidden sm:inline">{isSubmitting ? 'Submitting...' : 'Send for Review'}</span>
             </Button>
           ) : (
             <Button
               type="button"
               onClick={() => handleSubmit('published')}
               disabled={isSubmitting}
+              size="sm"
+              title="Publish"
+              aria-label="Publish"
             >
-              <Eye className="w-4 h-4 mr-2" />
-              {isSubmitting ? 'Publishing...' : 'Publish'}
+              <Eye className="w-4 h-4 sm:mr-1.5" />
+              <span className="hidden sm:inline">{isSubmitting ? 'Publishing...' : 'Publish'}</span>
             </Button>
           )}
         </div>

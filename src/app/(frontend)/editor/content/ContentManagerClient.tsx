@@ -46,7 +46,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Search, MoreVertical, Pencil, MessageSquare, Loader2, Trash2, FileX } from 'lucide-react'
+import { Search, MoreVertical, Pencil, MessageSquare, Loader2, Trash2, FileX, X, ChevronLeft, ChevronRight, Send } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { deletePost, unpublishPost } from './actions'
@@ -257,9 +257,9 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
   return (
     <>
       {/* Search and Filters */}
-      <div className="bg-card rounded-xl p-6 mb-6 shadow-sm border">
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="flex-1 min-w-[300px]">
+      <div className="bg-card rounded-xl p-4 sm:p-6 mb-6 shadow-sm border">
+        <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3 sm:gap-4">
+          <div className="flex-1 min-w-0 sm:min-w-[300px]">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <Input
@@ -272,9 +272,9 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
             </div>
           </div>
           
-          <div className="flex gap-2">
+          <div className="flex gap-2 overflow-x-auto pb-1 sm:pb-0">
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[150px]">
+              <SelectTrigger className="w-[130px] sm:w-[150px] flex-shrink-0">
                 <SelectValue placeholder="All Posts" />
               </SelectTrigger>
               <SelectContent>
@@ -286,7 +286,7 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
             </Select>
             
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[150px] sm:w-[180px] flex-shrink-0">
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
               <SelectContent>
@@ -307,8 +307,12 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
                   setStatusFilter('all')
                   setCategoryFilter('all')
                 }}
+                className="flex-shrink-0"
+                title="Clear Filters"
+                aria-label="Clear Filters"
               >
-                Clear Filters
+                <X className="w-4 h-4 sm:mr-1.5" />
+                <span className="hidden sm:inline">Clear Filters</span>
               </Button>
             )}
           </div>
@@ -317,14 +321,102 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
 
       {/* Content Overview */}
       <div className="bg-card rounded-xl shadow-sm border">
-        <div className="px-6 py-4 border-b">
+        <div className="px-4 sm:px-6 py-4 border-b">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Content Overview</h2>
-            <p className="text-sm text-muted-foreground">Showing {filteredPosts.length} of {posts.totalDocs} posts</p>
+            <h2 className="text-base sm:text-lg font-semibold">Content Overview</h2>
+            <p className="text-xs sm:text-sm text-muted-foreground">Showing {filteredPosts.length} of {posts.totalDocs} posts</p>
           </div>
         </div>
+
+        {/* Mobile Card View */}
+        <div className="md:hidden divide-y">
+          {filteredPosts.length === 0 ? (
+            <div className="text-center py-12 text-muted-foreground">
+              No posts found matching your filters
+            </div>
+          ) : (
+            filteredPosts.map((post) => {
+              const status = post._status || 'draft'
+              const authors = Array.isArray(post.authors) 
+                ? post.authors.map((author: string | { name?: string | null }) => 
+                    typeof author === 'object' ? author.name : author
+                  ).join(', ') 
+                : 'Unknown'
+              const postCategories = Array.isArray(post.categories)
+                ? post.categories.map((cat: string | { title: string }) => 
+                    typeof cat === 'object' ? cat.title : cat
+                  ).join(', ')
+                : 'Uncategorized'
+
+              return (
+                <div key={post.id} className="p-4 space-y-2">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold text-sm truncate">{post.title}</p>
+                      <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
+                        {post.meta?.description || 'No description'}
+                      </p>
+                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="flex-shrink-0 h-8 w-8">
+                          <MoreVertical className="w-4 h-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem asChild>
+                          <Link href={`/editor/posts/${post.id}/edit`} className="flex items-center gap-2">
+                            <Pencil className="w-4 h-4" />
+                            Edit
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>View Post</DropdownMenuItem>
+                        <DropdownMenuItem 
+                          onClick={() => openFeedbackDialog(post)}
+                          className="flex items-center gap-2"
+                        >
+                          <MessageSquare className="w-4 h-4" />
+                          Send Feedback
+                        </DropdownMenuItem>
+                        {status === 'published' && (
+                          <DropdownMenuItem
+                            onClick={() => setUnpublishDialog({ open: true, post })}
+                            className="flex items-center gap-2"
+                          >
+                            <FileX className="w-4 h-4" />
+                            Unpublish
+                          </DropdownMenuItem>
+                        )}
+                        <DropdownMenuItem 
+                          onClick={() => setDeleteDialog({ open: true, post })}
+                          className="text-destructive flex items-center gap-2"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2 text-xs">
+                    <Badge variant={getStatusVariant(status)} className="text-xs">
+                      {status.charAt(0).toUpperCase() + status.slice(1)}
+                    </Badge>
+                    <Badge variant="outline" className="text-xs">{postCategories}</Badge>
+                    <span className="text-muted-foreground ml-auto">
+                      {authors} &middot; {new Date(post.updatedAt).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                      })}
+                    </span>
+                  </div>
+                </div>
+              )
+            })
+          )}
+        </div>
         
-        <div className="overflow-x-auto">
+        {/* Desktop Table View */}
+        <div className="hidden md:block overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -435,8 +527,8 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
         </div>
 
         {/* Pagination */}
-        <div className="px-6 py-4 border-t flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
+        <div className="px-4 sm:px-6 py-4 border-t flex items-center justify-between">
+          <p className="text-xs sm:text-sm text-muted-foreground">
             Showing {filteredPosts.length} of {posts.totalDocs} posts
           </p>
           <div className="flex gap-2">
@@ -444,15 +536,21 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
               variant="outline"
               size="sm"
               disabled={!posts.hasPrevPage}
+              title="Previous"
+              aria-label="Previous"
             >
-              Previous
+              <ChevronLeft className="w-4 h-4 sm:mr-1" />
+              <span className="hidden sm:inline">Previous</span>
             </Button>
             <Button 
               variant="outline"
               size="sm"
               disabled={!posts.hasNextPage}
+              title="Next"
+              aria-label="Next"
             >
-              Next
+              <span className="hidden sm:inline">Next</span>
+              <ChevronRight className="w-4 h-4 sm:ml-1" />
             </Button>
           </div>
         </div>
@@ -517,12 +615,15 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
               variant="outline"
               onClick={() => setFeedbackDialog({ open: false, post: null })}
               disabled={isLoading}
+              title="Cancel"
+              aria-label="Cancel"
             >
-              Cancel
+              <X className="w-4 h-4 sm:mr-1.5" />
+              <span className="hidden sm:inline">Cancel</span>
             </Button>
-            <Button onClick={handleSendFeedback} disabled={isLoading}>
-              {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              Send Feedback
+            <Button onClick={handleSendFeedback} disabled={isLoading} title="Send Feedback" aria-label="Send Feedback">
+              {isLoading ? <Loader2 className="w-4 h-4 sm:mr-2 animate-spin" /> : <Send className="w-4 h-4 sm:mr-2" />}
+              <span className="hidden sm:inline">Send Feedback</span>
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -546,7 +647,10 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isLoading}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isLoading}>
+              <X className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Cancel</span>
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={(e) => {
                 e.preventDefault()
@@ -555,8 +659,8 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
               disabled={isLoading}
               className="bg-destructive hover:bg-destructive/90"
             >
-              {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              Delete Post
+              {isLoading ? <Loader2 className="w-4 h-4 sm:mr-2 animate-spin" /> : <Trash2 className="w-4 h-4 sm:mr-2" />}
+              <span className="hidden sm:inline">{isLoading ? 'Deleting...' : 'Delete Post'}</span>
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -576,7 +680,10 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isLoading}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isLoading}>
+              <X className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Cancel</span>
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={(e) => {
                 e.preventDefault()
@@ -584,8 +691,8 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
               }}
               disabled={isLoading}
             >
-              {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-              Unpublish
+              {isLoading ? <Loader2 className="w-4 h-4 sm:mr-2 animate-spin" /> : <FileX className="w-4 h-4 sm:mr-2" />}
+              <span className="hidden sm:inline">{isLoading ? 'Unpublishing...' : 'Unpublish'}</span>
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

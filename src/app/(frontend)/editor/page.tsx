@@ -149,7 +149,7 @@ export default async function EditorDashboardPage() {
     const storageGB = (totalBytes / (1024 * 1024 * 1024)).toFixed(2)
 
   return (
-    <div className="p-8 min-h-screen bg-background">
+    <div className="p-4 md:p-8 min-h-screen bg-background">
       {/* Header */}
       <div className="mb-8">
         <PageHeader
@@ -164,7 +164,7 @@ export default async function EditorDashboardPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-8">
         {/* Pending Reviews */}
         <Card className="border-t-4 border-t-orange-500">
           <CardHeader className="pb-3">
@@ -173,15 +173,15 @@ export default async function EditorDashboardPage() {
                 <CardTitle className="text-sm font-medium text-muted-foreground mb-1">Pending Reviews</CardTitle>
                 <CardDescription>Awaiting review</CardDescription>
               </div>
-              <div className="w-12 h-12 bg-orange-500/10 rounded-full flex items-center justify-center">
-                <Clock className="w-6 h-6 text-orange-500" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-orange-500/10 rounded-full flex items-center justify-center">
+                <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-orange-500" />
               </div>
             </div>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-3xl font-bold text-foreground">{pendingPosts.totalDocs}</p>
+                <p className="text-2xl sm:text-3xl font-bold text-foreground">{pendingPosts.totalDocs}</p>
                 {newPostsToday.totalDocs > 0 && (
                   <p className="text-sm text-orange-600 dark:text-orange-400 mt-1">+{newPostsToday.totalDocs} new today</p>
                 )}
@@ -198,15 +198,15 @@ export default async function EditorDashboardPage() {
                 <CardTitle className="text-sm font-medium text-muted-foreground mb-1">Approved Today</CardTitle>
                 <CardDescription>Published posts</CardDescription>
               </div>
-              <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center">
-                <CheckCircle2 className="w-6 h-6 text-green-500" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-500/10 rounded-full flex items-center justify-center">
+                <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 text-green-500" />
               </div>
             </div>
           </CardHeader>
           <CardContent>
             <div className="flex items-end justify-between">
               <div>
-                <p className="text-4xl font-bold text-foreground">{approvedPosts.totalDocs}</p>
+                <p className="text-2xl sm:text-4xl font-bold text-foreground">{approvedPosts.totalDocs}</p>
                 {approvalChange !== 0 && (
                   <p className={`text-sm mt-1 ${approvalChange > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                     {approvalChange > 0 ? '+' : ''}{approvalChange}% from yesterday
@@ -225,15 +225,15 @@ export default async function EditorDashboardPage() {
                 <CardTitle className="text-sm font-medium text-muted-foreground mb-1">Comments Pending</CardTitle>
                 <CardDescription>Comments to moderate</CardDescription>
               </div>
-              <div className="w-12 h-12 bg-blue-500/10 rounded-full flex items-center justify-center">
-                <MessageSquare className="w-6 h-6 text-blue-500" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-500/10 rounded-full flex items-center justify-center">
+                <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" />
               </div>
             </div>
           </CardHeader>
           <CardContent>
             <div className="flex items-end justify-between">
               <div>
-                <p className="text-4xl font-bold text-foreground">{pendingComments.totalDocs}</p>
+                <p className="text-2xl sm:text-4xl font-bold text-foreground">{pendingComments.totalDocs}</p>
                 {reportedComments.totalDocs > 0 && (
                   <p className="text-sm text-red-600 dark:text-red-400 mt-1">{reportedComments.totalDocs} reported</p>
                 )}
@@ -250,15 +250,15 @@ export default async function EditorDashboardPage() {
                 <CardTitle className="text-sm font-medium text-muted-foreground mb-1">Media Uploaded</CardTitle>
                 <CardDescription>Files this week</CardDescription>
               </div>
-              <div className="w-12 h-12 bg-purple-500/10 rounded-full flex items-center justify-center">
-                <ImageIcon className="w-6 h-6 text-purple-500" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-500/10 rounded-full flex items-center justify-center">
+                <ImageIcon className="w-5 h-5 sm:w-6 sm:h-6 text-purple-500" />
               </div>
             </div>
           </CardHeader>
           <CardContent>
             <div className="flex items-end justify-between">
               <div>
-                <p className="text-4xl font-bold text-foreground">{recentMedia.totalDocs}</p>
+                <p className="text-2xl sm:text-4xl font-bold text-foreground">{recentMedia.totalDocs}</p>
                 <p className="text-sm text-muted-foreground mt-1">{storageGB}GB used</p>
               </div>
             </div>
@@ -436,57 +436,98 @@ export default async function EditorDashboardPage() {
         </CardHeader>
         <CardContent>
           {approvedPosts.docs.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="border-b">
-                  <tr className="text-left">
-                    <th className="pb-3 text-sm font-semibold text-muted-foreground">Post Title</th>
-                    <th className="pb-3 text-sm font-semibold text-muted-foreground">Category</th>
-                    <th className="pb-3 text-sm font-semibold text-muted-foreground">Author</th>
-                    <th className="pb-3 text-sm font-semibold text-muted-foreground">Date</th>
-                    <th className="pb-3 text-sm font-semibold text-muted-foreground">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y">
-                  {approvedPosts.docs.slice(0, 4).map((post) => {
-                    const author = Array.isArray(post.authors) && post.authors.length > 0 && typeof post.authors[0] === 'object'
-                      ? post.authors[0]
-                      : null
-                    const category = Array.isArray(post.categories) && post.categories.length > 0 && typeof post.categories[0] === 'object'
-                      ? post.categories[0]
-                      : null
-                    const initials = author?.name ? author.name.split(' ').map((n: string) => n[0]).join('').toUpperCase() : 'U'
-                    
-                    return (
-                      <tr key={post.id} className="hover:bg-muted/50">
-                        <td className="py-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0" role="img" aria-label="Author avatar">
-                              <span className="text-primary font-semibold text-sm">{initials}</span>
-                            </div>
-                            <span className="text-sm font-medium text-foreground">{post.title}</span>
+            <>
+              {/* Mobile card view */}
+              <div className="md:hidden divide-y">
+                {approvedPosts.docs.slice(0, 4).map((post) => {
+                  const author = Array.isArray(post.authors) && post.authors.length > 0 && typeof post.authors[0] === 'object'
+                    ? post.authors[0]
+                    : null
+                  const category = Array.isArray(post.categories) && post.categories.length > 0 && typeof post.categories[0] === 'object'
+                    ? post.categories[0]
+                    : null
+                  const initials = author?.name ? author.name.split(' ').map((n: string) => n[0]).join('').toUpperCase() : 'U'
+                  
+                  return (
+                    <div key={post.id} className="py-3 first:pt-0 last:pb-0">
+                      <div className="flex items-start gap-3">
+                        <div className="w-9 h-9 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0" role="img" aria-label="Author avatar">
+                          <span className="text-primary font-semibold text-xs">{initials}</span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-foreground line-clamp-1">{post.title}</p>
+                          <div className="flex flex-wrap items-center gap-1.5 mt-1">
+                            <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                              {category?.title || 'Uncategorized'}
+                            </Badge>
+                            <Badge className="bg-green-500/10 text-green-700 dark:text-green-400 text-[10px] px-1.5 py-0">
+                              Published
+                            </Badge>
                           </div>
-                        </td>
-                        <td className="py-4">
-                          <Badge variant="secondary">
-                            {category?.title || 'Uncategorized'}
-                          </Badge>
-                        </td>
-                        <td className="py-4 text-sm text-muted-foreground">{author?.name || 'Unknown'}</td>
-                        <td className="py-4 text-sm text-muted-foreground">
-                          {new Date(post.publishedAt || post.updatedAt).toLocaleDateString()}
-                        </td>
-                        <td className="py-4">
-                          <Badge className="bg-green-500/10 text-green-700 dark:text-green-400 hover:bg-green-500/20">
-                            Published
-                          </Badge>
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
+                          <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
+                            <span>{author?.name || 'Unknown'}</span>
+                            <span>•</span>
+                            <span>{new Date(post.publishedAt || post.updatedAt).toLocaleDateString()}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+              {/* Desktop table view */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full">
+                  <thead className="border-b">
+                    <tr className="text-left">
+                      <th className="pb-3 text-sm font-semibold text-muted-foreground">Post Title</th>
+                      <th className="pb-3 text-sm font-semibold text-muted-foreground">Category</th>
+                      <th className="pb-3 text-sm font-semibold text-muted-foreground">Author</th>
+                      <th className="pb-3 text-sm font-semibold text-muted-foreground">Date</th>
+                      <th className="pb-3 text-sm font-semibold text-muted-foreground">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y">
+                    {approvedPosts.docs.slice(0, 4).map((post) => {
+                      const author = Array.isArray(post.authors) && post.authors.length > 0 && typeof post.authors[0] === 'object'
+                        ? post.authors[0]
+                        : null
+                      const category = Array.isArray(post.categories) && post.categories.length > 0 && typeof post.categories[0] === 'object'
+                        ? post.categories[0]
+                        : null
+                      const initials = author?.name ? author.name.split(' ').map((n: string) => n[0]).join('').toUpperCase() : 'U'
+                      
+                      return (
+                        <tr key={post.id} className="hover:bg-muted/50">
+                          <td className="py-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0" role="img" aria-label="Author avatar">
+                                <span className="text-primary font-semibold text-sm">{initials}</span>
+                              </div>
+                              <span className="text-sm font-medium text-foreground">{post.title}</span>
+                            </div>
+                          </td>
+                          <td className="py-4">
+                            <Badge variant="secondary">
+                              {category?.title || 'Uncategorized'}
+                            </Badge>
+                          </td>
+                          <td className="py-4 text-sm text-muted-foreground">{author?.name || 'Unknown'}</td>
+                          <td className="py-4 text-sm text-muted-foreground">
+                            {new Date(post.publishedAt || post.updatedAt).toLocaleDateString()}
+                          </td>
+                          <td className="py-4">
+                            <Badge className="bg-green-500/10 text-green-700 dark:text-green-400 hover:bg-green-500/20">
+                              Published
+                            </Badge>
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </>
           ) : (
             <p className="text-center py-8 text-muted-foreground">No recent approvals</p>
           )}

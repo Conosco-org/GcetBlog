@@ -105,23 +105,23 @@ export default function FeedbackCenter({ feedback, stats, user: _user }: Feedbac
   })
 
   return (
-    <div className="p-8 min-h-screen">
+    <div className="p-4 md:p-8 min-h-screen">
       <div className="mb-8">
         <h1 className="text-3xl font-bold">Feedback Center</h1>
         <p className="text-muted-foreground">Communicate with editors and track feedback on your submissions</p>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-8">
         <Card className="border-red-200 dark:border-red-800 bg-red-50/50 dark:bg-red-950/20">
           <CardContent className="pt-6">
             <div className="flex items-start justify-between mb-4">
               <div>
                 <p className="text-red-600 dark:text-red-400 text-sm font-medium mb-1">Critical Issues</p>
-                <p className="text-4xl font-bold text-red-700 dark:text-red-300">{stats.critical}</p>
+                <p className="text-2xl sm:text-4xl font-bold text-red-700 dark:text-red-300">{stats.critical}</p>
               </div>
-              <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
-                <AlertCircle className="w-6 h-6 text-red-500" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
+                <AlertCircle className="w-5 h-5 sm:w-6 sm:h-6 text-red-500" />
               </div>
             </div>
           </CardContent>
@@ -132,10 +132,10 @@ export default function FeedbackCenter({ feedback, stats, user: _user }: Feedbac
             <div className="flex items-start justify-between mb-4">
               <div>
                 <p className="text-blue-600 dark:text-blue-400 text-sm font-medium mb-1">Suggestions</p>
-                <p className="text-4xl font-bold text-blue-700 dark:text-blue-300">{stats.suggestions}</p>
+                <p className="text-2xl sm:text-4xl font-bold text-blue-700 dark:text-blue-300">{stats.suggestions}</p>
               </div>
-              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
-                <HelpCircle className="w-6 h-6 text-blue-500" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+                <HelpCircle className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" />
               </div>
             </div>
           </CardContent>
@@ -146,10 +146,10 @@ export default function FeedbackCenter({ feedback, stats, user: _user }: Feedbac
             <div className="flex items-start justify-between mb-4">
               <div>
                 <p className="text-yellow-600 dark:text-yellow-400 text-sm font-medium mb-1">Praise</p>
-                <p className="text-4xl font-bold text-yellow-700 dark:text-yellow-300">{stats.praise}</p>
+                <p className="text-2xl sm:text-4xl font-bold text-yellow-700 dark:text-yellow-300">{stats.praise}</p>
               </div>
-              <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center">
-                <Star className="w-6 h-6 text-yellow-500" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center">
+                <Star className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500" />
               </div>
             </div>
           </CardContent>
@@ -160,10 +160,10 @@ export default function FeedbackCenter({ feedback, stats, user: _user }: Feedbac
             <div className="flex items-start justify-between mb-4">
               <div>
                 <p className="text-purple-600 dark:text-purple-400 text-sm font-medium mb-1">Questions</p>
-                <p className="text-4xl font-bold text-purple-700 dark:text-purple-300">{stats.questions}</p>
+                <p className="text-2xl sm:text-4xl font-bold text-purple-700 dark:text-purple-300">{stats.questions}</p>
               </div>
-              <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
-                <MessageSquare className="w-6 h-6 text-purple-500" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
+                <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6 text-purple-500" />
               </div>
             </div>
           </CardContent>
@@ -171,9 +171,9 @@ export default function FeedbackCenter({ feedback, stats, user: _user }: Feedbac
       </div>
 
       {/* Main Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Conversations List */}
-        <div className="lg:col-span-1">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
+        {/* Conversations List — hidden on mobile when a conversation is selected */}
+        <div className={`lg:col-span-1 ${selectedFeedback ? 'hidden lg:block' : ''}`}>
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -246,18 +246,27 @@ export default function FeedbackCenter({ feedback, stats, user: _user }: Feedbac
           </Card>
         </div>
 
-        {/* Conversation Detail */}
-        <div className="lg:col-span-2">
+        {/* Conversation Detail — hidden on mobile when no conversation selected */}
+        <div className={`lg:col-span-2 ${!selectedFeedback ? 'hidden lg:block' : ''}`}>
           {selectedFeedback ? (
             <Card className="h-fit">
               <CardHeader className="pb-4">
+                {/* Mobile back button */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="lg:hidden mb-2 -ml-2 w-fit"
+                  onClick={() => setSelectedFeedback(null)}
+                >
+                  ← Back to conversations
+                </Button>
                 <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <CardTitle className="flex items-center gap-2 mb-2">
+                  <div className="flex-1 min-w-0">
+                    <CardTitle className="flex items-center gap-2 mb-2 text-base sm:text-lg">
                       {getTypeIcon(selectedFeedback.type)}
-                      {selectedFeedback.title}
+                      <span className="line-clamp-2">{selectedFeedback.title}</span>
                     </CardTitle>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-sm text-muted-foreground">
                       <span>Post: {selectedFeedback.title}</span>
                       <span>•</span>
                       <span>With Editor</span>
@@ -271,9 +280,11 @@ export default function FeedbackCenter({ feedback, stats, user: _user }: Feedbac
                             variant="outline"
                             size="sm"
                             className="ml-auto"
+                            title="View Article"
+                            aria-label="View Article"
                           >
-                            <Eye className="w-4 h-4 mr-1" />
-                            View Article
+                            <Eye className="w-4 h-4 sm:mr-1" />
+                            <span className="hidden sm:inline">View Article</span>
                           </Button>
                         </a>
                       ) : null}
@@ -327,9 +338,11 @@ export default function FeedbackCenter({ feedback, stats, user: _user }: Feedbac
                     <Button 
                       onClick={handleSendMessage}
                       disabled={isLoading || !newMessage.trim()}
+                      title="Send Reply"
+                      aria-label="Send Reply"
                     >
-                      <Send className="w-4 h-4 mr-2" />
-                      Send Reply
+                      <Send className="w-4 h-4 sm:mr-2" />
+                      <span className="hidden sm:inline">Send Reply</span>
                     </Button>
                   </div>
                 </div>

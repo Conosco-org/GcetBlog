@@ -73,7 +73,7 @@ export default async function ContributorDashboardPage() {
   const approvalRate = totalReviewed > 0 ? Math.round((approvedCount.totalDocs / totalReviewed) * 100) : 0
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       <div className="mb-8">
         <PageHeader
           title={`Welcome back, ${typedUser.name || 'Contributor'}!`}
@@ -81,14 +81,14 @@ export default async function ContributorDashboardPage() {
         />
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
+      <div className="grid gap-4 md:gap-6 grid-cols-2 lg:grid-cols-4 mb-8">
         <Card className="border-blue-200 dark:border-blue-900">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Submissions</CardTitle>
             <FileText className="h-5 w-5 text-blue-600 dark:text-blue-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{totalSubmissions.totalDocs}</div>
+            <div className="text-2xl sm:text-3xl font-bold">{totalSubmissions.totalDocs}</div>
             <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
               <TrendingUp className="h-3 w-3" />
               All time submissions
@@ -102,7 +102,7 @@ export default async function ContributorDashboardPage() {
             <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{approvalRate}%</div>
+            <div className="text-2xl sm:text-3xl font-bold">{approvalRate}%</div>
             <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
               <CheckCircle className="h-3 w-3" />
               {approvedCount.totalDocs} approved / {totalReviewed} reviewed
@@ -116,7 +116,7 @@ export default async function ContributorDashboardPage() {
             <Edit className="h-5 w-5 text-orange-600 dark:text-orange-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{draftCount.totalDocs}</div>
+            <div className="text-2xl sm:text-3xl font-bold">{draftCount.totalDocs}</div>
             <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
               <Clock className="h-3 w-3" />
               Works in progress
@@ -130,7 +130,7 @@ export default async function ContributorDashboardPage() {
             <Eye className="h-5 w-5 text-purple-600 dark:text-purple-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{publishedCount.totalDocs}</div>
+            <div className="text-2xl sm:text-3xl font-bold">{publishedCount.totalDocs}</div>
             <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
               <Eye className="h-3 w-3" />
               Live on blog

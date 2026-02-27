@@ -328,21 +328,24 @@ export function CreateContentForm({ user: _user, categories: dbCategories, initi
       />
 
       {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
+      <div className="mb-6 sm:mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h1 className="text-3xl font-bold">Create New Content</h1>
-            <p className="text-muted-foreground mt-1">Share your ideas with the GCET community</p>
+            <h1 className="text-2xl sm:text-3xl font-bold">Create New Content</h1>
+            <p className="text-muted-foreground mt-1 text-sm sm:text-base">Share your ideas with the GCET community</p>
           </div>
           <div className="flex items-center gap-3">
             <Button
               type="button"
               variant="outline"
+              size="sm"
               onClick={() => setShowTemplateSelector(true)}
               className="gap-1.5"
+              title="Use Template"
+              aria-label="Use Template"
             >
               <FileStack className="w-4 h-4" />
-              Use Template
+              <span className="hidden sm:inline">Use Template</span>
             </Button>
             {saveStatus === 'saving' && (
               <div className="flex items-center gap-2 text-orange-500">

@@ -149,9 +149,8 @@ export function EditorSidebar({
 
   return (
     <>
-      {/* Sidebar - Fixed positioning */}
-      {isOpen && (
-        <aside className="w-64 border-r bg-background flex flex-col fixed left-0 top-16 bottom-0 z-30">
+      {/* Sidebar - Fixed positioning with mobile overlay support */}
+      <aside className={`w-64 border-r bg-background flex flex-col fixed left-0 top-16 bottom-0 z-30 transition-transform duration-200 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
           {/* Navigation */}
           <nav className="flex-1 p-4 overflow-y-auto">
             <ul className="space-y-1">
@@ -211,7 +210,6 @@ export function EditorSidebar({
             </p>
           </div>
         </aside>
-      )}
     </>
   )
 }

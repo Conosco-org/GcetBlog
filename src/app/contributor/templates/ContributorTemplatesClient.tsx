@@ -17,7 +17,6 @@ import {
 import {
   Search,
   FileStack,
-  PlusCircle,
   Eye,
   ArrowRight,
   TrendingUp,
@@ -28,7 +27,6 @@ import { cn } from '@/utilities/ui'
 import {
   getTemplateIcon,
   categoryColors,
-  audienceLabels,
 } from '@/components/templates/templateUtils'
 
 /* ── Types ─────────────────────────────────────────────────────── */
@@ -154,8 +152,9 @@ export function ContributorTemplatesClient({
                   <span className="text-xs text-muted-foreground">
                     Used {previewTemplate.usageCount} times
                   </span>
-                  <Button onClick={() => handleUseTemplate(previewTemplate)} className="gap-1.5 shadow-sm">
-                    Use This Template
+                  <Button onClick={() => handleUseTemplate(previewTemplate)} className="gap-1.5 shadow-sm" title="Use This Template" aria-label="Use This Template">
+                    <span className="hidden sm:inline">Use This Template</span>
+                    <span className="sm:hidden">Use</span>
                     <ArrowRight className="w-4 h-4" />
                   </Button>
                 </div>
@@ -327,22 +326,28 @@ export function ContributorTemplatesClient({
                           variant="ghost"
                           size="sm"
                           className="h-7 px-2.5 text-xs text-muted-foreground hover:text-primary gap-1"
+                          title="Preview"
+                          aria-label="Preview"
                           onClick={(e) => {
                             e.stopPropagation()
                             setPreviewTemplate(template)
                           }}
                         >
-                          <Eye className="w-3 h-3" /> Preview
+                          <Eye className="w-3 h-3" /> <span className="hidden sm:inline">Preview</span>
                         </Button>
                         <Button
                           size="sm"
                           className="h-7 px-3 text-xs gap-1 shadow-sm"
+                          title="Use Template"
+                          aria-label="Use Template"
                           onClick={(e) => {
                             e.stopPropagation()
                             handleUseTemplate(template)
                           }}
                         >
-                          Use Template <ArrowRight className="w-3 h-3" />
+                          <span className="hidden sm:inline">Use Template</span>
+                          <span className="sm:hidden">Use</span>
+                          <ArrowRight className="w-3 h-3" />
                         </Button>
                       </div>
                     </div>

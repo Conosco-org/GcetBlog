@@ -27,6 +27,7 @@ import {
   Check,
   Copy,
   Loader2,
+  X,
 } from 'lucide-react'
 
 interface MediaGridClientProps {
@@ -201,13 +202,15 @@ export function MediaGridClient({
         <Button
           onClick={() => fileInputRef.current?.click()}
           disabled={isUploading}
+          title="Upload Files"
+          aria-label="Upload Files"
         >
           {isUploading ? (
-            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            <Loader2 className="w-4 h-4 sm:mr-2 animate-spin" />
           ) : (
-            <Upload className="w-4 h-4 mr-2" />
+            <Upload className="w-4 h-4 sm:mr-2" />
           )}
-          {isUploading ? 'Uploading...' : 'Upload Files'}
+          <span className="hidden sm:inline">{isUploading ? 'Uploading...' : 'Upload Files'}</span>
         </Button>
       </div>
 
@@ -305,7 +308,7 @@ export function MediaGridClient({
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between pt-4">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs sm:text-sm text-muted-foreground">
             Page {currentPage} of {totalPages}
           </p>
           <div className="flex gap-1">
@@ -315,8 +318,8 @@ export function MediaGridClient({
               disabled={currentPage <= 1}
               onClick={() => goToPage(currentPage - 1)}
             >
-              <ChevronLeft className="h-4 w-4 mr-1" />
-              Previous
+              <ChevronLeft className="h-4 w-4 sm:mr-1" />
+              <span className="hidden sm:inline">Previous</span>
             </Button>
             <Button
               variant="outline"
@@ -324,8 +327,8 @@ export function MediaGridClient({
               disabled={currentPage >= totalPages}
               onClick={() => goToPage(currentPage + 1)}
             >
-              Next
-              <ChevronRight className="h-4 w-4 ml-1" />
+              <span className="hidden sm:inline">Next</span>
+              <ChevronRight className="h-4 w-4 sm:ml-1" />
             </Button>
           </div>
         </div>
@@ -341,19 +344,20 @@ export function MediaGridClient({
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteTarget(null)} disabled={isDeleting}>
-              Cancel
+            <Button variant="outline" onClick={() => setDeleteTarget(null)} disabled={isDeleting} title="Cancel" aria-label="Cancel">
+              <X className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Cancel</span>
             </Button>
-            <Button variant="destructive" onClick={handleDelete} disabled={isDeleting}>
+            <Button variant="destructive" onClick={handleDelete} disabled={isDeleting} title="Delete" aria-label="Delete">
               {isDeleting ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Deleting...
+                  <Loader2 className="w-4 h-4 sm:mr-2 animate-spin" />
+                  <span className="hidden sm:inline">Deleting...</span>
                 </>
               ) : (
                 <>
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Delete
+                  <Trash2 className="w-4 h-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Delete</span>
                 </>
               )}
             </Button>
@@ -386,19 +390,20 @@ export function MediaGridClient({
             />
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setEditTarget(null)} disabled={isEditing}>
-              Cancel
+            <Button variant="outline" onClick={() => setEditTarget(null)} disabled={isEditing} title="Cancel" aria-label="Cancel">
+              <X className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Cancel</span>
             </Button>
-            <Button onClick={handleEditAlt} disabled={isEditing}>
+            <Button onClick={handleEditAlt} disabled={isEditing} title="Save" aria-label="Save">
               {isEditing ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Saving...
+                  <Loader2 className="w-4 h-4 sm:mr-2 animate-spin" />
+                  <span className="hidden sm:inline">Saving...</span>
                 </>
               ) : (
                 <>
-                  <Check className="w-4 h-4 mr-2" />
-                  Save
+                  <Check className="w-4 h-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Save</span>
                 </>
               )}
             </Button>
