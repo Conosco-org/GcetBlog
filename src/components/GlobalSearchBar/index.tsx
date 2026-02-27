@@ -130,9 +130,6 @@ export function GlobalSearchBar({ categories = [], className, variant = 'header'
         >
           <Search className="h-4 w-4" />
           <span className="hidden sm:inline">Search...</span>
-          <kbd className="hidden sm:inline-flex h-5 items-center gap-0.5 rounded border bg-muted px-1.5 text-[10px] font-medium text-muted-foreground">
-            ⌘K
-          </kbd>
         </button>
       )
     }
