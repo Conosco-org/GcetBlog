@@ -5,15 +5,11 @@ import {
   InlineToolbarFeature,
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
-import path from 'path'
-import { fileURLToPath } from 'url'
 
 import { anyone } from '../access/anyone'
 import { editorOnly } from '../access/editorOnly'
 import { useCloudinaryFallback } from './Media/hooks/useCloudinaryFallback'
-
-const filename = fileURLToPath(import.meta.url)
-const dirname = path.dirname(filename)
+import { uploadToCloudinary } from './Media/hooks/uploadToCloudinary'
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -27,6 +23,7 @@ export const Media: CollectionConfig = {
     description: '📸 Recommended sizes: Hero 1920×1080 (16:9), Cards 900×600 (3:2), OG 1200×630. Optimize images to <500KB. See IMAGE_GUIDELINES.md for details.',
   },
   hooks: {
+    beforeChange: [uploadToCloudinary],
     afterRead: [useCloudinaryFallback],
   },
   fields: [
@@ -53,12 +50,9 @@ export const Media: CollectionConfig = {
     },
   ],
   upload: {
-    // Note: disableLocalStorage requires a storage adapter plugin
-    // Using default storage with afterRead hook for Cloudinary fallback
-    staticDir: path.resolve(dirname, '../../public/media'),
+    disableLocalStorage: true,
     adminThumbnail: 'thumbnail',
     focalPoint: true,
-    // disableLocalStorage: true, // Commented out - requires storage adapter plugin
     imageSizes: [
       {
         name: 'thumbnail',

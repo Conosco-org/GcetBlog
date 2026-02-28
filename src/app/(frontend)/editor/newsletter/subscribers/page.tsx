@@ -9,13 +9,13 @@ import configPromise from '@payload-config'
 import type { Where } from 'payload'
 
 import { PageHeader } from '@/components/base/PageHeader'
-import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/base/EmptyState'
 import { SearchInput } from '@/components/base/SearchInput'
 import { FilterBar } from '@/components/base/FilterBar'
 import { Card } from '@/components/ui/card'
-import { Users, Download, Upload } from 'lucide-react'
+import { Users } from 'lucide-react'
 import { SubscribersTable } from './SubscribersTable'
+import { SubscriberActions } from './SubscriberActions'
 
 export const dynamic = 'force-dynamic'
 
@@ -89,16 +89,10 @@ export default async function SubscribersPage({ searchParams }: PageProps) {
         title="Subscribers"
         description={`Manage your ${totalActive.totalDocs.toLocaleString()} active subscribers`}
         action={
-          <div className="flex gap-3">
-            <Button variant="outline">
-              <Download className="w-4 h-4 mr-2" />
-              Export CSV
-            </Button>
-            <Button variant="outline">
-              <Upload className="w-4 h-4 mr-2" />
-              Import CSV
-            </Button>
-          </div>
+          <SubscriberActions
+            statusFilter={statusFilter}
+            frequencyFilter={frequencyFilter}
+          />
         }
       />
 
