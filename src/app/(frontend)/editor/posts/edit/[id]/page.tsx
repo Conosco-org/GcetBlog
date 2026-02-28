@@ -3,6 +3,7 @@ import configPromise from '@payload-config'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
 import { PostForm } from '../../create/PostForm'
+import { lexicalToHtml } from '@/components/RichTextEditor'
 import type { User } from '@/payload-types'
 
 export default async function EditPostPage({ params }: { params: Promise<{ id: string }> }) {
@@ -41,34 +42,27 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
     ? post.categories.map(cat => typeof cat === 'string' ? cat : cat.id)
     : []
 
-  // Convert Lexical content to plain text for editing
-  let plainTextContent = ''
-  if (post.content && typeof post.content === 'object' && 'root' in post.content) {
-    const root = post.content.root as Record<string, unknown>
-    if (root.children && Array.isArray(root.children)) {
-      plainTextContent = root.children
-        .map((child: Record<string, unknown>) => {
-          if (child.children && Array.isArray(child.children)) {
-            return child.children
-              .map((textNode: Record<string, unknown>) => (textNode.text as string) || '')
-              .join('')
-          }
-          return ''
-        })
-        .filter((text: string) => text.trim())
-        .join('\n\n')
-    }
-  }
+  // Convert Lexical content to HTML for the Tiptap editor
+  const htmlContent = lexicalToHtml(post.content)
+
+  // Extract hero image URL from populated object
+  const heroImageObj = typeof post.heroImage === 'object' && post.heroImage ? post.heroImage : null
+  const heroImageUrl = heroImageObj
+    ? (heroImageObj as unknown as { cloudinaryUrl?: string; url?: string }).cloudinaryUrl
+      || (heroImageObj as unknown as { url?: string }).url
+      || undefined
+    : undefined
 
   const initialData = {
     title: post.title,
-    content: plainTextContent,
+    content: htmlContent,
     categories: categoryIds,
     meta: post.meta ? {
       title: typeof post.meta === 'object' && 'title' in post.meta && post.meta.title ? String(post.meta.title) : undefined,
       description: typeof post.meta === 'object' && 'description' in post.meta && post.meta.description ? String(post.meta.description) : undefined,
     } : undefined,
-    heroImage: typeof post.heroImage === 'object' && post.heroImage ? post.heroImage.id : (post.heroImage || undefined),
+    heroImage: heroImageObj ? heroImageObj.id : (typeof post.heroImage === 'string' ? post.heroImage : undefined),
+    heroImageUrl,
   }
 
   return (

@@ -31,6 +31,7 @@ interface PostFormProps {
       description?: string
     }
     heroImage?: string
+    heroImageUrl?: string
   }
   /** Pre-loaded template data (from URL param ?template=<id>) */
   initialTemplate?: {
@@ -57,7 +58,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
   const [featuredFrom, setFeaturedFrom] = useState(initialData?.featuredFrom || '')
   const [featuredUntil, setFeaturedUntil] = useState(initialData?.featuredUntil || '')
   const [heroImageId, setHeroImageId] = useState<string | undefined>(initialData?.heroImage)
-  const [heroImagePreview, setHeroImagePreview] = useState<string | undefined>(undefined)
+  const [heroImagePreview, setHeroImagePreview] = useState<string | undefined>(initialData?.heroImageUrl || undefined)
   const [isUploadingImage, setIsUploadingImage] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showTemplateSelector, setShowTemplateSelector] = useState(false)
