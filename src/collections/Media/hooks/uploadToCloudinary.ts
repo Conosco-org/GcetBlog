@@ -1,4 +1,4 @@
-import type { CollectionAfterChangeHook } from 'payload'
+import type { CollectionBeforeChangeHook } from 'payload'
 import { v2 as cloudinary } from 'cloudinary'
 
 cloudinary.config({
@@ -17,12 +17,12 @@ function uploadBuffer(buffer: Buffer, options: Record<string, unknown>): Promise
   })
 }
 
-export const uploadToCloudinary: CollectionAfterChangeHook = async ({ doc, req, operation }) => {
-  if (operation !== 'create') return doc
+export const uploadToCloudinary: CollectionBeforeChangeHook = async ({ data, req, operation }) => {
+  if (operation !== 'create') return data
 
   // Get file from the request (Payload stores it here during upload operations)
   const file = (req as any).file as { data?: Buffer; tempFilePath?: string; mimetype?: string } | undefined
-  if (!file?.data) return doc
+  if (!file?.data) return data
 
   try {
     const buffer = Buffer.isBuffer(file.data) ? file.data : Buffer.from(file.data)
@@ -36,7 +36,8 @@ export const uploadToCloudinary: CollectionAfterChangeHook = async ({ doc, req, 
         : 'raw'
 
     // Use the filename (without extension) as public_id for stable URLs
-    const publicId = (doc.filename as string | undefined)?.replace(/\.[^/.]+$/, '') ?? doc.id
+    // data.filename is set by Payload's file processing before beforeChange runs
+    const publicId = (data.filename as string | undefined)?.replace(/\.[^/.]+$/, '') ?? String(Date.now())
 
     const result = await uploadBuffer(buffer, {
       folder: 'gcet-blog',
@@ -45,17 +46,10 @@ export const uploadToCloudinary: CollectionAfterChangeHook = async ({ doc, req, 
       overwrite: true,
     })
 
-    // Write cloudinaryUrl back to the document
-    await req.payload.update({
-      collection: 'media',
-      id: doc.id,
-      data: { cloudinaryUrl: result.secure_url },
-      overrideAccess: true,
-    })
-
-    return { ...doc, cloudinaryUrl: result.secure_url }
+    // Return merged data — cloudinaryUrl is saved in the same DB write, no secondary update needed
+    return { ...data, cloudinaryUrl: result.secure_url }
   } catch (err) {
     req.payload.logger.error({ err }, 'Cloudinary upload failed')
-    return doc
+    return data
   }
 }

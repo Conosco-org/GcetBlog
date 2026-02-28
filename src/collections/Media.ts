@@ -23,7 +23,7 @@ export const Media: CollectionConfig = {
     description: '📸 Recommended sizes: Hero 1920×1080 (16:9), Cards 900×600 (3:2), OG 1200×630. Optimize images to <500KB. See IMAGE_GUIDELINES.md for details.',
   },
   hooks: {
-    afterChange: [uploadToCloudinary],
+    beforeChange: [uploadToCloudinary],
     afterRead: [useCloudinaryFallback],
   },
   fields: [
