@@ -85,6 +85,38 @@ function blockNodeToHtml(node: LexicalNode): string {
     case 'horizontalrule':
       return '<hr>'
 
+    case 'inlineImage': {
+      const src = (node as { src?: string }).src ?? ''
+      const alt = (node as { alt?: string }).alt ?? ''
+      return `<p><img src="${escapeAttr(src)}" alt="${escapeAttr(alt)}" class="rounded-lg max-w-full h-auto my-2" /></p>`
+    }
+
+    case 'block': {
+      const fields = node.fields || {}
+      const blockType = fields.blockType as string
+
+      if (blockType === 'youtubeEmbed') {
+        const videoUrl = fields.videoUrl as string || ''
+        const videoIdMatch = videoUrl.match(/[?&]v=([^&]+)/)
+        const videoId = videoIdMatch?.[1] || videoUrl.match(/youtu\.be\/([^?#]+)/)?.[1] || ''
+        if (videoId) {
+          return `<div data-youtube-embed="" data-youtube-id="${escapeAttr(videoId)}" src="${escapeAttr(videoUrl)}" class="youtube-embed my-8"><div class="relative aspect-video w-full overflow-hidden rounded-lg border bg-card"><iframe src="https://www.youtube-nocookie.com/embed/${escapeAttr(videoId)}" frameborder="0" allowfullscreen="true" class="absolute inset-0 h-full w-full"></iframe></div></div>`
+        }
+        return ''
+      }
+
+      if (blockType === 'instagramEmbed') {
+        const postUrl = fields.postUrl as string || ''
+        if (postUrl) {
+          return `<div data-instagram-embed="" data-instagram-url="${escapeAttr(postUrl)}" class="instagram-embed-container my-8"><p>📸 Instagram: ${escapeHtml(postUrl)}</p></div>`
+        }
+        return ''
+      }
+
+      // Other block types – skip (banner, code, media, cta handled by Payload admin)
+      return ''
+    }
+
     default:
       // Unknown block type – render as paragraph
       return childrenHtml ? `<p>${childrenHtml}</p>` : ''

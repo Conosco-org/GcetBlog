@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useToast } from '@/hooks/use-toast'
+import { uploadToCloudinaryDirect } from '@/utilities/uploadToCloudinaryDirect'
 import {
   User as UserIcon,
   Mail,
@@ -220,30 +221,14 @@ export default function ProfilePage() {
 
     setUploadingAvatar(true)
     try {
-      // Upload to media collection
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('alt', `${user.name}'s avatar`)
-
-      const uploadRes = await fetch('/api/media', {
-        method: 'POST',
-        credentials: 'include',
-        body: formData,
-      })
-
-      if (!uploadRes.ok) {
-        toast({ title: 'Error', description: 'Failed to upload image.', variant: 'destructive' })
-        return
-      }
-
-      const uploaded = await uploadRes.json()
+      const uploaded = await uploadToCloudinaryDirect(file, `${user.name}'s avatar`)
 
       // Update user avatar field
       const res = await fetch(`/api/users/${user.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ avatar: uploaded.doc.id }),
+        body: JSON.stringify({ avatar: uploaded.id }),
       })
 
       if (res.ok) {

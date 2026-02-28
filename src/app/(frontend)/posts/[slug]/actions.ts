@@ -10,12 +10,30 @@ export async function submitComment(formData: FormData) {
 
   const postId = formData.get('postId') as string
   const content = formData.get('content') as string
-  const authorName = formData.get('authorName') as string
-  const authorEmail = formData.get('authorEmail') as string
   const parentId = (formData.get('parentId') as string) || null
 
-  if (!postId || !content || !authorName || !authorEmail) {
-    return { error: 'All fields are required' }
+  if (!postId || !content) {
+    return { error: 'Content is required' }
+  }
+
+  // Check if user is authenticated
+  let authenticatedUser = null
+  try {
+    const result = await getMeUser()
+    authenticatedUser = result.user || null
+  } catch {
+    // not logged in
+  }
+
+  // For anonymous users, require name + email from form
+  let authorName: string | undefined
+  let authorEmail: string | undefined
+  if (!authenticatedUser) {
+    authorName = (formData.get('authorName') as string) || ''
+    authorEmail = (formData.get('authorEmail') as string) || ''
+    if (!authorName || !authorEmail) {
+      return { error: 'Name and email are required' }
+    }
   }
 
   try {
@@ -32,16 +50,22 @@ export async function submitComment(formData: FormData) {
     // Create the comment
     await payload.create({
       collection: 'comments',
-      data: {
-        post: postId,
-        content,
-        authorName,
-        authorEmail,
-        status: 'pending', // All comments start as pending
-        ipAddress: 'server',
-        userAgent: 'server',
-        ...(parentId ? { parent: parentId } : {}),
-      },
+      data: authenticatedUser
+        ? {
+            post: postId,
+            content,
+            author: authenticatedUser.id,
+            status: 'pending',
+            ...(parentId ? { parent: parentId } : {}),
+          }
+        : {
+            post: postId,
+            content,
+            authorName,
+            authorEmail,
+            status: 'pending',
+            ...(parentId ? { parent: parentId } : {}),
+          },
     })
 
     revalidatePath(`/posts/${post.slug}`)

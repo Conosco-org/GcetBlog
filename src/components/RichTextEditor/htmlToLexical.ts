@@ -108,12 +108,33 @@ interface LexicalHorizontalRuleNode {
   version: 1
 }
 
+interface LexicalInlineImageNode {
+  type: 'inlineImage'
+  version: 1
+  src: string
+  alt: string
+}
+
+interface LexicalPayloadBlockNode {
+  type: 'block'
+  version: 2
+  format: ''
+  fields: {
+    id: string
+    blockType: string
+    blockName: string
+    [key: string]: unknown
+  }
+}
+
 type LexicalBlockNode =
   | LexicalParagraphNode
   | LexicalHeadingNode
   | LexicalListNode
   | LexicalQuoteNode
   | LexicalHorizontalRuleNode
+  | LexicalInlineImageNode
+  | LexicalPayloadBlockNode
 
 interface LexicalRootNode {
   type: 'root'
@@ -135,6 +156,14 @@ const FORMAT_ITALIC = 2
 const FORMAT_STRIKETHROUGH = 4
 const FORMAT_UNDERLINE = 8
 const FORMAT_CODE = 16
+
+// ── Block ID generator ──────────────────────────────────────────
+
+let _blockIdCounter = 0
+function generateBlockId(): string {
+  _blockIdCounter++
+  return `tiptap_${Date.now().toString(36)}_${_blockIdCounter}`
+}
 
 // ── DOM parser ──────────────────────────────────────────────────
 
@@ -255,14 +284,21 @@ function convertElement(el: Element): LexicalBlockNode[] {
     return blocks
   }
 
-  // Paragraph
+  // Paragraph — check if it contains only an image first
   if (tag === 'p') {
+    const imgs = el.querySelectorAll('img')
+    if (imgs.length > 0 && !el.textContent?.trim()) {
+      imgs.forEach((img) => {
+        const src = img.getAttribute('src') || ''
+        const alt = img.getAttribute('alt') || ''
+        if (src) blocks.push({ type: 'inlineImage', version: 1, src, alt })
+      })
+      return blocks
+    }
     const children = extractInlineNodes(el)
     blocks.push(makeParagraph(children.length ? children : [emptyText()]))
     return blocks
   }
-
-  // Lists
   if (tag === 'ul' || tag === 'ol') {
     const items: LexicalListItemNode[] = []
     let idx = 1
@@ -345,44 +381,54 @@ function convertElement(el: Element): LexicalBlockNode[] {
     return blocks
   }
 
-  // YouTube embed
-  if (tag === 'div' && el.hasAttribute('data-youtube-embed')) {
-    const videoId = el.getAttribute('data-youtube-id') || ''
-    if (videoId) {
-      blocks.push(
-        makeParagraph([
-          {
-            type: 'text',
-            text: `[YouTube: https://www.youtube.com/watch?v=${videoId}]`,
-            detail: 0,
-            format: 0,
-            mode: 'normal',
-            style: '',
-            version: 1,
-          },
-        ])
-      )
+  // Inline image
+  if (tag === 'img') {
+    const src = el.getAttribute('src') || ''
+    const alt = el.getAttribute('alt') || ''
+    if (src) {
+      blocks.push({ type: 'inlineImage', version: 1, src, alt })
     }
     return blocks
   }
 
-  // Instagram embed
+  // YouTube embed → Payload block node
+  if (tag === 'div' && el.hasAttribute('data-youtube-embed')) {
+    const videoId = el.getAttribute('data-youtube-id') || ''
+    const src = el.getAttribute('src') || ''
+    const videoUrl = videoId
+      ? `https://www.youtube.com/watch?v=${videoId}`
+      : src
+    if (videoUrl) {
+      blocks.push({
+        type: 'block',
+        version: 2,
+        format: '',
+        fields: {
+          id: generateBlockId(),
+          blockType: 'youtubeEmbed',
+          blockName: '',
+          videoUrl,
+        },
+      })
+    }
+    return blocks
+  }
+
+  // Instagram embed → Payload block node
   if (tag === 'div' && el.hasAttribute('data-instagram-embed')) {
     const url = el.getAttribute('data-instagram-url') || ''
     if (url) {
-      blocks.push(
-        makeParagraph([
-          {
-            type: 'text',
-            text: `[Instagram: ${url}]`,
-            detail: 0,
-            format: 0,
-            mode: 'normal',
-            style: '',
-            version: 1,
-          },
-        ])
-      )
+      blocks.push({
+        type: 'block',
+        version: 2,
+        format: '',
+        fields: {
+          id: generateBlockId(),
+          blockType: 'instagramEmbed',
+          blockName: '',
+          postUrl: url,
+        },
+      })
     }
     return blocks
   }

@@ -3,24 +3,7 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import { PostForm } from '../../create/PostForm'
-
-// Helper to extract plain text from Lexical content
-function lexicalToPlainText(content: unknown): string {
-  if (!content || typeof content !== 'object' || !('root' in (content as Record<string, unknown>))) {
-    return typeof content === 'string' ? content : ''
-  }
-  const root = (content as { root: { children?: Array<{ children?: Array<{ text?: string }> }> } }).root
-  if (!root.children || !Array.isArray(root.children)) return ''
-  return root.children
-    .map((child) => {
-      if (child.children && Array.isArray(child.children)) {
-        return child.children.map((textNode) => textNode.text || '').join('')
-      }
-      return ''
-    })
-    .filter((text: string) => text.trim())
-    .join('\n\n')
-}
+import { lexicalToHtml } from '@/components/RichTextEditor'
 
 export default async function EditPostPage({ params }: { params: Promise<{ id: string }> }) {
   const payload = await getPayload({ config: configPromise })
@@ -63,8 +46,16 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
       ? post.categories.map(cat => typeof cat === 'object' ? cat.id : cat)
       : []
 
-    // Convert Lexical content to plain text for editing
-    const plainTextContent = lexicalToPlainText(post.content)
+    // Convert Lexical content to HTML for the Tiptap editor
+    const htmlContent = lexicalToHtml(post.content)
+
+    // Extract hero image URL from populated object
+    const heroImageObj = typeof post.heroImage === 'object' && post.heroImage ? post.heroImage : null
+    const heroImageUrl = heroImageObj
+      ? (heroImageObj as unknown as { cloudinaryUrl?: string; url?: string }).cloudinaryUrl
+        || (heroImageObj as unknown as { url?: string }).url
+        || undefined
+      : undefined
 
     return (
       <div className="min-h-screen">
@@ -81,13 +72,14 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
             isEdit={true}
             initialData={{
               title: post.title,
-              content: plainTextContent,
+              content: htmlContent,
               categories: categoryIds,
               meta: post.meta ? {
                 title: typeof post.meta === 'object' && 'title' in post.meta && post.meta.title ? String(post.meta.title) : undefined,
                 description: typeof post.meta === 'object' && 'description' in post.meta && post.meta.description ? String(post.meta.description) : undefined,
               } : undefined,
-              heroImage: typeof post.heroImage === 'object' && post.heroImage ? post.heroImage.id : (typeof post.heroImage === 'string' ? post.heroImage : undefined),
+              heroImage: heroImageObj ? heroImageObj.id : (typeof post.heroImage === 'string' ? post.heroImage : undefined),
+              heroImageUrl,
             }}
           />
         </div>
