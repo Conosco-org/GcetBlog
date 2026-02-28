@@ -131,7 +131,9 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
     const embed = extractEmbedFromParagraph(props.node)
     if (embed) return embed
     // Delegate to Payload's default paragraph converter for normal paragraphs
-    return defaultConverters.paragraph(props)
+    const paraFn = defaultConverters.paragraph
+    if (typeof paraFn === 'function') return paraFn(props)
+    return null
   },
   blocks: {
     banner: ({ node }) => <BannerBlock className="col-start-2 mb-4" {...node.fields} />,
