@@ -1,4 +1,4 @@
-import { getPayload } from 'payload'
+﻿import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
@@ -63,7 +63,7 @@ export default async function CreateContentPage({
         })
       }
     } catch {
-      // Template not found — proceed without it
+      // Template not found - proceed without it
     }
   }
 

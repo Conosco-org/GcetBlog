@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation'
+﻿import { redirect } from 'next/navigation'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
@@ -61,7 +61,7 @@ export default async function CreatePostPage({
         }).catch(() => { /* non-critical */ })
       }
     } catch {
-      // Template not found — proceed without it
+      // Template not found - proceed without it
     }
   }
 

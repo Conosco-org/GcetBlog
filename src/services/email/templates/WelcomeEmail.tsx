@@ -1,5 +1,5 @@
-/**
- * Welcome Email — Sent on new subscription for double opt-in confirmation.
+﻿/**
+ * Welcome Email - Sent on new subscription for double opt-in confirmation.
  */
 
 import { Button, Heading, Section, Text } from '@react-email/components'
@@ -61,7 +61,7 @@ export function WelcomeEmail({
         <a href={preferencesUrl} style={linkStyle}>
           manage your preferences
         </a>{' '}
-        at any time — choose your categories and digest frequency.
+        at any time - choose your categories and digest frequency.
       </Text>
 
       <Text style={smallText}>

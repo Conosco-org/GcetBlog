@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Newsletter Digest Template
  *
  * Renders a collection of posts as a branded digest email.
@@ -56,7 +56,7 @@ export function NewsletterDigest({
 
   return (
     <BaseLayout
-      preview={`Your ${label} Digest — ${posts.length} new post${posts.length !== 1 ? 's' : ''}`}
+      preview={`Your ${label} Digest - ${posts.length} new post${posts.length !== 1 ? 's' : ''}`}
       unsubscribeUrl={unsubscribeUrl}
       preferencesUrl={preferencesUrl}
       baseUrl={baseUrl}

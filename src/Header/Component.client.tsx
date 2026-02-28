@@ -126,11 +126,11 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data: _data, categor
         </div>
       </header>
 
-      {/* Mobile Menu — slide-down panel */}
+      {/* Mobile Menu - slide-down panel */}
       {mobileMenuOpen && (
         <div className="md:hidden fixed inset-0 top-16 z-50 bg-background overflow-y-auto">
           <div className="p-4 space-y-3">
-            {/* Mobile Search — inline, no overlay */}
+            {/* Mobile Search - inline, no overlay */}
             <form onSubmit={handleMobileSearch} className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input

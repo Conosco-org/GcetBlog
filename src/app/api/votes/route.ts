@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 
 /**
- * POST /api/votes — Create or update a vote
+ * POST /api/votes - Create or update a vote
  * Body: { postId: string, value: 1 | -1 }
  */
 export async function POST(request: NextRequest) {
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
       const existingVote = existing.docs[0]!
       
       if ((existingVote.value as number) === value) {
-        // Same vote — remove it (toggle off)
+        // Same vote - remove it (toggle off)
         await payload.delete({
           collection: 'votes',
           id: existingVote.id,
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
         action = 'removed'
         vote = null
       } else {
-        // Different vote — update it
+        // Different vote - update it
         vote = await payload.update({
           collection: 'votes',
           id: existingVote.id,

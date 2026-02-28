@@ -1,5 +1,5 @@
-/**
- * Base Layout — Shared wrapper for all GCET Blog newsletter emails.
+﻿/**
+ * Base Layout - Shared wrapper for all GCET Blog newsletter emails.
  *
  * Responsive (600px max), CAN-SPAM compliant footer,
  * consistent branding across all email types.
@@ -64,7 +64,7 @@ export function BaseLayout({
 
           <Hr style={divider} />
 
-          {/* Footer — CAN-SPAM Compliant */}
+          {/* Footer - CAN-SPAM Compliant */}
           <Section style={footer}>
             <Text style={footerText}>
               You&apos;re receiving this because you subscribed to the GCET Blog newsletter.

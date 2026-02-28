@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Newsletter Click Tracking Endpoint
  *
  * GET /api/newsletter/track/click?nid={newsletterId}&sid={subscriberId}&url={encodedUrl}
@@ -24,12 +24,12 @@ export async function GET(request: NextRequest) {
     )
   }
 
-  // Record the click asynchronously — don't delay the redirect
+  // Record the click asynchronously - don't delay the redirect
   if (newsletterId && subscriberId) {
     try {
       const payload = await getPayload({ config: configPromise })
 
-      // Record click event (we DO allow multiple clicks — they clicked different links)
+      // Record click event (we DO allow multiple clicks - they clicked different links)
       await payload.create({
         collection: 'newsletter-events',
         data: {
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
         },
       })
     } catch (err) {
-      // Silently fail — always redirect regardless
+      // Silently fail - always redirect regardless
       console.error('[Newsletter Track Click] Error:', err)
     }
   }

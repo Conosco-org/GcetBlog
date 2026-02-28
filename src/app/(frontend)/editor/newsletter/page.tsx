@@ -1,5 +1,5 @@
-/**
- * Newsletter Dashboard — Editor View
+﻿/**
+ * Newsletter Dashboard - Editor View
  *
  * Shows campaign overview, stats, and recent newsletters.
  * Editors can create, manage, and send newsletters.

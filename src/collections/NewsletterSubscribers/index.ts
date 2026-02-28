@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+﻿import type { CollectionConfig } from 'payload'
 import { v4 as uuidv4 } from 'uuid'
 import { editorOnly } from '../../access/editorOnly'
 import { anyone } from '../../access/anyone'
@@ -95,7 +95,7 @@ export const NewsletterSubscribers: CollectionConfig = {
       relationTo: 'categories',
       hasMany: true,
       admin: {
-        description: 'Content preferences — only receive digests about these categories',
+        description: 'Content preferences - only receive digests about these categories',
       },
     },
     {

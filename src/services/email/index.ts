@@ -1,5 +1,5 @@
-/**
- * Email Service — Singleton Entry Point
+﻿/**
+ * Email Service - Singleton Entry Point
  *
  * Usage:
  *   import { getEmailService } from '@/services/email'
@@ -66,7 +66,7 @@ export function getEmailService(): EmailService {
 }
 
 /**
- * Reset the singleton — useful for testing or when env vars change at runtime.
+ * Reset the singleton - useful for testing or when env vars change at runtime.
  */
 export function resetEmailService(): void {
   _service = null

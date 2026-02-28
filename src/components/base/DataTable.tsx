@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import {
@@ -52,7 +52,7 @@ interface DataTableProps<T> {
   className?: string
   /** Unique key extractor for rows */
   getRowKey?: (item: T, index: number) => string
-  /** Optional mobile card renderer — shown on small screens instead of the table */
+  /** Optional mobile card renderer - shown on small screens instead of the table */
   mobileRender?: (item: T, index: number) => React.ReactNode
 }
 
@@ -99,7 +99,7 @@ export function DataTable<T>({
 
   return (
     <div className={cn('space-y-4', className)}>
-      {/* Mobile card view — shown when mobileRender is provided */}
+      {/* Mobile card view - shown when mobileRender is provided */}
       {mobileRender && (
         <div className="md:hidden space-y-3">
           {isLoading ? (

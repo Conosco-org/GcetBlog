@@ -1,7 +1,7 @@
-/**
+﻿/**
  * SMTP Email Provider
  *
- * Uses nodemailer — works with ANY SMTP endpoint:
+ * Uses nodemailer - works with ANY SMTP endpoint:
  * Gmail, Outlook, AWS SES, SendGrid SMTP, Mailgun, self-hosted, etc.
  */
 

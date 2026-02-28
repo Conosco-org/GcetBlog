@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Converts Tiptap HTML output to Payload CMS Lexical JSON format.
  *
  * Supported mappings:
@@ -284,7 +284,7 @@ function convertElement(el: Element): LexicalBlockNode[] {
     return blocks
   }
 
-  // Paragraph — check if it contains only an image first
+  // Paragraph - check if it contains only an image first
   if (tag === 'p') {
     const imgs = el.querySelectorAll('img')
     if (imgs.length > 0 && !el.textContent?.trim()) {

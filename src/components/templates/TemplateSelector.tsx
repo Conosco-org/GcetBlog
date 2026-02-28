@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, useCallback } from 'react'
 import {
@@ -28,7 +28,7 @@ const CATEGORIES = [
 interface TemplateSelectorProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  /** 'editor' or 'contributor' — filters audience accordingly */
+  /** 'editor' or 'contributor' - filters audience accordingly */
   userRole: 'editor' | 'contributor'
   /** Optional: pre-filter by content type (used in contributor flow) */
   contentType?: string
@@ -143,7 +143,7 @@ export function TemplateSelector({
         }),
       })
     } catch {
-      // Non-critical — don't block the user
+      // Non-critical - don't block the user
     }
 
     onSelect(template)

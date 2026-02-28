@@ -1,5 +1,5 @@
-/**
- * Console Email Provider — Development Only
+﻿/**
+ * Console Email Provider - Development Only
  *
  * Logs emails to stdout instead of sending them.
  * Zero external dependencies. Use with EMAIL_PROVIDER=console.
@@ -35,7 +35,7 @@ export class ConsoleProvider implements EmailProvider {
     const id = `console-${Date.now()}-${counter}`
 
     console.log('\n' + '='.repeat(60))
-    console.log('📧  EMAIL (console provider — not actually sent)')
+    console.log('📧  EMAIL (console provider - not actually sent)')
     console.log('='.repeat(60))
     console.log(`  ID:      ${id}`)
     console.log(`  To:      ${recipientList(message.to)}`)

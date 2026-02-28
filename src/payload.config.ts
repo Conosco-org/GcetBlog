@@ -50,7 +50,7 @@ export default buildConfig({
         {
           rel: 'icon',
           type: 'image/png',
-          url: 'https://res.cloudinary.com/dqpvhbkdd/image/upload/b_white,c_pad,w_512,h_512/v1761577830/Gcet_Logo_i9fkbt.png',
+          url: '/gcet-logo.png',
         },
       ],
     },

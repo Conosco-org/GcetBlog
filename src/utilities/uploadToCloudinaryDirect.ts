@@ -1,8 +1,8 @@
-/**
+﻿/**
  * Uploads a file directly from the browser to Cloudinary,
  * then registers a media document in Payload via a tiny JSON request.
  *
- * This completely bypasses Vercel's 4.5 MB serverless payload limit —
+ * This completely bypasses Vercel's 4.5 MB serverless payload limit -
  * files go  browser → Cloudinary  and only the resulting URL travels
  * through the Next.js API route.
  */

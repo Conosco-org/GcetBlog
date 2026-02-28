@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Newsletter Server Actions
  *
  * All newsletter-related server actions for editors.
@@ -181,7 +181,7 @@ export async function sendTestNewsletter(
     })) as any
 
     for (const email of testRecipients) {
-      // Simplified test send — just render and send without full tracking
+      // Simplified test send - just render and send without full tracking
       await emailService.send({
         to: email,
         subject: `[TEST] ${newsletter.subject}`,

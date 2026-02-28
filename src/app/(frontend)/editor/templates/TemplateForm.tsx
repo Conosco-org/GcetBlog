@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useRef, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
@@ -412,7 +412,7 @@ export function TemplateForm({ initialData }: TemplateFormProps) {
         ) : (
           /* ── Edit mode ─────────────────────────────────────── */
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
-            {/* Main column — editor */}
+            {/* Main column - editor */}
             <div className="space-y-4">
               {/* Name + description card */}
               <Card>
@@ -566,7 +566,7 @@ export function TemplateForm({ initialData }: TemplateFormProps) {
                     <Input
                       value={suggestedTitle}
                       onChange={(e) => setSuggestedTitle(e.target.value)}
-                      placeholder="e.g. [Event Name] — Highlights"
+                      placeholder="e.g. [Event Name] - Highlights"
                       className="h-9 text-sm"
                     />
                     <p className="text-[10px] text-muted-foreground leading-snug">

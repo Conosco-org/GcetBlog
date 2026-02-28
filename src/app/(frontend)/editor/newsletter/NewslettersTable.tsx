@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 /**
  * Newsletters Table Component
@@ -78,7 +78,7 @@ export function NewslettersTable({
 
                 {/* Recipients */}
                 <TableCell>
-                  {newsletter.stats?.totalRecipients?.toLocaleString() ?? '—'}
+                  {newsletter.stats?.totalRecipients?.toLocaleString() ?? '-'}
                 </TableCell>
 
                 {/* Open Rate */}
@@ -86,7 +86,7 @@ export function NewslettersTable({
                   {newsletter.stats?.totalRecipients &&
                   newsletter.stats.totalRecipients > 0
                     ? `${((newsletter.stats.opened ?? 0) / newsletter.stats.totalRecipients * 100).toFixed(1)}%`
-                    : '—'}
+                    : '-'}
                 </TableCell>
 
                 {/* Created */}

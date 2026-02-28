@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useTransition } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -243,7 +243,7 @@ export function TemplatesPageClient({
               <h1 className="text-2xl font-bold tracking-tight">Templates</h1>
             </div>
             <p className="text-muted-foreground text-sm ml-[46px]">
-              {totalDocs} template{totalDocs !== 1 ? 's' : ''} — Create, edit, or preview reusable post structures.
+              {totalDocs} template{totalDocs !== 1 ? 's' : ''} - Create, edit, or preview reusable post structures.
             </p>
           </div>
           <Link href="/editor/templates/create">

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { Suspense, useEffect, useState, createContext, useContext } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
@@ -13,7 +13,7 @@ export function useNavigationProgress() {
   return useContext(NavigationProgressContext)
 }
 
-/** Inner component that uses useSearchParams — must be wrapped in Suspense */
+/** Inner component that uses useSearchParams - must be wrapped in Suspense */
 function NavigationProgressInner({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const searchParams = useSearchParams()

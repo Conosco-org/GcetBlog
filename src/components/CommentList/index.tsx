@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { formatDistanceToNow } from 'date-fns'
@@ -135,7 +135,7 @@ function CommentItem({ comment, replies, postId, isEditor, depth = 0, currentUse
         <div className="flex-1 min-w-0 pb-4">
           <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 mb-1">
             <span className="text-sm font-semibold leading-snug">{authorDisplay}</span>
-            {/* Status badge — editors only */}
+            {/* Status badge - editors only */}
             {isEditor && comment.status !== 'approved' && (
               <span
                 className={`text-[10px] px-1.5 py-0.5 rounded font-medium leading-none ${
@@ -156,7 +156,7 @@ function CommentItem({ comment, replies, postId, isEditor, depth = 0, currentUse
             {comment.content}
           </p>
 
-          {/* Action row — visible on hover */}
+          {/* Action row - visible on hover */}
           <div className="flex items-center gap-4 mt-1.5 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
             {depth < 2 && (
               <button
@@ -276,7 +276,7 @@ export function CommentList({ comments, postId, currentUser }: CommentListProps)
   if (topLevel.length === 0) {
     return (
       <p className="text-center py-8 text-sm text-muted-foreground">
-        No comments yet — be the first to share your thoughts!
+        No comments yet - be the first to share your thoughts!
       </p>
     )
   }

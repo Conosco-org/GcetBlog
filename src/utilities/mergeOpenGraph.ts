@@ -6,7 +6,7 @@ const defaultOpenGraph: Metadata['openGraph'] = {
   description: 'Official blog of Geethanjali College of Engineering and Technology.',
   images: [
     {
-      url: `${getServerSideURL()}/website-template-OG.webp`,
+      url: `${getServerSideURL()}/gcet-logo.png`,
     },
   ],
   siteName: 'GCET Blog',

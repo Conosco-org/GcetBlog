@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Newsletter Sending Engine
  *
  * Core logic for:
@@ -220,7 +220,7 @@ export async function sendNewsletter(
         }),
       )
     } else {
-      // Manual compose — render Lexical content to HTML
+      // Manual compose - render Lexical content to HTML
       // For now, use a simple approach; Lexical content will need serialization
       const contentHtml =
         typeof newsletter.content === 'string'
@@ -406,8 +406,8 @@ export async function generateDigest(
   const newsletter = await payload.create({
     collection: 'newsletters',
     data: {
-      title: `${frequencyLabel} Digest — ${dateStr}`,
-      subject: `📰 Your ${frequencyLabel} GCET Blog Digest — ${recentPosts.docs.length} new post${recentPosts.docs.length !== 1 ? 's' : ''}`,
+      title: `${frequencyLabel} Digest - ${dateStr}`,
+      subject: `📰 Your ${frequencyLabel} GCET Blog Digest - ${recentPosts.docs.length} new post${recentPosts.docs.length !== 1 ? 's' : ''}`,
       type: 'auto_digest',
       frequency,
       status: 'draft',

@@ -1,4 +1,4 @@
-import type { CollectionBeforeChangeHook } from 'payload'
+﻿import type { CollectionBeforeChangeHook } from 'payload'
 import { v2 as cloudinary } from 'cloudinary'
 
 cloudinary.config({
@@ -49,7 +49,7 @@ export const uploadToCloudinary: CollectionBeforeChangeHook = async ({ data, req
       overwrite: true,
     })
 
-    // Return merged data — cloudinaryUrl is saved in the same DB write, no secondary update needed
+    // Return merged data - cloudinaryUrl is saved in the same DB write, no secondary update needed
     return { ...data, cloudinaryUrl: result.secure_url }
   } catch (err) {
     req.payload.logger.error({ err }, 'Cloudinary upload failed')

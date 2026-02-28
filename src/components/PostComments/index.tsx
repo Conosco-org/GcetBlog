@@ -1,4 +1,4 @@
-import { getPayload } from 'payload'
+﻿import { getPayload } from 'payload'
 import { headers as nextHeaders } from 'next/headers'
 import configPromise from '@payload-config'
 import { CommentForm } from '@/components/CommentForm'
@@ -26,7 +26,7 @@ export async function PostComments({ post }: PostCommentsProps) {
       }
     }
   } catch {
-    // unauthenticated — fine
+    // unauthenticated - fine
   }
 
   // Fetch all comments for this post (top-level + replies in one query)

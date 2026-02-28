@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -75,7 +75,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
     setActiveTemplateName(template.name)
     toast({
       title: 'Template applied',
-      description: `"${template.name}" loaded — feel free to edit everything.`,
+      description: `"${template.name}" loaded - feel free to edit everything.`,
     })
   }
 
@@ -430,7 +430,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
               <span>
                 Using template: <strong>{activeTemplateName}</strong>
               </span>
-              <span className="text-muted-foreground">— edit freely</span>
+              <span className="text-muted-foreground">- edit freely</span>
             </div>
             <button
               type="button"

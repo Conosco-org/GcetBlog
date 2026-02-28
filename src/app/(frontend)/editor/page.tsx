@@ -1,4 +1,4 @@
-import { getPayload } from 'payload'
+﻿import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import Link from 'next/link'
 import { Clock, CheckCircle2, MessageSquare, Image as ImageIcon, ChevronRight, LayoutTemplate } from 'lucide-react'
@@ -94,7 +94,7 @@ export default async function EditorDashboardPage() {
         collection: 'media',
         where: { createdAt: { greater_than: weekAgo.toISOString() } },
       }),
-      // Media storage sample (limited for performance — full calc is on media page)
+      // Media storage sample (limited for performance - full calc is on media page)
       payload.find({
         collection: 'media',
         limit: 500,

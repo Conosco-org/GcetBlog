@@ -1,4 +1,4 @@
-import { getPayload } from 'payload'
+﻿import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
@@ -48,7 +48,7 @@ export default async function AdminDashboardLayout({
     redirect(dest)
   }
 
-  // Fetch counts for sidebar badges — parallelized
+  // Fetch counts for sidebar badges - parallelized
   const [pendingPosts, totalPosts, recentLogs] = await Promise.all([
     payload.count({
       collection: 'posts',

@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+﻿import type { CollectionConfig } from 'payload'
 import type { AdminLog } from '../payload-types'
 
 import { authenticated } from '../access/authenticated'
@@ -182,7 +182,7 @@ export const Templates: CollectionConfig = {
               resourceType: 'templates',
               resourceId: String(doc.id),
               user: req.user.id,
-              details: `Template "${doc.name}" — ${action.replace('template_', '').replace('_', ' ')}`,
+              details: `Template "${doc.name}" - ${action.replace('template_', '').replace('_', ' ')}`,
               timestamp: new Date().toISOString(),
             },
           })

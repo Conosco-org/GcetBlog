@@ -1156,7 +1156,7 @@ export interface NewsletterSubscriber {
    */
   user?: (string | null) | User;
   /**
-   * Content preferences — only receive digests about these categories
+   * Content preferences - only receive digests about these categories
    */
   categories?: (string | Category)[] | null;
   /**
@@ -1191,7 +1191,7 @@ export interface NewsletterSubscriber {
   createdAt: string;
 }
 /**
- * Newsletter campaigns — manual compose or auto-generated digests
+ * Newsletter campaigns - manual compose or auto-generated digests
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "newsletters".
@@ -1203,7 +1203,7 @@ export interface Newsletter {
    */
   title: string;
   /**
-   * Email subject line — seen in inbox
+   * Email subject line - seen in inbox
    */
   subject: string;
   /**

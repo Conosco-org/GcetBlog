@@ -1,4 +1,4 @@
-import { getPayload } from 'payload'
+﻿import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
@@ -59,7 +59,7 @@ export default async function ContributorDashboardPage() {
     payload.count({ collection: 'posts', where: { ...authorFilter, reviewStatus: { equals: 'approved' } } }),
     payload.count({ collection: 'posts', where: { ...authorFilter, reviewStatus: { equals: 'rejected' } } }),
     payload.count({ collection: 'posts', where: { ...authorFilter, reviewStatus: { equals: 'pending_review' } } }),
-    // Recent activity — only need 5 docs for the feed
+    // Recent activity - only need 5 docs for the feed
     payload.find({
       collection: 'posts',
       where: authorFilter,

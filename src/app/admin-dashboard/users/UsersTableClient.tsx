@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import type { User } from '@/payload-types'
 import { SearchInput } from '@/components/base/SearchInput'
@@ -66,7 +66,7 @@ const columns: Column<User>[] = [
           </Badge>
         )}
         {!user.isAdmin && !user.canManageAdmins && (
-          <span className="text-xs text-muted-foreground">—</span>
+          <span className="text-xs text-muted-foreground">-</span>
         )}
       </div>
     ),

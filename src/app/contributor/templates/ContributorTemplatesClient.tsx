@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -224,7 +224,7 @@ export function ContributorTemplatesClient({
           <div className="flex-1 min-w-0">
             <p className="font-semibold text-sm">Start from Scratch</p>
             <p className="text-xs text-muted-foreground">
-              Open the editor with a blank canvas — write freely without any structure
+              Open the editor with a blank canvas - write freely without any structure
             </p>
           </div>
           <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />

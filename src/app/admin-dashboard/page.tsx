@@ -1,4 +1,4 @@
-import { getPayload } from 'payload'
+﻿import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import Link from 'next/link'
@@ -51,7 +51,7 @@ export default async function AdminDashboardPage() {
     depth: 1,
   })
 
-  // Stats — use count() for efficient counting
+  // Stats - use count() for efficient counting
   const [
     totalUsers,
     totalPosts,

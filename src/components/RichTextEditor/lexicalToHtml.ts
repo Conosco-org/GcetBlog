@@ -1,6 +1,6 @@
-/**
+﻿/**
  * Converts Payload CMS Lexical JSON to HTML for loading into Tiptap editor.
- * This is needed when editing existing posts — the stored Lexical JSON must
+ * This is needed when editing existing posts - the stored Lexical JSON must
  * be converted back to HTML so Tiptap can render it.
  */
 

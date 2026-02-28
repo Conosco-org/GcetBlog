@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import crypto from 'crypto'
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
   const timestamp = Math.round(Date.now() / 1000)
   const folder = 'gcet-blog'
 
-  // Build params to sign — must be sorted alphabetically, must exclude: file, api_key, resource_type
+  // Build params to sign - must be sorted alphabetically, must exclude: file, api_key, resource_type
   const signingParams: Record<string, string | number> = { folder, timestamp }
   if (publicId) signingParams.public_id = publicId
 

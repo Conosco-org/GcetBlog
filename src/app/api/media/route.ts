@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { v2 as cloudinary } from 'cloudinary'
@@ -18,7 +18,7 @@ if (cloudinaryConfigured) {
   })
 }
 
-// GET handler — list media (proxies to Payload's built-in REST)
+// GET handler - list media (proxies to Payload's built-in REST)
 export async function GET(request: NextRequest) {
   try {
     const payload = await getPayload({ config })
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Payload requires a file for upload collections even with disableLocalStorage.
-      // Pass a 1×1 transparent PNG placeholder — our beforeChange hook skips
+      // Pass a 1×1 transparent PNG placeholder - our beforeChange hook skips
       // re-uploading because cloudinaryUrl is already set in data.
       const PLACEHOLDER_PNG = Buffer.from(
         'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',

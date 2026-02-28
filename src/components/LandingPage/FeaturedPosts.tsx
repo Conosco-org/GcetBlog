@@ -1,4 +1,4 @@
-import React from 'react'
+﻿import React from 'react'
 import Link from 'next/link'
 import { Media } from '@/components/Media'
 import type { Post, Media as MediaType } from '@/payload-types'
@@ -21,7 +21,7 @@ export const FeaturedPosts: React.FC<FeaturedPostsProps> = ({ posts }) => {
           </div>
           <div>
             <h2 className="font-display text-2xl sm:text-3xl font-bold">Featured & Events</h2>
-            <p className="text-sm text-muted-foreground">Highlighted by editors — don&apos;t miss these</p>
+            <p className="text-sm text-muted-foreground">Highlighted by editors - don&apos;t miss these</p>
           </div>
         </div>
 

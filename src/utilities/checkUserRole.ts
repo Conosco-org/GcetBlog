@@ -1,12 +1,12 @@
-/**
+﻿/**
  * Utility functions to check user roles and permissions.
  *
  * Role hierarchy:
  *   contributor < editor < editor+isAdmin < editor+isAdmin+canManageAdmins
  *
  * - role: 'contributor' | 'editor'
- * - isAdmin: boolean — grants user management capabilities
- * - canManageAdmins: boolean — can manage other admins, and cannot be deleted
+ * - isAdmin: boolean - grants user management capabilities
+ * - canManageAdmins: boolean - can manage other admins, and cannot be deleted
  */
 
 type UserWithRole = {
@@ -35,7 +35,7 @@ export const canManageAdmins = (user: UserWithRole | Record<string, unknown> | n
 }
 
 /**
- * @deprecated No longer needed — admin role merged into editor.
+ * @deprecated No longer needed - admin role merged into editor.
  * Kept for backward compatibility during migration. Use isEditor() instead.
  */
 export const isEditorOrAdmin = (user: UserWithRole | Record<string, unknown> | null | undefined): boolean => {

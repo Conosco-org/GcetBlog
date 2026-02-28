@@ -8,7 +8,7 @@ import { getServerSideURL } from './getURL'
 const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
   const serverUrl = getServerSideURL()
 
-  let url = serverUrl + '/website-template-OG.webp'
+  let url = serverUrl + '/gcet-logo.png'
 
   if (image && typeof image === 'object' && 'url' in image) {
     const ogUrl = image.sizes?.og?.url
@@ -26,9 +26,11 @@ export const generateMeta = async (args: {
 
   const ogImage = getImageURL(doc?.meta?.image)
 
-  const title = doc?.meta?.title
-    ? doc?.meta?.title + ' | GCET Blog'
-    : 'GCET Blog'
+  const rawTitle = doc?.meta?.title
+  // Sanitize the default Payload seed title
+  const sanitizedTitle =
+    !rawTitle || rawTitle === 'Payload Website Template' ? 'GCET Blog' : rawTitle
+  const title = sanitizedTitle === 'GCET Blog' ? 'GCET Blog' : sanitizedTitle + ' | GCET Blog'
 
   return {
     description: doc?.meta?.description,

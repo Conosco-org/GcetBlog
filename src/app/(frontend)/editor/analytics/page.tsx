@@ -1,4 +1,4 @@
-import { getPayload } from 'payload'
+﻿import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
@@ -131,7 +131,7 @@ export default async function AnalyticsPage() {
     <div className="p-8 min-h-screen">
       <PageHeader
         title="Analytics Dashboard"
-        description="Self-hosted analytics — track content performance and engagement"
+        description="Self-hosted analytics - track content performance and engagement"
       />
 
       {/* Overview Stats */}

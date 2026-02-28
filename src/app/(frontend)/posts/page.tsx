@@ -1,4 +1,4 @@
-import type { Metadata } from 'next/types'
+﻿import type { Metadata } from 'next/types'
 
 import { CollectionArchive } from '@/components/CollectionArchive'
 import { PageRange } from '@/components/PageRange'
@@ -13,7 +13,7 @@ import { PostsFilterBar } from './PostsFilterBar'
 import { NewsletterSignup } from '@/components/NewsletterSignup'
 import type { Where } from 'payload'
 
-// Cache popular tags for 10 minutes — they rarely change
+// Cache popular tags for 10 minutes - they rarely change
 const getCachedPopularTags = unstable_cache(
   async () => {
     const payload = await getPayload({ config: configPromise })

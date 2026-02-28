@@ -1,4 +1,4 @@
-import { getPayload, type Where } from 'payload'
+﻿import { getPayload, type Where } from 'payload'
 import configPromise from '@payload-config'
 import { Card, CardContent } from '@/components/ui/card'
 import { PageHeader } from '@/components/base/PageHeader'
@@ -32,7 +32,7 @@ export default async function MediaManagerPage({ searchParams }: PageProps) {
       sort: sortParam,
       where,
     }),
-    // count() is a single DB aggregation — no docs loaded
+    // count() is a single DB aggregation - no docs loaded
     payload.count({ collection: 'media' }),
     // Sample recent files for storage estimate
     payload.find({
