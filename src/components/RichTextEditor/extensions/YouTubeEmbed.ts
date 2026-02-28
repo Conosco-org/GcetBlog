@@ -1,4 +1,6 @@
-import { Node, mergeAttributes } from '@tiptap/core'
+﻿import { Node, mergeAttributes } from '@tiptap/core'
+import { ReactNodeViewRenderer, NodeViewWrapper } from '@tiptap/react'
+import React from 'react'
 
 export interface YouTubeEmbedOptions {
   HTMLAttributes: Record<string, unknown>
@@ -31,6 +33,32 @@ function getYouTubeVideoId(url: string): string | null {
   return null
 }
 
+function YouTubeNodeView({ node }: { node: { attrs: { src: string } } }) {
+  const videoId = getYouTubeVideoId(node.attrs.src || '')
+
+  return React.createElement(
+    NodeViewWrapper,
+    { className: 'youtube-embed my-6 not-prose', contentEditable: false },
+    videoId
+      ? React.createElement(
+          'div',
+          { className: 'relative aspect-video w-full overflow-hidden rounded-lg border bg-muted' },
+          React.createElement('iframe', {
+            src: `https://www.youtube-nocookie.com/embed/${videoId}`,
+            title: 'YouTube video player',
+            allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture',
+            allowFullScreen: true,
+            className: 'absolute inset-0 h-full w-full',
+          }),
+        )
+      : React.createElement(
+          'div',
+          { className: 'rounded-lg border border-red-300 bg-red-50 p-4 text-center text-sm text-red-600' },
+          'Invalid YouTube URL',
+        ),
+  )
+}
+
 export const YouTubeEmbed = Node.create<YouTubeEmbedOptions>({
   name: 'youtubeEmbed',
 
@@ -56,32 +84,24 @@ export const YouTubeEmbed = Node.create<YouTubeEmbedOptions>({
     return [
       {
         tag: 'div[data-youtube-embed]',
+        getAttrs: (element: HTMLElement) => {
+          const src = element.getAttribute('src')
+          const videoId = element.getAttribute('data-youtube-id')
+          return {
+            src:
+              src ||
+              (videoId ? `https://www.youtube.com/watch?v=${videoId}` : null),
+          }
+        },
       },
     ]
   },
 
   renderHTML({ HTMLAttributes }) {
     const videoId = getYouTubeVideoId(HTMLAttributes.src || '')
-    
     if (!videoId) {
-      return [
-        'div',
-        mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
-          'data-youtube-embed': '',
-          class: 'youtube-embed-error',
-        }),
-        [
-          'div',
-          { class: 'rounded-lg border border-red-500 bg-red-50 p-4 text-center my-4' },
-          [
-            'p',
-            { class: 'text-sm text-red-600 font-medium' },
-            'Invalid YouTube URL. Please use format: https://www.youtube.com/watch?v=VIDEO_ID',
-          ],
-        ],
-      ]
+      return ['div', mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, { 'data-youtube-embed': '' })]
     }
-
     return [
       'div',
       mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
@@ -97,14 +117,17 @@ export const YouTubeEmbed = Node.create<YouTubeEmbedOptions>({
           {
             src: `https://www.youtube-nocookie.com/embed/${videoId}`,
             frameborder: '0',
-            allow:
-              'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share',
+            allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share',
             allowfullscreen: 'true',
             class: 'absolute inset-0 h-full w-full',
           },
         ],
       ],
     ]
+  },
+
+  addNodeView() {
+    return ReactNodeViewRenderer(YouTubeNodeView as any)
   },
 
   addCommands() {

@@ -86,7 +86,7 @@ function Divider() {
 
 // ── Editor Component ────────────────────────────────────────────
 
-export default function RichTextEditor({
+export function RichTextEditor({
   value,
   onChange,
   placeholder = 'Start writing your content...',
