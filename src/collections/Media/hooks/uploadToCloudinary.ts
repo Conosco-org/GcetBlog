@@ -20,6 +20,9 @@ function uploadBuffer(buffer: Buffer, options: Record<string, unknown>): Promise
 export const uploadToCloudinary: CollectionBeforeChangeHook = async ({ data, req, operation }) => {
   if (operation !== 'create') return data
 
+  // If cloudinaryUrl is already set (e.g. direct browser upload), skip re-uploading
+  if (data.cloudinaryUrl) return data
+
   // Get file from the request (Payload stores it here during upload operations)
   const file = (req as any).file as { data?: Buffer; tempFilePath?: string; mimetype?: string } | undefined
   if (!file?.data) return data

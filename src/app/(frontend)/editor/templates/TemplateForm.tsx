@@ -31,6 +31,7 @@ import {
 import { useToast } from '@/hooks/use-toast'
 import { RichTextEditor } from '@/components/RichTextEditor'
 import { getTemplateIcon } from '@/components/templates/templateUtils'
+import { uploadToCloudinaryDirect } from '@/utilities/uploadToCloudinaryDirect'
 
 // ── Constants ────────────────────────────────────────────────────
 
@@ -158,27 +159,13 @@ export function TemplateForm({ initialData }: TemplateFormProps) {
 
     setIsUploadingImage(true)
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-
-      const response = await fetch('/api/media', { method: 'POST', body: formData })
-
-      if (response.ok) {
-        const data = await response.json()
-        const imageUrl = data.doc?.url || data.cloudinaryUrl || URL.createObjectURL(file)
-        const alt = file.name.replace(/\.[^/.]+$/, '')
-
-        // Insert an image placeholder into the content
-        const imgHtml = `<p><img src="${imageUrl}" alt="${alt}" /></p>`
-        setContent((prev) => prev + imgHtml)
-
-        toast({ title: 'Uploaded', description: 'Image inserted into the template content.' })
-      } else {
-        const error = await response.json()
-        toast({ title: 'Error', description: error.message || 'Upload failed', variant: 'destructive' })
-      }
-    } catch {
-      toast({ title: 'Error', description: 'An error occurred while uploading', variant: 'destructive' })
+      const altText = file.name.replace(/\.[^/.]+$/, '')
+      const result = await uploadToCloudinaryDirect(file, altText)
+      const imgHtml = `<p><img src="${result.cloudinaryUrl}" alt="${altText}" /></p>`
+      setContent((prev) => prev + imgHtml)
+      toast({ title: 'Uploaded', description: 'Image inserted into the template content.' })
+    } catch (err) {
+      toast({ title: 'Error', description: err instanceof Error ? err.message : 'Upload failed', variant: 'destructive' })
     } finally {
       setIsUploadingImage(false)
       if (fileInputRef.current) fileInputRef.current.value = ''

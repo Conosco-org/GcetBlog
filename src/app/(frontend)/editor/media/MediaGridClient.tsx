@@ -17,6 +17,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog'
 import { useToast } from '@/hooks/use-toast'
+import { uploadToCloudinaryDirect } from '@/utilities/uploadToCloudinaryDirect'
 import {
   Image as ImageIcon,
   ChevronLeft,
@@ -127,14 +128,8 @@ export function MediaGridClient({
         continue
       }
       try {
-        const formData = new FormData()
-        formData.append('file', file)
-        const res = await fetch('/api/media', { method: 'POST', body: formData })
-        if (res.ok) {
-          successCount++
-        } else {
-          failCount++
-        }
+        await uploadToCloudinaryDirect(file)
+        successCount++
       } catch {
         failCount++
       }

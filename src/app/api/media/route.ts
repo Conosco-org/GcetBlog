@@ -58,6 +58,64 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // ── JSON mode: file already uploaded to Cloudinary by the browser ────────
+    // The browser POSTs { cloudinaryUrl, alt, filename, mimeType, filesize, width, height }
+    // so no file body passes through this serverless function (avoids Vercel 4.5 MB limit).
+    const contentType = request.headers.get('content-type') ?? ''
+    if (contentType.includes('application/json')) {
+      const body = (await request.json()) as {
+        cloudinaryUrl?: string
+        alt?: string
+        filename?: string
+        mimeType?: string
+        filesize?: number
+        width?: number
+        height?: number
+      }
+
+      if (!body.cloudinaryUrl) {
+        return NextResponse.json({ message: 'cloudinaryUrl is required' }, { status: 400 })
+      }
+
+      // Payload requires a file for upload collections even with disableLocalStorage.
+      // Pass a 1×1 transparent PNG placeholder — our beforeChange hook skips
+      // re-uploading because cloudinaryUrl is already set in data.
+      const PLACEHOLDER_PNG = Buffer.from(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+        'base64',
+      )
+      const filename = (body.filename ?? body.cloudinaryUrl.split('/').pop() ?? 'image')
+        .replace(/\.[^/.]+$/, '') + '.png'
+
+      const media = await payload.create({
+        collection: 'media',
+        data: {
+          alt: body.alt ?? 'Uploaded image',
+          cloudinaryUrl: body.cloudinaryUrl,
+          mimeType: body.mimeType ?? 'image/jpeg',
+          filesize: body.filesize ?? 0,
+          width: body.width ?? 0,
+          height: body.height ?? 0,
+        },
+        file: {
+          data: PLACEHOLDER_PNG,
+          mimetype: 'image/png',
+          name: filename,
+          size: PLACEHOLDER_PNG.length,
+        },
+        overrideAccess: false,
+        user,
+      })
+
+      return NextResponse.json({
+        success: true,
+        doc: media,
+        cloudinaryUrl: body.cloudinaryUrl,
+        message: 'Media record created',
+      })
+    }
+    // ── FormData mode (legacy / local dev without Vercel limits) ─────────────
+
     const formData = await request.formData()
     const file = formData.get('file') as File
     const alt = (formData.get('alt') as string) || file?.name || 'Uploaded image'

@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast'
 import { RichTextEditor, htmlToLexical, htmlToPlainText } from '@/components/RichTextEditor'
 import { TemplateSelector, type TemplateCardData } from '@/components/templates'
 import type { Category, User } from '@/payload-types'
+import { uploadToCloudinaryDirect } from '@/utilities/uploadToCloudinaryDirect'
 
 interface PostFormProps {
   categories: Category[]
@@ -136,36 +137,18 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
     setIsUploadingImage(true)
 
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-
-      const response = await fetch('/api/media', {
-        method: 'POST',
-        body: formData,
+      const result = await uploadToCloudinaryDirect(file, file.name)
+      setHeroImageId(result.id)
+      setHeroImagePreview(result.cloudinaryUrl)
+      toast({
+        title: 'Success',
+        description: 'Image uploaded successfully',
       })
-
-      if (response.ok) {
-        const data = await response.json()
-        setHeroImageId(data.doc.id)
-        // Use Cloudinary URL for preview instead of blob URL
-        setHeroImagePreview(data.cloudinaryUrl || URL.createObjectURL(file))
-        toast({
-          title: "Success",
-          description: "Image uploaded successfully to Cloudinary",
-        })
-      } else {
-        const error = await response.json()
-        toast({
-          title: "Error",
-          description: error.message || "Failed to upload image",
-          variant: "destructive",
-        })
-      }
     } catch (err) {
       toast({
-        title: "Error",
-        description: "An error occurred while uploading",
-        variant: "destructive",
+        title: 'Error',
+        description: err instanceof Error ? err.message : 'An error occurred while uploading',
+        variant: 'destructive',
       })
       console.error('Image upload error:', err)
     } finally {

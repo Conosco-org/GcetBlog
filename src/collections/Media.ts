@@ -8,13 +8,14 @@ import {
 
 import { anyone } from '../access/anyone'
 import { editorOnly } from '../access/editorOnly'
+import { authenticated } from '../access/authenticated'
 import { useCloudinaryFallback } from './Media/hooks/useCloudinaryFallback'
 import { uploadToCloudinary } from './Media/hooks/uploadToCloudinary'
 
 export const Media: CollectionConfig = {
   slug: 'media',
   access: {
-    create: editorOnly,
+    create: authenticated, // contributors need to upload featured images
     delete: editorOnly,
     read: anyone,
     update: editorOnly,
