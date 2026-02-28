@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { VoteButtons } from '@/components/VoteButtons'
 import { ShareButtons } from '@/components/ShareButtons'
 
@@ -16,9 +16,12 @@ interface PostEngagementProps {
 }
 
 export function PostEngagement({ postId, postSlug, postTitle, postDescription, initialLikes = 0, initialUserVote = null, variant = 'inline' }: PostEngagementProps) {
-  const fullUrl = typeof window !== 'undefined'
-    ? `${window.location.origin}/posts/${postSlug}`
-    : `/posts/${postSlug}`
+  // Start with a relative URL (same on server and client) to avoid hydration mismatch,
+  // then upgrade to the absolute URL after mount.
+  const [fullUrl, setFullUrl] = useState(`/posts/${postSlug}`)
+  useEffect(() => {
+    setFullUrl(`${window.location.origin}/posts/${postSlug}`)
+  }, [postSlug])
 
   if (variant === 'sidebar') {
     return (
