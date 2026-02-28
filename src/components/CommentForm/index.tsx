@@ -8,9 +8,10 @@ import { submitComment } from '@/app/(frontend)/posts/[slug]/actions'
 
 interface CommentFormProps {
   postId: string
+  user?: { id: string; name: string; email: string } | null
 }
 
-export function CommentForm({ postId }: CommentFormProps) {
+export function CommentForm({ postId, user }: CommentFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const formRef = useRef<HTMLFormElement>(null)
@@ -41,23 +42,29 @@ export function CommentForm({ postId }: CommentFormProps) {
       <form ref={formRef} action={handleSubmit} className="space-y-3">
         <input type="hidden" name="postId" value={postId} />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <Input
-            name="authorName"
-            required
-            placeholder="Your name *"
-            disabled={isSubmitting}
-            className="h-9"
-          />
-          <Input
-            name="authorEmail"
-            type="email"
-            required
-            placeholder="Email (not displayed publicly) *"
-            disabled={isSubmitting}
-            className="h-9"
-          />
-        </div>
+        {user ? (
+          <p className="text-sm text-muted-foreground">
+            Commenting as <span className="font-medium text-foreground">{user.name}</span>
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Input
+              name="authorName"
+              required
+              placeholder="Your name *"
+              disabled={isSubmitting}
+              className="h-9"
+            />
+            <Input
+              name="authorEmail"
+              type="email"
+              required
+              placeholder="Email (not displayed publicly) *"
+              disabled={isSubmitting}
+              className="h-9"
+            />
+          </div>
+        )}
 
         <Textarea
           name="content"

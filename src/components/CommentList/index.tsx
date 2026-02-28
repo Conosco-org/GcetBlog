@@ -21,9 +21,10 @@ interface ReplyFormProps {
   postId: string
   parentId: string
   onCancel: () => void
+  currentUser?: { id: string; name: string; email: string } | null
 }
 
-function ReplyForm({ postId, parentId, onCancel }: ReplyFormProps) {
+function ReplyForm({ postId, parentId, onCancel, currentUser }: ReplyFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [msg, setMsg] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -46,10 +47,16 @@ function ReplyForm({ postId, parentId, onCancel }: ReplyFormProps) {
     <form action={handleSubmit} className="mt-3 pl-4 border-l-2 border-border space-y-2">
       <input type="hidden" name="postId" value={postId} />
       <input type="hidden" name="parentId" value={parentId} />
-      <div className="grid grid-cols-2 gap-2">
-        <Input name="authorName" placeholder="Your name *" required disabled={isSubmitting || success} className="h-8 text-sm" />
-        <Input name="authorEmail" type="email" placeholder="Email (private) *" required disabled={isSubmitting || success} className="h-8 text-sm" />
-      </div>
+      {currentUser ? (
+        <p className="text-xs text-muted-foreground">
+          Replying as <span className="font-medium text-foreground">{currentUser.name}</span>
+        </p>
+      ) : (
+        <div className="grid grid-cols-2 gap-2">
+          <Input name="authorName" placeholder="Your name *" required disabled={isSubmitting || success} className="h-8 text-sm" />
+          <Input name="authorEmail" type="email" placeholder="Email (private) *" required disabled={isSubmitting || success} className="h-8 text-sm" />
+        </div>
+      )}
       <Textarea name="content" placeholder="Write a reply…" required disabled={isSubmitting || success} rows={2} className="text-sm resize-none" />
       {msg && (
         <p className={`text-xs ${success ? 'text-green-600 dark:text-green-400' : 'text-destructive'}`}>{msg}</p>
@@ -74,9 +81,10 @@ interface CommentItemProps {
   postId: string
   isEditor: boolean
   depth?: number
+  currentUser?: { id: string; name: string; email: string } | null
 }
 
-function CommentItem({ comment, replies, postId, isEditor, depth = 0 }: CommentItemProps) {
+function CommentItem({ comment, replies, postId, isEditor, depth = 0, currentUser }: CommentItemProps) {
   const [showReplyForm, setShowReplyForm] = useState(false)
   const [showReplies, setShowReplies] = useState(true)
   const [reporting, setReporting] = useState(false)
@@ -210,7 +218,7 @@ function CommentItem({ comment, replies, postId, isEditor, depth = 0 }: CommentI
 
           {/* Inline reply form */}
           {showReplyForm && (
-            <ReplyForm postId={postId} parentId={String(comment.id)} onCancel={() => setShowReplyForm(false)} />
+            <ReplyForm postId={postId} parentId={String(comment.id)} onCancel={() => setShowReplyForm(false)} currentUser={currentUser} />
           )}
 
           {/* Replies toggle + list */}
@@ -234,6 +242,7 @@ function CommentItem({ comment, replies, postId, isEditor, depth = 0 }: CommentI
                       postId={postId}
                       isEditor={isEditor}
                       depth={depth + 1}
+                      currentUser={currentUser}
                     />
                   ))}
                 </div>
@@ -285,6 +294,7 @@ export function CommentList({ comments, postId, currentUser }: CommentListProps)
           postId={postId}
           isEditor={!!isEditor}
           depth={0}
+          currentUser={currentUser}
         />
       ))}
     </div>
