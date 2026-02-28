@@ -41,7 +41,7 @@ export const CTASection: React.FC = () => {
           </h2>
 
           <p className="text-lg md:text-xl text-background/60 max-w-xl mx-auto mb-12 leading-relaxed">
-            A tutorial, a poem, a hot take, a project breakdown &mdash; whatever it is, spill it. This platform is built for your voice.
+            A tutorial, a poem, a hot take, a project breakdown - whatever it is, spill it. This platform is built for your voice.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

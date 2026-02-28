@@ -48,7 +48,7 @@ export const FeaturesSection: React.FC = () => {
             <span className="text-accent">GCET community</span>
           </h2>
           <p className="text-lg text-muted-foreground leading-relaxed">
-            Where technical prowess meets creative expression &mdash; a platform for collaboration, storytelling, and innovation across all departments.
+            Where technical prowess meets creative expression - a platform for collaboration, storytelling, and innovation across all departments.
           </p>
         </div>
 

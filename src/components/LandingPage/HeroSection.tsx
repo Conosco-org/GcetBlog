@@ -46,7 +46,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             </p>
 
             <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg mb-8">
-              Got opinions, ideas, or something the world needs to hear? This is your space. Write about anything &mdash; tech, life, art, campus, or that random 3 AM thought.
+              Got opinions, ideas, or something the world needs to hear? This is your space. Write about anything - tech, life, art, campus, or that random 3 AM thought.
             </p>
 
             <div className="flex flex-wrap items-center gap-3 mb-12">

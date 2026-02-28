@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -354,7 +354,7 @@ export function CreateContentForm({ user: _user, categories: dbCategories, initi
             <span>
               Using template: <strong>{activeTemplateName}</strong>
             </span>
-            <span className="text-muted-foreground">&mdash; edit freely</span>
+            <span className="text-muted-foreground">- edit freely</span>
           </div>
           <button
             type="button"

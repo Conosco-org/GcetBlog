@@ -1,4 +1,4 @@
-import { getCachedGlobal } from '@/utilities/getGlobals'
+﻿import { getCachedGlobal } from '@/utilities/getGlobals'
 import Link from 'next/link'
 import React from 'react'
 
@@ -24,7 +24,7 @@ export async function Footer() {
               <Logo />
             </Link>
             <p className="text-sm text-background/50 max-w-xs">
-              The platform where the GCET community spills their mind &mdash; tech, creativity, and everything in between.
+              The platform where the GCET community spills their mind - tech, creativity, and everything in between.
             </p>
           </div>
 
