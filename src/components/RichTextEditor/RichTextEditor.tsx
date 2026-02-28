@@ -7,7 +7,9 @@ import Link from '@tiptap/extension-link'
 import Placeholder from '@tiptap/extension-placeholder'
 import { YouTubeEmbed } from './extensions/YouTubeEmbed'
 import { InstagramEmbed } from './extensions/InstagramEmbed'
-import { useCallback, useEffect } from 'react'
+import Image from '@tiptap/extension-image'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { uploadToCloudinaryDirect } from '@/utilities/uploadToCloudinaryDirect'
 import {
   Bold,
   Italic,
@@ -27,6 +29,8 @@ import {
   RemoveFormatting,
   Youtube,
   Instagram,
+  ImagePlus,
+  Loader2,
 } from 'lucide-react'
 import { cn } from '@/utilities/ui'
 import './editor.css'
@@ -82,13 +86,16 @@ function Divider() {
 
 // ── Editor Component ────────────────────────────────────────────
 
-export function RichTextEditor({
+export default function RichTextEditor({
   value,
   onChange,
-  placeholder = 'Start writing...',
-  minHeight = '400px',
+  placeholder = 'Start writing your content...',
+  minHeight = '300px',
   className,
 }: RichTextEditorProps) {
+  const imageInputRef = useRef<HTMLInputElement>(null)
+  const [isUploadingImage, setIsUploadingImage] = useState(false)
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -97,6 +104,10 @@ export function RichTextEditor({
         orderedList: { keepMarks: true },
       }),
       Underline,
+      Image.configure({
+        HTMLAttributes: { class: 'rounded-lg max-w-full h-auto my-2' },
+        allowBase64: false,
+      }),
       Link.configure({
         openOnClick: false,
         autolink: true,
@@ -176,6 +187,26 @@ export function RichTextEditor({
       editor.chain().focus().setInstagramEmbed({ src: url.trim() }).run()
     }
   }, [editor])
+
+  const handleImageUpload = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0]
+      if (!file || !editor) return
+      // reset so the same file can be re-selected
+      e.target.value = ''
+
+      setIsUploadingImage(true)
+      try {
+        const result = await uploadToCloudinaryDirect(file, file.name.replace(/\.[^/.]+$/, ''))
+        editor.chain().focus().setImage({ src: result.cloudinaryUrl, alt: file.name.replace(/\.[^/.]+$/, '') }).run()
+      } catch (err) {
+        console.error('Image upload failed:', err)
+      } finally {
+        setIsUploadingImage(false)
+      }
+    },
+    [editor],
+  )
 
   // Helper functions for stats
   const getWordCount = (html: string) => {
@@ -338,6 +369,15 @@ export function RichTextEditor({
         <ToolbarButton onClick={insertInstagram} title="Insert Instagram Post">
           <Instagram className="h-4 w-4" />
         </ToolbarButton>
+        <ToolbarButton
+          onClick={() => imageInputRef.current?.click()}
+          disabled={isUploadingImage}
+          title="Insert Image"
+        >
+          {isUploadingImage
+            ? <Loader2 className="h-4 w-4 animate-spin" />
+            : <ImagePlus className="h-4 w-4" />}
+        </ToolbarButton>
 
         <Divider />
 
@@ -352,6 +392,14 @@ export function RichTextEditor({
 
       {/* Editor content */}
       <EditorContent editor={editor} />
+      {/* Hidden image file input */}
+      <input
+        ref={imageInputRef}
+        type="file"
+        accept="image/*"
+        className="sr-only"
+        onChange={handleImageUpload}
+      />
       
       {/* Stats footer */}
       <div className="px-4 py-2 border-t bg-muted/30 flex items-center gap-4 text-xs text-muted-foreground">
@@ -364,5 +412,3 @@ export function RichTextEditor({
     </div>
   )
 }
-
-export default RichTextEditor

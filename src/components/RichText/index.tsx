@@ -50,6 +50,15 @@ const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
 const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) => ({
   ...defaultConverters,
   ...LinkJSXConverter({ internalDocToHref }),
+  // Inline images inserted by the Tiptap editor (uploaded to Cloudinary)
+  inlineImage: ({ node }: { node: { src?: string; alt?: string } }) => (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={node.src ?? ''}
+      alt={node.alt ?? ''}
+      className="rounded-lg max-w-full h-auto my-4 col-start-2"
+    />
+  ),
   blocks: {
     banner: ({ node }) => <BannerBlock className="col-start-2 mb-4" {...node.fields} />,
     mediaBlock: ({ node }) => (
