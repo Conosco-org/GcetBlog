@@ -26,6 +26,18 @@ declare global {
 
       // SendGrid (when EMAIL_PROVIDER=sendgrid)
       SENDGRID_API_KEY?: string
+
+      // Conosco API Integration
+      CONOSCO_API_URL?: string
+      CONOSCO_API_KEY?: string
+      CONOSCO_INSTITUTION_CODE?: string
+      CONOSCO_TIMEOUT_ENRICHMENT?: string
+      CONOSCO_TIMEOUT_DETAIL?: string
+      CONOSCO_TIMEOUT_LIST?: string
+      CONOSCO_TIMEOUT_STATS?: string
+
+      // Revalidation
+      REVALIDATION_SECRET?: string
     }
   }
 }

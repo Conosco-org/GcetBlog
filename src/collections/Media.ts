@@ -49,6 +49,40 @@ export const Media: CollectionConfig = {
         description: 'Cloudinary CDN URL for the uploaded image',
       },
     },
+    {
+      name: 'contextType',
+      type: 'select',
+      options: [
+        { label: 'Post', value: 'post' },
+        { label: 'Event', value: 'event' },
+        { label: 'Club', value: 'club' },
+        { label: 'Page', value: 'page' },
+        { label: 'General', value: 'general' },
+      ],
+      admin: {
+        position: 'sidebar',
+        description: 'What type of content this media is associated with',
+      },
+    },
+    {
+      name: 'contextId',
+      type: 'text',
+      index: true,
+      admin: {
+        position: 'sidebar',
+        description: 'ID of the associated content item',
+      },
+    },
+    {
+      name: 'uploadedBy',
+      type: 'relationship',
+      relationTo: 'users',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description: 'User who uploaded this media',
+      },
+    },
   ],
   upload: {
     disableLocalStorage: true,

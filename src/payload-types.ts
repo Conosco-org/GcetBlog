@@ -81,6 +81,8 @@ export interface Config {
     'newsletter-subscribers': NewsletterSubscriber;
     newsletters: Newsletter;
     'newsletter-events': NewsletterEvent;
+    events: Event;
+    clubs: Club;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -107,6 +109,8 @@ export interface Config {
     'newsletter-subscribers': NewsletterSubscribersSelect<false> | NewsletterSubscribersSelect<true>;
     newsletters: NewslettersSelect<false> | NewslettersSelect<true>;
     'newsletter-events': NewsletterEventsSelect<false> | NewsletterEventsSelect<true>;
+    events: EventsSelect<false> | EventsSelect<true>;
+    clubs: ClubsSelect<false> | ClubsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -241,6 +245,14 @@ export interface Post {
   id: string;
   title: string;
   /**
+   * Content type — affects display and routing
+   */
+  contentVariant?: ('blog-post' | 'news' | 'announcement' | 'event-coverage' | 'tutorial' | 'landing-page') | null;
+  /**
+   * Department this content belongs to
+   */
+  department?: ('CSE' | 'IT' | 'ECE' | 'EE' | 'ME' | 'CE' | 'CHE' | 'AIML' | 'AIDS' | 'GENERAL') | null;
+  /**
    * Recommended: 1920×1080 (16:9). For portraits, keep faces in top 60% of frame. Compress to <500KB.
    */
   heroImage?: (string | null) | Media;
@@ -261,6 +273,10 @@ export interface Post {
   };
   relatedPosts?: (string | Post)[] | null;
   categories?: (string | Category)[] | null;
+  /**
+   * Events related to this post
+   */
+  relatedEvents?: (string | Event)[] | null;
   meta?: {
     title?: string | null;
     /**
@@ -281,6 +297,10 @@ export interface Post {
     | number
     | boolean
     | null;
+  /**
+   * Flag this post for inclusion in the next newsletter digest
+   */
+  newsletterCandidate?: boolean | null;
   /**
    * Start date for featuring this post (e.g., event start)
    */
@@ -351,6 +371,18 @@ export interface Media {
    * Cloudinary CDN URL for the uploaded image
    */
   cloudinaryUrl?: string | null;
+  /**
+   * What type of content this media is associated with
+   */
+  contextType?: ('post' | 'event' | 'club' | 'page' | 'general') | null;
+  /**
+   * ID of the associated content item
+   */
+  contextId?: string | null;
+  /**
+   * User who uploaded this media
+   */
+  uploadedBy?: (string | null) | User;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -420,27 +452,6 @@ export interface Media {
       filename?: string | null;
     };
   };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "categories".
- */
-export interface Category {
-  id: string;
-  title: string;
-  slug?: string | null;
-  slugLock?: boolean | null;
-  parent?: (string | null) | Category;
-  breadcrumbs?:
-    | {
-        doc?: (string | null) | Category;
-        url?: string | null;
-        label?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  updatedAt: string;
-  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -530,6 +541,139 @@ export interface User {
     | null;
   password?: string | null;
   collection: 'users';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories".
+ */
+export interface Category {
+  id: string;
+  title: string;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  parent?: (string | null) | Category;
+  breadcrumbs?:
+    | {
+        doc?: (string | null) | Category;
+        url?: string | null;
+        label?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * 📅 Events from Conosco API or manually created. CMS adds SEO, images, and editorial content.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events".
+ */
+export interface Event {
+  id: string;
+  title: string;
+  /**
+   * Custom hero image (overrides Conosco poster for display)
+   */
+  heroImage?: (string | null) | Media;
+  /**
+   * Additional editorial content. Conosco description is shown separately.
+   */
+  editorialDescription?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * For manual events. Conosco events get this from API.
+   */
+  eventType?:
+    | (
+        | 'workshop'
+        | 'seminar'
+        | 'hackathon'
+        | 'competition'
+        | 'cultural'
+        | 'sports'
+        | 'guest-lecture'
+        | 'conference'
+        | 'webinar'
+        | 'other'
+      )
+    | null;
+  /**
+   * Organizing department
+   */
+  department?: ('CSE' | 'IT' | 'ECE' | 'EE' | 'ME' | 'CE' | 'CHE' | 'AIML' | 'AIDS' | 'GENERAL') | null;
+  /**
+   * Only for manual events. Conosco events get dates from API.
+   */
+  startDate?: string | null;
+  endDate?: string | null;
+  /**
+   * Venue name for manual events
+   */
+  venue?: string | null;
+  /**
+   * Status for manual events. Conosco events get status from API.
+   */
+  manualStatus?: ('upcoming' | 'ongoing' | 'completed' | 'cancelled') | null;
+  /**
+   * Where this event originates. Conosco events sync operational data from the API.
+   */
+  dataSource: 'manual' | 'conosco';
+  /**
+   * Semantic event code from Conosco (e.g., EVT-2025-0042). Used to link CMS record to API data.
+   */
+  conoscoEventCode?: string | null;
+  /**
+   * Last time this record was synced with Conosco API
+   */
+  lastSyncedAt?: string | null;
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (string | null) | Media;
+    description?: string | null;
+  };
+  /**
+   * Feature this event prominently on the events page
+   */
+  featured?: boolean | null;
+  /**
+   * Blog posts related to this event
+   */
+  relatedPosts?: (string | Post)[] | null;
+  /**
+   * Free-form tags (comma-separated)
+   */
+  tags?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  publishedAt?: string | null;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -951,8 +1095,27 @@ export interface AdminLog {
     | 'template_updated'
     | 'template_published'
     | 'template_unpublished'
-    | 'template_deleted';
-  resourceType: 'posts' | 'comments' | 'users' | 'media' | 'newsletters' | 'newsletter-subscribers' | 'templates';
+    | 'template_deleted'
+    | 'event_created'
+    | 'event_updated'
+    | 'event_synced'
+    | 'event_deleted'
+    | 'club_created'
+    | 'club_updated'
+    | 'club_synced'
+    | 'club_deleted'
+    | 'cache_revalidated';
+  resourceType:
+    | 'posts'
+    | 'comments'
+    | 'users'
+    | 'media'
+    | 'newsletters'
+    | 'newsletter-subscribers'
+    | 'templates'
+    | 'events'
+    | 'clubs'
+    | 'system';
   /**
    * ID of the affected resource
    */
@@ -966,6 +1129,22 @@ export interface AdminLog {
    */
   details?: string | null;
   timestamp: string;
+  /**
+   * Which module generated this log entry
+   */
+  module?: ('content' | 'events' | 'clubs' | 'media' | 'newsletter' | 'users' | 'system') | null;
+  /**
+   * Additional structured data about the action (flexible JSON)
+   */
+  metadata?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   /**
    * IP address of the user
    */
@@ -1302,6 +1481,110 @@ export interface NewsletterEvent {
   createdAt: string;
 }
 /**
+ * 🏛️ Clubs & societies from Conosco API or manually created. CMS adds SEO, images, and editorial content.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "clubs".
+ */
+export interface Club {
+  id: string;
+  title: string;
+  /**
+   * Club banner/hero image (overrides Conosco logo for display)
+   */
+  heroImage?: (string | null) | Media;
+  /**
+   * Club logo (used in cards and listings)
+   */
+  logo?: (string | null) | Media;
+  /**
+   * Rich editorial content about the club. Conosco description is shown separately.
+   */
+  editorialDescription?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Club classification. For Conosco clubs, this mirrors the API value.
+   */
+  classification?: ('technical' | 'cultural' | 'sports' | 'social' | 'professional' | 'other') | null;
+  /**
+   * Affiliated department
+   */
+  department?: ('CSE' | 'IT' | 'ECE' | 'EE' | 'ME' | 'CE' | 'CHE' | 'AIML' | 'AIDS' | 'GENERAL') | null;
+  /**
+   * Status for manual clubs. Conosco clubs get status from API.
+   */
+  manualStatus?: ('active' | 'inactive') | null;
+  /**
+   * Social media links for manual clubs
+   */
+  socialLinks?: {
+    website?: string | null;
+    instagram?: string | null;
+    linkedin?: string | null;
+    twitter?: string | null;
+    github?: string | null;
+  };
+  /**
+   * Where this club originates. Conosco clubs sync operational data from the API.
+   */
+  dataSource: 'manual' | 'conosco';
+  /**
+   * Semantic club code from Conosco (e.g., CLB-2025-0012). Used to link CMS record to API data.
+   */
+  conoscoClubCode?: string | null;
+  /**
+   * Last time this record was synced with Conosco API
+   */
+  lastSyncedAt?: string | null;
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (string | null) | Media;
+    description?: string | null;
+  };
+  /**
+   * Feature this club prominently on the clubs page
+   */
+  featured?: boolean | null;
+  /**
+   * Blog posts related to this club
+   */
+  relatedPosts?: (string | Post)[] | null;
+  /**
+   * Free-form tags (comma-separated)
+   */
+  tags?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  publishedAt?: string | null;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
@@ -1574,6 +1857,14 @@ export interface PayloadLockedDocument {
         value: string | NewsletterEvent;
       } | null)
     | ({
+        relationTo: 'events';
+        value: string | Event;
+      } | null)
+    | ({
+        relationTo: 'clubs';
+        value: string | Club;
+      } | null)
+    | ({
         relationTo: 'redirects';
         value: string | Redirect;
       } | null)
@@ -1772,10 +2063,13 @@ export interface FormBlockSelect<T extends boolean = true> {
  */
 export interface PostsSelect<T extends boolean = true> {
   title?: T;
+  contentVariant?: T;
+  department?: T;
   heroImage?: T;
   content?: T;
   relatedPosts?: T;
   categories?: T;
+  relatedEvents?: T;
   meta?:
     | T
     | {
@@ -1784,6 +2078,7 @@ export interface PostsSelect<T extends boolean = true> {
         description?: T;
       };
   tags?: T;
+  newsletterCandidate?: T;
   featuredFrom?: T;
   featuredUntil?: T;
   voteScore?: T;
@@ -1813,6 +2108,9 @@ export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   caption?: T;
   cloudinaryUrl?: T;
+  contextType?: T;
+  contextId?: T;
+  uploadedBy?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -2002,6 +2300,8 @@ export interface AdminLogsSelect<T extends boolean = true> {
   user?: T;
   details?: T;
   timestamp?: T;
+  module?: T;
+  metadata?: T;
   ipAddress?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -2137,6 +2437,81 @@ export interface NewsletterEventsSelect<T extends boolean = true> {
   timestamp?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events_select".
+ */
+export interface EventsSelect<T extends boolean = true> {
+  title?: T;
+  heroImage?: T;
+  editorialDescription?: T;
+  eventType?: T;
+  department?: T;
+  startDate?: T;
+  endDate?: T;
+  venue?: T;
+  manualStatus?: T;
+  dataSource?: T;
+  conoscoEventCode?: T;
+  lastSyncedAt?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        description?: T;
+      };
+  featured?: T;
+  relatedPosts?: T;
+  tags?: T;
+  publishedAt?: T;
+  slug?: T;
+  slugLock?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "clubs_select".
+ */
+export interface ClubsSelect<T extends boolean = true> {
+  title?: T;
+  heroImage?: T;
+  logo?: T;
+  editorialDescription?: T;
+  classification?: T;
+  department?: T;
+  manualStatus?: T;
+  socialLinks?:
+    | T
+    | {
+        website?: T;
+        instagram?: T;
+        linkedin?: T;
+        twitter?: T;
+        github?: T;
+      };
+  dataSource?: T;
+  conoscoClubCode?: T;
+  lastSyncedAt?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        description?: T;
+      };
+  featured?: T;
+  relatedPosts?: T;
+  tags?: T;
+  publishedAt?: T;
+  slug?: T;
+  slugLock?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2590,6 +2965,14 @@ export interface TaskSchedulePublish {
       | ({
           relationTo: 'posts';
           value: string | Post;
+        } | null)
+      | ({
+          relationTo: 'events';
+          value: string | Event;
+        } | null)
+      | ({
+          relationTo: 'clubs';
+          value: string | Club;
         } | null);
     global?: string | null;
     user?: (string | null) | User;

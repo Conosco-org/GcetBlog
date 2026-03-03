@@ -250,7 +250,16 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const { slug = '' } = await paramsPromise
   const post = await queryPostBySlug({ slug })
 
-  return generateMeta({ doc: post })
+  const meta = await generateMeta({ doc: post })
+
+  // Add canonical URL pointing to /content/[slug] for content engine
+  const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || ''
+  return {
+    ...meta,
+    alternates: {
+      canonical: `${serverUrl}/content/${slug}`,
+    },
+  }
 }
 
 const queryPostBySlug = cache(async ({ slug }: { slug: string }) => {

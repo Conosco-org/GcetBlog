@@ -20,6 +20,8 @@ import { Templates } from './collections/Templates'
 import { NewsletterSubscribers } from './collections/NewsletterSubscribers'
 import { Newsletters } from './collections/Newsletters'
 import { NewsletterEvents } from './collections/NewsletterEvents'
+import { Events } from './modules/events/collections/Events'
+import { Clubs } from './modules/clubs/collections/Clubs'
 import {
   newsletterDailyDigest,
   newsletterWeeklyDigest,
@@ -119,6 +121,8 @@ export default buildConfig({
     NewsletterSubscribers,
     Newsletters,
     NewsletterEvents,
+    Events,
+    Clubs,
   ],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],

@@ -29,6 +29,7 @@ import {
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
 import { slugField } from '@/fields/slug'
+import { getDepartmentOptions } from '@/custom/departments'
 
 export const Posts: CollectionConfig<'posts'> = {
   slug: 'posts',
@@ -77,6 +78,32 @@ export const Posts: CollectionConfig<'posts'> = {
       name: 'title',
       type: 'text',
       required: true,
+    },
+    {
+      name: 'contentVariant',
+      type: 'select',
+      defaultValue: 'blog-post',
+      options: [
+        { label: 'Blog Post', value: 'blog-post' },
+        { label: 'News Article', value: 'news' },
+        { label: 'Announcement', value: 'announcement' },
+        { label: 'Event Coverage', value: 'event-coverage' },
+        { label: 'Tutorial', value: 'tutorial' },
+        { label: 'Landing Page', value: 'landing-page' },
+      ],
+      admin: {
+        position: 'sidebar',
+        description: 'Content type — affects display and routing',
+      },
+    },
+    {
+      name: 'department',
+      type: 'select',
+      options: getDepartmentOptions(),
+      admin: {
+        position: 'sidebar',
+        description: 'Department this content belongs to',
+      },
     },
     {
       type: 'tabs',
@@ -139,6 +166,16 @@ export const Posts: CollectionConfig<'posts'> = {
               hasMany: true,
               relationTo: 'categories',
             },
+            {
+              name: 'relatedEvents',
+              type: 'relationship',
+              admin: {
+                position: 'sidebar',
+                description: 'Events related to this post',
+              },
+              hasMany: true,
+              relationTo: 'events',
+            },
           ],
           label: 'Meta',
         },
@@ -179,6 +216,15 @@ export const Posts: CollectionConfig<'posts'> = {
         position: 'sidebar',
       },
       // Stored as string[] in the database
+    },
+    {
+      name: 'newsletterCandidate',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        position: 'sidebar',
+        description: 'Flag this post for inclusion in the next newsletter digest',
+      },
     },
     {
       name: 'featuredFrom',

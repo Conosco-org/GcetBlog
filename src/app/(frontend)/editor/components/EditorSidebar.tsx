@@ -19,6 +19,9 @@ import {
   Users,
   Mail,
   PenSquare,
+  Calendar,
+  Users2,
+  Server,
 } from 'lucide-react'
 
 interface NavItem {
@@ -101,6 +104,16 @@ export function EditorSidebar({
       icon: <FileStack className="w-5 h-5" />,
     },
     {
+      label: 'Events',
+      href: '/editor/events',
+      icon: <Calendar className="w-5 h-5" />,
+    },
+    {
+      label: 'Clubs',
+      href: '/editor/clubs',
+      icon: <Users2 className="w-5 h-5" />,
+    },
+    {
       label: 'Newsletter',
       href: '/editor/newsletter',
       icon: <Mail className="w-5 h-5" />,
@@ -122,6 +135,14 @@ export function EditorSidebar({
       icon: <Activity className="w-5 h-5" />,
       badge: activityLogsCount,
     },
+    // Admin-only: Conosco integration status
+    ...(isAdmin ? [
+      {
+        label: 'Conosco',
+        href: '/editor/system/conosco',
+        icon: <Server className="w-5 h-5" />,
+      },
+    ] : []),
   ]
 
   const isActive = useCallback((href: string) => {
