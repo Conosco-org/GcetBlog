@@ -50,7 +50,7 @@ export function SetPasswordForm() {
 
       if (res.ok && data.success) {
         // Redirect to appropriate dashboard
-        router.push(data.redirectPath || '/contributor')
+        router.push(data.redirectPath || '/user')
       } else {
         setError(data.message || 'Failed to set password. Please try again.')
       }
@@ -67,17 +67,14 @@ export function SetPasswordForm() {
       const res = await fetch('/api/auth/me', { credentials: 'include' })
       const data = await res.json()
       const role = data?.user?.role
-      const isAdmin = data?.user?.isAdmin
 
-      if (isAdmin) {
-        router.push('/admin-dashboard')
-      } else if (role === 'editor') {
-        router.push('/editor')
+      if (role === 'superadmin') {
+        router.push('/platform')
       } else {
-        router.push('/contributor')
+        router.push('/user')
       }
     } catch {
-      router.push('/contributor')
+      router.push('/user')
     }
   }
 

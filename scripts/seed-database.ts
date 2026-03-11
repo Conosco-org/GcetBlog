@@ -91,7 +91,14 @@ async function seedDatabase() {
       code: 'gcet',
       shortName: 'GCET',
       status: 'active',
-      tier: 'pilot',
+      tier: 'standard',
+      domains: [
+        {
+          hostname: 'blog.gcet.edu.in',
+          purpose: 'blog',
+          verified: false,
+        },
+      ],
       contact: {
         email: 'info@gcettbr.ac.in',
         website: 'https://gcettbr.ac.in/',
