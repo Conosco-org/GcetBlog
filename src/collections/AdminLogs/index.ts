@@ -1,11 +1,13 @@
 import type { CollectionConfig } from 'payload'
-import { editorOnly } from '../../access/editorOnly'
+import { hasPermission, hasPermissionFilter } from '../../access/hasPermission'
+import { institutionField } from '../../fields/institution'
+import { tenantIsolationHooks } from '@/hooks/tenantIsolation'
 
 export const AdminLogs: CollectionConfig = {
   slug: 'admin-logs',
   access: {
-    read: editorOnly,
-    create: editorOnly,
+    read: hasPermissionFilter('logs:read', 'id', 'institution'),
+    create: hasPermission('logs:read'),
     update: () => false, // Logs should be immutable
     delete: () => false, // Logs should not be deleted
   },
@@ -13,7 +15,9 @@ export const AdminLogs: CollectionConfig = {
     defaultColumns: ['action', 'resourceType', 'user', 'timestamp'],
     useAsTitle: 'action',
   },
+  hooks: tenantIsolationHooks(),
   fields: [
+    institutionField,
     {
       name: 'action',
       type: 'select',

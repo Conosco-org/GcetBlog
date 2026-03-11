@@ -1,10 +1,11 @@
-import type { CollectionConfig, Where } from 'payload'
-import { editorOnly } from '../../access/editorOnly'
+﻿import type { CollectionConfig, Where } from 'payload'
+import { hasPermission, checkPermission, getUserInstitutionId, isOwnInstitutionAdmin } from '../../access/hasPermission'
+import { optionalInstitutionField } from '../../fields/institution'
+import { withTenantIsolation } from '@/hooks/tenantIsolation'
 
-/** Field-level access helper: checks if the requesting user is an editor */
-const isEditorFieldAccess = ({ req }: { req: { user: unknown } }): boolean => {
-  const user = req.user as { role?: string } | undefined
-  return user?.role === 'editor'
+/** Field-level access helper: checks if the requesting user has comment moderation permission */
+const isModeratorFieldAccess = ({ req }: { req: { user: unknown } }): boolean => {
+  return checkPermission(req.user, 'comment:moderate')
 }
 
 export const Comments: CollectionConfig = {
@@ -12,8 +13,12 @@ export const Comments: CollectionConfig = {
   access: {
     read: ({ req }) => {
       const user = req.user as { role?: string; id?: string } | undefined
-      // Editors can see all comments
-      if (user?.role === 'editor') return true
+      // Moderators/editors can see all comments in their institution
+      if (user && checkPermission(user, 'comment:moderate')) {
+        const instId = getUserInstitutionId(user)
+        if (instId) return { institution: { equals: instId } } as Where
+        return true // superadmin
+      }
 
       // Users can see their own comments + approved ones
       if (user && user.id) {
@@ -31,14 +36,15 @@ export const Comments: CollectionConfig = {
       }
     },
     create: () => true, // Anyone can create comments (we'll validate in hooks)
-    update: editorOnly,
-    delete: editorOnly,
+    update: hasPermission('comment:moderate'),
+    delete: hasPermission('comment:delete'),
   },
   admin: {
     defaultColumns: ['post', 'author', 'content', 'status', 'createdAt'],
     useAsTitle: 'content',
   },
   fields: [
+    optionalInstitutionField,
     {
       name: 'post',
       type: 'relationship',
@@ -94,7 +100,7 @@ export const Comments: CollectionConfig = {
       ],
       defaultValue: 'pending',
       access: {
-        update: isEditorFieldAccess,
+        update: isModeratorFieldAccess,
       },
     },
     {
@@ -112,8 +118,8 @@ export const Comments: CollectionConfig = {
         description: 'Internal notes for moderators',
       },
       access: {
-        read: isEditorFieldAccess,
-        update: isEditorFieldAccess,
+        read: isModeratorFieldAccess,
+        update: isModeratorFieldAccess,
       },
     },
     {
@@ -125,7 +131,7 @@ export const Comments: CollectionConfig = {
         readOnly: true,
       },
       access: {
-        read: isEditorFieldAccess,
+        read: isModeratorFieldAccess,
       },
     },
     {
@@ -136,7 +142,7 @@ export const Comments: CollectionConfig = {
         readOnly: true,
       },
       access: {
-        read: isEditorFieldAccess,
+        read: isModeratorFieldAccess,
       },
     },
     {
@@ -148,7 +154,7 @@ export const Comments: CollectionConfig = {
         readOnly: true,
       },
       access: {
-        read: isEditorFieldAccess,
+        read: isModeratorFieldAccess,
       },
     },
     {
@@ -159,7 +165,7 @@ export const Comments: CollectionConfig = {
         readOnly: true,
       },
       access: {
-        read: isEditorFieldAccess,
+        read: isModeratorFieldAccess,
       },
     },
     {
@@ -170,7 +176,7 @@ export const Comments: CollectionConfig = {
         readOnly: true,
       },
       access: {
-        read: isEditorFieldAccess,
+        read: isModeratorFieldAccess,
       },
     },
     {
@@ -181,7 +187,7 @@ export const Comments: CollectionConfig = {
         description: 'IP address of the commenter',
       },
       access: {
-        read: isEditorFieldAccess,
+        read: isModeratorFieldAccess,
       },
     },
     {
@@ -192,11 +198,11 @@ export const Comments: CollectionConfig = {
         description: 'User agent of the commenter',
       },
       access: {
-        read: isEditorFieldAccess,
+        read: isModeratorFieldAccess,
       },
     },
   ],
-  hooks: {
+  hooks: withTenantIsolation({
     beforeChange: [
       ({ req, operation, data }) => {
         // Auto-approve comments from editors
@@ -220,6 +226,6 @@ export const Comments: CollectionConfig = {
         }
       },
     ],
-  },
+  }),
   timestamps: true,
 }

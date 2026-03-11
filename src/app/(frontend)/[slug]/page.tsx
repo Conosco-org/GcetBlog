@@ -15,6 +15,7 @@ import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { HeroSection, HomePosts, FeaturesSection, CTASection } from '@/components/LandingPage'
+import { getDomainScope } from '@/utilities/domainScope'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -69,6 +70,14 @@ export default async function Page({ params: paramsPromise }: Args) {
   // Modern landing page for home - show latest 10 posts
   if (slug === 'home') {
     const payload = await getPayload({ config: configPromise })
+    const scope = await getDomainScope()
+
+    // ── Club-scoped domain (e.g., ieee.gcet.edu.in) ─────────────────
+    // Redirect to the specific club's page
+    if (scope.isClubScoped && scope.clubScope) {
+      const { redirect } = await import('next/navigation')
+      redirect(`/clubs/${scope.clubScope}`)
+    }
     
     // Fetch latest 10 published posts, sorted by publish date
     const postsResult = await payload.find({
@@ -113,7 +122,8 @@ export default async function Page({ params: paramsPromise }: Args) {
           latestPost={latestPost}
         />
         <HomePosts posts={postsResult.docs} />
-        <FeaturesSection />
+        {/* Blog-only domains skip clubs/events sections */}
+        {scope.purpose !== 'blog' && <FeaturesSection />}
         <CTASection />
       </main>
     )

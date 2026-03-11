@@ -13,7 +13,14 @@ export async function GET(request: NextRequest) {
     }
 
     // Type assertion to access custom fields
-    const typedUser = user as User
+    const typedUser = user as unknown as {
+      id: string
+      email: string
+      name?: string
+      role?: string
+      roleAssignments?: { assignedRole: string; scopeType: string; scopeId?: string; scopeLabel?: string }[]
+      institution?: string | { id: string }
+    }
 
     return Response.json({
       user: {
@@ -21,8 +28,8 @@ export async function GET(request: NextRequest) {
         email: typedUser.email,
         name: typedUser.name,
         role: typedUser.role,
-        isAdmin: typedUser.isAdmin,
-        canManageAdmins: typedUser.canManageAdmins,
+        roleAssignments: typedUser.roleAssignments || [],
+        institution: typedUser.institution,
       },
     })
   } catch (error) {

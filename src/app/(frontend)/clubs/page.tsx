@@ -2,12 +2,13 @@ import type { Metadata } from 'next/types'
 
 import React, { Suspense } from 'react'
 import Link from 'next/link'
-import { Users2, X } from 'lucide-react'
+import { Users2, X, ArrowRight } from 'lucide-react'
 import PageClient from './page.client'
 import { getClubListingData } from '@/modules/clubs/services/club-context'
 import { ClubArchive } from '@/modules/clubs/components/ClubArchive'
 import { getDepartmentOptions } from '@/custom/departments'
 import { ClubsFilterBar } from './ClubsFilterBar'
+import { getDomainScope } from '@/utilities/domainScope'
 
 export const dynamic = 'force-dynamic'
 
@@ -22,6 +23,37 @@ type Args = {
 
 export default async function ClubsPage({ searchParams: searchParamsPromise }: Args) {
   const searchParams = await searchParamsPromise
+  const scope = await getDomainScope()
+
+  // ── Blog-only domain: clubs not available ──────────────────────────
+  if (!scope.showClubs) {
+    return (
+      <div className="min-h-screen">
+        <PageClient />
+        <div className="container mx-auto px-6 py-24 text-center">
+          <Users2 className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
+          <h1 className="text-2xl font-semibold mb-2">Clubs & Chapters</h1>
+          <p className="text-muted-foreground text-sm mb-6">
+            Clubs are available on the main site. This domain is dedicated to blog content.
+          </p>
+          <Link
+            href="/posts"
+            className="inline-flex items-center gap-2 text-accent hover:underline text-sm"
+          >
+            Browse posts instead
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  // ── Club-scoped domain: redirect to the specific club ──────────────
+  if (scope.isClubScoped && scope.clubScope) {
+    const { redirect } = await import('next/navigation')
+    redirect(`/clubs/${scope.clubScope}`)
+  }
+
   const query = searchParams.q || ''
   const department = searchParams.department || ''
   const classification = searchParams.classification || ''

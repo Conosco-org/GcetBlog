@@ -172,7 +172,7 @@ export async function GET(request: NextRequest) {
           name: googleUser.name,
           email: googleUser.email,
           password: tempPassword,
-          role: 'contributor',
+          role: 'user',
           bio: '',
           authProvider: 'google',
           googleSubId: googleUser.sub,

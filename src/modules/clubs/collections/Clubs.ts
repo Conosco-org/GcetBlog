@@ -12,8 +12,9 @@
 
 import type { CollectionConfig } from 'payload'
 
-import { editorOnly } from '@/access/editorOnly'
-import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
+import { hasPermission, publicOrInstitution } from '@/access/hasPermission'
+import { clubAdminAccess } from '@/access/hasClubAccess'
+import { institutionField } from '@/fields/institution'
 import { slugField } from '@/fields/slug'
 import { getDepartmentOptions } from '@/custom/departments'
 
@@ -28,10 +29,10 @@ import {
 export const Clubs: CollectionConfig = {
   slug: 'clubs',
   access: {
-    create: editorOnly,
-    delete: editorOnly,
-    read: authenticatedOrPublished,
-    update: editorOnly,
+    create: hasPermission('club:edit_page'),
+    delete: hasPermission('club:edit_page'),
+    read: publicOrInstitution(),
+    update: clubAdminAccess,
   },
   admin: {
     defaultColumns: ['title', 'dataSource', 'classification', 'department', 'updatedAt'],
@@ -39,6 +40,7 @@ export const Clubs: CollectionConfig = {
     description: '🏛️ Clubs & societies from Conosco API or manually created. CMS adds SEO, images, and editorial content.',
   },
   fields: [
+    institutionField,
     {
       name: 'title',
       type: 'text',
@@ -182,6 +184,64 @@ export const Clubs: CollectionConfig = {
               titlePath: 'meta.title',
               descriptionPath: 'meta.description',
             }),
+          ],
+        },
+        {
+          label: 'Theme',
+          description: 'Visual customization for this club\'s landing page',
+          fields: [
+            {
+              name: 'theme',
+              type: 'group',
+              admin: {
+                description: 'Per-club visual tokens. Applied as CSS custom properties on the club landing page.',
+              },
+              fields: [
+                {
+                  name: 'primaryColor',
+                  type: 'text',
+                  defaultValue: '#0047AB',
+                  admin: {
+                    description: 'Primary brand color (hex, e.g. #0047AB)',
+                  },
+                },
+                {
+                  name: 'accentColor',
+                  type: 'text',
+                  admin: {
+                    description: 'Secondary accent color (hex)',
+                  },
+                },
+                {
+                  name: 'cardStyle',
+                  type: 'select',
+                  defaultValue: 'default',
+                  options: [
+                    { label: 'Default', value: 'default' },
+                    { label: 'Glass', value: 'glass' },
+                    { label: 'Bordered', value: 'bordered' },
+                    { label: 'Elevated', value: 'elevated' },
+                  ],
+                  admin: {
+                    description: 'Card rendering style on the club landing page',
+                  },
+                },
+                {
+                  name: 'fontPreset',
+                  type: 'select',
+                  defaultValue: 'default',
+                  options: [
+                    { label: 'Default (Inter)', value: 'default' },
+                    { label: 'Modern (Space Grotesk)', value: 'modern' },
+                    { label: 'Classic (Merriweather)', value: 'classic' },
+                    { label: 'Technical (JetBrains Mono)', value: 'technical' },
+                  ],
+                  admin: {
+                    description: 'Font family preset for the club landing page',
+                  },
+                },
+              ],
+            },
           ],
         },
       ],

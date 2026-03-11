@@ -19,7 +19,10 @@ export async function POST(request: NextRequest) {
 
     const typedUser = user as User & { role: string }
 
-    if (typedUser.role !== 'editor') {
+    const userWithRoles = user as unknown as { role: string; roleAssignments?: { assignedRole: string }[] }
+    const hasEditorAccess = userWithRoles.role === 'superadmin' ||
+      userWithRoles.roleAssignments?.some(a => ['blog_editor', 'institution_admin'].includes(a.assignedRole))
+    if (!hasEditorAccess) {
       return NextResponse.json(
         { error: 'Forbidden: Only editors can create feedback' },
         { status: 403 }
@@ -63,7 +66,7 @@ export async function POST(request: NextRequest) {
       id: contributorId,
     })
 
-    if (!contributor || (contributor as User & { role: string }).role !== 'contributor') {
+    if (!contributor || !(contributor as unknown as { roleAssignments?: { assignedRole: string }[] }).roleAssignments?.some(a => a.assignedRole === 'blog_author')) {
       return NextResponse.json(
         { error: 'Contributor not found' },
         { status: 404 }

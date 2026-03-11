@@ -1,4 +1,4 @@
-﻿import type { CollectionSlug, GlobalSlug, Payload, PayloadRequest, File } from 'payload'
+import type { CollectionSlug, GlobalSlug, Payload, PayloadRequest, File } from 'payload'
 
 import { contactForm as contactFormData } from './contact-form'
 import { contact as contactPageData } from './contact-page'
@@ -18,6 +18,12 @@ const collections: CollectionSlug[] = [
   'forms',
   'form-submissions',
   'search',
+  'institutions',
+  'admin-logs',
+  'comments',
+  'feedback',
+  'events',
+  'clubs',
 ]
 const globals: GlobalSlug[] = ['header', 'footer']
 
@@ -66,7 +72,28 @@ export const seed = async ({
       .map((collection) => payload.db.deleteVersions({ collection, req, where: {} })),
   )
 
-  payload.logger.info(`- Seeding demo users with different roles...`)
+  payload.logger.info(`- Seeding GCET institution...`)
+
+  const gcetInstitution = await payload.create({
+    collection: 'institutions',
+    data: {
+      name: 'Geethanjali College of Engineering & Technology',
+      code: 'gcet',
+      shortName: 'GCET',
+      status: 'active',
+      tier: 'pilot',
+      contact: {
+        email: 'info@gcettbr.ac.in',
+        website: 'https://gcettbr.ac.in/',
+      },
+      settings: {
+        enabledModules: ['blog', 'events', 'clubs', 'newsletter'],
+        maxUsers: 0,
+      },
+    },
+  })
+
+  payload.logger.info(`- Seeding demo users with roles...`)
 
   // Delete existing demo users if they exist
   await Promise.all([
@@ -106,6 +133,15 @@ export const seed = async ({
         },
       },
     }),
+    payload.delete({
+      collection: 'users',
+      depth: 0,
+      where: {
+        email: {
+          equals: 'superadmin@gcetblog.in',
+        },
+      },
+    }),
   ])
 
   payload.logger.info(`- Seeding media...`)
@@ -125,25 +161,51 @@ export const seed = async ({
     ),
   ])
 
-  const [demoAuthor, _adminUser, _editorUser, _contributorUser, image1Doc, image2Doc, image3Doc, imageHomeDoc] = await Promise.all([
+  const [demoAuthor, _superAdmin, _instAdmin, _editorUser, _contributorUser, image1Doc, image2Doc, image3Doc, imageHomeDoc] = await Promise.all([
     payload.create({
       collection: 'users',
       data: {
         name: 'Demo Author',
         email: 'demo-author@example.com',
         password: 'password',
-        role: 'contributor',
+        role: 'user',
+        institution: gcetInstitution.id,
+        roleAssignments: [
+          {
+            assignedRole: 'blog_author',
+            scopeType: 'institution',
+            scopeId: { relationTo: 'institutions', value: gcetInstitution.id },
+            scopeLabel: 'GCET',
+          },
+        ],
       },
     }),
     payload.create({
       collection: 'users',
       data: {
-        name: 'Admin User',
+        name: 'SuperAdmin',
+        email: 'superadmin@gcetblog.in',
+        password: 'superadmin123',
+        role: 'superadmin',
+        // superadmin has NO institution
+      },
+    }),
+    payload.create({
+      collection: 'users',
+      data: {
+        name: 'Institution Admin',
         email: 'admin@gcet.edu.in',
         password: 'admin123',
-        role: 'editor',
-        isAdmin: true,
-        canManageAdmins: true,
+        role: 'user',
+        institution: gcetInstitution.id,
+        roleAssignments: [
+          {
+            assignedRole: 'institution_admin',
+            scopeType: 'institution',
+            scopeId: { relationTo: 'institutions', value: gcetInstitution.id },
+            scopeLabel: 'GCET',
+          },
+        ],
       },
     }),
     payload.create({
@@ -152,7 +214,16 @@ export const seed = async ({
         name: 'Editor User',
         email: 'editor@gcet.edu.in',
         password: 'editor123',
-        role: 'editor',
+        role: 'user',
+        institution: gcetInstitution.id,
+        roleAssignments: [
+          {
+            assignedRole: 'blog_editor',
+            scopeType: 'institution',
+            scopeId: { relationTo: 'institutions', value: gcetInstitution.id },
+            scopeLabel: 'GCET',
+          },
+        ],
       },
     }),
     payload.create({
@@ -161,7 +232,16 @@ export const seed = async ({
         name: 'Contributor User',
         email: 'contributor@gcet.edu.in',
         password: 'contributor123',
-        role: 'contributor',
+        role: 'user',
+        institution: gcetInstitution.id,
+        roleAssignments: [
+          {
+            assignedRole: 'blog_author',
+            scopeType: 'institution',
+            scopeId: { relationTo: 'institutions', value: gcetInstitution.id },
+            scopeLabel: 'GCET',
+          },
+        ],
       },
     }),
     payload.create({
@@ -189,6 +269,7 @@ export const seed = async ({
       collection: 'categories',
       data: {
         title: 'Technology',
+        institution: gcetInstitution.id,
         breadcrumbs: [
           {
             label: 'Technology',
@@ -202,6 +283,7 @@ export const seed = async ({
       collection: 'categories',
       data: {
         title: 'News',
+        institution: gcetInstitution.id,
         breadcrumbs: [
           {
             label: 'News',
@@ -215,6 +297,7 @@ export const seed = async ({
       collection: 'categories',
       data: {
         title: 'Finance',
+        institution: gcetInstitution.id,
         breadcrumbs: [
           {
             label: 'Finance',
@@ -227,6 +310,7 @@ export const seed = async ({
       collection: 'categories',
       data: {
         title: 'Design',
+        institution: gcetInstitution.id,
         breadcrumbs: [
           {
             label: 'Design',
@@ -240,6 +324,7 @@ export const seed = async ({
       collection: 'categories',
       data: {
         title: 'Software',
+        institution: gcetInstitution.id,
         breadcrumbs: [
           {
             label: 'Software',
@@ -253,6 +338,7 @@ export const seed = async ({
       collection: 'categories',
       data: {
         title: 'Engineering',
+        institution: gcetInstitution.id,
         breadcrumbs: [
           {
             label: 'Engineering',
@@ -273,7 +359,7 @@ export const seed = async ({
     context: {
       disableRevalidate: true,
     },
-    data: post1({ heroImage: image1Doc, blockImage: image2Doc, author: demoAuthor }),
+    data: { ...post1({ heroImage: image1Doc, blockImage: image2Doc, author: demoAuthor }), institution: gcetInstitution.id },
   })
 
   const post2Doc = await payload.create({
@@ -282,7 +368,7 @@ export const seed = async ({
     context: {
       disableRevalidate: true,
     },
-    data: post2({ heroImage: image2Doc, blockImage: image3Doc, author: demoAuthor }),
+    data: { ...post2({ heroImage: image2Doc, blockImage: image3Doc, author: demoAuthor }), institution: gcetInstitution.id },
   })
 
   const post3Doc = await payload.create({
@@ -291,7 +377,7 @@ export const seed = async ({
     context: {
       disableRevalidate: true,
     },
-    data: post3({ heroImage: image3Doc, blockImage: image1Doc, author: demoAuthor }),
+    data: { ...post3({ heroImage: image3Doc, blockImage: image1Doc, author: demoAuthor }), institution: gcetInstitution.id },
   })
 
   // update each post with related posts
@@ -331,12 +417,12 @@ export const seed = async ({
     payload.create({
       collection: 'pages',
       depth: 0,
-      data: home({ heroImage: imageHomeDoc, metaImage: image2Doc }),
+      data: { ...home({ heroImage: imageHomeDoc, metaImage: image2Doc }), institution: gcetInstitution.id },
     }),
     payload.create({
       collection: 'pages',
       depth: 0,
-      data: contactPageData({ contactForm: contactForm }),
+      data: { ...contactPageData({ contactForm: contactForm }), institution: gcetInstitution.id },
     }),
   ])
 

@@ -12,8 +12,8 @@
 
 import type { CollectionConfig } from 'payload'
 
-import { editorOnly } from '@/access/editorOnly'
-import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
+import { hasPermission, hasPermissionFilter, publicOrInstitution } from '@/access/hasPermission'
+import { institutionField } from '@/fields/institution'
 import { slugField } from '@/fields/slug'
 import { getDepartmentOptions } from '@/custom/departments'
 
@@ -28,10 +28,10 @@ import {
 export const Events: CollectionConfig = {
   slug: 'events',
   access: {
-    create: editorOnly,
-    delete: editorOnly,
-    read: authenticatedOrPublished,
-    update: editorOnly,
+    create: hasPermission('event:create'),
+    delete: hasPermission('event:delete'),
+    read: publicOrInstitution(),
+    update: hasPermissionFilter('event:edit_own_club', 'organizingClubs'),
   },
   admin: {
     defaultColumns: ['title', 'dataSource', 'eventType', 'department', 'updatedAt'],
@@ -39,10 +39,31 @@ export const Events: CollectionConfig = {
     description: '📅 Events from Conosco API or manually created. CMS adds SEO, images, and editorial content.',
   },
   fields: [
+    institutionField,
     {
       name: 'title',
       type: 'text',
       required: true,
+    },
+    // -----------------------------------------------------------------------
+    // Club Ownership & Collaboration (Phase 2)
+    // -----------------------------------------------------------------------
+    {
+      name: 'organizingClubs',
+      type: 'relationship',
+      relationTo: 'clubs',
+      hasMany: true,
+      admin: {
+        description: 'All clubs organizing this event. Supports collaborative events (e.g., IEEE + Coding Club hackathon).',
+      },
+    },
+    {
+      name: 'createdByClub',
+      type: 'relationship',
+      relationTo: 'clubs',
+      admin: {
+        description: 'The primary club that created this event. Only this club\'s admin (or superadmin) can edit.',
+      },
     },
     {
       type: 'tabs',
@@ -144,11 +165,44 @@ export const Events: CollectionConfig = {
               required: true,
               defaultValue: 'manual',
               options: [
-                { label: 'Manual (created in CMS)', value: 'manual' },
-                { label: 'Conosco (synced from API)', value: 'conosco' },
+                { label: 'Simple CMS Event', value: 'manual' },
+                { label: 'Conosco Managed (Full Power)', value: 'conosco' },
+                { label: 'External Platform', value: 'external' },
               ],
               admin: {
-                description: 'Where this event originates. Conosco events sync operational data from the API.',
+                description: 'Where this event originates. Manual = CMS-only. Conosco = synced from ERP. External = IEEE vTools, Unstop, etc.',
+              },
+            },
+            {
+              name: 'registrationUrl',
+              type: 'text',
+              admin: {
+                description: 'External registration link (Google Form, Unstop, vTools, etc.)',
+                condition: (data) => data?.dataSource !== 'conosco',
+              },
+            },
+            {
+              name: 'externalPlatform',
+              type: 'select',
+              options: [
+                { label: 'IEEE vTools', value: 'ieee-vtools' },
+                { label: 'Unstop', value: 'unstop' },
+                { label: 'Eventbrite', value: 'eventbrite' },
+                { label: 'Devfolio', value: 'devfolio' },
+                { label: 'Google Forms', value: 'google-forms' },
+                { label: 'Other', value: 'other' },
+              ],
+              admin: {
+                condition: (data) => data?.dataSource === 'external',
+                description: 'Which platform manages this event',
+              },
+            },
+            {
+              name: 'externalEventUrl',
+              type: 'text',
+              admin: {
+                condition: (data) => data?.dataSource === 'external',
+                description: 'Canonical URL on the external platform',
               },
             },
             {

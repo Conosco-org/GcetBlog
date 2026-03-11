@@ -2,13 +2,20 @@
 
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 
+interface RoleAssignment {
+  assignedRole: string
+  scopeType: string
+  scopeId?: string | { id: string }
+  scopeLabel?: string
+}
+
 interface User {
   id: string
   email: string
   name?: string
-  role: 'contributor' | 'editor'
-  isAdmin?: boolean
-  canManageAdmins?: boolean
+  role: 'superadmin' | 'user'
+  institution?: string | { id: string }
+  roleAssignments?: RoleAssignment[]
 }
 
 interface AuthContextType {

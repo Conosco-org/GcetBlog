@@ -30,13 +30,13 @@ export default async function LoginPage({
     }
     
     // Default role-based redirect
-    const typedUser = user as unknown as { isAdmin?: boolean; role?: string }
-    if (typedUser.isAdmin) {
-      redirect('/admin-dashboard')
-    } else if (typedUser.role === 'editor') {
-      redirect('/editor')
+    const typedUser = user as unknown as { role?: string; roleAssignments?: Array<{ assignedRole: string }> }
+    if (typedUser.role === 'superadmin') {
+      redirect('/platform')
+    } else if (Array.isArray(typedUser.roleAssignments) && typedUser.roleAssignments.length > 0) {
+      redirect('/user')
     } else {
-      redirect('/contributor')
+      redirect('/')
     }
   }
 

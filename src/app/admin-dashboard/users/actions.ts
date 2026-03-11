@@ -4,8 +4,24 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import { revalidatePath } from 'next/cache'
+import { isSuperAdmin, isInstitutionAdmin } from '@/utilities/checkUserRole'
 
-export async function changeUserRole(userId: string, newRole: 'contributor' | 'editor') {
+type RoleAssignment = {
+  assignedRole: string
+  scopeType: string
+  scopeId?: string | { id: string }
+  scopeLabel?: string
+  id?: string | null
+}
+
+type UserWithRoles = {
+  id: string
+  role?: string
+  roleAssignments?: RoleAssignment[]
+  [key: string]: unknown
+}
+
+export async function changeUserRole(userId: string, assignedRole: string, action: 'add' | 'remove' = 'add') {
   try {
     const payload = await getPayload({ config: configPromise })
     const requestHeaders = await headers()
@@ -15,14 +31,14 @@ export async function changeUserRole(userId: string, newRole: 'contributor' | 'e
       return { success: false, message: 'Unauthorized' }
     }
 
-    // Fetch full user to check isAdmin
+    // Fetch full user to check permissions
     const fullUser = await payload.findByID({
       collection: 'users',
       id: user.id,
       depth: 0,
-    })
+    }) as unknown as UserWithRoles
 
-    if (!fullUser.isAdmin) {
+    if (!isSuperAdmin(fullUser) && !isInstitutionAdmin(fullUser)) {
       return { success: false, message: 'Unauthorized' }
     }
 
@@ -31,10 +47,33 @@ export async function changeUserRole(userId: string, newRole: 'contributor' | 'e
       return { success: false, message: 'You cannot change your own role' }
     }
 
+    // Fetch target user
+    const targetUser = await payload.findByID({
+      collection: 'users',
+      id: userId,
+      depth: 0,
+    }) as unknown as UserWithRoles
+
+    const currentAssignments = (targetUser.roleAssignments || []) as RoleAssignment[]
+
+    let newAssignments: RoleAssignment[]
+    if (action === 'remove') {
+      newAssignments = currentAssignments.filter(a => a.assignedRole !== assignedRole)
+    } else {
+      // Don't add duplicate
+      if (currentAssignments.some(a => a.assignedRole === assignedRole)) {
+        return { success: false, message: `User already has role ${assignedRole}` }
+      }
+      newAssignments = [...currentAssignments, {
+        assignedRole,
+        scopeType: assignedRole === 'institution_admin' ? 'institution' : 'global',
+      }]
+    }
+
     await payload.update({
       collection: 'users',
       id: userId,
-      data: { role: newRole },
+      data: { roleAssignments: newAssignments } as any,
     })
 
     // Log the action
@@ -50,7 +89,7 @@ export async function changeUserRole(userId: string, newRole: 'contributor' | 'e
     })
 
     revalidatePath('/admin-dashboard/users')
-    return { success: true, message: `User role updated to ${newRole}` }
+    return { success: true, message: action === 'remove' ? `Role ${assignedRole} removed` : `Role ${assignedRole} assigned` }
   } catch (error) {
     console.error('Error changing user role:', error)
     return { success: false, message: 'Failed to update user role' }
@@ -67,20 +106,31 @@ export async function deleteUser(userId: string) {
       return { success: false, message: 'Unauthorized' }
     }
 
-    // Fetch full user to check isAdmin
+    // Fetch full user to check permissions
     const fullUser = await payload.findByID({
       collection: 'users',
       id: user.id,
       depth: 0,
-    })
+    }) as unknown as UserWithRoles
 
-    if (!fullUser.isAdmin) {
+    if (!isSuperAdmin(fullUser) && !isInstitutionAdmin(fullUser)) {
       return { success: false, message: 'Unauthorized' }
     }
 
     // Prevent deleting own account
     if (user.id === userId) {
       return { success: false, message: 'You cannot delete your own account' }
+    }
+
+    // Prevent deleting superadmins
+    const targetUser = await payload.findByID({
+      collection: 'users',
+      id: userId,
+      depth: 0,
+    }) as unknown as UserWithRoles
+
+    if (isSuperAdmin(targetUser)) {
+      return { success: false, message: 'Cannot delete a superadmin' }
     }
 
     await payload.delete({
@@ -118,15 +168,15 @@ export async function toggleAdminStatus(userId: string) {
       return { success: false, message: 'Unauthorized' }
     }
 
-    // Fetch full current user to check canManageAdmins
+    // Only superadmins can toggle institution_admin
     const fullUser = await payload.findByID({
       collection: 'users',
       id: user.id,
       depth: 0,
-    })
+    }) as unknown as UserWithRoles
 
-    if (!fullUser.canManageAdmins) {
-      return { success: false, message: 'Only super admins can toggle admin status' }
+    if (!isSuperAdmin(fullUser)) {
+      return { success: false, message: 'Only superadmins can toggle admin status' }
     }
 
     // Prevent toggling own admin status
@@ -139,23 +189,27 @@ export async function toggleAdminStatus(userId: string) {
       collection: 'users',
       id: userId,
       depth: 0,
-    })
+    }) as unknown as UserWithRoles
 
-    // Only editors can be admins
-    if (targetUser.role !== 'editor') {
-      return { success: false, message: 'User must be an editor to become admin' }
+    const currentAssignments = (targetUser.roleAssignments || []) as RoleAssignment[]
+    const hasInstAdmin = currentAssignments.some(a => a.assignedRole === 'institution_admin')
+
+    let newAssignments: RoleAssignment[]
+    if (hasInstAdmin) {
+      // Remove institution_admin
+      newAssignments = currentAssignments.filter(a => a.assignedRole !== 'institution_admin')
+    } else {
+      // Add institution_admin
+      newAssignments = [...currentAssignments, {
+        assignedRole: 'institution_admin',
+        scopeType: 'institution',
+      }]
     }
-
-    const newStatus = !targetUser.isAdmin
 
     await payload.update({
       collection: 'users',
       id: userId,
-      data: {
-        isAdmin: newStatus,
-        // If revoking admin, also revoke canManageAdmins
-        ...(newStatus === false ? { canManageAdmins: false } : {}),
-      },
+      data: { roleAssignments: newAssignments } as any,
     })
 
     // Log the action
@@ -173,9 +227,9 @@ export async function toggleAdminStatus(userId: string) {
     revalidatePath('/admin-dashboard/users')
     return {
       success: true,
-      message: newStatus
-        ? `User promoted to admin`
-        : `User demoted from admin`,
+      message: hasInstAdmin
+        ? 'User demoted from institution admin'
+        : 'User promoted to institution admin',
     }
   } catch (error) {
     console.error('Error toggling admin status:', error)
@@ -184,6 +238,8 @@ export async function toggleAdminStatus(userId: string) {
 }
 
 export async function toggleCanManageAdmins(userId: string) {
+  // In the new RBAC system, "super admin" = superadmin base role.
+  // Only an existing superadmin can promote/demote base role.
   try {
     const payload = await getPayload({ config: configPromise })
     const requestHeaders = await headers()
@@ -193,40 +249,32 @@ export async function toggleCanManageAdmins(userId: string) {
       return { success: false, message: 'Unauthorized' }
     }
 
-    // Fetch full current user to check canManageAdmins
     const fullUser = await payload.findByID({
       collection: 'users',
       id: user.id,
       depth: 0,
-    })
+    }) as unknown as UserWithRoles
 
-    if (!fullUser.canManageAdmins) {
-      return { success: false, message: 'Only super admins can manage super admin status' }
+    if (!isSuperAdmin(fullUser)) {
+      return { success: false, message: 'Only superadmins can manage superadmin status' }
     }
 
-    // Prevent toggling own super admin status
     if (user.id === userId) {
-      return { success: false, message: 'You cannot change your own super admin status' }
+      return { success: false, message: 'You cannot change your own superadmin status' }
     }
 
-    // Fetch target user
     const targetUser = await payload.findByID({
       collection: 'users',
       id: userId,
       depth: 0,
-    })
+    }) as unknown as UserWithRoles
 
-    // Must be an admin to become super admin
-    if (!targetUser.isAdmin) {
-      return { success: false, message: 'User must be an admin to become super admin' }
-    }
-
-    const newStatus = !targetUser.canManageAdmins
+    const newRole = targetUser.role === 'superadmin' ? 'user' : 'superadmin'
 
     await payload.update({
       collection: 'users',
       id: userId,
-      data: { canManageAdmins: newStatus },
+      data: { role: newRole } as any,
     })
 
     // Log the action
@@ -244,12 +292,12 @@ export async function toggleCanManageAdmins(userId: string) {
     revalidatePath('/admin-dashboard/users')
     return {
       success: true,
-      message: newStatus
-        ? `User granted super admin privileges`
-        : `User revoked super admin privileges`,
+      message: newRole === 'superadmin'
+        ? 'User promoted to superadmin'
+        : 'User demoted from superadmin',
     }
   } catch (error) {
-    console.error('Error toggling canManageAdmins:', error)
-    return { success: false, message: 'Failed to update super admin status' }
+    console.error('Error toggling superadmin:', error)
+    return { success: false, message: 'Failed to update superadmin status' }
   }
 }

@@ -47,7 +47,7 @@ export async function registerAction(formData: FormData) {
         name,
         email,
         password,
-        role: 'contributor',
+        role: 'user',
         bio,
       },
     })

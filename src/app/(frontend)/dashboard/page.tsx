@@ -13,16 +13,15 @@ export default async function DashboardPage() {
     redirect('/login')
   }
 
-  const typedUser = user as User
+  const typedUser = user as unknown as { id: string; role: string; roleAssignments?: { assignedRole: string }[] }
 
-  // Redirect based on user role and admin flag
-  const isAdmin = Boolean((typedUser as unknown as Record<string, unknown>).isAdmin)
-  if (isAdmin) {
+  // Redirect based on user role assignments
+  if (typedUser.role === 'superadmin') {
     redirect('/admin-dashboard')
-  } else if (typedUser.role === 'editor') {
+  } else if (typedUser.roleAssignments?.some(a => a.assignedRole === 'institution_admin')) {
+    redirect('/admin-dashboard')
+  } else if (typedUser.roleAssignments?.length) {
     redirect('/editor')
-  } else if (typedUser.role === 'contributor') {
-    redirect('/contributor')
   } else {
     // Default user - show basic dashboard
     redirect('/dashboard/user')

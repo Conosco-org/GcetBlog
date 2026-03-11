@@ -7,6 +7,15 @@ import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
 import { FormBlock } from '@/blocks/Form/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
+import { StatsBlockComponent } from '@/blocks/StatsBlock/Component'
+import { EventsFeedBlockComponent } from '@/blocks/EventsFeed/Component'
+import { TeamGridBlockComponent } from '@/blocks/TeamGrid/Component'
+import { CountdownBlockComponent } from '@/blocks/Countdown/Component'
+import { GalleryPreviewBlockComponent } from '@/blocks/GalleryPreview/Component'
+import { SponsorsBlockComponent } from '@/blocks/Sponsors/Component'
+import { TestimonialsBlockComponent } from '@/blocks/Testimonials/Component'
+import { ScheduleBlockComponent } from '@/blocks/Schedule/Component'
+import { ContactBlockComponent } from '@/blocks/Contact/Component'
 
 const blockComponents = {
   archive: ArchiveBlock,
@@ -14,6 +23,15 @@ const blockComponents = {
   cta: CallToActionBlock,
   formBlock: FormBlock,
   mediaBlock: MediaBlock,
+  statsBlock: StatsBlockComponent,
+  eventsFeed: EventsFeedBlockComponent,
+  teamGrid: TeamGridBlockComponent,
+  countdown: CountdownBlockComponent,
+  galleryPreview: GalleryPreviewBlockComponent,
+  sponsors: SponsorsBlockComponent,
+  testimonials: TestimonialsBlockComponent,
+  schedule: ScheduleBlockComponent,
+  contact: ContactBlockComponent,
 }
 
 export const RenderBlocks: React.FC<{

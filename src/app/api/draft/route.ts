@@ -20,7 +20,13 @@ export async function GET(request: Request) {
     const result = await payload.auth({ headers: request.headers })
     user = result.user
     
-    if (!user || user.role !== 'editor') {
+    const hasEditAccess = user && (
+      user.role === 'superadmin' ||
+      (user as unknown as { roleAssignments?: { assignedRole: string }[] }).roleAssignments?.some(
+        (a) => ['blog_editor', 'institution_admin'].includes(a.assignedRole)
+      )
+    )
+    if (!hasEditAccess) {
       return new Response('Forbidden - Editor access required. Please log in as an editor.', { status: 403 })
     }
   } catch (error) {

@@ -3,6 +3,7 @@ import configPromise from '@payload-config'
 import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import type { User } from '@/payload-types'
+import { checkPermission } from '@/access/hasPermission'
 
 export async function PATCH(
   request: NextRequest,
@@ -23,7 +24,7 @@ export async function PATCH(
 
     const typedUser = user as User & { role: string }
 
-    if (typedUser.role !== 'editor') {
+    if (!checkPermission(user, 'blog:publish')) {
       return NextResponse.json(
         { error: 'Forbidden: Only editors can update categories' },
         { status: 403 }
@@ -99,7 +100,7 @@ export async function DELETE(
 
     const typedUser = user as User & { role: string }
 
-    if (typedUser.role !== 'editor') {
+    if (!checkPermission(user, 'blog:publish')) {
       return NextResponse.json(
         { error: 'Forbidden: Only editors can delete categories' },
         { status: 403 }

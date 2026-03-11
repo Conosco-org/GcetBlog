@@ -1,0 +1,127 @@
+﻿import { redirect, notFound } from 'next/navigation'
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
+import { headers } from 'next/headers'
+import { checkPermission } from '@/access/hasPermission'
+import { lexicalToHtml } from '@/components/RichTextEditor/lexicalToHtml'
+import { PostForm } from './PostForm'
+import type { Post } from '@/payload-types'
+
+interface PageProps {
+  params: Promise<{ id: string }>
+}
+
+export default async function EditPostPage({ params }: PageProps) {
+  const { id } = await params
+  const payload = await getPayload({ config: configPromise })
+  const requestHeaders = await headers()
+
+  const { user } = await payload.auth({ headers: requestHeaders })
+
+  if (!user) {
+    redirect('/login')
+  }
+
+  if (!checkPermission(user, 'blog:create_draft')) {
+    redirect('/user')
+  }
+
+  // Fetch the post
+  let post: Post | null = null
+  try {
+    post = await payload.findByID({
+      collection: 'posts',
+      id,
+      draft: true,
+      depth: 1,
+    }) as Post
+  } catch {
+    notFound()
+  }
+
+  if (!post) notFound()
+
+  // Blog authors can only edit their own posts
+  const userWithRoles = user as unknown as { id: string; role: string; roleAssignments?: { assignedRole: string }[] }
+  const isBlogAuthorOnly =
+    !userWithRoles.roleAssignments?.some(a => ['blog_editor', 'institution_admin'].includes(a.assignedRole)) &&
+    userWithRoles.roleAssignments?.some(a => a.assignedRole === 'blog_author')
+  if (isBlogAuthorOnly) {
+    const authorIds = (post.authors || []).map((a: unknown) =>
+      typeof a === 'object' && a !== null && 'id' in a ? String((a as { id: unknown }).id) : String(a)
+    )
+    if (!authorIds.includes(String(user.id))) {
+      redirect('/user')
+    }
+  }
+
+  // Fetch categories
+  const categories = await payload.find({
+    collection: 'categories',
+    limit: 100,
+    sort: 'title',
+  })
+
+  // Convert Lexical content back to HTML for the editor
+  let contentHtml = ''
+  if (post.content) {
+    try {
+      contentHtml = lexicalToHtml(post.content as Parameters<typeof lexicalToHtml>[0])
+    } catch {
+      contentHtml = ''
+    }
+  }
+
+  // Build initialData
+  const categoryIds = (post.categories || []).map((c: unknown) =>
+    typeof c === 'object' && c !== null && 'id' in c ? String((c as { id: unknown }).id) : String(c)
+  )
+
+  const heroImage =
+    post.heroImage && typeof post.heroImage === 'object'
+      ? { id: String(post.heroImage.id), url: post.heroImage.url || undefined }
+      : post.heroImage
+        ? { id: String(post.heroImage), url: undefined }
+        : null
+
+  const initialData = {
+    title: post.title || '',
+    content: contentHtml,
+    categories: categoryIds,
+    tags: (post.tags as string[] | null) || [],
+    publishedAt: post.publishedAt
+      ? new Date(post.publishedAt).toISOString().slice(0, 16)
+      : '',
+    featuredFrom: post.featuredFrom
+      ? new Date(post.featuredFrom as string).toISOString().slice(0, 16)
+      : '',
+    featuredUntil: post.featuredUntil
+      ? new Date(post.featuredUntil as string).toISOString().slice(0, 16)
+      : '',
+    meta: {
+      title: post.meta?.title || '',
+      description: post.meta?.description || '',
+    },
+    heroImage: heroImage?.id,
+    heroImageUrl: heroImage?.url,
+  }
+
+  return (
+    <div className="min-h-screen">
+      <div className="max-w-4xl mx-auto p-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-foreground mb-2">Edit Post</h1>
+          <p className="text-muted-foreground">Update and republish your post</p>
+        </div>
+
+        <PostForm
+          categories={categories.docs}
+          user={user}
+          initialData={initialData}
+          postId={id}
+          isEdit={true}
+        />
+      </div>
+    </div>
+  )
+}

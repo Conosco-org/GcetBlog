@@ -1,21 +1,25 @@
 import type { CollectionConfig } from 'payload'
 
 import { anyone } from '../access/anyone'
-import { editorOnly } from '../access/editorOnly'
+import { hasPermission } from '../access/hasPermission'
+import { institutionField } from '../fields/institution'
 import { slugField } from '@/fields/slug'
+import { tenantIsolationHooks } from '@/hooks/tenantIsolation'
 
 export const Categories: CollectionConfig = {
   slug: 'categories',
   access: {
-    create: editorOnly,
-    delete: editorOnly,
+    create: hasPermission('blog:publish'),
+    delete: hasPermission('blog:delete'),
     read: anyone,
-    update: editorOnly,
+    update: hasPermission('blog:publish'),
   },
   admin: {
     useAsTitle: 'title',
   },
+  hooks: tenantIsolationHooks(),
   fields: [
+    institutionField,
     {
       name: 'title',
       type: 'text',

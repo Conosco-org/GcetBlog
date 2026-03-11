@@ -2,21 +2,24 @@
 import type { AdminLog } from '../payload-types'
 
 import { authenticated } from '../access/authenticated'
-import { editorOnly } from '../access/editorOnly'
+import { hasPermission, hasPermissionFilter, publicOrInstitution } from '../access/hasPermission'
+import { institutionField } from '../fields/institution'
+import { withTenantIsolation } from '@/hooks/tenantIsolation'
 
 export const Templates: CollectionConfig = {
   slug: 'templates',
   access: {
-    create: editorOnly,
-    delete: editorOnly,
-    read: authenticated,
-    update: editorOnly,
+    create: hasPermission('blog:publish'),
+    delete: hasPermissionFilter('blog:publish', 'createdBy', 'institution'),
+    read: publicOrInstitution('institution'),
+    update: hasPermissionFilter('blog:publish', 'createdBy', 'institution'),
   },
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'category', 'audience', 'usageCount', 'updatedAt'],
   },
   fields: [
+    institutionField,
     {
       name: 'name',
       type: 'text',
@@ -150,7 +153,7 @@ export const Templates: CollectionConfig = {
       },
     },
   ],
-  hooks: {
+  hooks: withTenantIsolation({
     beforeChange: [
       ({ req, operation, data }) => {
         if (operation === 'create' && req.user) {
@@ -216,5 +219,5 @@ export const Templates: CollectionConfig = {
         return doc
       },
     ],
-  },
+  }),
 }

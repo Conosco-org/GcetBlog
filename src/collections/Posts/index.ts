@@ -9,9 +9,10 @@ import {
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
 
-import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
-import { editorOnly } from '../../access/editorOnly'
-import { isAdmin } from '../../utilities/checkUserRole'
+import { hasPermission, blogContentAccess, publicOrInstitution } from '../../access/hasPermission'
+import { blogCreateAccess } from '../../access/hasBlogAccess'
+import { institutionField } from '../../fields/institution'
+import { withTenantIsolation } from '@/hooks/tenantIsolation'
 import { Banner } from '../../blocks/Banner/config'
 import { Code } from '../../blocks/Code/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
@@ -34,10 +35,10 @@ import { getDepartmentOptions } from '@/custom/departments'
 export const Posts: CollectionConfig<'posts'> = {
   slug: 'posts',
   access: {
-    create: editorOnly,
-    delete: editorOnly,
-    read: authenticatedOrPublished,
-    update: editorOnly,
+    create: blogCreateAccess,
+    delete: hasPermission('blog:delete'),
+    read: publicOrInstitution(),
+    update: blogContentAccess('blog:edit_own'),
   },
   // This config controls what's populated by default when a post is referenced
   // https://payloadcms.com/docs/queries/select#defaultpopulate-collection-config-property
@@ -52,8 +53,12 @@ export const Posts: CollectionConfig<'posts'> = {
     },
   },
   admin: {
-    hidden: ({ user }) => isAdmin(user),
-    defaultColumns: ['title', 'slug', 'updatedAt'],
+    hidden: ({ user }) => {
+      // Hide from Payload admin for non-superadmins (they use the editor UI)
+      const u = user as { role?: string } | undefined
+      return u?.role !== 'superadmin'
+    },
+    defaultColumns: ['title', 'slug', 'institution', 'updatedAt'],
     livePreview: {
       url: ({ data, req }) => {
         const path = generatePreviewPath({
@@ -74,6 +79,7 @@ export const Posts: CollectionConfig<'posts'> = {
     useAsTitle: 'title',
   },
   fields: [
+    institutionField,
     {
       name: 'title',
       type: 'text',
@@ -407,11 +413,11 @@ export const Posts: CollectionConfig<'posts'> = {
     },
     ...slugField(),
   ],
-  hooks: {
+  hooks: withTenantIsolation({
     afterChange: [revalidatePost],
     afterRead: [populateAuthors],
     afterDelete: [revalidateDelete],
-  },
+  }),
   versions: {
     drafts: {
       autosave: {

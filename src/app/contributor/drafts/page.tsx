@@ -31,9 +31,8 @@ export default async function DraftsPage({ searchParams }: PageProps) {
 
   const typedUser = user as User
 
-  if (typedUser.role !== 'contributor') {
-    redirect('/dashboard')
-  }
+  // Contributor routes deprecated — redirect to editor
+  redirect('/editor')
 
   const query = params.q || ''
   const page = Math.max(1, Number(params.page) || 1)

@@ -4,19 +4,29 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import React, { useEffect, useState, useRef, Suspense } from 'react'
 import Image from 'next/image'
-import { Menu, X, Search, BookOpen } from 'lucide-react'
+import { Menu, X, Search, BookOpen, Users, Calendar } from 'lucide-react'
 
 import type { Header } from '@/payload-types'
 
 import { AuthButton } from '@/components/Header/AuthButton'
 import { GlobalSearchBar } from '@/components/GlobalSearchBar'
+import type { ScopedNavItem } from '@/utilities/domainScope'
+
+/** Map icon name strings to Lucide components */
+const NAV_ICONS: Record<string, React.FC<{ className?: string }>> = {
+  'book-open': BookOpen,
+  users: Users,
+  calendar: Calendar,
+}
 
 interface HeaderClientProps {
   data: Header
   categories?: Array<{ id: string; title: string; slug: string }>
+  scopedNavItems?: ScopedNavItem[]
+  domainPurpose?: string
 }
 
-export const HeaderClient: React.FC<HeaderClientProps> = ({ data: _data, categories = [] }) => {
+export const HeaderClient: React.FC<HeaderClientProps> = ({ data: _data, categories = [], scopedNavItems = [], domainPurpose: _domainPurpose }) => {
   const [theme, setTheme] = useState<string | null>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -103,14 +113,20 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data: _data, categor
           {/* Desktop Navigation */}
           <div className="ml-auto flex items-center gap-4 sm:gap-6">
             <nav className="hidden md:flex items-center gap-8">
-              <Link
-                href="/posts"
-                className={`text-sm font-medium tracking-wide transition-colors hover:text-accent ${
-                  pathname === '/posts' || pathname?.startsWith('/posts/page') ? 'text-accent' : 'text-muted-foreground'
-                }`}
-              >
-                Posts
-              </Link>
+              {scopedNavItems.map((item) => {
+                const isActive = pathname === item.href || pathname?.startsWith(item.href + '/')
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`text-sm font-medium tracking-wide transition-colors hover:text-accent ${
+                      isActive ? 'text-accent' : 'text-muted-foreground'
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                )
+              })}
             </nav>
 
             <Suspense fallback={null}>
@@ -156,18 +172,25 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data: _data, categor
 
             {/* Navigation Links */}
             <nav className="space-y-1" aria-label="Mobile navigation">
-              <Link
-                href="/posts"
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                  pathname === '/posts' || pathname?.startsWith('/posts/page')
-                    ? 'bg-accent/10 text-accent'
-                    : 'text-foreground hover:bg-card'
-                }`}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <BookOpen className="h-4 w-4" />
-                Posts
-              </Link>
+              {scopedNavItems.map((item) => {
+                const isActive = pathname === item.href || pathname?.startsWith(item.href + '/')
+                const IconComponent = item.icon ? NAV_ICONS[item.icon] : null
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                      isActive
+                        ? 'bg-accent/10 text-accent'
+                        : 'text-foreground hover:bg-card'
+                    }`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {IconComponent && <IconComponent className="h-4 w-4" />}
+                    {item.label}
+                  </Link>
+                )
+              })}
             </nav>
 
             {/* Category Quick Links */}

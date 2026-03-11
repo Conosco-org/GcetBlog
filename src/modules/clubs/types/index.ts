@@ -57,6 +57,14 @@ export interface ClubDisplayData {
     image?: { url?: string }
   }
 
+  /** Theme customization */
+  theme?: {
+    primaryColor?: string
+    accentColor?: string
+    cardStyle?: string
+    fontPreset?: string
+  }
+
   /** CMS record ID */
   cmsId?: string
 

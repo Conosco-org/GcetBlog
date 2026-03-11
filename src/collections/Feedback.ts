@@ -1,6 +1,8 @@
 import type { CollectionConfig } from 'payload'
 
 import { authenticated } from '../access/authenticated'
+import { optionalInstitutionField } from '../fields/institution'
+import { tenantIsolationHooks } from '@/hooks/tenantIsolation'
 
 export const Feedback: CollectionConfig = {
   slug: 'feedback',
@@ -14,7 +16,9 @@ export const Feedback: CollectionConfig = {
     useAsTitle: 'title',
     defaultColumns: ['title', 'post', 'type', 'status', 'createdAt'],
   },
+  hooks: tenantIsolationHooks(),
   fields: [
+    optionalInstitutionField,
     {
       name: 'title',
       type: 'text',

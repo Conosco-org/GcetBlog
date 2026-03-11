@@ -1,5 +1,5 @@
 ﻿import type { CollectionConfig } from 'payload'
-import { editorOnly } from '../../access/editorOnly'
+import { hasPermission, hasPermissionFilter } from '../../access/hasPermission'
 import {
   BlocksFeature,
   FixedToolbarFeature,
@@ -11,6 +11,8 @@ import {
 import { Banner } from '@/blocks/Banner/config'
 import { Code } from '@/blocks/Code/config'
 import { MediaBlock } from '@/blocks/MediaBlock/config'
+import { institutionField } from '../../fields/institution'
+import { tenantIsolationHooks } from '@/hooks/tenantIsolation'
 
 export const Newsletters: CollectionConfig = {
   slug: 'newsletters',
@@ -24,11 +26,12 @@ export const Newsletters: CollectionConfig = {
     description: 'Newsletter campaigns - manual compose or auto-generated digests',
   },
   access: {
-    read: editorOnly,
-    create: editorOnly,
-    update: editorOnly,
-    delete: editorOnly,
+    read: hasPermissionFilter('blog:publish', 'sentBy', 'institution'),
+    create: hasPermission('blog:publish'),
+    update: hasPermissionFilter('blog:publish', 'sentBy', 'institution'),
+    delete: hasPermissionFilter('blog:publish', 'sentBy', 'institution'),
   },
+  hooks: tenantIsolationHooks(),
   versions: {
     drafts: {
       autosave: {
@@ -38,6 +41,7 @@ export const Newsletters: CollectionConfig = {
     maxPerDoc: 25,
   },
   fields: [
+    institutionField,
     // ── Campaign Identity ─────────────────────────────────────────────
     {
       name: 'title',

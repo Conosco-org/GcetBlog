@@ -1,5 +1,7 @@
 import type { CollectionConfig, Where } from 'payload'
 import { authenticated } from '../../access/authenticated'
+import { institutionField } from '../../fields/institution'
+import { withTenantIsolation } from '@/hooks/tenantIsolation'
 
 export const Votes: CollectionConfig = {
   slug: 'votes',
@@ -27,6 +29,7 @@ export const Votes: CollectionConfig = {
     hidden: true, // Hide from admin panel - managed via API
   },
   fields: [
+    institutionField,
     {
       name: 'post',
       type: 'relationship',
@@ -54,7 +57,7 @@ export const Votes: CollectionConfig = {
       },
     },
   ],
-  hooks: {
+  hooks: withTenantIsolation({
     beforeChange: [
       // Auto-set the user to the current authenticated user
       ({ req, data, operation }) => {
@@ -97,6 +100,6 @@ export const Votes: CollectionConfig = {
         return data
       },
     ],
-  },
+  }),
   timestamps: true,
 }

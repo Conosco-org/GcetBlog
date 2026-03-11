@@ -17,7 +17,13 @@ export default async function UserDashboardPage() {
     redirect('/login')
   }
 
-  const typedUser = user as User
+  const typedUser = user as unknown as {
+    id: string
+    role: string
+    name?: string
+    email?: string
+    roleAssignments?: { assignedRole: string }[]
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -46,14 +52,14 @@ export default async function UserDashboardPage() {
             <Button className="w-full justify-start" variant="ghost" asChild>
               <Link href="/posts">Browse Posts</Link>
             </Button>
-            {typedUser.role === 'editor' && (
+            {typedUser.roleAssignments?.some(a => ['blog_editor', 'institution_admin'].includes(a.assignedRole)) && (
               <Button className="w-full justify-start" variant="ghost" asChild>
                 <Link href="/editor">Editor Dashboard</Link>
               </Button>
             )}
-            {typedUser.role === 'contributor' && (
+            {typedUser.roleAssignments?.some(a => a.assignedRole === 'blog_author') && (
               <Button className="w-full justify-start" variant="ghost" asChild>
-                <Link href="/contributor">Contributor Dashboard</Link>
+                <Link href="/editor">Author Dashboard</Link>
               </Button>
             )}
           </CardContent>

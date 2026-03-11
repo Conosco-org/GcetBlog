@@ -1,25 +1,36 @@
 import type { CollectionConfig } from 'payload'
 
 import { authenticated } from '../../access/authenticated'
-import { adminOnly } from '../../access/adminOnly'
-import { adminOrSelf } from '../../access/adminOrSelf'
+import { isSuperAdmin, isSuperAdminField } from '../../access/isSuperAdmin'
+import { selfOrAdmin } from '../../access/selfOrAdmin'
+import { ASSIGNABLE_ROLES, ROLE_LABELS } from '../../access/permissions'
 
 export const Users: CollectionConfig = {
   slug: 'users',
   access: {
+    // Payload admin panel: superadmin, institution_admin, and users with role assignments
     admin: ({ req: { user } }) => {
       if (!user || typeof user !== 'object') return false
-      return Boolean((user as unknown as Record<string, unknown>).isAdmin === true)
+      const u = user as unknown as {
+        role?: string
+        roleAssignments?: Array<{ assignedRole?: string }>
+      }
+      // SuperAdmin always has access
+      if (u.role === 'superadmin') return true
+      // Users with any role assignment can access admin panel
+      // (their per-collection access controls what they can actually do)
+      return (u.roleAssignments || []).length > 0
     },
     create: authenticated,
-    delete: adminOnly,
-    // Public can read basic profile info, authenticated users see more
-    read: () => true,
-    update: adminOrSelf,
+    delete: isSuperAdmin,
+    // selfOrAdmin: superadmin sees all, institution_admin sees their institution, users see self
+    read: selfOrAdmin,
+    update: selfOrAdmin,
   },
   admin: {
-    defaultColumns: ['name', 'email', 'role'],
+    defaultColumns: ['name', 'email', 'role', 'institution'],
     useAsTitle: 'name',
+    group: 'Platform',
   },
   auth: true,
   hooks: {
@@ -40,52 +51,117 @@ export const Users: CollectionConfig = {
       type: 'text',
       required: true,
     },
+    // -----------------------------------------------------------------------
+    // Multi-tenant: Institution this user belongs to
+    // SuperAdmin has NO institution — they're platform-level
+    // -----------------------------------------------------------------------
+    {
+      name: 'institution',
+      type: 'relationship',
+      relationTo: 'institutions',
+      index: true,
+      admin: {
+        position: 'sidebar',
+        description: 'Which institution this user belongs to. SuperAdmins have no institution.',
+        // Only superadmin can change institution assignment
+        condition: (data, siblingData, { user }) => {
+          return user?.role === 'superadmin'
+        },
+      },
+      access: {
+        update: isSuperAdminField,
+      },
+    },
+    // -----------------------------------------------------------------------
+    // Base Role: superadmin (platform owner) or user (everyone else)
+    // -----------------------------------------------------------------------
     {
       name: 'role',
       type: 'select',
       options: [
-        { label: 'Contributor', value: 'contributor' },
-        { label: 'Editor', value: 'editor' },
-        { label: 'Admin', value: 'admin' },
+        { label: 'User', value: 'user' },
+        { label: 'SuperAdmin', value: 'superadmin' },
       ],
-      defaultValue: 'contributor',
+      defaultValue: 'user',
       access: {
-        update: ({ req }) => {
-          const user = req.user as { role?: string } | undefined
-          return user?.role === 'admin'
-        },
+        // Only superadmin can change base roles
+        update: isSuperAdminField,
       },
-    },
-    {
-      name: 'isAdmin',
-      type: 'checkbox',
-      defaultValue: false,
       admin: {
-        description: 'Grant admin privileges for user management, logs, and system oversight',
+        description: 'Base role. SuperAdmin = platform owner. User = institution member with role assignments.',
         position: 'sidebar',
       },
-      access: {
-        update: ({ req }) => {
-          const user = req.user as { role?: string; isAdmin?: boolean } | undefined
-          return user?.isAdmin === true
-        },
-      },
     },
+    // -----------------------------------------------------------------------
+    // Role Assignments — where the real power comes from
+    // -----------------------------------------------------------------------
     {
-      name: 'canManageAdmins',
-      type: 'checkbox',
-      defaultValue: false,
+      name: 'roleAssignments',
+      type: 'array',
       admin: {
-        description: 'Can grant/revoke admin privileges. Protected from deletion.',
-        position: 'sidebar',
+        description:
+          'Assigned roles with scope. institution_admin can assign roles within their institution. SuperAdmin can assign any role.',
       },
       access: {
+        // Only superadmin and institution_admin can modify
         update: ({ req }) => {
-          const user = req.user as { canManageAdmins?: boolean } | undefined
-          return user?.canManageAdmins === true
+          const user = req.user as {
+            role?: string
+            roleAssignments?: Array<{ assignedRole?: string }>
+          } | undefined
+          if (!user) return false
+          if (user.role === 'superadmin') return true
+          // institution_admin can assign roles
+          return (user.roleAssignments || []).some(
+            (a) => a.assignedRole === 'institution_admin',
+          )
         },
       },
+      fields: [
+        {
+          name: 'assignedRole',
+          type: 'select',
+          required: true,
+          options: ASSIGNABLE_ROLES.map((r) => ({
+            label: ROLE_LABELS[r],
+            value: r,
+          })),
+        },
+        {
+          name: 'scopeType',
+          type: 'select',
+          required: true,
+          options: [
+            { label: 'Institution', value: 'institution' },
+            { label: 'Club', value: 'club' },
+            { label: 'Blog', value: 'blog' },
+            { label: 'Global (within institution)', value: 'global' },
+          ],
+        },
+        {
+          name: 'scopeId',
+          type: 'relationship',
+          relationTo: ['clubs', 'institutions'],
+          admin: {
+            description:
+              'Which club or institution this role applies to. Required for club and institution scopes.',
+            condition: (data, siblingData) =>
+              siblingData?.scopeType === 'club' || siblingData?.scopeType === 'institution',
+          },
+        },
+        {
+          name: 'scopeLabel',
+          type: 'text',
+          admin: {
+            readOnly: true,
+            description: 'Auto-populated display label (e.g., "Coding Club", "GCET")',
+          },
+        },
+      ],
     },
+    // -----------------------------------------------------------------------
+    // Profile fields
+    // -----------------------------------------------------------------------
     {
       name: 'bio',
       type: 'textarea',
@@ -112,6 +188,9 @@ export const Users: CollectionConfig = {
         description: 'Year of study or designation',
       },
     },
+    // -----------------------------------------------------------------------
+    // Auth provider tracking
+    // -----------------------------------------------------------------------
     {
       name: 'authProvider',
       type: 'select',
@@ -144,6 +223,9 @@ export const Users: CollectionConfig = {
         update: () => false,
       },
     },
+    // -----------------------------------------------------------------------
+    // Social & newsletter
+    // -----------------------------------------------------------------------
     {
       name: 'socialLinks',
       type: 'group',
@@ -178,7 +260,7 @@ export const Users: CollectionConfig = {
       type: 'checkbox',
       defaultValue: false,
       admin: {
-        description: 'Opt-in to receive the GCET Blog newsletter',
+        description: 'Opt-in to receive the newsletter',
         position: 'sidebar',
       },
     },

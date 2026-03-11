@@ -7,27 +7,30 @@ import {
 } from '@payloadcms/richtext-lexical'
 
 import { anyone } from '../access/anyone'
-import { editorOnly } from '../access/editorOnly'
+import { hasPermission } from '../access/hasPermission'
 import { authenticated } from '../access/authenticated'
+import { optionalInstitutionField } from '../fields/institution'
 import { useCloudinaryFallback } from './Media/hooks/useCloudinaryFallback'
 import { uploadToCloudinary } from './Media/hooks/uploadToCloudinary'
+import { withTenantIsolation } from '@/hooks/tenantIsolation'
 
 export const Media: CollectionConfig = {
   slug: 'media',
   access: {
-    create: authenticated, // contributors need to upload featured images
-    delete: editorOnly,
+    create: authenticated, // any authenticated user can upload media
+    delete: hasPermission('media:delete'),
     read: anyone,
-    update: editorOnly,
+    update: hasPermission('media:upload'),
   },
   admin: {
     description: '📸 Recommended sizes: Hero 1920×1080 (16:9), Cards 900×600 (3:2), OG 1200×630. Optimize images to <500KB. See IMAGE_GUIDELINES.md for details.',
   },
-  hooks: {
+  hooks: withTenantIsolation({
     beforeChange: [uploadToCloudinary],
     afterRead: [useCloudinaryFallback],
-  },
+  }),
   fields: [
+    optionalInstitutionField,
     {
       name: 'alt',
       type: 'text',

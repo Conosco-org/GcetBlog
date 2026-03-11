@@ -104,6 +104,7 @@ export async function getEventListingData(params: {
   eventType?: string
   status?: string
   search?: string
+  clubSlug?: string
 }): Promise<{
   events: EventCardData[]
   totalPages: number
@@ -122,6 +123,22 @@ export async function getEventListingData(params: {
     where.or = [
       { title: { like: params.search } },
     ]
+  }
+
+  // Club-scoped filtering: resolve slug → ID, then filter by organizingClubs
+  if (params.clubSlug) {
+    const clubResult = await payload.find({
+      collection: 'clubs',
+      where: { slug: { equals: params.clubSlug } },
+      limit: 1,
+      depth: 0,
+    })
+    if (clubResult.docs.length > 0) {
+      where.organizingClubs = { contains: clubResult.docs[0]!.id }
+    } else {
+      // Club not found — return empty results
+      return { events: [], totalPages: 0, totalDocs: 0, page: 1 }
+    }
   }
 
   // Fetch CMS events
@@ -169,6 +186,88 @@ export async function getEventListingData(params: {
   )
 
   // Apply status filter post-merge (since status comes from Conosco for synced events)
+  const filtered = params.status
+    ? events.filter((e) => e.status === params.status)
+    : events
+
+  return {
+    events: filtered,
+    totalPages: cmsResult.totalPages,
+    totalDocs: cmsResult.totalDocs,
+    page: cmsResult.page ?? 1,
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Get events for a specific club (organized by or created by)
+// ---------------------------------------------------------------------------
+
+export async function getClubEventsForDisplay(params: {
+  clubId: string
+  page?: number
+  limit?: number
+  status?: string
+}): Promise<{
+  events: EventCardData[]
+  totalPages: number
+  totalDocs: number
+  page: number
+}> {
+  const payload = await getPayload({ config })
+  const page = params.page ?? 1
+  const limit = params.limit ?? 12
+
+  const where: Record<string, unknown> = {
+    _status: { equals: 'published' },
+    or: [
+      { createdByClub: { equals: params.clubId } },
+      { organizingClubs: { contains: params.clubId } },
+    ],
+  }
+
+  const cmsResult = await payload.find({
+    collection: 'events',
+    where: where as import('payload').Where,
+    page,
+    limit,
+    sort: '-startDate',
+    depth: 1,
+  })
+
+  const events: EventCardData[] = await Promise.all(
+    cmsResult.docs.map(async (doc) => {
+      let conoscoData = null
+      if (doc.dataSource === 'conosco' && doc.conoscoEventCode) {
+        try {
+          const apiResponse = await getCachedEvent(doc.conoscoEventCode)
+          conoscoData = apiResponse.data
+        } catch {
+          // Degrade gracefully
+        }
+      }
+
+      const heroImage = doc.heroImage as { url?: string } | string | undefined
+      const heroImageUrl = typeof heroImage === 'object' && heroImage !== null ? heroImage.url : undefined
+
+      return {
+        slug: doc.slug as string,
+        title: doc.title,
+        eventType: conoscoData?.eventType ?? doc.eventType ?? undefined,
+        department: conoscoData?.department ?? doc.department ?? undefined,
+        status: conoscoData?.status ?? (doc.manualStatus as string) ?? 'upcoming',
+        startDate: conoscoData?.startDate ?? doc.startDate ?? undefined,
+        endDate: conoscoData?.endDate ?? doc.endDate ?? undefined,
+        heroImageUrl,
+        posterUrl: conoscoData?.posterUrl,
+        featured: doc.featured ?? false,
+        dataSource: (doc.dataSource as 'manual' | 'conosco') ?? 'manual',
+        registeredCount: conoscoData?.registration?.registeredCount,
+        venue: conoscoData?.venue ? { name: conoscoData.venue.name, type: conoscoData.venue.type } : undefined,
+      }
+    }),
+  )
+
+  // Apply status filter post-merge
   const filtered = params.status
     ? events.filter((e) => e.status === params.status)
     : events

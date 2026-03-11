@@ -36,10 +36,9 @@ export default async function ContributorLayout({
 
   const typedUser = user as User
 
-  // Only allow contributors to access this area
-  if (typedUser.role !== 'contributor') {
-    redirect('/dashboard')
-  }
+  // Contributor routes are deprecated — redirect to /editor
+  // Users with blog_author role should use the editor workspace
+  redirect('/editor')
 
   // Fetch badge counts for sidebar - use count() for efficiency
   const authorWhere = { authors: { equals: typedUser.id } }

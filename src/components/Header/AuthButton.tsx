@@ -21,16 +21,21 @@ export function AuthButton() {
   }
 
   if (user) {
-    const isAdmin = Boolean((user as unknown as { isAdmin?: boolean }).isAdmin)
+    const isSuperAdmin = user.role === 'superadmin'
+    const isInstAdmin = user.roleAssignments?.some(a => a.assignedRole === 'institution_admin') ?? false
+    const hasRoles = (user.roleAssignments?.length ?? 0) > 0
+
     const dashboardUrl = 
-      isAdmin ? '/admin-dashboard' :
-      user.role === 'editor' ? '/editor' :
-      '/dashboard'
+      isSuperAdmin ? '/platform' :
+      isInstAdmin ? '/admin-dashboard' :
+      hasRoles ? '/editor' :
+      '/'
 
     const dashboardLabel = 
-      isAdmin ? 'Admin Dashboard' :
-      user.role === 'editor' ? 'Editor Dashboard' :
-      'Dashboard'
+      isSuperAdmin ? 'Platform Admin' :
+      isInstAdmin ? 'Admin Dashboard' :
+      hasRoles ? 'Editor Dashboard' :
+      'Home'
 
     return (
       <div className="flex items-center gap-2 sm:gap-3">

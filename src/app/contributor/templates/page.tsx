@@ -20,9 +20,8 @@ export default async function ContributorTemplatesPage({
   }
 
   const typedUser = user as User
-  if (typedUser.role !== 'contributor') {
-    redirect('/dashboard')
-  }
+  // Contributor routes deprecated — redirect to editor
+  redirect('/editor/templates')
 
   const params = await searchParams
   const query = params.q || ''

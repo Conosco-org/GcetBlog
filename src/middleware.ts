@@ -1,12 +1,95 @@
 ﻿import { NextRequest, NextResponse } from 'next/server'
 
 // ---------------------------------------------------------------------------
+// Constants for tenant header propagation
+// ---------------------------------------------------------------------------
+
+const TENANT_HEADER = 'x-tenant-id'
+const TENANT_CODE_HEADER = 'x-tenant-code'
+const TENANT_CLUB_SCOPE_HEADER = 'x-tenant-club-scope'
+const TENANT_PURPOSE_HEADER = 'x-tenant-purpose'
+
+/** Managed subdomain suffix (pilot tier) */
+const PLATFORM_SUBDOMAIN_SUFFIX =
+  process.env.PLATFORM_SUBDOMAIN_SUFFIX || 'sites.conosco.in'
+
+// ---------------------------------------------------------------------------
+// Lightweight tenant cache (Edge-compatible, no Payload dependency)
+// ---------------------------------------------------------------------------
+
+interface TenantCacheEntry {
+  institutionId: string
+  code: string
+  status: string
+  purpose?: string
+  clubScope?: string
+  expiresAt: number
+}
+
+const TENANT_CACHE_TTL = 5 * 60 * 1000 // 5 min
+const tenantCache = new Map<string, TenantCacheEntry | null>()
+
+/**
+ * Resolve hostname to institution via API call (Edge-compatible).
+ * Calls /api/resolve-tenant?hostname=... which runs in Node.js runtime.
+ */
+async function resolveTenantFromHostname(
+  hostname: string,
+  request: NextRequest,
+): Promise<TenantCacheEntry | null> {
+  const normalizedHost = hostname.toLowerCase().replace(/:\d+$/, '')
+
+  // Check cache
+  const cached = tenantCache.get(normalizedHost)
+  if (cached !== undefined) {
+    if (cached === null) return null
+    if (cached.expiresAt > Date.now()) return cached
+  }
+
+  try {
+    const apiUrl = new URL('/api/resolve-tenant', request.url)
+    apiUrl.searchParams.set('hostname', normalizedHost)
+    const res = await fetch(apiUrl.toString())
+
+    if (!res.ok) {
+      tenantCache.set(normalizedHost, null)
+      return null
+    }
+
+    const data = await res.json()
+    if (!data.institutionId) {
+      tenantCache.set(normalizedHost, null)
+      return null
+    }
+
+    const entry: TenantCacheEntry = {
+      institutionId: data.institutionId,
+      code: data.code,
+      status: data.status,
+      purpose: data.purpose,
+      clubScope: data.clubScope,
+      expiresAt: Date.now() + TENANT_CACHE_TTL,
+    }
+    tenantCache.set(normalizedHost, entry)
+    return entry
+  } catch {
+    // If API call fails, don't cache — might be transient
+    return null
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
 interface MiddlewareUser {
   role?: string
-  isAdmin?: boolean
+  institution?: string | { id: string }
+  roleAssignments?: Array<{
+    assignedRole?: string
+    scopeType?: string
+    scopeId?: string | { id: string }
+  }>
 }
 
 /**
@@ -41,6 +124,30 @@ function loginRedirect(
   return NextResponse.redirect(url)
 }
 
+/** Check if user is superadmin (platform owner). */
+function isSuperAdmin(user: MiddlewareUser): boolean {
+  return user.role === 'superadmin'
+}
+
+/** Check if user is institution_admin. */
+function isInstitutionAdmin(user: MiddlewareUser): boolean {
+  return (user.roleAssignments || []).some(
+    (a) => a.assignedRole === 'institution_admin',
+  )
+}
+
+/** Check if user has any role assignment (any scoped role). */
+function hasAnyRole(user: MiddlewareUser): boolean {
+  return (user.roleAssignments || []).length > 0
+}
+
+/** Get the best dashboard URL for a user based on their roles. */
+function getDashboardUrl(user: MiddlewareUser): string {
+  if (isSuperAdmin(user)) return '/platform'
+  if (hasAnyRole(user)) return '/user'
+  return '/' // regular user with no roles — public site only
+}
+
 // ---------------------------------------------------------------------------
 // Middleware
 // ---------------------------------------------------------------------------
@@ -48,108 +155,147 @@ function loginRedirect(
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const token = request.cookies.get('payload-token')?.value
+  const hostname = request.headers.get('host') || 'localhost'
 
-  // ── Payload admin panel is disabled for everyone ──────────────────────
-  // Block /admin/login and redirect /admin to appropriate dashboard
+  // ── Tenant Resolution ─────────────────────────────────────────────────
+  // Resolve hostname → institution for EVERY request (cached, lightweight).
+  // Sets x-tenant-id, x-tenant-code headers for downstream server components.
+  // Skip for /api/resolve-tenant (the endpoint we call), /platform, /_next, etc.
+  const skipTenantPaths = [
+    '/api/resolve-tenant',
+    '/_next',
+    '/favicon.ico',
+    '/robots.txt',
+    '/sitemap.xml',
+  ]
+  const shouldResolveTenant =
+    !pathname.startsWith('/platform') &&
+    !skipTenantPaths.some((p) => pathname.startsWith(p))
+
+  let tenantInfo: TenantCacheEntry | null = null
+
+  if (shouldResolveTenant) {
+    tenantInfo = await resolveTenantFromHostname(hostname, request)
+
+    // If institution is suspended, show a maintenance page (except for platform routes)
+    if (tenantInfo?.status === 'suspended') {
+      return new NextResponse(
+        '<html><body><h1>This site is currently suspended.</h1><p>Please contact the platform administrator.</p></body></html>',
+        {
+          status: 503,
+          headers: { 'Content-Type': 'text/html' },
+        },
+      )
+    }
+  }
+
+  // ── Payload admin panel — only superadmin ─────────────────────────────
+  // Block /admin/login publicly
   if (pathname === '/admin/login') {
     return new NextResponse(null, { status: 404 })
   }
 
-  // ── /admin-dashboard - requires isAdmin flag ─────────────────────────
-  // (Must come BEFORE the /admin check since /admin-dashboard starts with /admin)
-  if (pathname.startsWith('/admin-dashboard')) {
+  // ── /platform/* — SuperAdmin only (platform management) ──────────────
+  if (pathname.startsWith('/platform')) {
     if (!token) return loginRedirect(request)
 
     const user = await getUser(token, request)
     if (!user) return loginRedirect(request, { message: 'Session expired' })
 
-    if (!user.isAdmin) {
-      const dest = user.role === 'editor' ? '/editor' : '/contributor'
-      return NextResponse.redirect(new URL(dest, request.url))
+    if (!isSuperAdmin(user)) {
+      return NextResponse.redirect(new URL(getDashboardUrl(user), request.url))
     }
 
     return NextResponse.next()
   }
 
-  // ── /admin (Payload panel) - redirect to appropriate dashboard ───────
+  // ── /user — unified dashboard for all role holders ────────────────────
+  if (pathname.startsWith('/user')) {
+    if (!token) return loginRedirect(request, { redirect: pathname })
+
+    const user = await getUser(token, request)
+    if (!user) return loginRedirect(request, { message: 'Session expired' })
+
+    if (isSuperAdmin(user)) {
+      return NextResponse.redirect(new URL('/platform', request.url))
+    }
+
+    if (!hasAnyRole(user)) {
+      return NextResponse.redirect(new URL('/', request.url))
+    }
+
+    // For /user routes, inject tenant headers so server components can scope queries
+    const response = NextResponse.next()
+    if (tenantInfo) {
+      response.headers.set(TENANT_HEADER, tenantInfo.institutionId)
+      response.headers.set(TENANT_CODE_HEADER, tenantInfo.code)
+      if (tenantInfo.purpose) {
+        response.headers.set(TENANT_PURPOSE_HEADER, tenantInfo.purpose)
+      }
+      if (tenantInfo.clubScope) {
+        response.headers.set(TENANT_CLUB_SCOPE_HEADER, tenantInfo.clubScope)
+      }
+    }
+    return response
+  }
+
+  // ── /admin-dashboard/* — DEPRECATED, redirect to /user/* ──────────────
+  if (pathname.startsWith('/admin-dashboard')) {
+    const subPath = pathname.replace('/admin-dashboard', '/user')
+    return NextResponse.redirect(new URL(subPath, request.url))
+  }
+
+  // ── /admin (Payload panel) — redirect to appropriate dashboard ────────
   if (pathname.startsWith('/admin')) {
     if (!token) return loginRedirect(request)
 
     const user = await getUser(token, request)
     if (!user) return loginRedirect(request, { message: 'Session expired' })
 
-    // Redirect to appropriate dashboard based on permissions
-    if (user.isAdmin) {
-      return NextResponse.redirect(new URL('/admin-dashboard', request.url))
-    } else if (user.role === 'editor') {
-      return NextResponse.redirect(new URL('/editor', request.url))
-    } else {
-      return NextResponse.redirect(new URL('/contributor', request.url))
-    }
+    return NextResponse.redirect(new URL(getDashboardUrl(user), request.url))
   }
 
-  // ── /editor - requires role === 'editor' ─────────────────────────────
-  // Contributors are allowed on /editor/posts/*/edit (own-post editing).
+  // ── /editor/* — DEPRECATED, redirect to /user/* ──────────────────────
   if (pathname.startsWith('/editor')) {
-    if (!token) return loginRedirect(request, { redirect: pathname })
-
-    const user = await getUser(token, request)
-    if (!user) {
-      return loginRedirect(request, { message: 'Session expired', redirect: pathname })
-    }
-
-    // Allow contributors to edit their own posts via the editor UI
-    const isPostEditRoute = /^\/editor\/posts\/[^/]+\/edit/.test(pathname)
-    if (user.role === 'contributor' && isPostEditRoute) {
-      return NextResponse.next()
-    }
-
-    // Only editors (which includes admins, since admins are editors) can
-    // access the rest of /editor.
-    if (user.role !== 'editor') {
-      return NextResponse.redirect(new URL('/contributor', request.url))
-    }
-
-    return NextResponse.next()
+    const subPath = pathname.replace('/editor', '/user')
+    return NextResponse.redirect(new URL(subPath, request.url))
   }
 
-  // ── /contributor - requires role === 'contributor' ────────────────────
+  // ── /contributor — DEPRECATED, redirect to /user ────────────────────
   if (pathname.startsWith('/contributor')) {
-    if (!token) return loginRedirect(request, { redirect: pathname })
+    if (!token) return loginRedirect(request, { redirect: '/user' })
 
     const user = await getUser(token, request)
-    if (!user) {
-      return loginRedirect(request, { message: 'Session expired', redirect: pathname })
-    }
+    if (!user) return loginRedirect(request, { redirect: '/user' })
 
-    if (user.role !== 'contributor') {
-      const dest = user.role === 'editor' ? '/editor' : '/contributor'
-      return NextResponse.redirect(new URL(dest, request.url))
-    }
-
-    return NextResponse.next()
+    return NextResponse.redirect(new URL(getDashboardUrl(user), request.url))
   }
 
   // ── Legacy /dashboard routes ──────────────────────────────────────────
-  if (pathname.startsWith('/dashboard/contributor')) {
-    const newPath = pathname.replace('/dashboard/contributor', '/contributor')
-    return NextResponse.redirect(new URL(newPath, request.url))
-  }
   if (pathname.startsWith('/dashboard')) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  // Don't handle auth route redirects in middleware - the login page
-  // itself calls getCurrentUser() and redirects appropriately.
-
-  return NextResponse.next()
+  // ── Public routes — inject tenant headers ─────────────────────────────
+  const response = NextResponse.next()
+  if (tenantInfo) {
+    response.headers.set(TENANT_HEADER, tenantInfo.institutionId)
+    response.headers.set(TENANT_CODE_HEADER, tenantInfo.code)
+    if (tenantInfo.purpose) {
+      response.headers.set(TENANT_PURPOSE_HEADER, tenantInfo.purpose)
+    }
+    if (tenantInfo.clubScope) {
+      response.headers.set(TENANT_CLUB_SCOPE_HEADER, tenantInfo.clubScope)
+    }
+  }
+  return response
 }
 
 export const config = {
   matcher: [
     /*
      * Match all request paths except for the ones starting with:
-     * - api (API routes)
+     * - api (API routes) — except resolve-tenant which MUST be excluded above
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)

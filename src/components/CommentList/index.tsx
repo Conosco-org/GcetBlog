@@ -258,7 +258,10 @@ function CommentItem({ comment, replies, postId, isEditor, depth = 0, currentUse
 // ─── Public list ──────────────────────────────────────────────────────────────
 
 export function CommentList({ comments, postId, currentUser }: CommentListProps) {
-  const isEditor = currentUser?.role === 'editor'
+  const isEditor = currentUser?.role === 'superadmin' || 
+    (currentUser as unknown as { roleAssignments?: Array<{ assignedRole: string }> })?.roleAssignments?.some(
+      (a) => ['blog_editor', 'moderator', 'institution_admin'].includes(a.assignedRole)
+    )
 
   // Editors see all; public sees only approved
   const visible = isEditor ? comments : comments.filter((c) => c.status === 'approved')

@@ -17,10 +17,10 @@ export default async function EditorDashboardPage() {
     redirect('/login')
   }
 
-  const typedUser = user as User & { role: string }
+  const typedUser = user as unknown as { id: string; role: string; name?: string; email?: string; roleAssignments?: { assignedRole: string }[] }
 
-  // Only editors can access this page (admins are editors with isAdmin flag)
-  if (typedUser.role !== 'editor') {
+  // Only users with role assignments can access this page
+  if (typedUser.role !== 'superadmin' && !(typedUser.roleAssignments?.length)) {
     redirect('/dashboard')
   }
 

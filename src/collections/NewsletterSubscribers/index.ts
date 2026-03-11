@@ -1,7 +1,8 @@
 ﻿import type { CollectionConfig } from 'payload'
 import { v4 as uuidv4 } from 'uuid'
-import { editorOnly } from '../../access/editorOnly'
+import { hasPermissionFilter } from '../../access/hasPermission'
 import { anyone } from '../../access/anyone'
+import { withTenantIsolation } from '@/hooks/tenantIsolation'
 
 export const NewsletterSubscribers: CollectionConfig = {
   slug: 'newsletter-subscribers',
@@ -15,14 +16,14 @@ export const NewsletterSubscribers: CollectionConfig = {
     description: 'Email subscribers for the GCET Blog newsletter',
   },
   access: {
-    // Editors manage subscribers
-    read: editorOnly,
-    update: editorOnly,
-    delete: editorOnly,
+    // Blog editors manage subscribers within their institution
+    read: hasPermissionFilter('blog:publish', 'user', 'institution'),
+    update: hasPermissionFilter('blog:publish', 'user', 'institution'),
+    delete: hasPermissionFilter('blog:publish', 'user', 'institution'),
     // Public can subscribe (create) via the subscribe endpoint
     create: anyone,
   },
-  hooks: {
+  hooks: withTenantIsolation({
     beforeChange: [
       // Auto-generate unsubscribe token on creation
       ({ data, operation }) => {
@@ -36,7 +37,7 @@ export const NewsletterSubscribers: CollectionConfig = {
         return data
       },
     ],
-  },
+  }),
   indexes: [
     { fields: ['email'], unique: true },
     { fields: ['email', 'status'] },
@@ -44,6 +45,16 @@ export const NewsletterSubscribers: CollectionConfig = {
     { fields: ['status', 'frequency'] },
   ],
   fields: [
+    {
+      name: 'institution',
+      type: 'relationship',
+      relationTo: 'institutions',
+      required: false,
+      admin: {
+        position: 'sidebar',
+        description: 'The institution this subscriber belongs to (optional for public signups)',
+      },
+    },
     {
       name: 'email',
       type: 'email',

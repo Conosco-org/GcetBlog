@@ -11,6 +11,8 @@ import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
 import { ConditionalLayout } from './ConditionalLayout'
 import { PageViewTracker } from '@/components/PageViewTracker'
+import { TenantProvider, type ClientTenant } from '@/providers/Tenant'
+import { getCurrentTenantFull } from '@/utilities/tenantContext'
 
 const sora = Sora({
   subsets: ['latin'],
@@ -32,17 +34,33 @@ export const metadata: Metadata = {
 }
 
 export default async function FrontendLayout({ children }: { children: React.ReactNode }) {
+  // Resolve the current tenant from middleware headers (multi-tenant)
+  const resolvedTenant = await getCurrentTenantFull()
+  const clientTenant: ClientTenant | null = resolvedTenant
+    ? {
+        institutionId: resolvedTenant.institutionId,
+        code: resolvedTenant.code,
+        name: resolvedTenant.name,
+        shortName: resolvedTenant.shortName,
+        purpose: resolvedTenant.purpose,
+        clubScope: resolvedTenant.clubScope,
+        branding: resolvedTenant.branding,
+      }
+    : null
+
   return (
     <html className={cn(GeistSans.variable, GeistMono.variable, sora.variable)} lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
         <InitTheme />
-        <Providers>
-          <PageViewTracker />
-          <ConditionalLayout>
-            <Header />
-            {children}
-          </ConditionalLayout>
-        </Providers>
+        <TenantProvider tenant={clientTenant}>
+          <Providers>
+            <PageViewTracker />
+            <ConditionalLayout>
+              <Header />
+              {children}
+            </ConditionalLayout>
+          </Providers>
+        </TenantProvider>
         <Analytics />
       </body>
     </html>

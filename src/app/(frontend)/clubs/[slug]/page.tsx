@@ -8,9 +8,14 @@ import Image from 'next/image'
 import { ArrowLeft, Users2 } from 'lucide-react'
 
 import RichText from '@/components/RichText'
+import { RenderBlocks } from '@/blocks/RenderBlocks'
+import { RenderHero } from '@/heros/RenderHero'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import { getClubDisplayData } from '@/modules/clubs/services/club-context'
 import { ClubEnrichment } from '@/modules/clubs/components/ClubEnrichment'
+import { ClubNav } from '@/modules/clubs/components/ClubNav'
+import { ClubThemeWrapper } from '@/components/ClubThemeWrapper'
+import type { Page as PageType } from '@/payload-types'
 import PageClient from './page.client'
 
 export async function generateStaticParams() {
@@ -38,8 +43,47 @@ export default async function ClubPage({ params: paramsPromise }: Args) {
 
   if (!club) return <PayloadRedirects url={url} />
 
-  // Fetch related posts
   const payload = await getPayload({ config: configPromise })
+
+  // Check if a Page is linked to this club (custom landing page)
+  let landingPage: PageType | null = null
+  if (club.cmsId) {
+    const pageResult = await payload.find({
+      collection: 'pages',
+      where: { club: { equals: club.cmsId } },
+      limit: 1,
+      depth: 2,
+    })
+    landingPage = (pageResult.docs[0] as PageType) ?? null
+  }
+
+  // If a linked Page exists, render its hero + blocks as the landing page
+  if (landingPage) {
+    return (
+      <ClubThemeWrapper theme={club.theme}>
+        <article className="pb-16">
+          <PageClient />
+          <PayloadRedirects disableNotFound url={url} />
+
+          {/* Render the Page hero */}
+          <RenderHero {...(landingPage.hero as React.ComponentProps<typeof RenderHero>)} />
+
+          {/* Sub-navigation */}
+          <ClubNav
+            slug={slug}
+            hasTeam={Boolean(club.coordinator || club.facultyAdvisor)}
+            hasAchievements={(club.recentAchievements?.length ?? 0) > 0}
+          />
+
+          {/* Render all Page blocks */}
+          <RenderBlocks blocks={landingPage.layout as React.ComponentProps<typeof RenderBlocks>['blocks']} />
+        </article>
+      </ClubThemeWrapper>
+    )
+  }
+
+  // Default view — no linked Page, show standard club detail
+  // Fetch related posts
   let relatedPosts: Array<{ slug: string; title: string; meta?: { description?: string } }> = []
   if (club.relatedPostSlugs && club.relatedPostSlugs.length > 0) {
     const result = await payload.find({
@@ -67,6 +111,7 @@ export default async function ClubPage({ params: paramsPromise }: Args) {
     : null
 
   return (
+    <ClubThemeWrapper theme={club.theme}>
     <article className="pb-16">
       <PageClient />
       <PayloadRedirects disableNotFound url={url} />
@@ -137,6 +182,13 @@ export default async function ClubPage({ params: paramsPromise }: Args) {
           </div>
         </div>
       </div>
+
+      {/* Sub-navigation */}
+      <ClubNav
+        slug={slug}
+        hasTeam={Boolean(club.coordinator || club.facultyAdvisor)}
+        hasAchievements={(club.recentAchievements?.length ?? 0) > 0}
+      />
 
       {/* Content */}
       <div className="container mx-auto px-4 sm:px-6 mt-10 sm:mt-14">
@@ -210,6 +262,7 @@ export default async function ClubPage({ params: paramsPromise }: Args) {
         </div>
       </div>
     </article>
+    </ClubThemeWrapper>
   )
 }
 

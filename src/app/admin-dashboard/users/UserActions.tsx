@@ -31,10 +31,23 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { changeUserRole, deleteUser, toggleAdminStatus, toggleCanManageAdmins } from './actions'
-import type { User } from '@/payload-types'
+
+interface UserForActions {
+  id: string
+  name?: string | null
+  email?: string | null
+  role?: string
+  roleAssignments?: Array<{
+    assignedRole: string
+    scopeType: string
+    scopeId?: string | { id: string }
+    scopeLabel?: string
+  }>
+  [key: string]: unknown
+}
 
 interface UserActionsProps {
-  user: User
+  user: UserForActions
   currentUserId: string
   currentUserCanManageAdmins?: boolean
 }
@@ -48,10 +61,14 @@ export function UserActions({ user, currentUserId, currentUserCanManageAdmins = 
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
   const isOwnAccount = user.id === currentUserId
+  const isSuperAdmin = user.role === 'superadmin'
+  const isInstAdmin = user.roleAssignments?.some(a => a.assignedRole === 'institution_admin') ?? false
+  const hasBlogEditor = user.roleAssignments?.some(a => a.assignedRole === 'blog_editor') ?? false
+  const hasBlogAuthor = user.roleAssignments?.some(a => a.assignedRole === 'blog_author') ?? false
 
-  const handleRoleChange = async (newRole: 'contributor' | 'editor') => {
+  const handleRoleChange = async (assignedRole: string, action: 'add' | 'remove') => {
     setIsChangingRole(true)
-    const result = await changeUserRole(user.id, newRole)
+    const result = await changeUserRole(user.id, assignedRole, action)
     
     if (result.success) {
       setMessage({ type: 'success', text: result.message })
@@ -104,31 +121,31 @@ export function UserActions({ user, currentUserId, currentUserCanManageAdmins = 
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuLabel>Change Role</DropdownMenuLabel>
+          <DropdownMenuLabel>Assign Roles</DropdownMenuLabel>
           <DropdownMenuSeparator />
           
           <DropdownMenuItem
-            onClick={() => handleRoleChange('editor')}
-            disabled={user.role === 'editor' || isOwnAccount || isChangingRole}
+            onClick={() => handleRoleChange('blog_editor', hasBlogEditor ? 'remove' : 'add')}
+            disabled={isOwnAccount || isSuperAdmin || isChangingRole}
           >
             <UserCog className="mr-2 h-4 w-4 text-blue-500" />
-            <span>Editor</span>
-            {user.role === 'editor' && <span className="ml-auto text-xs">Current</span>}
+            <span>{hasBlogEditor ? 'Remove Blog Editor' : 'Add Blog Editor'}</span>
+            {hasBlogEditor && <span className="ml-auto text-xs">Active</span>}
           </DropdownMenuItem>
           
           <DropdownMenuItem
-            onClick={() => handleRoleChange('contributor')}
-            disabled={user.role === 'contributor' || isOwnAccount || isChangingRole}
+            onClick={() => handleRoleChange('blog_author', hasBlogAuthor ? 'remove' : 'add')}
+            disabled={isOwnAccount || isSuperAdmin || isChangingRole}
           >
             <Users className="mr-2 h-4 w-4 text-green-500" />
-            <span>Contributor</span>
-            {user.role === 'contributor' && <span className="ml-auto text-xs">Current</span>}
+            <span>{hasBlogAuthor ? 'Remove Blog Author' : 'Add Blog Author'}</span>
+            {hasBlogAuthor && <span className="ml-auto text-xs">Active</span>}
           </DropdownMenuItem>
 
           {currentUserCanManageAdmins && (
             <>
               <DropdownMenuSeparator />
-              <DropdownMenuLabel>Admin Flags</DropdownMenuLabel>
+              <DropdownMenuLabel>Admin Roles</DropdownMenuLabel>
               
               <DropdownMenuItem
                 onClick={async () => {
@@ -143,39 +160,36 @@ export function UserActions({ user, currentUserId, currentUserCanManageAdmins = 
                   }
                   setIsTogglingAdmin(false)
                 }}
-                disabled={isOwnAccount || user.role !== 'editor' || isTogglingAdmin}
+                disabled={isOwnAccount || isSuperAdmin || isTogglingAdmin}
               >
-                {user.isAdmin ? (
-                  <><ShieldOff className="mr-2 h-4 w-4 text-orange-500" /><span>Revoke Admin</span></>
+                {isInstAdmin ? (
+                  <><ShieldOff className="mr-2 h-4 w-4 text-orange-500" /><span>Revoke Inst. Admin</span></>
                 ) : (
-                  <><Shield className="mr-2 h-4 w-4 text-blue-500" /><span>Make Admin</span></>
+                  <><Shield className="mr-2 h-4 w-4 text-blue-500" /><span>Make Inst. Admin</span></>
                 )}
-                {user.role !== 'editor' && <span className="ml-auto text-xs">Editor only</span>}
               </DropdownMenuItem>
 
-              {user.isAdmin && (
-                <DropdownMenuItem
-                  onClick={async () => {
-                    setIsTogglingAdmin(true)
-                    const result = await toggleCanManageAdmins(user.id)
-                    if (result.success) {
-                      setMessage({ type: 'success', text: result.message })
-                      setTimeout(() => { setMessage(null); router.refresh() }, 2000)
-                    } else {
-                      setMessage({ type: 'error', text: result.message })
-                      setTimeout(() => setMessage(null), 3000)
-                    }
-                    setIsTogglingAdmin(false)
-                  }}
-                  disabled={isOwnAccount || isTogglingAdmin}
-                >
-                  {user.canManageAdmins ? (
-                    <><Crown className="mr-2 h-4 w-4 text-orange-500" /><span>Revoke Super Admin</span></>
-                  ) : (
-                    <><Crown className="mr-2 h-4 w-4 text-amber-500" /><span>Make Super Admin</span></>
-                  )}
-                </DropdownMenuItem>
-              )}
+              <DropdownMenuItem
+                onClick={async () => {
+                  setIsTogglingAdmin(true)
+                  const result = await toggleCanManageAdmins(user.id)
+                  if (result.success) {
+                    setMessage({ type: 'success', text: result.message })
+                    setTimeout(() => { setMessage(null); router.refresh() }, 2000)
+                  } else {
+                    setMessage({ type: 'error', text: result.message })
+                    setTimeout(() => setMessage(null), 3000)
+                  }
+                  setIsTogglingAdmin(false)
+                }}
+                disabled={isOwnAccount || isTogglingAdmin}
+              >
+                {isSuperAdmin ? (
+                  <><Crown className="mr-2 h-4 w-4 text-orange-500" /><span>Revoke Super Admin</span></>
+                ) : (
+                  <><Crown className="mr-2 h-4 w-4 text-amber-500" /><span>Make Super Admin</span></>
+                )}
+              </DropdownMenuItem>
             </>
           )}
 
@@ -183,13 +197,13 @@ export function UserActions({ user, currentUserId, currentUserCanManageAdmins = 
           
           <DropdownMenuItem
             onClick={() => setShowDeleteDialog(true)}
-            disabled={isOwnAccount || !!user.canManageAdmins}
+            disabled={isOwnAccount || isSuperAdmin}
             className="text-red-600 dark:text-red-400"
           >
             <Trash2 className="mr-2 h-4 w-4" />
             <span>Delete User</span>
             {isOwnAccount && <span className="ml-auto text-xs">Not allowed</span>}
-            {!isOwnAccount && user.canManageAdmins && <span className="ml-auto text-xs">Protected</span>}
+            {!isOwnAccount && isSuperAdmin && <span className="ml-auto text-xs">Protected</span>}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

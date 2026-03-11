@@ -1,41 +1,151 @@
-# Copilot Instructions — GCET Blog Platform
+# Copilot Instructions — GCET Blog Platform (Conosco Multi-Tenant SaaS)
 
 ## Project Overview
 
 - **Framework**: Next.js 15 (App Router, RSC)
-- **CMS**: Payload CMS v3 (embedded)
+- **CMS**: Payload CMS v3 (embedded — admin panel disabled for end-users)
 - **UI**: shadcn/ui + Tailwind CSS + Radix primitives
-- **Language**: TypeScript (strict)
-- **Auth**: Payload built-in auth with custom role system
-- **Database**: MongoDB (via Payload)
+- **Language**: TypeScript (strict, `no-explicit-any` as error)
+- **Auth**: Payload built-in auth + Google OAuth, role-assignment based RBAC
+- **Database**: MongoDB (via Payload) with multi-tenant isolation
+- **Architecture**: Multi-tenant SaaS — single codebase, shared DB, tenant-scoped data
 
-## Architecture Principles
+## Multi-Tenant Architecture
 
-### Role Hierarchy
+### Tenant Model
+
+One institution = one tenant. All data is scoped by `institution` field.
 
 ```
-contributor < editor < editor+isAdmin < editor+isAdmin+canManageAdmins
+Conosco (platform owner)
+├── platform.conosco.in      ← SuperAdmin dashboard (/platform route)
+│
+├── GCET (tenant)
+│   ├── digital.gcet.edu.in  ← Dashboard + public site (path-based routing)
+│   └── blog.gcet.edu.in     ← Optional second domain
+│
+├── JNTU (tenant)
+│   └── hub.jntu.ac.in
+└── ...
 ```
 
-- `contributor`: Can create posts, manage own content
-- `editor`: Full content management (review, publish, moderate)
-- `editor+isAdmin`: User management, activity logs, system oversight
-- `editor+isAdmin+canManageAdmins`: Can grant/revoke admin privileges, protected from deletion
+### Tenant Isolation (3-layer defense-in-depth)
+
+1. **Access Control** — `institutionField` auto-sets `institution` on create via `beforeChange` hook
+2. **Collection Hooks** — `tenantIsolation.ts` auto-injects `{ institution: { equals: tenantId } }` on every find/count/update/delete via `beforeOperation` hook. `afterRead` logs cross-tenant warnings
+3. **Query Guard** — `tenantQuery.ts` wrapper functions (`tenantFind`, `tenantCreate`, etc.) for explicit tenant-scoped queries
+
+### Tenant Resolution Flow
+
+```
+Browser → hostname (e.g., digital.gcet.edu.in)
+  → Edge Middleware reads hostname
+  → Calls /api/resolve-tenant?hostname=...  (Node.js, uses Payload)
+  → Looks up Institutions.domains[] array
+  → Sets x-tenant-id, x-tenant-code, x-tenant-club-scope headers
+  → All downstream server components read headers via tenantContext.ts
+```
+
+Key files:
+- `src/middleware.ts` — Edge middleware, tenant resolution, route protection
+- `src/utilities/tenantResolver.ts` — hostname → institution lookup (cached 5min)
+- `src/utilities/tenantContext.ts` — Server component helpers (`getCurrentTenant()`)
+- `src/hooks/tenantIsolation.ts` — Defense-in-depth collection hooks
+- `src/utilities/tenantQuery.ts` — Tenant-scoped Payload query wrappers
+- `src/app/api/resolve-tenant/route.ts` — Node.js API endpoint for resolution
+
+### Domain Configuration (Institutions Collection)
+
+```ts
+// Each institution has a domains array:
+domains: [
+  { hostname: 'digital.gcet.edu.in', purpose: 'main', isPrimary: true },
+  { hostname: 'blog.gcet.edu.in', purpose: 'blog' },
+  { hostname: 'ieee.gcet.edu.in', purpose: 'club', clubScope: 'ieee-club-id' },
+]
+```
+
+## Role Hierarchy (Content Engine v2 RBAC)
+
+```
+superadmin (platform owner — Conosco team)
+  └─ institution_admin (college-level admin — full autonomy within tenant)
+       ├─ blog_editor    (manage all blog posts, can publish)
+       ├─ blog_author    (write drafts, cannot publish)
+       ├─ club_admin     (manage specific club: pages, events, gallery)
+       ├─ club_editor    (create club content drafts)
+       ├─ event_manager  (manage events across all clubs)
+       └─ moderator      (moderate comments/feedback)
+```
+
+- `superadmin` bypasses ALL checks — platform-level, no institution
+- `institution_admin` bypasses all checks WITHIN their institution
+- Scoped roles checked against `PERMISSION_MAP` in `src/access/permissions.ts`
+- Users have `role: 'superadmin' | 'user'` + `roleAssignments[]` array
 
 ### Route Structure
 
-| Route Group | Purpose | Access |
+| Route | Purpose | Access |
 |---|---|---|
-| `/(frontend)/editor/*` | Editor workspace (content management) | `role === 'editor'` |
-| `/admin-dashboard/*` | Admin overview (users, logs, stats) | `isAdmin === true` |
-| `/contributor/*` | Contributor workspace | `role === 'contributor'` |
-| `/(frontend)/*` | Public pages | Everyone |
+| `/platform/*` | SuperAdmin dashboard (institutions, platform stats) | `role === 'superadmin'` |
+| `/user/*` | Unified dashboard for all role holders | Any user with `roleAssignments.length > 0` |
+| `/user/posts/*` | Blog post management | `blog_editor`, `blog_author` |
+| `/user/clubs/*` | Club management | `club_admin`, `club_editor` |
+| `/user/events/*` | Event management | `event_manager`, `club_admin` |
+| `/user/users/*` | User management | `institution_admin` |
+| `/user/logs/*` | Activity logs | `institution_admin` |
+| `/user/newsletter/*` | Newsletter management | `blog_editor` |
+| `/(frontend)/*` | Public pages (blog, clubs, events) | Everyone |
+| `/(frontend)/clubs/[slug]` | Individual club public page | Everyone |
+| `/(frontend)/events/[slug]` | Individual event public page | Everyone |
+| `/(auth)/*` | Login, register, set-password | Everyone |
 
-### Shared Layout
+### Deprecated Routes (Auto-redirect in middleware)
 
-- **EditorSidebar** is the single navigation component for both editor and admin routes
-- Admin-only links (`User Management`, `Admin Dashboard`) render conditionally via `isAdmin` check
-- Never duplicate navigation — one source of truth
+- `/admin-dashboard/*` → redirects to `/user/*`
+- `/editor/*` → redirects to `/user/*`
+- `/contributor/*` → redirects to `/user/*`
+- `/admin` → redirects to appropriate dashboard based on role
+
+## Collections (18 total)
+
+### Tenant-Scoped (have `institutionField` + tenant isolation hooks)
+
+| Collection | Slug | Module |
+|---|---|---|
+| Posts | `posts` | `src/collections/Posts/` |
+| Pages | `pages` | `src/collections/Pages/` |
+| Categories | `categories` | `src/collections/Categories.ts` |
+| Media | `media` | `src/collections/Media.ts` |
+| Comments | `comments` | `src/collections/Comments/` |
+| Votes | `votes` | `src/collections/Votes/` |
+| PageViews | `page-views` | `src/collections/PageViews/` |
+| AdminLogs | `admin-logs` | `src/collections/AdminLogs/` |
+| Feedback | `feedback` | `src/collections/Feedback.ts` |
+| Templates | `templates` | `src/collections/Templates.ts` |
+| Newsletters | `newsletters` | `src/collections/Newsletters/` |
+| NewsletterSubscribers | `newsletter-subscribers` | `src/collections/NewsletterSubscribers/` |
+| NewsletterEvents | `newsletter-events` | `src/collections/NewsletterEvents/` |
+| Clubs | `clubs` | `src/modules/clubs/collections/Clubs.ts` |
+| Events | `events` | `src/modules/events/collections/Events.ts` |
+
+### Platform-Level (no institution scoping)
+
+| Collection | Slug | Purpose |
+|---|---|---|
+| Users | `users` | All platform users (scoped by `institution` relationship) |
+| Institutions | `institutions` | Tenant definitions (domains, branding, settings) |
+
+## Access Control Files
+
+| File | Purpose |
+|---|---|
+| `src/access/permissions.ts` | PERMISSION_MAP, role definitions, scope helpers |
+| `src/access/hasPermission.ts` | Core `checkPermission()`, `hasPermission()`, `publicOrInstitution()` |
+| `src/access/hasClubAccess.ts` | Club-scoped permission shortcuts |
+| `src/access/hasBlogAccess.ts` | Blog-scoped permission shortcuts |
+| `src/access/isSuperAdmin.ts` | SuperAdmin-only access guards |
+| `src/access/selfOrAdmin.ts` | Self-or-admin access for user profiles |
 
 ---
 
@@ -108,10 +218,10 @@ toast({ title: 'Success', description: 'Changes saved.' })
 
 ```tsx
 // ✅ Strong typing — use Payload generated types
-import type { User, Post, Comment } from '@/payload-types'
+import type { User, Post, Comment, Club, Event, Institution } from '@/payload-types'
 
 // ✅ Explicit return types on server actions
-export async function changeUserRole(userId: string, newRole: 'contributor' | 'editor'): Promise<ActionResult> { }
+export async function changeUserRole(userId: string, newRole: string): Promise<ActionResult> { }
 
 // ✅ Define shared types
 interface ActionResult {
@@ -119,7 +229,8 @@ interface ActionResult {
   message: string
 }
 
-// ❌ Never use `any` — use `unknown` and narrow
+// ❌ Never use `any` — enforced by eslint (error level). Use `unknown` and narrow.
+// Exception: tenant query wrappers use controlled `as any` with eslint-disable for Payload generic compatibility
 ```
 
 ### 6. Server Components vs Client Components
@@ -128,6 +239,7 @@ interface ActionResult {
 // ✅ Server Components (default) — for data fetching & static UI
 // - Pages, layouts, data displays
 // - Can directly call Payload API
+// - Use tenantContext.ts for tenant-scoped queries
 
 // ✅ Client Components ('use client') — ONLY when needed for:
 // - Interactivity (onClick, onChange, forms)
@@ -138,12 +250,36 @@ interface ActionResult {
 // Page.tsx (server) → DataTableClient.tsx (client)
 ```
 
-### 7. Pagination Pattern
+### 7. Multi-Tenant Query Pattern
+
+```tsx
+// ✅ In server components — use tenantContext + tenantQuery
+import { getCurrentTenant } from '@/utilities/tenantContext'
+import { tenantFind, tenantCreate } from '@/utilities/tenantQuery'
+
+const tenant = await getCurrentTenant()
+const posts = await tenantFind(payload, 'posts', tenant.institutionId, {
+  where: { _status: { equals: 'published' } },
+  limit: 10,
+})
+
+// ✅ Or use Payload directly — collection hooks auto-inject tenant filter
+// (defense-in-depth: even if you forget tenantQuery, hooks catch it)
+const posts = await payload.find({
+  collection: 'posts',
+  where: { _status: { equals: 'published' } },
+})
+
+// ❌ Never hardcode institution IDs
+// ❌ Never use overrideAccess: true without understanding it bypasses tenant hooks
+```
+
+### 8. Pagination Pattern
 
 ```tsx
 // ✅ Server-side pagination via Payload
 const results = await payload.find({
-  collection: 'users',
+  collection: 'posts',
   page: currentPage,
   limit: 10,
   where: { /* filters */ },
@@ -153,33 +289,64 @@ const results = await payload.find({
 // Pass to client: results.docs, results.totalPages, results.page
 ```
 
-### 8. Search Pattern
+### 9. Club Theming
 
 ```tsx
-// ✅ Debounced search that syncs to URL
-// SearchInput component handles debounce internally
-// Page reads from searchParams, queries Payload with `like` operator
+// ✅ Clubs have per-club themes via ClubThemeWrapper
+import { ClubThemeWrapper } from '@/components/ClubThemeWrapper'
 
-const where = query
-  ? { or: [
-      { name: { like: query } },
-      { email: { like: query } },
-    ]}
-  : {}
+// ClubTheme interface:
+// { primaryColor, accentColor, cardStyle, fontPreset }
+// Available CSS vars: --club-primary, --club-accent
+// Card styles: club-card-default | glass | bordered | elevated
+// Font presets: club-font-default | modern | classic | technical
+
+<ClubThemeWrapper theme={club.theme}>
+  {/* Club content uses --club-primary, --club-accent */}
+</ClubThemeWrapper>
 ```
 
-### 9. File Organization
+### 10. File Organization
 
 ```
-src/components/
-├── base/              # Reusable base components (SearchInput, DataTable, etc.)
-├── ui/                # shadcn/ui primitives (Button, Card, Input, etc.)
-├── Card/              # Domain-specific components
-├── Header/
-└── ...
+src/
+├── access/                # RBAC access control functions
+│   ├── permissions.ts     # PERMISSION_MAP, roles, scope helpers
+│   ├── hasPermission.ts   # Core permission checker
+│   ├── hasClubAccess.ts   # Club-scoped access
+│   ├── hasBlogAccess.ts   # Blog-scoped access
+│   └── isSuperAdmin.ts    # Platform-level access
+├── app/
+│   ├── (auth)/            # Login, register, set-password
+│   ├── (frontend)/        # Public pages (blog, clubs, events)
+│   ├── (payload)/         # Payload admin (disabled for end users)
+│   ├── platform/          # SuperAdmin dashboard (Conosco team only)
+│   ├── user/              # Unified role-holder dashboard
+│   └── api/               # API routes (resolve-tenant, auth, etc.)
+├── collections/           # Payload collection configs
+├── modules/
+│   ├── clubs/             # Club-specific collection + logic
+│   └── events/            # Event-specific collection + logic
+├── components/
+│   ├── base/              # Reusable base components (DataTable, SearchInput, etc.)
+│   ├── ui/                # shadcn/ui primitives
+│   └── ...                # Domain-specific components
+├── fields/
+│   ├── institution.ts     # institutionField (auto-sets tenant on create)
+│   └── slug/              # Slug field with auto-generation
+├── hooks/
+│   └── tenantIsolation.ts # Defense-in-depth tenant hooks
+├── utilities/
+│   ├── tenantResolver.ts  # Hostname → institution resolution
+│   ├── tenantContext.ts   # Server component tenant helpers
+│   └── tenantQuery.ts     # Tenant-scoped Payload wrappers
+└── providers/
+    ├── Tenant/            # Client-side tenant context provider
+    ├── Auth/              # Auth state provider
+    └── Theme/             # Theme provider (light/dark)
 ```
 
-### 10. Import Order
+### 11. Import Order
 
 ```tsx
 // 1. React/Next.js
@@ -195,11 +362,15 @@ import { Button } from '@/components/ui/button'
 // 4. Base components
 import { SearchInput } from '@/components/base/SearchInput'
 
-// 5. Types
-import type { User } from '@/payload-types'
+// 5. Access control / permissions
+import { hasPermission } from '@/access/hasPermission'
 
-// 6. Utilities
+// 6. Types
+import type { User, Post, Club } from '@/payload-types'
+
+// 7. Utilities
 import { cn } from '@/utilities/ui'
+import { getCurrentTenant } from '@/utilities/tenantContext'
 ```
 
 ---
@@ -290,14 +461,19 @@ import { cn } from '@/utilities/ui'
 - **Use `depth: 0`** when you don't need populated relations
 - **Prefer server components** — avoid unnecessary client bundles
 - **Debounce search** — 300ms minimum to avoid excessive queries
+- **Tenant resolution is cached** — 5min TTL in both middleware and resolver
 
 ## Security Guidelines
 
 - **Always verify auth** in server actions — never trust client
-- **Fetch full user** via `payload.findByID()` to check `isAdmin` — don't rely on JWT claims alone
+- **Fetch full user** via `payload.findByID()` to check roles — don't rely on JWT claims alone
+- **Use `checkPermission()` from `hasPermission.ts`** for all permission checks
 - **Validate inputs** — check types, ranges, allowed values
 - **Use Payload access control** as primary guard, UI checks as secondary
-- **Never expose canManageAdmins operations** without checking the flag on both client AND server
+- **Tenant isolation is automatic** via collection hooks — but prefer `tenantQuery.ts` wrappers for explicit scoping
+- **`overrideAccess: true`** bypasses tenant isolation hooks — use only for trusted system operations (seeds, migrations)
+- **SuperAdmin has no institution** — they're platform-level and bypass all tenant checks
+- **Never expose institution_admin operations** without verifying the user IS an institution_admin for THAT institution
 
 ## Accessibility Guidelines
 

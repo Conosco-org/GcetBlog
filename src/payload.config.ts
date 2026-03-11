@@ -22,6 +22,7 @@ import { Newsletters } from './collections/Newsletters'
 import { NewsletterEvents } from './collections/NewsletterEvents'
 import { Events } from './modules/events/collections/Events'
 import { Clubs } from './modules/clubs/collections/Clubs'
+import { Institutions } from './collections/Institutions'
 import {
   newsletterDailyDigest,
   newsletterWeeklyDigest,
@@ -107,6 +108,7 @@ export default buildConfig({
     url: process.env.DATABASE_URI || '',
   }),
   collections: [
+    Institutions,
     Pages,
     Posts,
     Media,

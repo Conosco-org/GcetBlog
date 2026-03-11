@@ -1,5 +1,6 @@
 import React from 'react'
-import { Users2, Mail, Phone, GraduationCap, Trophy, Calendar, Globe, Instagram, Linkedin, Twitter, Github } from 'lucide-react'
+import Link from 'next/link'
+import { Users2, Mail, Phone, GraduationCap, Trophy, Calendar, Globe, Instagram, Linkedin, Twitter, Github, ArrowRight } from 'lucide-react'
 import type { ClubDisplayData } from '../types'
 
 /**
@@ -7,7 +8,9 @@ import type { ClubDisplayData } from '../types'
  */
 export const ClubEnrichment: React.FC<{
   club: ClubDisplayData
-}> = ({ club }) => {
+  showSubPageLinks?: boolean
+}> = ({ club, showSubPageLinks = true }) => {
+  const slug = club.slug
   return (
     <div className="space-y-6">
       {/* Member Stats */}
@@ -124,6 +127,14 @@ export const ClubEnrichment: React.FC<{
               </div>
             ))}
           </div>
+          {showSubPageLinks && (
+            <Link
+              href={`/clubs/${slug}/achievements`}
+              className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-accent hover:underline"
+            >
+              View all achievements <ArrowRight className="h-3 w-3" />
+            </Link>
+          )}
         </div>
       )}
 
@@ -153,6 +164,14 @@ export const ClubEnrichment: React.FC<{
               </div>
             ))}
           </div>
+          {showSubPageLinks && (
+            <Link
+              href={`/clubs/${slug}/events`}
+              className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-accent hover:underline"
+            >
+              View all events <ArrowRight className="h-3 w-3" />
+            </Link>
+          )}
         </div>
       )}
 

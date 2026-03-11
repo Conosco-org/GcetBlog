@@ -3,6 +3,7 @@ import configPromise from '@payload-config'
 import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import type { User } from '@/payload-types'
+import { checkPermission } from '@/access/hasPermission'
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,7 +20,7 @@ export async function POST(request: NextRequest) {
 
     const typedUser = user as User & { role: string }
 
-    if (typedUser.role !== 'editor') {
+    if (!checkPermission(user, 'blog:publish')) {
       return NextResponse.json(
         { error: 'Forbidden: Only editors can create categories' },
         { status: 403 }

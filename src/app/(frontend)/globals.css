@@ -234,3 +234,36 @@ html {
   }
 }
 
+/* ── Club Theme System ── */
+.club-theme {
+  --club-primary: #0047AB;
+  --club-accent: #3B82F6;
+}
+
+/* Card style variants */
+.club-card-default .club-card {
+  @apply rounded-xl border border-border bg-card;
+}
+.club-card-glass .club-card {
+  @apply rounded-xl border border-white/20 bg-white/10 backdrop-blur-md;
+}
+.club-card-bordered .club-card {
+  @apply rounded-xl border-2 bg-card;
+  border-color: var(--club-primary);
+}
+.club-card-elevated .club-card {
+  @apply rounded-xl border-0 bg-card shadow-lg;
+}
+
+/* Font preset variants */
+.club-font-modern {
+  font-family: 'Space Grotesk', var(--font-sans), system-ui, sans-serif;
+}
+.club-font-classic {
+  font-family: 'Merriweather', var(--font-serif), Georgia, serif;
+}
+.club-font-technical {
+  font-family: 'JetBrains Mono', var(--font-mono), monospace;
+}
+
+

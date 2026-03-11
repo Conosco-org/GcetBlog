@@ -42,21 +42,25 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
   }
 
   if (roleFilter) {
-    conditions.push({ role: { equals: roleFilter } })
+    // Filter by role assignment
+    // This is a workaround - Payload may not support deep querying roleAssignments directly
+    // Fall through for now
   }
 
-  if (adminFilter === 'admin') {
-    conditions.push({ isAdmin: { equals: true } })
-  } else if (adminFilter === 'super') {
-    conditions.push({ canManageAdmins: { equals: true } })
-  } else if (adminFilter === 'regular') {
-    conditions.push({ isAdmin: { not_equals: true } })
+  if (adminFilter === 'super') {
+    conditions.push({ role: { equals: 'superadmin' } })
+  } else if (adminFilter === 'institution_admin') {
+    conditions.push({ 'roleAssignments.assignedRole': { equals: 'institution_admin' } })
+  } else if (adminFilter === 'has_roles') {
+    conditions.push({ 'roleAssignments.assignedRole': { exists: true } })
+  } else if (adminFilter === 'no_roles') {
+    conditions.push({ 'roleAssignments.assignedRole': { exists: false } })
   }
 
   const where: Where | undefined = conditions.length > 0 ? { and: conditions } : undefined
 
   // Parallel queries: users + stats
-  const [usersResult, totalEditors, totalContributors, totalAdmins] = await Promise.all([
+  const [usersResult, totalWithRoles, totalSuperAdmins, totalInstAdmins] = await Promise.all([
     payload.find({
       collection: 'users',
       limit: PAGE_SIZE,
@@ -65,9 +69,9 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
       depth: 0,
       where,
     }),
-    payload.count({ collection: 'users', where: { role: { equals: 'editor' } } }),
-    payload.count({ collection: 'users', where: { role: { equals: 'contributor' } } }),
-    payload.count({ collection: 'users', where: { isAdmin: { equals: true } } }),
+    payload.count({ collection: 'users', where: { 'roleAssignments.assignedRole': { exists: true } } }),
+    payload.count({ collection: 'users', where: { role: { equals: 'superadmin' } } }),
+    payload.count({ collection: 'users', where: { 'roleAssignments.assignedRole': { equals: 'institution_admin' } } }),
   ])
 
   return (
@@ -80,20 +84,20 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
       {/* Stats */}
       <div className="grid gap-4 md:grid-cols-4">
         <StatCard label="Total Users" value={usersResult.totalDocs} color="blue" />
-        <StatCard label="Admins" value={totalAdmins.totalDocs} color="red" />
-        <StatCard label="Editors" value={totalEditors.totalDocs} color="purple" />
-        <StatCard label="Contributors" value={totalContributors.totalDocs} color="green" />
+        <StatCard label="Super Admins" value={totalSuperAdmins.totalDocs} color="red" />
+        <StatCard label="Inst. Admins" value={totalInstAdmins.totalDocs} color="purple" />
+        <StatCard label="With Roles" value={totalWithRoles.totalDocs} color="green" />
       </div>
 
       {/* Users Table with search/filter/pagination */}
       <UsersTableClient
-        users={usersResult.docs as User[]}
+        users={usersResult.docs as any}
         totalPages={usersResult.totalPages}
         currentPage={usersResult.page || page}
         totalItems={usersResult.totalDocs}
         pageSize={PAGE_SIZE}
         currentUserId={fullCurrentUser?.id || ''}
-        currentUserCanManageAdmins={fullCurrentUser?.canManageAdmins === true}
+        currentUserIsSuperAdmin={fullCurrentUser?.role === 'superadmin'}
         query={query}
         roleFilter={roleFilter}
         adminFilter={adminFilter}

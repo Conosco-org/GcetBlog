@@ -45,14 +45,17 @@ export async function loginAction(formData: FormData) {
         // Use the redirect parameter if it's a safe internal path
         redirectPath = redirectTo
       } else {
-        // Default role-based redirect
-        const typedUser = user as unknown as { isAdmin?: boolean; role?: string }
-        redirectPath = typedUser?.isAdmin ? '/admin-dashboard' : 
-                      typedUser?.role === 'editor' ? '/editor' : 
-                      '/contributor'
+        // New RBAC-based redirect
+        const u = user as { role?: string; roleAssignments?: Array<{ assignedRole: string }> }
+        if (u.role === 'superadmin') {
+          redirectPath = '/platform'
+        } else {
+          const hasAnyRole = Array.isArray(u.roleAssignments) && u.roleAssignments.length > 0
+          redirectPath = hasAnyRole ? '/user' : '/'
+        }
       }
       
-      console.log('Login successful - User role:', (user as { role?: string })?.role, 'isAdmin:', (user as { isAdmin?: boolean })?.isAdmin, 'Redirecting to:', redirectPath)
+      console.log('Login successful - role:', (user as { role?: string })?.role, '→', redirectPath)
       
       // Return success with redirect path for client-side handling
       return { success: true, redirectPath }

@@ -9,6 +9,7 @@ import {
 } from '@/components/LandingPage'
 import { getPayload } from 'payload'
 import config from '@payload-config'
+import { getDomainScope } from '@/utilities/domainScope'
 
 export const metadata: Metadata = {
   title: 'Home',
@@ -18,6 +19,13 @@ export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
   const payload = await getPayload({ config })
+  const scope = await getDomainScope()
+
+  // Club-scoped domain → redirect to the specific club page
+  if (scope.isClubScoped && scope.clubScope) {
+    const { redirect } = await import('next/navigation')
+    redirect(`/clubs/${scope.clubScope}`)
+  }
   
   const now = new Date().toISOString()
 
@@ -72,7 +80,7 @@ export default async function HomePage() {
       />
       <FeaturedPosts posts={featuredData.docs} />
       <HomePosts posts={postsData.docs} />
-      <FeaturesSection />
+      {scope.purpose !== 'blog' && <FeaturesSection />}
       <CTASection />
     </main>
   )

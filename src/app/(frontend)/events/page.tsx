@@ -2,12 +2,13 @@ import type { Metadata } from 'next/types'
 
 import React, { Suspense } from 'react'
 import Link from 'next/link'
-import { Calendar, Filter, X } from 'lucide-react'
+import { Calendar, Filter, X, ArrowRight } from 'lucide-react'
 import PageClient from './page.client'
 import { getEventListingData } from '@/modules/events/services/event-context'
 import { EventArchive } from '@/modules/events/components/EventArchive'
 import { getDepartmentOptions } from '@/custom/departments'
 import { EventsFilterBar } from './EventsFilterBar'
+import { getDomainScope } from '@/utilities/domainScope'
 
 export const dynamic = 'force-dynamic'
 
@@ -23,6 +24,31 @@ type Args = {
 
 export default async function EventsPage({ searchParams: searchParamsPromise }: Args) {
   const searchParams = await searchParamsPromise
+  const scope = await getDomainScope()
+
+  // ── Blog-only domain: events not available ─────────────────────────
+  if (!scope.showEvents) {
+    return (
+      <div className="min-h-screen">
+        <PageClient />
+        <div className="container mx-auto px-6 py-24 text-center">
+          <Calendar className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
+          <h1 className="text-2xl font-semibold mb-2">Events</h1>
+          <p className="text-muted-foreground text-sm mb-6">
+            Events are available on the main site. This domain is dedicated to blog content.
+          </p>
+          <Link
+            href="/posts"
+            className="inline-flex items-center gap-2 text-accent hover:underline text-sm"
+          >
+            Browse posts instead
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
   const query = searchParams.q || ''
   const department = searchParams.department || ''
   const eventType = searchParams.type || ''
@@ -36,6 +62,7 @@ export default async function EventsPage({ searchParams: searchParamsPromise }: 
     eventType: eventType || undefined,
     status: status || undefined,
     search: query || undefined,
+    clubSlug: scope.isClubScoped ? scope.clubScope : undefined,
   })
 
   const hasActiveFilters = Boolean(query || department || eventType || status)

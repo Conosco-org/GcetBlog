@@ -72,6 +72,8 @@ export async function getClubDisplayData(slug: string): Promise<ClubDisplayData 
     featured: cmsClub.featured ?? false,
     publishedAt: cmsClub.publishedAt ?? undefined,
 
+    theme: (cmsClub as unknown as Record<string, unknown>).theme as ClubDisplayData['theme'],
+
     meta: cmsClub.meta as ClubDisplayData['meta'],
     cmsId: cmsClub.id as string,
 

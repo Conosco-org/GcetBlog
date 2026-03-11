@@ -1,6 +1,5 @@
 ﻿'use client'
 
-import type { User } from '@/payload-types'
 import { SearchInput } from '@/components/base/SearchInput'
 import { FilterBar } from '@/components/base/FilterBar'
 import { DataTable, type Column } from '@/components/base/DataTable'
@@ -8,20 +7,45 @@ import { Badge } from '@/components/ui/badge'
 import { Shield, ShieldCheck, Users } from 'lucide-react'
 import { UserActions } from './UserActions'
 
+interface UserForTable {
+  id: string
+  name?: string | null
+  email?: string | null
+  role?: string
+  createdAt: string
+  roleAssignments?: Array<{
+    assignedRole: string
+    scopeType: string
+    scopeId?: string | { id: string }
+    scopeLabel?: string
+  }>
+  [key: string]: unknown
+}
+
 interface UsersTableClientProps {
-  users: User[]
+  users: UserForTable[]
   totalPages: number
   currentPage: number
   totalItems: number
   pageSize: number
   currentUserId: string
-  currentUserCanManageAdmins: boolean
+  currentUserIsSuperAdmin: boolean
   query: string
   roleFilter: string
   adminFilter: string
 }
 
-const columns: Column<User>[] = [
+/** Get the primary role label for a user */
+function getPrimaryRoleLabel(user: UserForTable): string {
+  if (user.role === 'superadmin') return 'Super Admin'
+  const instAdmin = user.roleAssignments?.find(a => a.assignedRole === 'institution_admin')
+  if (instAdmin) return 'Institution Admin'
+  const first = user.roleAssignments?.[0]
+  if (first) return first.assignedRole.replace(/_/g, ' ')
+  return 'User'
+}
+
+const columns: Column<UserForTable>[] = [
   {
     key: 'user',
     header: 'User',
@@ -42,34 +66,53 @@ const columns: Column<User>[] = [
   {
     key: 'role',
     header: 'Role',
-    render: (user) => (
-      <Badge variant={user.role === 'editor' ? 'default' : 'secondary'} className="capitalize">
-        {user.role || 'unknown'}
-      </Badge>
-    ),
+    render: (user) => {
+      const label = getPrimaryRoleLabel(user)
+      const variant = user.role === 'superadmin' || user.roleAssignments?.some(a => a.assignedRole === 'institution_admin')
+        ? 'destructive'
+        : (user.roleAssignments?.length ?? 0) > 0
+          ? 'default'
+          : 'secondary'
+      return (
+        <Badge variant={variant} className="capitalize">
+          {label}
+        </Badge>
+      )
+    },
   },
   {
     key: 'flags',
-    header: 'Flags',
-    render: (user) => (
-      <div className="flex gap-1">
-        {user.isAdmin && (
-          <Badge variant="destructive" className="text-xs">
-            <Shield className="h-3 w-3 mr-1" />
-            Admin
-          </Badge>
-        )}
-        {user.canManageAdmins && (
+    header: 'Roles',
+    render: (user) => {
+      const assignments = user.roleAssignments ?? []
+      if (user.role === 'superadmin') {
+        return (
           <Badge variant="outline" className="text-xs border-amber-500 text-amber-600">
             <ShieldCheck className="h-3 w-3 mr-1" />
-            Super
+            Platform Owner
           </Badge>
-        )}
-        {!user.isAdmin && !user.canManageAdmins && (
-          <span className="text-xs text-muted-foreground">-</span>
-        )}
-      </div>
-    ),
+        )
+      }
+      if (assignments.length === 0) {
+        return <span className="text-xs text-muted-foreground">No roles assigned</span>
+      }
+      return (
+        <div className="flex flex-wrap gap-1">
+          {assignments.slice(0, 3).map((a, i) => (
+            <Badge key={i} variant="outline" className="text-xs">
+              {a.assignedRole === 'institution_admin' && <Shield className="h-3 w-3 mr-1" />}
+              {a.assignedRole.replace(/_/g, ' ')}
+              {a.scopeLabel ? ` (${a.scopeLabel})` : ''}
+            </Badge>
+          ))}
+          {assignments.length > 3 && (
+            <Badge variant="secondary" className="text-xs">
+              +{assignments.length - 3} more
+            </Badge>
+          )}
+        </div>
+      )
+    },
   },
   {
     key: 'joined',
@@ -89,13 +132,13 @@ export function UsersTableClient({
   totalItems,
   pageSize,
   currentUserId,
-  currentUserCanManageAdmins,
+  currentUserIsSuperAdmin,
   query,
   roleFilter,
   adminFilter,
 }: UsersTableClientProps) {
   // Add actions column dynamically since it needs props
-  const allColumns: Column<User>[] = [
+  const allColumns: Column<UserForTable>[] = [
     ...columns,
     {
       key: 'actions',
@@ -106,7 +149,7 @@ export function UsersTableClient({
           <UserActions
             user={user}
             currentUserId={currentUserId}
-            currentUserCanManageAdmins={currentUserCanManageAdmins}
+            currentUserCanManageAdmins={currentUserIsSuperAdmin}
           />
         </div>
       ),
@@ -130,8 +173,12 @@ export function UsersTableClient({
               label: 'Role',
               options: [
                 { label: 'All Roles', value: '' },
-                { label: 'Editor', value: 'editor' },
-                { label: 'Contributor', value: 'contributor' },
+                { label: 'Institution Admin', value: 'institution_admin' },
+                { label: 'Blog Editor', value: 'blog_editor' },
+                { label: 'Blog Author', value: 'blog_author' },
+                { label: 'Club Admin', value: 'club_admin' },
+                { label: 'Event Manager', value: 'event_manager' },
+                { label: 'Moderator', value: 'moderator' },
               ],
             },
             {
@@ -139,9 +186,10 @@ export function UsersTableClient({
               label: 'Access',
               options: [
                 { label: 'All Access', value: '' },
-                { label: 'Admins', value: 'admin' },
-                { label: 'Super Admins', value: 'super' },
-                { label: 'Regular', value: 'regular' },
+                { label: 'Super Admin', value: 'super' },
+                { label: 'Inst. Admin', value: 'institution_admin' },
+                { label: 'Has Roles', value: 'has_roles' },
+                { label: 'No Roles', value: 'no_roles' },
               ],
             },
           ]}
@@ -179,23 +227,23 @@ export function UsersTableClient({
               <UserActions
                 user={user}
                 currentUserId={currentUserId}
-                currentUserCanManageAdmins={currentUserCanManageAdmins}
+                currentUserCanManageAdmins={currentUserIsSuperAdmin}
               />
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              <Badge variant={user.role === 'editor' ? 'default' : 'secondary'} className="capitalize text-xs">
-                {user.role || 'unknown'}
+              <Badge variant={(user.roleAssignments?.length ?? 0) > 0 ? 'default' : 'secondary'} className="capitalize text-xs">
+                {getPrimaryRoleLabel(user)}
               </Badge>
-              {user.isAdmin && (
+              {user.role === 'superadmin' && (
+                <Badge variant="outline" className="text-xs border-amber-500 text-amber-600">
+                  <ShieldCheck className="h-3 w-3 mr-1" />
+                  Platform
+                </Badge>
+              )}
+              {user.roleAssignments?.some(a => a.assignedRole === 'institution_admin') && (
                 <Badge variant="destructive" className="text-xs">
                   <Shield className="h-3 w-3 mr-1" />
                   Admin
-                </Badge>
-              )}
-              {user.canManageAdmins && (
-                <Badge variant="outline" className="text-xs border-amber-500 text-amber-600">
-                  <ShieldCheck className="h-3 w-3 mr-1" />
-                  Super
                 </Badge>
               )}
               <span className="text-xs text-muted-foreground ml-auto">

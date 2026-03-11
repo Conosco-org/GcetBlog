@@ -4,7 +4,6 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { EditorLayoutClient } from '../(frontend)/editor/components/EditorLayoutClient'
 import { PayloadBlocker } from '../contributor/components/PayloadBlocker'
-import type { User } from '@/payload-types'
 import React from 'react'
 import { cn } from '@/utilities/ui'
 import { GeistMono } from 'geist/font/mono'
@@ -34,18 +33,24 @@ export default async function AdminDashboardLayout({
     redirect('/login')
   }
 
-  // Fetch full user data to ensure we have isAdmin field
+  // Fetch full user data to check roleAssignments
   const fullUser = await payload.findByID({
     collection: 'users',
     id: user.id,
     depth: 0,
   })
 
-  // Only allow admins (isAdmin flag) to access this area
-  if (!fullUser.isAdmin) {
-    // Redirect to appropriate dashboard based on role
-    const dest = fullUser.role === 'editor' ? '/editor' : '/contributor'
-    redirect(dest)
+  // Only allow institution_admin or superadmin to access this area
+  const isSuperAdmin = fullUser.role === 'superadmin'
+  const isInstAdmin = Array.isArray((fullUser as unknown as Record<string, unknown>).roleAssignments) &&
+    (fullUser as unknown as { roleAssignments: Array<{ assignedRole: string }> }).roleAssignments
+      .some((a) => a.assignedRole === 'institution_admin')
+
+  if (!isSuperAdmin && !isInstAdmin) {
+    // Redirect to editor if they have any roles, otherwise home
+    const hasRoles = Array.isArray((fullUser as unknown as Record<string, unknown>).roleAssignments) &&
+      ((fullUser as unknown as { roleAssignments: unknown[] }).roleAssignments.length > 0)
+    redirect(hasRoles ? '/editor' : '/')
   }
 
   // Fetch counts for sidebar badges - parallelized
@@ -72,7 +77,7 @@ export default async function AdminDashboardLayout({
         <PayloadBlocker />
         <Providers>
           <EditorLayoutClient
-            user={fullUser as User & { role: string }}
+            user={fullUser as any}
             pendingPostsCount={pendingPosts.totalDocs}
             totalPostsCount={totalPosts.totalDocs}
             activityLogsCount={recentLogs.totalDocs}

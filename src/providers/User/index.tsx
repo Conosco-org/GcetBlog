@@ -3,13 +3,20 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 
+interface RoleAssignment {
+  assignedRole: string
+  scopeType: string
+  scopeId?: string | { id: string }
+  scopeLabel?: string
+}
+
 export interface User {
   id: string
   email: string
   name?: string
-  role: 'contributor' | 'editor'
-  isAdmin?: boolean
-  canManageAdmins?: boolean
+  role: 'superadmin' | 'user'
+  institution?: string | { id: string }
+  roleAssignments?: RoleAssignment[]
 }
 
 interface UserContextType {

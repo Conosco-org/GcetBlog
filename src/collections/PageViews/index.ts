@@ -1,27 +1,37 @@
 import type { CollectionConfig } from 'payload'
+import { institutionField } from '../../fields/institution'
+import { isSuperAdminCheck, isOwnInstitutionAdmin, getUserInstitutionId } from '../../access/hasPermission'
+import { tenantIsolationHooks } from '@/hooks/tenantIsolation'
 
 export const PageViews: CollectionConfig = {
   slug: 'page-views',
   access: {
-    // Only editors/admins can read analytics
-    read: ({ req }) => {
-      const user = req.user as { role?: string } | undefined
-      return user ? ['editor', 'admin'].includes(user.role || '') : false
+    // Superadmin sees all. institution_admin sees their institution's analytics.
+    read: ({ req: { user } }) => {
+      if (!user) return false
+      if (isSuperAdminCheck(user)) return true
+      const instId = getUserInstitutionId(user)
+      if (instId && isOwnInstitutionAdmin(user)) {
+        return { institution: { equals: instId } }
+      }
+      return false
     },
     // Anyone can create (tracked via middleware/API)
     create: () => true,
     // Analytics are immutable
     update: () => false,
-    delete: ({ req }) => {
-      const user = req.user as { role?: string } | undefined
-      return user?.role === 'admin'
+    delete: ({ req: { user } }) => {
+      if (!user) return false
+      return isSuperAdminCheck(user)
     },
   },
   admin: {
     defaultColumns: ['path', 'postSlug', 'createdAt'],
     hidden: true,
   },
+  hooks: tenantIsolationHooks(),
   fields: [
+    institutionField,
     {
       name: 'path',
       type: 'text',

@@ -1,5 +1,7 @@
 ﻿import type { CollectionConfig } from 'payload'
-import { editorOnly } from '../../access/editorOnly'
+import { hasPermissionFilter } from '../../access/hasPermission'
+import { optionalInstitutionField } from '../../fields/institution'
+import { tenantIsolationHooks } from '@/hooks/tenantIsolation'
 
 export const NewsletterEvents: CollectionConfig = {
   slug: 'newsletter-events',
@@ -13,14 +15,15 @@ export const NewsletterEvents: CollectionConfig = {
     description: 'Immutable event log for newsletter analytics (opens, clicks, bounces)',
   },
   access: {
-    // Editors can view analytics
-    read: editorOnly,
+    // Blog editors can view analytics within their institution
+    read: hasPermissionFilter('blog:publish', 'subscriber', 'institution'),
     // System-only creation (via server actions / tracking endpoints)
     create: () => true,
     // Immutable - no updates or deletes
     update: () => false,
     delete: () => false,
   },
+  hooks: tenantIsolationHooks(),
   indexes: [
     { fields: ['newsletter', 'type'] },
     { fields: ['subscriber', 'type'] },
@@ -28,6 +31,7 @@ export const NewsletterEvents: CollectionConfig = {
     { fields: ['timestamp'] },
   ],
   fields: [
+    optionalInstitutionField,
     {
       name: 'newsletter',
       type: 'relationship',

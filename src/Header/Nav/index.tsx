@@ -20,7 +20,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
       })}
       
       {/* Role-based navigation items */}
-      {user && user.role === 'editor' && (
+      {user && (user.roleAssignments?.length ?? 0) > 0 && (
         <Link 
           href="/editor" 
           className="flex items-center gap-1 text-sm hover:text-primary transition-colors"
@@ -31,9 +31,9 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
         </Link>
       )}
       
-      {user && (user as unknown as { isAdmin?: boolean }).isAdmin && (
+      {user && (user.role === 'superadmin' || user.roleAssignments?.some(a => a.assignedRole === 'institution_admin')) && (
         <Link 
-          href="/admin-dashboard" 
+          href={user.role === 'superadmin' ? '/platform' : '/admin-dashboard'}
           className="flex items-center gap-1 text-sm hover:text-primary transition-colors"
           title="Admin Dashboard"
         >

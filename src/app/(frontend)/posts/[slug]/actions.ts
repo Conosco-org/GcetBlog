@@ -91,7 +91,14 @@ export async function moderateComment(formData: FormData) {
     // Get the current user
     const { user } = await getMeUser()
 
-    if (!user || user.role !== 'editor') {
+    if (!user) {
+      return { error: 'Unauthorized' }
+    }
+
+    const userWithRoles = user as unknown as { id: string; role: string; roleAssignments?: { assignedRole: string }[] }
+    const hasModerateAccess = userWithRoles.role === 'superadmin' ||
+      userWithRoles.roleAssignments?.some(a => ['blog_editor', 'institution_admin', 'moderator'].includes(a.assignedRole))
+    if (!hasModerateAccess) {
       return { error: 'Unauthorized' }
     }
 
