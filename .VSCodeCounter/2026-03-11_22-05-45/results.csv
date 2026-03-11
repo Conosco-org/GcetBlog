@@ -1,0 +1,587 @@
+"filename", "language", "JSON with Comments", "TypeScript", "JavaScript", "Dotenv", "Docker", "Markdown", "YAML", "JSON", "Ignore", "TypeScript JSX", "PostCSS", "SCSS", "SVG", "comment", "blank", "total"
+"a:\GCET BLOG\GcetBlog\.github\copilot-instructions.md", "Markdown", 0, 0, 0, 0, 0, 386, 0, 0, 0, 0, 0, 0, 0, 0, 99, 485
+"a:\GCET BLOG\GcetBlog\.prettierignore", "Ignore", 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 2, 15
+"a:\GCET BLOG\GcetBlog\.prettierrc.json", "JSON", 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 1, 7
+"a:\GCET BLOG\GcetBlog\ARCHITECTURE.md", "Markdown", 0, 0, 0, 0, 0, 360, 0, 0, 0, 0, 0, 0, 0, 0, 39, 399
+"a:\GCET BLOG\GcetBlog\CHEAT_SHEET.md", "Markdown", 0, 0, 0, 0, 0, 209, 0, 0, 0, 0, 0, 0, 0, 0, 66, 275
+"a:\GCET BLOG\GcetBlog\CODEBASE_GUIDE.md", "Markdown", 0, 0, 0, 0, 0, 877, 0, 0, 0, 0, 0, 0, 0, 0, 233, 1110
+"a:\GCET BLOG\GcetBlog\DOCUMENTATION_INDEX.md", "Markdown", 0, 0, 0, 0, 0, 204, 0, 0, 0, 0, 0, 0, 0, 0, 85, 289
+"a:\GCET BLOG\GcetBlog\DOCUMENTATION_SUMMARY.md", "Markdown", 0, 0, 0, 0, 0, 270, 0, 0, 0, 0, 0, 0, 0, 0, 82, 352
+"a:\GCET BLOG\GcetBlog\Dockerfile", "Docker", 0, 0, 0, 0, 35, 0, 0, 0, 0, 0, 0, 0, 0, 19, 18, 72
+"a:\GCET BLOG\GcetBlog\IMAGE_GUIDELINES.md", "Markdown", 0, 0, 0, 0, 0, 90, 0, 0, 0, 0, 0, 0, 0, 0, 29, 119
+"a:\GCET BLOG\GcetBlog\QUICK_START.md", "Markdown", 0, 0, 0, 0, 0, 145, 0, 0, 0, 0, 0, 0, 0, 0, 64, 209
+"a:\GCET BLOG\GcetBlog\README.md", "Markdown", 0, 0, 0, 0, 0, 212, 0, 0, 0, 0, 0, 0, 0, 0, 126, 338
+"a:\GCET BLOG\GcetBlog\START_HERE.md", "Markdown", 0, 0, 0, 0, 0, 151, 0, 0, 0, 0, 0, 0, 0, 0, 78, 229
+"a:\GCET BLOG\GcetBlog\clear-database.js", "JavaScript", 0, 0, 37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 11, 53
+"a:\GCET BLOG\GcetBlog\components.json", "JSON", 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 0, 1, 18
+"a:\GCET BLOG\GcetBlog\docker-compose.yml", "YAML", 0, 0, 0, 0, 0, 0, 28, 0, 0, 0, 0, 0, 0, 0, 4, 32
+"a:\GCET BLOG\GcetBlog\docs\01-project-overview.md", "Markdown", 0, 0, 0, 0, 0, 187, 0, 0, 0, 0, 0, 0, 0, 0, 49, 236
+"a:\GCET BLOG\GcetBlog\docs\02-architecture.md", "Markdown", 0, 0, 0, 0, 0, 338, 0, 0, 0, 0, 0, 0, 0, 0, 84, 422
+"a:\GCET BLOG\GcetBlog\docs\03-folder-structure.md", "Markdown", 0, 0, 0, 0, 0, 490, 0, 0, 0, 0, 0, 0, 0, 0, 104, 594
+"a:\GCET BLOG\GcetBlog\docs\04-authentication.md", "Markdown", 0, 0, 0, 0, 0, 445, 0, 0, 0, 0, 0, 0, 0, 0, 110, 555
+"a:\GCET BLOG\GcetBlog\docs\05-route-groups.md", "Markdown", 0, 0, 0, 0, 0, 347, 0, 0, 0, 0, 0, 0, 0, 0, 91, 438
+"a:\GCET BLOG\GcetBlog\docs\11-development.md", "Markdown", 0, 0, 0, 0, 0, 532, 0, 0, 0, 0, 0, 0, 0, 0, 160, 692
+"a:\GCET BLOG\GcetBlog\docs\12-roadmap.md", "Markdown", 0, 0, 0, 0, 0, 381, 0, 0, 0, 0, 0, 0, 0, 0, 93, 474
+"a:\GCET BLOG\GcetBlog\docs\COMPLETE.md", "Markdown", 0, 0, 0, 0, 0, 272, 0, 0, 0, 0, 0, 0, 0, 0, 56, 328
+"a:\GCET BLOG\GcetBlog\docs\DIAGRAMS.md", "Markdown", 0, 0, 0, 0, 0, 476, 0, 0, 0, 0, 0, 0, 0, 0, 47, 523
+"a:\GCET BLOG\GcetBlog\docs\INDEX.md", "Markdown", 0, 0, 0, 0, 0, 226, 0, 0, 0, 0, 0, 0, 0, 0, 120, 346
+"a:\GCET BLOG\GcetBlog\docs\QUICK-REFERENCE.md", "Markdown", 0, 0, 0, 0, 0, 348, 0, 0, 0, 0, 0, 0, 0, 0, 97, 445
+"a:\GCET BLOG\GcetBlog\docs\README.md", "Markdown", 0, 0, 0, 0, 0, 54, 0, 0, 0, 0, 0, 0, 0, 0, 22, 76
+"a:\GCET BLOG\GcetBlog\docs\SUMMARY.md", "Markdown", 0, 0, 0, 0, 0, 275, 0, 0, 0, 0, 0, 0, 0, 0, 54, 329
+"a:\GCET BLOG\GcetBlog\docs\content-engine\MASTER_PLAN.md", "Markdown", 0, 0, 0, 0, 0, 402, 0, 0, 0, 0, 0, 0, 0, 0, 87, 489
+"a:\GCET BLOG\GcetBlog\docs\content-engine\V2_ROADMAP.md", "Markdown", 0, 0, 0, 0, 0, 1467, 0, 0, 0, 0, 0, 0, 0, 0, 298, 1765
+"a:\GCET BLOG\GcetBlog\docs\newsletter-email-setup.md", "Markdown", 0, 0, 0, 0, 0, 162, 0, 0, 0, 0, 0, 0, 0, 0, 47, 209
+"a:\GCET BLOG\GcetBlog\eslint.config.mjs", "JavaScript", 0, 0, 34, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 39
+"a:\GCET BLOG\GcetBlog\next-env.d.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 2, 7
+"a:\GCET BLOG\GcetBlog\next-sitemap.config.cjs", "JavaScript", 0, 0, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 26
+"a:\GCET BLOG\GcetBlog\next.config.js", "JavaScript", 0, 0, 38, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 8, 64
+"a:\GCET BLOG\GcetBlog\package-lock.json", "JSON", 0, 0, 0, 0, 0, 0, 0, 16729, 0, 0, 0, 0, 0, 0, 1, 16730
+"a:\GCET BLOG\GcetBlog\package.json", "JSON", 0, 0, 0, 0, 0, 0, 0, 140, 0, 0, 0, 0, 0, 0, 1, 141
+"a:\GCET BLOG\GcetBlog\playwright.config.ts", "TypeScript", 0, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 4, 42
+"a:\GCET BLOG\GcetBlog\pnpm-lock.yaml", "YAML", 0, 0, 0, 0, 0, 0, 10127, 0, 0, 0, 0, 0, 0, 0, 2481, 12608
+"a:\GCET BLOG\GcetBlog\postcss.config.js", "JavaScript", 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 9
+"a:\GCET BLOG\GcetBlog\public\favicon.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 1, 11
+"a:\GCET BLOG\GcetBlog\redirects.js", "JavaScript", 0, 0, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 21
+"a:\GCET BLOG\GcetBlog\scripts\clear-database.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"a:\GCET BLOG\GcetBlog\scripts\create-sample-posts.js", "JavaScript", 0, 0, 157, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 17, 184
+"a:\GCET BLOG\GcetBlog\scripts\create-sample-posts.ts", "TypeScript", 0, 154, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 16, 174
+"a:\GCET BLOG\GcetBlog\scripts\migrate-admin-role.ts", "TypeScript", 0, 121, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 24, 164
+"a:\GCET BLOG\GcetBlog\scripts\migrate-to-multitenant.ts", "TypeScript", 0, 131, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 28, 24, 183
+"a:\GCET BLOG\GcetBlog\scripts\migrate-to-rbac.js", "JavaScript", 0, 0, 199, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 49, 31, 279
+"a:\GCET BLOG\GcetBlog\scripts\seed-database.ts", "TypeScript", 0, 581, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 27, 35, 643
+"a:\GCET BLOG\GcetBlog\scripts\seed-templates.ts", "TypeScript", 0, 598, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 26, 639
+"a:\GCET BLOG\GcetBlog\scripts\test-admin.mjs", "JavaScript", 0, 0, 180, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 31, 228
+"a:\GCET BLOG\GcetBlog\scripts\test-contributor.mjs", "JavaScript", 0, 0, 593, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 92, 82, 767
+"a:\GCET BLOG\GcetBlog\scripts\test-editor.mjs", "JavaScript", 0, 0, 405, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 66, 47, 518
+"a:\GCET BLOG\GcetBlog\src\Footer\Component.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 66, 0, 0, 0, 5, 9, 80
+"a:\GCET BLOG\GcetBlog\src\Footer\RowLabel.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 4, 14
+"a:\GCET BLOG\GcetBlog\src\Footer\config.ts", "TypeScript", 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 33
+"a:\GCET BLOG\GcetBlog\src\Footer\hooks\revalidateFooter.ts", "TypeScript", 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 14
+"a:\GCET BLOG\GcetBlog\src\Header\Component.client.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 192, 0, 0, 0, 9, 20, 221
+"a:\GCET BLOG\GcetBlog\src\Header\Component.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 0, 0, 0, 3, 6, 38
+"a:\GCET BLOG\GcetBlog\src\Header\Nav\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 42, 0, 0, 0, 1, 9, 52
+"a:\GCET BLOG\GcetBlog\src\Header\RowLabel.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 4, 14
+"a:\GCET BLOG\GcetBlog\src\Header\config.ts", "TypeScript", 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 33
+"a:\GCET BLOG\GcetBlog\src\Header\hooks\revalidateHeader.ts", "TypeScript", 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 14
+"a:\GCET BLOG\GcetBlog\src\access\anyone.ts", "TypeScript", 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 4
+"a:\GCET BLOG\GcetBlog\src\access\authenticated.ts", "TypeScript", 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 10
+"a:\GCET BLOG\GcetBlog\src\access\authenticatedOrPublished.ts", "TypeScript", 0, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 14
+"a:\GCET BLOG\GcetBlog\src\access\hasBlogAccess.ts", "TypeScript", 0, 52, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 17, 101
+"a:\GCET BLOG\GcetBlog\src\access\hasClubAccess.ts", "TypeScript", 0, 73, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 18, 121
+"a:\GCET BLOG\GcetBlog\src\access\hasPermission.ts", "TypeScript", 0, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 124, 59, 361
+"a:\GCET BLOG\GcetBlog\src\access\isSuperAdmin.ts", "TypeScript", 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 4, 25
+"a:\GCET BLOG\GcetBlog\src\access\permissions.ts", "TypeScript", 0, 95, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 67, 26, 188
+"a:\GCET BLOG\GcetBlog\src\access\selfOrAdmin.ts", "TypeScript", 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 41
+"a:\GCET BLOG\GcetBlog\src\app\(auth)\layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 49, 0, 0, 0, 0, 4, 53
+"a:\GCET BLOG\GcetBlog\src\app\(auth)\login\LoginForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 122, 0, 0, 0, 2, 15, 139
+"a:\GCET BLOG\GcetBlog\src\app\(auth)\login\RegisterLink.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 0, 0, 5, 35
+"a:\GCET BLOG\GcetBlog\src\app\(auth)\login\actions.ts", "TypeScript", 0, 87, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 17, 111
+"a:\GCET BLOG\GcetBlog\src\app\(auth)\login\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 56, 0, 0, 0, 6, 11, 73
+"a:\GCET BLOG\GcetBlog\src\app\(auth)\register\RegistrationForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 153, 0, 0, 0, 1, 16, 170
+"a:\GCET BLOG\GcetBlog\src\app\(auth)\register\SignInLink.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 0, 0, 5, 35
+"a:\GCET BLOG\GcetBlog\src\app\(auth)\register\actions.ts", "TypeScript", 0, 52, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 11, 66
+"a:\GCET BLOG\GcetBlog\src\app\(auth)\register\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 42, 0, 0, 0, 1, 7, 50
+"a:\GCET BLOG\GcetBlog\src\app\(auth)\set-password\SetPasswordForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 163, 0, 0, 0, 2, 16, 181
+"a:\GCET BLOG\GcetBlog\src\app\(auth)\set-password\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 3, 20
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\(sitemaps)\pages-sitemap.xml\route.ts", "TypeScript", 0, 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 69
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\(sitemaps)\posts-sitemap.xml\route.ts", "TypeScript", 0, 48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 56
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\ConditionalLayout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 1, 5, 18
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\[slug]\page.client.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 1, 4, 16
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\[slug]\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 137, 0, 0, 0, 9, 32, 178
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\clubs\ClubsFilterBar.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 92, 0, 0, 0, 4, 14, 110
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\clubs\[slug]\achievements\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 146, 0, 0, 0, 2, 16, 164
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\clubs\[slug]\events\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 112, 0, 0, 0, 5, 17, 134
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\clubs\[slug]\page.client.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 4, 15
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\clubs\[slug]\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 247, 0, 0, 0, 17, 30, 294
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\clubs\[slug]\team\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 138, 0, 0, 0, 4, 14, 156
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\clubs\page.client.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 4, 15
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\clubs\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 186, 0, 0, 0, 7, 20, 213
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\content\[slug]\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 33, 0, 0, 0, 12, 11, 56
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\dashboard\admin\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 3, 2, 9
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\dashboard\editor\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 172, 0, 0, 0, 9, 13, 194
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\dashboard\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 0, 0, 0, 2, 5, 30
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\dashboard\user\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 87, 0, 0, 0, 2, 7, 96
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\editor\components\DashboardErrorFallback.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 27, 0, 0, 0, 0, 3, 30
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\editor\components\EditorHeader.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 148, 0, 0, 0, 5, 11, 164
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\editor\components\EditorLayoutClient.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 75, 0, 0, 0, 3, 8, 86
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\editor\components\EditorSidebar.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 221, 0, 0, 0, 10, 11, 242
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\editor\components\ErrorBoundary.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 50, 0, 0, 0, 0, 10, 60
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\editor\components\MobileMenuButton.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 38, 0, 0, 0, 2, 6, 46
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\events\EventsFilterBar.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 112, 0, 0, 0, 5, 16, 133
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\events\[slug]\page.client.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 4, 15
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\events\[slug]\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 142, 0, 0, 0, 9, 19, 170
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\events\page.client.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 4, 15
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\events\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 189, 0, 0, 0, 6, 19, 214
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\globals.css", "PostCSS", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 202, 0, 0, 15, 53, 270
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\home\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 72, 0, 0, 0, 5, 11, 88
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 62, 0, 0, 0, 1, 6, 69
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\newsletter\confirm\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 99, 0, 0, 0, 9, 14, 122
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\newsletter\preferences\PreferencesForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 136, 0, 0, 0, 8, 12, 156
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\newsletter\preferences\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 10, 14, 100
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\newsletter\unsubscribe\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 92, 0, 0, 0, 9, 14, 115
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\next\exit-preview\route.ts", "TypeScript", 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 8
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\next\preview\route.ts", "TypeScript", 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 16, 57
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\next\seed\route.ts", "TypeScript", 0, 26, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 9, 40
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\not-found.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 3, 19
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 3, 6
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\posts\PostsFilterBar.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 0, 8, 12, 148
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\posts\[slug]\PostEngagement.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 67, 0, 0, 0, 4, 7, 78
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\posts\[slug]\actions.ts", "TypeScript", 0, 163, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 30, 206
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\posts\[slug]\page.client.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 4, 15
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\posts\[slug]\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 251, 0, 0, 0, 16, 30, 297
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\posts\page.client.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 1, 4, 16
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\posts\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 213, 0, 0, 0, 13, 24, 250
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\posts\page\[pageNumber]\page.client.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 1, 4, 16
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\posts\page\[pageNumber]\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 78, 0, 0, 0, 1, 19, 98
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\profile\[id]\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 246, 0, 0, 0, 10, 17, 273
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\search\page.client.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 1, 4, 16
+"a:\GCET BLOG\GcetBlog\src\app\(frontend)\search\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 80, 0, 0, 0, 1, 8, 89
+"a:\GCET BLOG\GcetBlog\src\app\(payload)\admin\[[...segments]]\not-found.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 2, 6, 25
+"a:\GCET BLOG\GcetBlog\src\app\(payload)\admin\[[...segments]]\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 2, 6, 25
+"a:\GCET BLOG\GcetBlog\src\app\(payload)\admin\importMap.js", "JavaScript", 0, 0, 58, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 60
+"a:\GCET BLOG\GcetBlog\src\app\(payload)\api\[...slug]\route.ts", "TypeScript", 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 21
+"a:\GCET BLOG\GcetBlog\src\app\(payload)\api\graphql-playground\route.ts", "TypeScript", 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 8
+"a:\GCET BLOG\GcetBlog\src\app\(payload)\api\graphql\route.ts", "TypeScript", 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 9
+"a:\GCET BLOG\GcetBlog\src\app\(payload)\custom.scss", "SCSS", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 39, 0, 7, 9, 55
+"a:\GCET BLOG\GcetBlog\src\app\(payload)\layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 24, 0, 0, 0, 2, 6, 32
+"a:\GCET BLOG\GcetBlog\src\app\admin-dashboard\error.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 51, 0, 0, 0, 0, 4, 55
+"a:\GCET BLOG\GcetBlog\src\app\admin-dashboard\layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 80, 0, 0, 0, 4, 9, 93
+"a:\GCET BLOG\GcetBlog\src\app\admin-dashboard\loading.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 2, 6
+"a:\GCET BLOG\GcetBlog\src\app\admin-dashboard\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 1, 1, 6
+"a:\GCET BLOG\GcetBlog\src\app\admin-dashboard\profile\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 484, 0, 0, 0, 9, 39, 532
+"a:\GCET BLOG\GcetBlog\src\app\admin-dashboard\users\UserActions.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 215, 0, 0, 0, 0, 20, 235
+"a:\GCET BLOG\GcetBlog\src\app\admin-dashboard\users\UsersTableClient.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 246, 0, 0, 0, 4, 9, 259
+"a:\GCET BLOG\GcetBlog\src\app\admin-dashboard\users\actions.ts", "TypeScript", 0, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 46, 304
+"a:\GCET BLOG\GcetBlog\src\app\admin-dashboard\users\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 99, 0, 0, 0, 7, 17, 123
+"a:\GCET BLOG\GcetBlog\src\app\api\admin\stats\route.ts", "TypeScript", 0, 48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 8, 60
+"a:\GCET BLOG\GcetBlog\src\app\api\auth\google\callback\route.ts", "TypeScript", 0, 203, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 37, 36, 276
+"a:\GCET BLOG\GcetBlog\src\app\api\auth\google\route.ts", "TypeScript", 0, 52, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 11, 69
+"a:\GCET BLOG\GcetBlog\src\app\api\auth\logout\route.ts", "TypeScript", 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 12
+"a:\GCET BLOG\GcetBlog\src\app\api\auth\me\route.ts", "TypeScript", 0, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 22
+"a:\GCET BLOG\GcetBlog\src\app\api\auth\set-password\route.ts", "TypeScript", 0, 51, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 9, 74
+"a:\GCET BLOG\GcetBlog\src\app\api\categories\[id]\route.ts", "TypeScript", 0, 119, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 19, 142
+"a:\GCET BLOG\GcetBlog\src\app\api\categories\create\route.ts", "TypeScript", 0, 61, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 10, 73
+"a:\GCET BLOG\GcetBlog\src\app\api\disable-draft\route.ts", "TypeScript", 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 9
+"a:\GCET BLOG\GcetBlog\src\app\api\draft\route.ts", "TypeScript", 0, 46, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 61
+"a:\GCET BLOG\GcetBlog\src\app\api\feedback\[id]\message\route.ts", "TypeScript", 0, 80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 12, 96
+"a:\GCET BLOG\GcetBlog\src\app\api\feedback\create\route.ts", "TypeScript", 0, 87, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 14, 105
+"a:\GCET BLOG\GcetBlog\src\app\api\media\file\[filename]\route.ts", "TypeScript", 0, 34, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 9, 49
+"a:\GCET BLOG\GcetBlog\src\app\api\media\route.ts", "TypeScript", 0, 169, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 21, 204
+"a:\GCET BLOG\GcetBlog\src\app\api\media\sign\route.ts", "TypeScript", 0, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 9, 49
+"a:\GCET BLOG\GcetBlog\src\app\api\newsletter\preferences\route.ts", "TypeScript", 0, 57, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 13, 77
+"a:\GCET BLOG\GcetBlog\src\app\api\newsletter\subscribe\route.ts", "TypeScript", 0, 89, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 15, 123
+"a:\GCET BLOG\GcetBlog\src\app\api\newsletter\subscribers\export\route.ts", "TypeScript", 0, 65, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 10, 78
+"a:\GCET BLOG\GcetBlog\src\app\api\newsletter\subscribers\import\route.ts", "TypeScript", 0, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 18, 121
+"a:\GCET BLOG\GcetBlog\src\app\api\newsletter\track\click\route.ts", "TypeScript", 0, 38, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 7, 57
+"a:\GCET BLOG\GcetBlog\src\app\api\newsletter\track\open\route.ts", "TypeScript", 0, 59, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 10, 82
+"a:\GCET BLOG\GcetBlog\src\app\api\newsletter\unsubscribe\route.ts", "TypeScript", 0, 67, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 13, 92
+"a:\GCET BLOG\GcetBlog\src\app\api\posts\[id]\route.ts", "TypeScript", 0, 91, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 11, 108
+"a:\GCET BLOG\GcetBlog\src\app\api\posts\create\route.ts", "TypeScript", 0, 116, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 12, 135
+"a:\GCET BLOG\GcetBlog\src\app\api\posts\route.ts", "TypeScript", 0, 125, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 17, 150
+"a:\GCET BLOG\GcetBlog\src\app\api\resolve-tenant\route.ts", "TypeScript", 0, 67, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 12, 93
+"a:\GCET BLOG\GcetBlog\src\app\api\revalidate\route.ts", "TypeScript", 0, 55, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 11, 83
+"a:\GCET BLOG\GcetBlog\src\app\api\seed-posts\route.ts", "TypeScript", 0, 183, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 16, 204
+"a:\GCET BLOG\GcetBlog\src\app\api\track\route.ts", "TypeScript", 0, 78, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 15, 102
+"a:\GCET BLOG\GcetBlog\src\app\api\users\me\route.ts", "TypeScript", 0, 43, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 7, 52
+"a:\GCET BLOG\GcetBlog\src\app\api\votes\route.ts", "TypeScript", 0, 86, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 13, 109
+"a:\GCET BLOG\GcetBlog\src\app\contributor\components\ContributorErrorFallback.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 27, 0, 0, 0, 0, 3, 30
+"a:\GCET BLOG\GcetBlog\src\app\contributor\components\ContributorHeader.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 134, 0, 0, 0, 5, 11, 150
+"a:\GCET BLOG\GcetBlog\src\app\contributor\components\ContributorLayoutClient.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 62, 0, 0, 0, 3, 7, 72
+"a:\GCET BLOG\GcetBlog\src\app\contributor\components\ContributorSidebar.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 149, 0, 0, 0, 6, 10, 165
+"a:\GCET BLOG\GcetBlog\src\app\contributor\components\PayloadBlocker.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 50, 0, 0, 0, 7, 10, 67
+"a:\GCET BLOG\GcetBlog\src\app\contributor\create\CreateContentForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 521, 0, 0, 0, 22, 42, 585
+"a:\GCET BLOG\GcetBlog\src\app\contributor\create\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 1, 2, 7
+"a:\GCET BLOG\GcetBlog\src\app\contributor\drafts\DraftsGridClient.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 125, 0, 0, 0, 1, 9, 135
+"a:\GCET BLOG\GcetBlog\src\app\contributor\drafts\loading.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 2, 6
+"a:\GCET BLOG\GcetBlog\src\app\contributor\drafts\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 69, 0, 0, 0, 2, 14, 85
+"a:\GCET BLOG\GcetBlog\src\app\contributor\error.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 3, 8
+"a:\GCET BLOG\GcetBlog\src\app\contributor\feedback\FeedbackCenter.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 336, 0, 0, 0, 8, 20, 364
+"a:\GCET BLOG\GcetBlog\src\app\contributor\feedback\loading.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 2, 6
+"a:\GCET BLOG\GcetBlog\src\app\contributor\feedback\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 2, 3, 11
+"a:\GCET BLOG\GcetBlog\src\app\contributor\layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 71, 0, 0, 0, 3, 10, 84
+"a:\GCET BLOG\GcetBlog\src\app\contributor\loading.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 2, 6
+"a:\GCET BLOG\GcetBlog\src\app\contributor\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 283, 0, 0, 0, 4, 24, 311
+"a:\GCET BLOG\GcetBlog\src\app\contributor\profile\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 495, 0, 0, 0, 10, 44, 549
+"a:\GCET BLOG\GcetBlog\src\app\contributor\submissions\SubmissionsClient.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 158, 0, 0, 0, 0, 7, 165
+"a:\GCET BLOG\GcetBlog\src\app\contributor\submissions\loading.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 2, 6
+"a:\GCET BLOG\GcetBlog\src\app\contributor\submissions\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 66, 0, 0, 0, 3, 15, 84
+"a:\GCET BLOG\GcetBlog\src\app\contributor\templates\ContributorTemplatesClient.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 322, 0, 0, 0, 14, 28, 364
+"a:\GCET BLOG\GcetBlog\src\app\contributor\templates\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 64, 0, 0, 0, 2, 10, 76
+"a:\GCET BLOG\GcetBlog\src\app\layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 24, 0, 0, 0, 0, 5, 29
+"a:\GCET BLOG\GcetBlog\src\app\platform\actions.ts", "TypeScript", 0, 126, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 21, 150
+"a:\GCET BLOG\GcetBlog\src\app\platform\components\InstitutionForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 532, 0, 0, 0, 8, 33, 573
+"a:\GCET BLOG\GcetBlog\src\app\platform\components\PlatformSidebar.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 69, 0, 0, 0, 3, 10, 82
+"a:\GCET BLOG\GcetBlog\src\app\platform\institutions\[id]\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 129, 0, 0, 0, 1, 12, 142
+"a:\GCET BLOG\GcetBlog\src\app\platform\institutions\components\InstitutionActions.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 139, 0, 0, 0, 1, 10, 150
+"a:\GCET BLOG\GcetBlog\src\app\platform\institutions\new\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 36, 0, 0, 0, 1, 7, 44
+"a:\GCET BLOG\GcetBlog\src\app\platform\institutions\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 142, 0, 0, 0, 2, 9, 153
+"a:\GCET BLOG\GcetBlog\src\app\platform\layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 47, 0, 0, 0, 1, 7, 55
+"a:\GCET BLOG\GcetBlog\src\app\platform\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 221, 0, 0, 0, 7, 14, 242
+"a:\GCET BLOG\GcetBlog\src\app\platform\users\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 186, 0, 0, 0, 4, 16, 206
+"a:\GCET BLOG\GcetBlog\src\app\user\activity\ActivityClient.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 170, 0, 0, 0, 0, 8, 178
+"a:\GCET BLOG\GcetBlog\src\app\user\activity\loading.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 2, 6
+"a:\GCET BLOG\GcetBlog\src\app\user\activity\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 56, 0, 0, 0, 1, 13, 70
+"a:\GCET BLOG\GcetBlog\src\app\user\analytics\loading.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 22, 0, 0, 0, 0, 2, 24
+"a:\GCET BLOG\GcetBlog\src\app\user\analytics\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 350, 0, 0, 0, 23, 16, 389
+"a:\GCET BLOG\GcetBlog\src\app\user\categories\CategoryForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 110, 0, 0, 0, 0, 14, 124
+"a:\GCET BLOG\GcetBlog\src\app\user\categories\CategoryManager.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 379, 0, 0, 0, 4, 29, 412
+"a:\GCET BLOG\GcetBlog\src\app\user\categories\loading.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 2, 6
+"a:\GCET BLOG\GcetBlog\src\app\user\categories\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 49, 0, 0, 0, 3, 8, 60
+"a:\GCET BLOG\GcetBlog\src\app\user\clubs\[id]\edit\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 0, 5, 19, 152
+"a:\GCET BLOG\GcetBlog\src\app\user\clubs\create\ClubForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 659, 0, 0, 0, 20, 46, 725
+"a:\GCET BLOG\GcetBlog\src\app\user\clubs\create\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 42, 0, 0, 0, 2, 10, 54
+"a:\GCET BLOG\GcetBlog\src\app\user\clubs\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 225, 0, 0, 0, 5, 13, 243
+"a:\GCET BLOG\GcetBlog\src\app\user\clubs\sync-preview\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 182, 0, 0, 0, 4, 13, 199
+"a:\GCET BLOG\GcetBlog\src\app\user\comments\CommentModerationList.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 215, 0, 0, 0, 2, 22, 239
+"a:\GCET BLOG\GcetBlog\src\app\user\comments\loading.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 2, 6
+"a:\GCET BLOG\GcetBlog\src\app\user\comments\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 185, 0, 0, 0, 8, 20, 213
+"a:\GCET BLOG\GcetBlog\src\app\user\content\ContentManagerClient.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 654, 0, 0, 0, 13, 35, 702
+"a:\GCET BLOG\GcetBlog\src\app\user\content\actions.ts", "TypeScript", 0, 108, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 21, 138
+"a:\GCET BLOG\GcetBlog\src\app\user\content\loading.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 2, 6
+"a:\GCET BLOG\GcetBlog\src\app\user\content\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 0, 4, 7, 52
+"a:\GCET BLOG\GcetBlog\src\app\user\events\[id]\edit\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 138, 0, 0, 0, 6, 19, 163
+"a:\GCET BLOG\GcetBlog\src\app\user\events\create\EventForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 676, 0, 0, 0, 22, 51, 749
+"a:\GCET BLOG\GcetBlog\src\app\user\events\create\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 55, 0, 0, 0, 2, 10, 67
+"a:\GCET BLOG\GcetBlog\src\app\user\events\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 242, 0, 0, 0, 6, 15, 263
+"a:\GCET BLOG\GcetBlog\src\app\user\events\sync-preview\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 198, 0, 0, 0, 8, 13, 219
+"a:\GCET BLOG\GcetBlog\src\app\user\layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 88, 0, 0, 0, 4, 12, 104
+"a:\GCET BLOG\GcetBlog\src\app\user\loading.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 2, 6
+"a:\GCET BLOG\GcetBlog\src\app\user\logs\LogsClient.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 141, 0, 0, 0, 0, 7, 148
+"a:\GCET BLOG\GcetBlog\src\app\user\logs\loading.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 2, 6
+"a:\GCET BLOG\GcetBlog\src\app\user\logs\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 56, 0, 0, 0, 1, 13, 70
+"a:\GCET BLOG\GcetBlog\src\app\user\media\MediaGridClient.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 378, 0, 0, 0, 11, 22, 411
+"a:\GCET BLOG\GcetBlog\src\app\user\media\loading.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 2, 6
+"a:\GCET BLOG\GcetBlog\src\app\user\media\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 72, 0, 0, 0, 4, 12, 88
+"a:\GCET BLOG\GcetBlog\src\app\user\newsletter\NewslettersTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 123, 0, 0, 0, 13, 15, 151
+"a:\GCET BLOG\GcetBlog\src\app\user\newsletter\[id]\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 286, 0, 0, 0, 10, 21, 317
+"a:\GCET BLOG\GcetBlog\src\app\user\newsletter\actions.ts", "TypeScript", 0, 343, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 44, 49, 436
+"a:\GCET BLOG\GcetBlog\src\app\user\newsletter\compose\ComposeForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 230, 0, 0, 0, 12, 18, 260
+"a:\GCET BLOG\GcetBlog\src\app\user\newsletter\compose\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 60, 0, 0, 0, 7, 11, 78
+"a:\GCET BLOG\GcetBlog\src\app\user\newsletter\loading.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 2, 6
+"a:\GCET BLOG\GcetBlog\src\app\user\newsletter\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 222, 0, 0, 0, 15, 22, 259
+"a:\GCET BLOG\GcetBlog\src\app\user\newsletter\subscribers\SubscriberActions.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 0, 1, 15, 100
+"a:\GCET BLOG\GcetBlog\src\app\user\newsletter\subscribers\SubscribersTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 125, 0, 0, 0, 11, 14, 150
+"a:\GCET BLOG\GcetBlog\src\app\user\newsletter\subscribers\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 166, 0, 0, 0, 11, 18, 195
+"a:\GCET BLOG\GcetBlog\src\app\user\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 223, 0, 0, 0, 4, 19, 246
+"a:\GCET BLOG\GcetBlog\src\app\user\pages\[id]\edit\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 179, 0, 0, 0, 11, 24, 214
+"a:\GCET BLOG\GcetBlog\src\app\user\pages\create\PageForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 1186, 0, 0, 0, 80, 103, 1369
+"a:\GCET BLOG\GcetBlog\src\app\user\pages\create\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 0, 2, 9, 52
+"a:\GCET BLOG\GcetBlog\src\app\user\pages\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 209, 0, 0, 0, 5, 14, 228
+"a:\GCET BLOG\GcetBlog\src\app\user\posts\[id]\edit\PostForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 646, 0, 0, 0, 19, 49, 714
+"a:\GCET BLOG\GcetBlog\src\app\user\posts\[id]\edit\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 107, 0, 0, 0, 5, 16, 128
+"a:\GCET BLOG\GcetBlog\src\app\user\posts\create\PostForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 646, 0, 0, 0, 19, 49, 714
+"a:\GCET BLOG\GcetBlog\src\app\user\posts\create\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 70, 0, 0, 0, 6, 10, 86
+"a:\GCET BLOG\GcetBlog\src\app\user\profile\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 495, 0, 0, 0, 14, 44, 553
+"a:\GCET BLOG\GcetBlog\src\app\user\queue\ApprovalButtons.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 122, 0, 0, 0, 2, 9, 133
+"a:\GCET BLOG\GcetBlog\src\app\user\queue\EditorQueueList.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 196, 0, 0, 0, 4, 19, 219
+"a:\GCET BLOG\GcetBlog\src\app\user\queue\QueueTableClient.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 111, 0, 0, 0, 0, 8, 119
+"a:\GCET BLOG\GcetBlog\src\app\user\queue\actions.ts", "TypeScript", 0, 123, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 22, 156
+"a:\GCET BLOG\GcetBlog\src\app\user\queue\loading.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 2, 6
+"a:\GCET BLOG\GcetBlog\src\app\user\queue\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 132, 0, 0, 0, 6, 16, 154
+"a:\GCET BLOG\GcetBlog\src\app\user\settings\loading.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 0, 0, 0, 2, 21
+"a:\GCET BLOG\GcetBlog\src\app\user\settings\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 309, 0, 0, 0, 12, 24, 345
+"a:\GCET BLOG\GcetBlog\src\app\user\system\conosco\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 229, 0, 0, 0, 9, 19, 257
+"a:\GCET BLOG\GcetBlog\src\app\user\templates\TemplateForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 541, 0, 0, 0, 29, 50, 620
+"a:\GCET BLOG\GcetBlog\src\app\user\templates\TemplatesPageClient.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 468, 0, 0, 0, 21, 31, 520
+"a:\GCET BLOG\GcetBlog\src\app\user\templates\[id]\edit\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 54, 0, 0, 0, 0, 8, 62
+"a:\GCET BLOG\GcetBlog\src\app\user\templates\create\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 0, 0, 0, 0, 5, 26
+"a:\GCET BLOG\GcetBlog\src\app\user\templates\loading.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 2, 6
+"a:\GCET BLOG\GcetBlog\src\app\user\templates\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 1, 11, 88
+"a:\GCET BLOG\GcetBlog\src\app\user\users\RoleManagementDialog.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 413, 0, 0, 0, 19, 36, 468
+"a:\GCET BLOG\GcetBlog\src\app\user\users\UserActions.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 198, 0, 0, 0, 3, 20, 221
+"a:\GCET BLOG\GcetBlog\src\app\user\users\UsersTableClient.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 247, 0, 0, 0, 5, 10, 262
+"a:\GCET BLOG\GcetBlog\src\app\user\users\actions.ts", "TypeScript", 0, 424, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 42, 80, 546
+"a:\GCET BLOG\GcetBlog\src\app\user\users\loading.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 2, 6
+"a:\GCET BLOG\GcetBlog\src\app\user\users\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 107, 0, 0, 0, 8, 19, 134
+"a:\GCET BLOG\GcetBlog\src\blocks\ArchiveBlock\Component.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 54, 0, 0, 0, 0, 12, 66
+"a:\GCET BLOG\GcetBlog\src\blocks\ArchiveBlock\config.ts", "TypeScript", 0, 92, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 95
+"a:\GCET BLOG\GcetBlog\src\blocks\Banner\Component.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 0, 0, 0, 0, 4, 27
+"a:\GCET BLOG\GcetBlog\src\blocks\Banner\config.ts", "TypeScript", 0, 35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 38
+"a:\GCET BLOG\GcetBlog\src\blocks\CallToAction\Component.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 4, 24
+"a:\GCET BLOG\GcetBlog\src\blocks\CallToAction\config.ts", "TypeScript", 0, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 43
+"a:\GCET BLOG\GcetBlog\src\blocks\Code\Component.client.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 0, 0, 4, 34
+"a:\GCET BLOG\GcetBlog\src\blocks\Code\Component.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 5, 22
+"a:\GCET BLOG\GcetBlog\src\blocks\Code\CopyButton.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 0, 0, 4, 34
+"a:\GCET BLOG\GcetBlog\src\blocks\Code\config.ts", "TypeScript", 0, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 34
+"a:\GCET BLOG\GcetBlog\src\blocks\Contact\Component.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 125, 0, 0, 0, 2, 8, 135
+"a:\GCET BLOG\GcetBlog\src\blocks\Contact\config.ts", "TypeScript", 0, 61, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 63
+"a:\GCET BLOG\GcetBlog\src\blocks\Content\Component.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 36, 0, 0, 0, 0, 8, 44
+"a:\GCET BLOG\GcetBlog\src\blocks\Content\config.ts", "TypeScript", 0, 75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 80
+"a:\GCET BLOG\GcetBlog\src\blocks\Countdown\Component.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 87, 0, 0, 0, 0, 12, 99
+"a:\GCET BLOG\GcetBlog\src\blocks\Countdown\config.ts", "TypeScript", 0, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 35
+"a:\GCET BLOG\GcetBlog\src\blocks\EventsFeed\Component.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 156, 0, 0, 0, 1, 12, 169
+"a:\GCET BLOG\GcetBlog\src\blocks\EventsFeed\config.ts", "TypeScript", 0, 46, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 48
+"a:\GCET BLOG\GcetBlog\src\blocks\Form\Checkbox\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 6, 46
+"a:\GCET BLOG\GcetBlog\src\blocks\Form\Component.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 139, 0, 0, 0, 2, 23, 164
+"a:\GCET BLOG\GcetBlog\src\blocks\Form\Country\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 60, 0, 0, 0, 0, 6, 66
+"a:\GCET BLOG\GcetBlog\src\blocks\Form\Country\options.ts", "TypeScript", 0, 982, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 983
+"a:\GCET BLOG\GcetBlog\src\blocks\Form\Email\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 33, 0, 0, 0, 0, 6, 39
+"a:\GCET BLOG\GcetBlog\src\blocks\Form\Error\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 3, 16
+"a:\GCET BLOG\GcetBlog\src\blocks\Form\Message\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 3, 14
+"a:\GCET BLOG\GcetBlog\src\blocks\Form\Number\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 33, 0, 0, 0, 0, 4, 37
+"a:\GCET BLOG\GcetBlog\src\blocks\Form\Select\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 59, 0, 0, 0, 0, 5, 64
+"a:\GCET BLOG\GcetBlog\src\blocks\Form\State\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 60, 0, 0, 0, 0, 5, 65
+"a:\GCET BLOG\GcetBlog\src\blocks\Form\State\options.ts", "TypeScript", 0, 52, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 53
+"a:\GCET BLOG\GcetBlog\src\blocks\Form\Text\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 28, 0, 0, 0, 0, 5, 33
+"a:\GCET BLOG\GcetBlog\src\blocks\Form\Textarea\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 34, 0, 0, 0, 0, 7, 41
+"a:\GCET BLOG\GcetBlog\src\blocks\Form\Width\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 2, 14
+"a:\GCET BLOG\GcetBlog\src\blocks\Form\config.ts", "TypeScript", 0, 49, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 52
+"a:\GCET BLOG\GcetBlog\src\blocks\Form\fields.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 2, 22
+"a:\GCET BLOG\GcetBlog\src\blocks\GalleryPreview\Component.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 101, 0, 0, 0, 1, 8, 110
+"a:\GCET BLOG\GcetBlog\src\blocks\GalleryPreview\config.ts", "TypeScript", 0, 51, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 53
+"a:\GCET BLOG\GcetBlog\src\blocks\InstagramEmbed\Component.client.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 75, 0, 0, 0, 4, 11, 90
+"a:\GCET BLOG\GcetBlog\src\blocks\InstagramEmbed\Component.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 4, 21
+"a:\GCET BLOG\GcetBlog\src\blocks\InstagramEmbed\config.ts", "TypeScript", 0, 29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 31
+"a:\GCET BLOG\GcetBlog\src\blocks\MediaBlock\Component.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 60, 0, 0, 0, 0, 8, 68
+"a:\GCET BLOG\GcetBlog\src\blocks\MediaBlock\config.ts", "TypeScript", 0, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 15
+"a:\GCET BLOG\GcetBlog\src\blocks\RelatedPosts\Component.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 8, 33
+"a:\GCET BLOG\GcetBlog\src\blocks\RenderBlocks.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 59, 0, 0, 0, 1, 10, 70
+"a:\GCET BLOG\GcetBlog\src\blocks\Schedule\Component.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 104, 0, 0, 0, 0, 9, 113
+"a:\GCET BLOG\GcetBlog\src\blocks\Schedule\config.ts", "TypeScript", 0, 59, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 61
+"a:\GCET BLOG\GcetBlog\src\blocks\Sponsors\Component.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 89, 0, 0, 0, 1, 12, 102
+"a:\GCET BLOG\GcetBlog\src\blocks\Sponsors\config.ts", "TypeScript", 0, 56, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 58
+"a:\GCET BLOG\GcetBlog\src\blocks\StatsBlock\Component.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0, 7, 83
+"a:\GCET BLOG\GcetBlog\src\blocks\StatsBlock\config.ts", "TypeScript", 0, 52, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 54
+"a:\GCET BLOG\GcetBlog\src\blocks\TeamGrid\Component.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 122, 0, 0, 0, 1, 7, 130
+"a:\GCET BLOG\GcetBlog\src\blocks\TeamGrid\config.ts", "TypeScript", 0, 58, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 60
+"a:\GCET BLOG\GcetBlog\src\blocks\Testimonials\Component.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 99, 0, 0, 0, 1, 8, 108
+"a:\GCET BLOG\GcetBlog\src\blocks\Testimonials\config.ts", "TypeScript", 0, 53, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 55
+"a:\GCET BLOG\GcetBlog\src\blocks\YouTubeEmbed\Component.client.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 50, 0, 0, 0, 1, 9, 60
+"a:\GCET BLOG\GcetBlog\src\blocks\YouTubeEmbed\Component.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 4, 21
+"a:\GCET BLOG\GcetBlog\src\blocks\YouTubeEmbed\config.ts", "TypeScript", 0, 29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 31
+"a:\GCET BLOG\GcetBlog\src\collections\AdminLogs\index.ts", "TypeScript", 0, 142, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 144
+"a:\GCET BLOG\GcetBlog\src\collections\Categories.ts", "TypeScript", 0, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 31
+"a:\GCET BLOG\GcetBlog\src\collections\Comments\index.ts", "TypeScript", 0, 217, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 7, 232
+"a:\GCET BLOG\GcetBlog\src\collections\Feedback.ts", "TypeScript", 0, 103, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 105
+"a:\GCET BLOG\GcetBlog\src\collections\Institutions\index.ts", "TypeScript", 0, 327, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 9, 354
+"a:\GCET BLOG\GcetBlog\src\collections\Media.ts", "TypeScript", 0, 124, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 4, 129
+"a:\GCET BLOG\GcetBlog\src\collections\Media\hooks\uploadToCloudinary.ts", "TypeScript", 0, 42, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 11, 59
+"a:\GCET BLOG\GcetBlog\src\collections\Media\hooks\useCloudinaryFallback.ts", "TypeScript", 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 3, 23
+"a:\GCET BLOG\GcetBlog\src\collections\NewsletterEvents\index.ts", "TypeScript", 0, 86, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2, 91
+"a:\GCET BLOG\GcetBlog\src\collections\NewsletterSubscribers\index.ts", "TypeScript", 0, 155, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 2, 161
+"a:\GCET BLOG\GcetBlog\src\collections\Newsletters\index.ts", "TypeScript", 0, 193, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 8, 208
+"a:\GCET BLOG\GcetBlog\src\collections\PageViews\index.ts", "TypeScript", 0, 112, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2, 117
+"a:\GCET BLOG\GcetBlog\src\collections\Pages\hooks\revalidatePage.ts", "TypeScript", 0, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 11, 44
+"a:\GCET BLOG\GcetBlog\src\collections\Pages\index.ts", "TypeScript", 0, 147, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 158
+"a:\GCET BLOG\GcetBlog\src\collections\Posts\hooks\populateAuthors.ts", "TypeScript", 0, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 38
+"a:\GCET BLOG\GcetBlog\src\collections\Posts\hooks\revalidatePost.ts", "TypeScript", 0, 36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 12, 49
+"a:\GCET BLOG\GcetBlog\src\collections\Posts\index.ts", "TypeScript", 0, 410, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 8, 431
+"a:\GCET BLOG\GcetBlog\src\collections\Templates.ts", "TypeScript", 0, 216, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 224
+"a:\GCET BLOG\GcetBlog\src\collections\Users\index.ts", "TypeScript", 0, 262, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 3, 296
+"a:\GCET BLOG\GcetBlog\src\collections\Votes\index.ts", "TypeScript", 0, 95, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 3, 106
+"a:\GCET BLOG\GcetBlog\src\components\AdminBar\index.scss", "SCSS", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 2, 8
+"a:\GCET BLOG\GcetBlog\src\components\AdminBar\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 79, 0, 0, 0, 0, 11, 90
+"a:\GCET BLOG\GcetBlog\src\components\AdminLogout\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 0, 0, 0, 2, 5, 36
+"a:\GCET BLOG\GcetBlog\src\components\AdminLogout\styles.css", "PostCSS", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 2, 15
+"a:\GCET BLOG\GcetBlog\src\components\AdminUI\CustomDashboard.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 358, 0, 0, 0, 9, 20, 387
+"a:\GCET BLOG\GcetBlog\src\components\AdminUI\CustomLogo.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 0, 0, 0, 0, 3, 17
+"a:\GCET BLOG\GcetBlog\src\components\AdminUI\CustomNav.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 0, 3, 10, 97
+"a:\GCET BLOG\GcetBlog\src\components\BeforeDashboard\SeedButton\index.scss", "SCSS", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 2, 13
+"a:\GCET BLOG\GcetBlog\src\components\BeforeDashboard\SeedButton\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 78, 0, 0, 0, 0, 11, 89
+"a:\GCET BLOG\GcetBlog\src\components\BeforeDashboard\index.scss", "SCSS", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 0, 6, 25
+"a:\GCET BLOG\GcetBlog\src\components\BeforeDashboard\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 44, 0, 0, 0, 0, 5, 49
+"a:\GCET BLOG\GcetBlog\src\components\BeforeLogin\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 3, 15
+"a:\GCET BLOG\GcetBlog\src\components\Card\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 126, 0, 0, 0, 5, 14, 145
+"a:\GCET BLOG\GcetBlog\src\components\ClubThemeWrapper.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 0, 9, 5, 55
+"a:\GCET BLOG\GcetBlog\src\components\CollectionArchive\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 6, 31
+"a:\GCET BLOG\GcetBlog\src\components\CommentForm\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 83, 0, 0, 0, 0, 15, 98
+"a:\GCET BLOG\GcetBlog\src\components\CommentList\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 267, 0, 0, 0, 12, 27, 306
+"a:\GCET BLOG\GcetBlog\src\components\DraftModeBanner.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 28, 0, 0, 0, 0, 2, 30
+"a:\GCET BLOG\GcetBlog\src\components\GlobalSearchBar\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 330, 0, 0, 0, 19, 22, 371
+"a:\GCET BLOG\GcetBlog\src\components\GoogleSignInButton.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 0, 0, 0, 0, 6, 69
+"a:\GCET BLOG\GcetBlog\src\components\Header\AuthButton.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 68, 0, 0, 0, 0, 10, 78
+"a:\GCET BLOG\GcetBlog\src\components\InstagramEmbedLoader.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 27, 0, 0, 0, 2, 6, 35
+"a:\GCET BLOG\GcetBlog\src\components\LandingPage\CTASection.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 97, 0, 0, 0, 4, 10, 111
+"a:\GCET BLOG\GcetBlog\src\components\LandingPage\FeaturedPosts.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 115, 0, 0, 0, 8, 12, 135
+"a:\GCET BLOG\GcetBlog\src\components\LandingPage\FeaturesSection.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 81, 0, 0, 0, 2, 4, 87
+"a:\GCET BLOG\GcetBlog\src\components\LandingPage\HeroSection.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 124, 0, 0, 0, 4, 13, 141
+"a:\GCET BLOG\GcetBlog\src\components\LandingPage\HomePosts.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 161, 0, 0, 0, 8, 12, 181
+"a:\GCET BLOG\GcetBlog\src\components\LandingPage\RecentPostsSection.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 0, 0, 0, 8, 12, 147
+"a:\GCET BLOG\GcetBlog\src\components\LandingPage\StatsSection.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 102, 0, 0, 0, 4, 12, 118
+"a:\GCET BLOG\GcetBlog\src\components\LandingPage\index.ts", "TypeScript", 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 6
+"a:\GCET BLOG\GcetBlog\src\components\Link\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 0, 0, 0, 0, 4, 67
+"a:\GCET BLOG\GcetBlog\src\components\LivePreviewListener\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 2, 11
+"a:\GCET BLOG\GcetBlog\src\components\Logo\Logo.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 24, 0, 0, 0, 1, 5, 30
+"a:\GCET BLOG\GcetBlog\src\components\LogoutButton\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 39, 0, 0, 0, 4, 7, 50
+"a:\GCET BLOG\GcetBlog\src\components\Media\ImageMedia\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 61, 0, 0, 0, 2, 16, 79
+"a:\GCET BLOG\GcetBlog\src\components\Media\VideoMedia\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 34, 0, 0, 0, 3, 10, 47
+"a:\GCET BLOG\GcetBlog\src\components\Media\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 6, 26
+"a:\GCET BLOG\GcetBlog\src\components\Media\types.ts", "TypeScript", 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 23
+"a:\GCET BLOG\GcetBlog\src\components\ModernCTA\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 61, 0, 0, 0, 4, 7, 72
+"a:\GCET BLOG\GcetBlog\src\components\ModernFeatures\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 95, 0, 0, 0, 4, 8, 107
+"a:\GCET BLOG\GcetBlog\src\components\NewsletterSignup\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 125, 0, 0, 0, 9, 12, 146
+"a:\GCET BLOG\GcetBlog\src\components\PageRange\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 51, 0, 0, 0, 0, 7, 58
+"a:\GCET BLOG\GcetBlog\src\components\PageViewTracker\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 34, 0, 0, 0, 10, 9, 53
+"a:\GCET BLOG\GcetBlog\src\components\Pagination\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 91, 0, 0, 0, 0, 11, 102
+"a:\GCET BLOG\GcetBlog\src\components\PayloadRedirects\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 1, 8, 49
+"a:\GCET BLOG\GcetBlog\src\components\PostComments\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 49, 0, 0, 0, 5, 10, 64
+"a:\GCET BLOG\GcetBlog\src\components\RichTextEditor\RichTextEditor.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 347, 0, 0, 0, 23, 45, 415
+"a:\GCET BLOG\GcetBlog\src\components\RichTextEditor\editor.css", "PostCSS", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 22, 0, 0, 2, 6, 30
+"a:\GCET BLOG\GcetBlog\src\components\RichTextEditor\extensions\InstagramEmbed.ts", "TypeScript", 0, 111, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 15, 129
+"a:\GCET BLOG\GcetBlog\src\components\RichTextEditor\extensions\YouTubeEmbed.ts", "TypeScript", 0, 126, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 17, 146
+"a:\GCET BLOG\GcetBlog\src\components\RichTextEditor\htmlToLexical.ts", "TypeScript", 0, 438, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 47, 56, 541
+"a:\GCET BLOG\GcetBlog\src\components\RichTextEditor\index.ts", "TypeScript", 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 4
+"a:\GCET BLOG\GcetBlog\src\components\RichTextEditor\lexicalToHtml.ts", "TypeScript", 0, 103, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 31, 150
+"a:\GCET BLOG\GcetBlog\src\components\RichText\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 172, 0, 0, 0, 12, 15, 199
+"a:\GCET BLOG\GcetBlog\src\components\ShareButtons\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 152, 0, 0, 0, 3, 10, 165
+"a:\GCET BLOG\GcetBlog\src\components\UpgradeToConoscoPrompt.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 74, 0, 0, 0, 1, 10, 85
+"a:\GCET BLOG\GcetBlog\src\components\UserInfo\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 42, 0, 0, 0, 0, 7, 49
+"a:\GCET BLOG\GcetBlog\src\components\VoteButtons\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 133, 0, 0, 0, 13, 18, 164
+"a:\GCET BLOG\GcetBlog\src\components\base\DataTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 232, 0, 0, 0, 27, 21, 280
+"a:\GCET BLOG\GcetBlog\src\components\base\DataTablePagination.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 0, 0, 0, 7, 12, 119
+"a:\GCET BLOG\GcetBlog\src\components\base\DataTableSkeleton.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 58, 0, 0, 0, 6, 5, 69
+"a:\GCET BLOG\GcetBlog\src\components\base\EmptyState.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 0, 0, 0, 5, 3, 33
+"a:\GCET BLOG\GcetBlog\src\components\base\FilterBar.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 67, 0, 0, 0, 7, 8, 82
+"a:\GCET BLOG\GcetBlog\src\components\base\LoadingButton.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 0, 0, 0, 2, 3, 34
+"a:\GCET BLOG\GcetBlog\src\components\base\PageHeader.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 0, 4, 3, 27
+"a:\GCET BLOG\GcetBlog\src\components\base\PageSkeleton.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 83, 0, 0, 0, 13, 7, 103
+"a:\GCET BLOG\GcetBlog\src\components\base\SearchInput.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 92, 0, 0, 0, 8, 12, 112
+"a:\GCET BLOG\GcetBlog\src\components\base\index.ts", "TypeScript", 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 9
+"a:\GCET BLOG\GcetBlog\src\components\templates\TemplateCard.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 73, 0, 0, 0, 0, 6, 79
+"a:\GCET BLOG\GcetBlog\src\components\templates\TemplatePreview.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 78, 0, 0, 0, 3, 7, 88
+"a:\GCET BLOG\GcetBlog\src\components\templates\TemplateSelector.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 238, 0, 0, 0, 17, 24, 279
+"a:\GCET BLOG\GcetBlog\src\components\templates\index.ts", "TypeScript", 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 5
+"a:\GCET BLOG\GcetBlog\src\components\templates\templateUtils.ts", "TypeScript", 0, 44, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 50
+"a:\GCET BLOG\GcetBlog\src\components\ui\alert-dialog.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 0, 0, 0, 0, 15, 142
+"a:\GCET BLOG\GcetBlog\src\components\ui\alert.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 43, 0, 0, 0, 0, 7, 50
+"a:\GCET BLOG\GcetBlog\src\components\ui\avatar.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 44, 0, 0, 0, 0, 7, 51
+"a:\GCET BLOG\GcetBlog\src\components\ui\badge.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 28, 0, 0, 0, 0, 5, 33
+"a:\GCET BLOG\GcetBlog\src\components\ui\button.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 48, 0, 0, 0, 0, 5, 53
+"a:\GCET BLOG\GcetBlog\src\components\ui\card.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 41, 0, 0, 0, 0, 8, 49
+"a:\GCET BLOG\GcetBlog\src\components\ui\checkbox.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 24, 0, 0, 0, 0, 4, 28
+"a:\GCET BLOG\GcetBlog\src\components\ui\dialog.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 91, 0, 0, 0, 0, 14, 105
+"a:\GCET BLOG\GcetBlog\src\components\ui\dropdown-menu.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 182, 0, 0, 0, 0, 19, 201
+"a:\GCET BLOG\GcetBlog\src\components\ui\input.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 4, 24
+"a:\GCET BLOG\GcetBlog\src\components\ui\label.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 5, 20
+"a:\GCET BLOG\GcetBlog\src\components\ui\pagination.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 82, 0, 0, 0, 0, 11, 93
+"a:\GCET BLOG\GcetBlog\src\components\ui\radio-group.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 54, 0, 0, 0, 0, 11, 65
+"a:\GCET BLOG\GcetBlog\src\components\ui\select.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 146, 0, 0, 0, 0, 15, 161
+"a:\GCET BLOG\GcetBlog\src\components\ui\separator.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 27, 0, 0, 0, 0, 5, 32
+"a:\GCET BLOG\GcetBlog\src\components\ui\skeleton.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 3, 16
+"a:\GCET BLOG\GcetBlog\src\components\ui\table.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 107, 0, 0, 0, 0, 11, 118
+"a:\GCET BLOG\GcetBlog\src\components\ui\textarea.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 0, 0, 0, 4, 23
+"a:\GCET BLOG\GcetBlog\src\components\ui\toast.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 116, 0, 0, 0, 0, 14, 130
+"a:\GCET BLOG\GcetBlog\src\components\ui\toaster.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 0, 0, 0, 0, 4, 36
+"a:\GCET BLOG\GcetBlog\src\core\types.ts", "TypeScript", 0, 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 10, 52
+"a:\GCET BLOG\GcetBlog\src\cssVariables.js", "JavaScript", 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 13
+"a:\GCET BLOG\GcetBlog\src\custom\departments.ts", "TypeScript", 0, 29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 7, 57
+"a:\GCET BLOG\GcetBlog\src\custom\theme.ts", "TypeScript", 0, 64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 26, 16, 106
+"a:\GCET BLOG\GcetBlog\src\endpoints\seed\contact-form.ts", "TypeScript", 0, 110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 112
+"a:\GCET BLOG\GcetBlog\src\endpoints\seed\contact-page.ts", "TypeScript", 0, 54, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 57
+"a:\GCET BLOG\GcetBlog\src\endpoints\seed\home-static.ts", "TypeScript", 0, 86, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 89
+"a:\GCET BLOG\GcetBlog\src\endpoints\seed\home.ts", "TypeScript", 0, 573, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 576
+"a:\GCET BLOG\GcetBlog\src\endpoints\seed\image-1.ts", "TypeScript", 0, 66, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 68
+"a:\GCET BLOG\GcetBlog\src\endpoints\seed\image-2.ts", "TypeScript", 0, 66, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 68
+"a:\GCET BLOG\GcetBlog\src\endpoints\seed\image-3.ts", "TypeScript", 0, 66, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 68
+"a:\GCET BLOG\GcetBlog\src\endpoints\seed\image-hero-1.ts", "TypeScript", 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 6
+"a:\GCET BLOG\GcetBlog\src\endpoints\seed\index.ts", "TypeScript", 0, 460, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 36, 510
+"a:\GCET BLOG\GcetBlog\src\endpoints\seed\post-1.ts", "TypeScript", 0, 313, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 316
+"a:\GCET BLOG\GcetBlog\src\endpoints\seed\post-2.ts", "TypeScript", 0, 231, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 233
+"a:\GCET BLOG\GcetBlog\src\endpoints\seed\post-3.ts", "TypeScript", 0, 267, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 269
+"a:\GCET BLOG\GcetBlog\src\environment.d.ts", "TypeScript", 0, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 8, 48
+"a:\GCET BLOG\GcetBlog\src\fields\defaultLexical.ts", "TypeScript", 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 48
+"a:\GCET BLOG\GcetBlog\src\fields\institution.ts", "TypeScript", 0, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 24, 4, 68
+"a:\GCET BLOG\GcetBlog\src\fields\link.ts", "TypeScript", 0, 127, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 140
+"a:\GCET BLOG\GcetBlog\src\fields\linkGroup.ts", "TypeScript", 0, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 29
+"a:\GCET BLOG\GcetBlog\src\fields\slug\SlugComponent.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 72, 0, 0, 0, 0, 16, 88
+"a:\GCET BLOG\GcetBlog\src\fields\slug\formatSlug.ts", "TypeScript", 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 26
+"a:\GCET BLOG\GcetBlog\src\fields\slug\index.scss", "SCSS", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 2, 14
+"a:\GCET BLOG\GcetBlog\src\fields\slug\index.ts", "TypeScript", 0, 44, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 8, 54
+"a:\GCET BLOG\GcetBlog\src\heros\HighImpact\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 72, 0, 0, 0, 9, 13, 94
+"a:\GCET BLOG\GcetBlog\src\heros\LowImpact\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 0, 0, 0, 0, 5, 26
+"a:\GCET BLOG\GcetBlog\src\heros\MediumImpact\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 42, 0, 0, 0, 0, 5, 47
+"a:\GCET BLOG\GcetBlog\src\heros\PostHero\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 79, 0, 0, 0, 4, 9, 92
+"a:\GCET BLOG\GcetBlog\src\heros\RenderHero.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 9, 26
+"a:\GCET BLOG\GcetBlog\src\heros\config.ts", "TypeScript", 0, 69, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 73
+"a:\GCET BLOG\GcetBlog\src\hooks\formatSlug.ts", "TypeScript", 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 28
+"a:\GCET BLOG\GcetBlog\src\hooks\populatePublishedAt.ts", "TypeScript", 0, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 16
+"a:\GCET BLOG\GcetBlog\src\hooks\revalidateRedirects.ts", "TypeScript", 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 12
+"a:\GCET BLOG\GcetBlog\src\hooks\tenantIsolation.ts", "TypeScript", 0, 97, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 72, 20, 189
+"a:\GCET BLOG\GcetBlog\src\hooks\use-toast.ts", "TypeScript", 0, 160, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 32, 195
+"a:\GCET BLOG\GcetBlog\src\jobs\newsletter.ts", "TypeScript", 0, 163, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 33, 227
+"a:\GCET BLOG\GcetBlog\src\middleware.ts", "TypeScript", 0, 207, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 53, 47, 307
+"a:\GCET BLOG\GcetBlog\src\modules\clubs\collections\Clubs.ts", "TypeScript", 0, 289, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 5, 307
+"a:\GCET BLOG\GcetBlog\src\modules\clubs\components\ClubArchive.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 3, 18
+"a:\GCET BLOG\GcetBlog\src\modules\clubs\components\ClubCard.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 99, 0, 0, 0, 7, 10, 116
+"a:\GCET BLOG\GcetBlog\src\modules\clubs\components\ClubEnrichment.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 182, 0, 0, 0, 9, 7, 198
+"a:\GCET BLOG\GcetBlog\src\modules\clubs\components\ClubNav.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 68, 0, 0, 0, 3, 8, 79
+"a:\GCET BLOG\GcetBlog\src\modules\clubs\components\ClubSubPageHeader.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 51, 0, 0, 0, 4, 5, 60
+"a:\GCET BLOG\GcetBlog\src\modules\clubs\index.ts", "TypeScript", 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 4
+"a:\GCET BLOG\GcetBlog\src\modules\clubs\services\club-context.ts", "TypeScript", 0, 135, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 29, 178
+"a:\GCET BLOG\GcetBlog\src\modules\clubs\types\index.ts", "TypeScript", 0, 66, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 24, 19, 109
+"a:\GCET BLOG\GcetBlog\src\modules\events\collections\Events.ts", "TypeScript", 0, 287, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 5, 308
+"a:\GCET BLOG\GcetBlog\src\modules\events\components\EventArchive.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 3, 18
+"a:\GCET BLOG\GcetBlog\src\modules\events\components\EventCard.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 121, 0, 0, 0, 8, 12, 141
+"a:\GCET BLOG\GcetBlog\src\modules\events\components\EventHero.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 228, 0, 0, 0, 13, 13, 254
+"a:\GCET BLOG\GcetBlog\src\modules\events\index.ts", "TypeScript", 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 4
+"a:\GCET BLOG\GcetBlog\src\modules\events\services\event-context.ts", "TypeScript", 0, 256, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 43, 43, 342
+"a:\GCET BLOG\GcetBlog\src\modules\events\types\index.ts", "TypeScript", 0, 58, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 35, 17, 110
+"a:\GCET BLOG\GcetBlog\src\payload-types.ts", "TypeScript", 0, 2853, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1056, 4, 3913
+"a:\GCET BLOG\GcetBlog\src\payload.config.ts", "TypeScript", 0, 161, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 9, 182
+"a:\GCET BLOG\GcetBlog\src\plugins\index.ts", "TypeScript", 0, 88, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 6, 95
+"a:\GCET BLOG\GcetBlog\src\providers\Auth\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 85, 0, 0, 0, 2, 15, 102
+"a:\GCET BLOG\GcetBlog\src\providers\HeaderTheme\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 0, 0, 0, 0, 11, 34
+"a:\GCET BLOG\GcetBlog\src\providers\NavigationProgress\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 78, 0, 0, 0, 11, 18, 107
+"a:\GCET BLOG\GcetBlog\src\providers\Tenant\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 35, 0, 0, 0, 26, 8, 69
+"a:\GCET BLOG\GcetBlog\src\providers\Theme\InitTheme\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 47, 0, 0, 0, 1, 3, 51
+"a:\GCET BLOG\GcetBlog\src\providers\Theme\ThemeSelector\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 44, 0, 0, 0, 0, 8, 52
+"a:\GCET BLOG\GcetBlog\src\providers\Theme\ThemeSelector\types.ts", "TypeScript", 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 6
+"a:\GCET BLOG\GcetBlog\src\providers\Theme\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 44, 0, 0, 0, 0, 14, 58
+"a:\GCET BLOG\GcetBlog\src\providers\Theme\shared.ts", "TypeScript", 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 18
+"a:\GCET BLOG\GcetBlog\src\providers\Theme\types.ts", "TypeScript", 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 11
+"a:\GCET BLOG\GcetBlog\src\providers\User\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 114, 0, 0, 0, 9, 22, 145
+"a:\GCET BLOG\GcetBlog\src\providers\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 3, 18
+"a:\GCET BLOG\GcetBlog\src\search\Component.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 37, 0, 0, 0, 0, 5, 42
+"a:\GCET BLOG\GcetBlog\src\search\beforeSync.ts", "TypeScript", 0, 51, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 61
+"a:\GCET BLOG\GcetBlog\src\search\fieldOverrides.ts", "TypeScript", 0, 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 62
+"a:\GCET BLOG\GcetBlog\src\services\conosco\cached.ts", "TypeScript", 0, 182, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 19, 226
+"a:\GCET BLOG\GcetBlog\src\services\conosco\client.ts", "TypeScript", 0, 163, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 34, 32, 229
+"a:\GCET BLOG\GcetBlog\src\services\conosco\disconnected.ts", "TypeScript", 0, 91, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 19, 127
+"a:\GCET BLOG\GcetBlog\src\services\conosco\factory.ts", "TypeScript", 0, 61, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 13, 91
+"a:\GCET BLOG\GcetBlog\src\services\conosco\index.ts", "TypeScript", 0, 54, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 24, 14, 92
+"a:\GCET BLOG\GcetBlog\src\services\conosco\types.ts", "TypeScript", 0, 184, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 72, 50, 306
+"a:\GCET BLOG\GcetBlog\src\services\email\factory.ts", "TypeScript", 0, 78, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 18, 111
+"a:\GCET BLOG\GcetBlog\src\services\email\index.ts", "TypeScript", 0, 36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 13, 74
+"a:\GCET BLOG\GcetBlog\src\services\email\providers\console.ts", "TypeScript", 0, 71, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 14, 91
+"a:\GCET BLOG\GcetBlog\src\services\email\providers\resend.ts", "TypeScript", 0, 130, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 18, 157
+"a:\GCET BLOG\GcetBlog\src\services\email\providers\sendgrid.ts", "TypeScript", 0, 96, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 15, 123
+"a:\GCET BLOG\GcetBlog\src\services\email\providers\smtp.ts", "TypeScript", 0, 110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 15, 132
+"a:\GCET BLOG\GcetBlog\src\services\email\sender.ts", "TypeScript", 0, 376, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 52, 60, 488
+"a:\GCET BLOG\GcetBlog\src\services\email\templates\BaseLayout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 156, 0, 0, 0, 12, 24, 192
+"a:\GCET BLOG\GcetBlog\src\services\email\templates\NewsletterDigest.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 174, 0, 0, 0, 12, 22, 208
+"a:\GCET BLOG\GcetBlog\src\services\email\templates\NewsletterManual.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 52, 0, 0, 0, 11, 10, 73
+"a:\GCET BLOG\GcetBlog\src\services\email\templates\UnsubscribeConfirmation.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 75, 0, 0, 0, 8, 17, 100
+"a:\GCET BLOG\GcetBlog\src\services\email\templates\WelcomeEmail.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 101, 0, 0, 0, 6, 20, 127
+"a:\GCET BLOG\GcetBlog\src\services\email\tracking.ts", "TypeScript", 0, 64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 37, 15, 116
+"a:\GCET BLOG\GcetBlog\src\services\email\types.ts", "TypeScript", 0, 68, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 52, 20, 140
+"a:\GCET BLOG\GcetBlog\src\utilities\canUseDOM.ts", "TypeScript", 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2
+"a:\GCET BLOG\GcetBlog\src\utilities\checkUserRole.ts", "TypeScript", 0, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 28, 12, 90
+"a:\GCET BLOG\GcetBlog\src\utilities\deepMerge.ts", "TypeScript", 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 4, 36
+"a:\GCET BLOG\GcetBlog\src\utilities\domainScope.ts", "TypeScript", 0, 90, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 50, 19, 159
+"a:\GCET BLOG\GcetBlog\src\utilities\formatAuthors.ts", "TypeScript", 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 4, 25
+"a:\GCET BLOG\GcetBlog\src\utilities\formatDateTime.ts", "TypeScript", 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 12
+"a:\GCET BLOG\GcetBlog\src\utilities\generateMeta.ts", "TypeScript", 0, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 12, 52
+"a:\GCET BLOG\GcetBlog\src\utilities\generatePreviewPath.ts", "TypeScript", 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 26
+"a:\GCET BLOG\GcetBlog\src\utilities\getDocument.ts", "TypeScript", 0, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 7, 32
+"a:\GCET BLOG\GcetBlog\src\utilities\getGlobals.ts", "TypeScript", 0, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 7, 27
+"a:\GCET BLOG\GcetBlog\src\utilities\getMeUser.ts", "TypeScript", 0, 35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 8, 44
+"a:\GCET BLOG\GcetBlog\src\utilities\getMediaUrl.ts", "TypeScript", 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 5, 25
+"a:\GCET BLOG\GcetBlog\src\utilities\getRedirects.ts", "TypeScript", 0, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 27
+"a:\GCET BLOG\GcetBlog\src\utilities\getURL.ts", "TypeScript", 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 27
+"a:\GCET BLOG\GcetBlog\src\utilities\mergeOpenGraph.ts", "TypeScript", 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 23
+"a:\GCET BLOG\GcetBlog\src\utilities\tenantContext.ts", "TypeScript", 0, 58, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 64, 17, 139
+"a:\GCET BLOG\GcetBlog\src\utilities\tenantQuery.ts", "TypeScript", 0, 262, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 148, 51, 461
+"a:\GCET BLOG\GcetBlog\src\utilities\tenantResolver.ts", "TypeScript", 0, 174, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 35, 293
+"a:\GCET BLOG\GcetBlog\src\utilities\toKebabCase.ts", "TypeScript", 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 6
+"a:\GCET BLOG\GcetBlog\src\utilities\ui.ts", "TypeScript", 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 3, 13
+"a:\GCET BLOG\GcetBlog\src\utilities\uploadToCloudinaryDirect.ts", "TypeScript", 0, 71, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 13, 96
+"a:\GCET BLOG\GcetBlog\src\utilities\useClickableCard.ts", "TypeScript", 0, 89, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 17, 109
+"a:\GCET BLOG\GcetBlog\src\utilities\useDebounce.ts", "TypeScript", 0, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 18
+"a:\GCET BLOG\GcetBlog\tailwind.config.mjs", "JavaScript", 0, 0, 158, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 162
+"a:\GCET BLOG\GcetBlog\test.env", "Dotenv", 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2
+"a:\GCET BLOG\GcetBlog\tests\e2e\frontend.e2e.spec.ts", "TypeScript", 0, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 21
+"a:\GCET BLOG\GcetBlog\tests\int\api.int.spec.ts", "TypeScript", 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 21
+"a:\GCET BLOG\GcetBlog\tsconfig.json", "JSON with Comments", 51, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 52
+"a:\GCET BLOG\GcetBlog\vitest.config.mts", "TypeScript", 0, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 13
+"a:\GCET BLOG\GcetBlog\vitest.setup.ts", "TypeScript", 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 5
+"Total", "-", 51, 22543, 1916, 1, 35, 9306, 10155, 16892, 13, 35554, 237, 87, 10, 5018, 11355, 113173

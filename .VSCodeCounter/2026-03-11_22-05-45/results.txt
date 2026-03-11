@@ -1,0 +1,954 @@
+Date : 2026-03-11 22:05:45
+Directory : a:\GCET BLOG\GcetBlog
+Total : 585 files,  96800 codes, 5018 comments, 11355 blanks, all 113173 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| TypeScript JSX     |        319 |     35,554 |      1,383 |      3,742 |     40,679 |
+| TypeScript         |        207 |     22,543 |      3,332 |      2,352 |     28,227 |
+| JSON               |          4 |     16,892 |          0 |          4 |     16,896 |
+| YAML               |          2 |     10,155 |          0 |      2,485 |     12,640 |
+| Markdown           |         26 |      9,306 |          0 |      2,420 |     11,726 |
+| JavaScript         |         14 |      1,916 |        260 |        247 |      2,423 |
+| PostCSS            |          3 |        237 |         17 |         61 |        315 |
+| SCSS               |          5 |         87 |          7 |         21 |        115 |
+| JSON with Comments |          1 |         51 |          0 |          1 |         52 |
+| Docker             |          1 |         35 |         19 |         18 |         72 |
+| Ignore             |          1 |         13 |          0 |          2 |         15 |
+| SVG                |          1 |         10 |          0 |          1 |         11 |
+| Dotenv             |          1 |          1 |          0 |          1 |          2 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++---------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                  | files      | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                     |        585 |     96,800 |      5,018 |     11,355 |    113,173 |
+| . (Files)                                                                             |         30 |     30,014 |         66 |      3,358 |     33,438 |
+| .github                                                                               |          1 |        386 |          0 |         99 |        485 |
+| docs                                                                                  |         16 |      6,402 |          0 |      1,519 |      7,921 |
+| docs (Files)                                                                          |         14 |      4,533 |          0 |      1,134 |      5,667 |
+| docs\content-engine                                                                   |          2 |      1,869 |          0 |        385 |      2,254 |
+| public                                                                                |          1 |         10 |          0 |          1 |         11 |
+| scripts                                                                               |         11 |      3,119 |        327 |        334 |      3,780 |
+| src                                                                                   |        524 |     56,839 |      4,625 |      6,032 |     67,496 |
+| src (Files)                                                                           |          5 |      3,263 |      1,130 |         70 |      4,463 |
+| src\Footer                                                                            |          4 |        115 |          5 |         21 |        141 |
+| src\Footer (Files)                                                                    |          3 |        106 |          5 |         16 |        127 |
+| src\Footer\hooks                                                                      |          1 |          9 |          0 |          5 |         14 |
+| src\Header                                                                            |          6 |        312 |         13 |         47 |        372 |
+| src\Header (Files)                                                                    |          4 |        261 |         12 |         33 |        306 |
+| src\Header\Nav                                                                        |          1 |         42 |          1 |          9 |         52 |
+| src\Header\hooks                                                                      |          1 |          9 |          0 |          5 |         14 |
+| src\access                                                                            |          9 |        442 |        284 |        139 |        865 |
+| src\app                                                                               |        221 |     28,902 |      1,340 |      3,141 |     33,383 |
+| src\app (Files)                                                                       |          1 |         24 |          0 |          5 |         29 |
+| src\app\(auth)                                                                        |         11 |        801 |         22 |        110 |        933 |
+| src\app\(auth) (Files)                                                                |          1 |         49 |          0 |          4 |         53 |
+| src\app\(auth)\login                                                                  |          4 |        295 |         15 |         48 |        358 |
+| src\app\(auth)\register                                                               |          4 |        277 |          5 |         39 |        321 |
+| src\app\(auth)\set-password                                                           |          2 |        180 |          2 |         19 |        201 |
+| src\app\(frontend)                                                                    |         53 |      4,654 |        250 |        646 |      5,550 |
+| src\app\(frontend) (Files)                                                            |          5 |        295 |         17 |         70 |        382 |
+| src\app\(frontend)\(sitemaps)                                                         |          2 |        108 |          0 |         17 |        125 |
+| src\app\(frontend)\(sitemaps)\pages-sitemap.xml                                       |          1 |         60 |          0 |          9 |         69 |
+| src\app\(frontend)\(sitemaps)\posts-sitemap.xml                                       |          1 |         48 |          0 |          8 |         56 |
+| src\app\(frontend)\[slug]                                                             |          2 |        148 |         10 |         36 |        194 |
+| src\app\(frontend)\clubs                                                              |          8 |        943 |         39 |        119 |      1,101 |
+| src\app\(frontend)\clubs (Files)                                                      |          3 |        289 |         11 |         38 |        338 |
+| src\app\(frontend)\clubs\[slug]                                                       |          5 |        654 |         28 |         81 |        763 |
+| src\app\(frontend)\clubs\[slug] (Files)                                               |          2 |        258 |         17 |         34 |        309 |
+| src\app\(frontend)\clubs\[slug]\achievements                                          |          1 |        146 |          2 |         16 |        164 |
+| src\app\(frontend)\clubs\[slug]\events                                                |          1 |        112 |          5 |         17 |        134 |
+| src\app\(frontend)\clubs\[slug]\team                                                  |          1 |        138 |          4 |         14 |        156 |
+| src\app\(frontend)\content                                                            |          1 |         33 |         12 |         11 |         56 |
+| src\app\(frontend)\content\[slug]                                                     |          1 |         33 |         12 |         11 |         56 |
+| src\app\(frontend)\dashboard                                                          |          4 |        286 |         16 |         27 |        329 |
+| src\app\(frontend)\dashboard (Files)                                                  |          1 |         23 |          2 |          5 |         30 |
+| src\app\(frontend)\dashboard\admin                                                    |          1 |          4 |          3 |          2 |          9 |
+| src\app\(frontend)\dashboard\editor                                                   |          1 |        172 |          9 |         13 |        194 |
+| src\app\(frontend)\dashboard\user                                                     |          1 |         87 |          2 |          7 |         96 |
+| src\app\(frontend)\editor                                                             |          6 |        559 |         20 |         49 |        628 |
+| src\app\(frontend)\editor\components                                                  |          6 |        559 |         20 |         49 |        628 |
+| src\app\(frontend)\events                                                             |          5 |        465 |         20 |         62 |        547 |
+| src\app\(frontend)\events (Files)                                                     |          3 |        312 |         11 |         39 |        362 |
+| src\app\(frontend)\events\[slug]                                                      |          2 |        153 |          9 |         23 |        185 |
+| src\app\(frontend)\home                                                               |          1 |         72 |          5 |         11 |         88 |
+| src\app\(frontend)\newsletter                                                         |          4 |        403 |         36 |         54 |        493 |
+| src\app\(frontend)\newsletter\confirm                                                 |          1 |         99 |          9 |         14 |        122 |
+| src\app\(frontend)\newsletter\preferences                                             |          2 |        212 |         18 |         26 |        256 |
+| src\app\(frontend)\newsletter\unsubscribe                                             |          1 |         92 |          9 |         14 |        115 |
+| src\app\(frontend)\next                                                               |          3 |         72 |          6 |         27 |        105 |
+| src\app\(frontend)\next\exit-preview                                                  |          1 |          6 |          0 |          2 |          8 |
+| src\app\(frontend)\next\preview                                                       |          1 |         40 |          1 |         16 |         57 |
+| src\app\(frontend)\next\seed                                                          |          1 |         26 |          5 |          9 |         40 |
+| src\app\(frontend)\posts                                                              |          9 |        933 |         57 |        134 |      1,124 |
+| src\app\(frontend)\posts (Files)                                                      |          3 |        352 |         22 |         40 |        414 |
+| src\app\(frontend)\posts\[slug]                                                       |          4 |        492 |         33 |         71 |        596 |
+| src\app\(frontend)\posts\page                                                         |          2 |         89 |          2 |         23 |        114 |
+| src\app\(frontend)\posts\page\[pageNumber]                                            |          2 |         89 |          2 |         23 |        114 |
+| src\app\(frontend)\profile                                                            |          1 |        246 |         10 |         17 |        273 |
+| src\app\(frontend)\profile\[id]                                                       |          1 |        246 |         10 |         17 |        273 |
+| src\app\(frontend)\search                                                             |          2 |         91 |          2 |         12 |        105 |
+| src\app\(payload)                                                                     |          8 |        179 |         19 |         37 |        235 |
+| src\app\(payload) (Files)                                                             |          2 |         63 |          9 |         15 |         87 |
+| src\app\(payload)\admin                                                               |          3 |         92 |          4 |         14 |        110 |
+| src\app\(payload)\admin (Files)                                                       |          1 |         58 |          0 |          2 |         60 |
+| src\app\(payload)\admin\[[...segments]]                                               |          2 |         34 |          4 |         12 |         50 |
+| src\app\(payload)\api                                                                 |          3 |         24 |          6 |          8 |         38 |
+| src\app\(payload)\api\[...slug]                                                       |          1 |         16 |          2 |          3 |         21 |
+| src\app\(payload)\api\graphql                                                         |          1 |          4 |          2 |          3 |          9 |
+| src\app\(payload)\api\graphql-playground                                              |          1 |          4 |          2 |          2 |          8 |
+| src\app\admin-dashboard                                                               |          9 |      1,423 |         43 |        147 |      1,613 |
+| src\app\admin-dashboard (Files)                                                       |          4 |        139 |          5 |         16 |        160 |
+| src\app\admin-dashboard\profile                                                       |          1 |        484 |          9 |         39 |        532 |
+| src\app\admin-dashboard\users                                                         |          4 |        800 |         29 |         92 |        921 |
+| src\app\api                                                                           |         31 |      2,337 |        254 |        376 |      2,967 |
+| src\app\api\admin                                                                     |          1 |         48 |          4 |          8 |         60 |
+| src\app\api\admin\stats                                                               |          1 |         48 |          4 |          8 |         60 |
+| src\app\api\auth                                                                      |          5 |        334 |         57 |         62 |        453 |
+| src\app\api\auth\google                                                               |          2 |        255 |         43 |         47 |        345 |
+| src\app\api\auth\google (Files)                                                       |          1 |         52 |          6 |         11 |         69 |
+| src\app\api\auth\google\callback                                                      |          1 |        203 |         37 |         36 |        276 |
+| src\app\api\auth\logout                                                               |          1 |         10 |          0 |          2 |         12 |
+| src\app\api\auth\me                                                                   |          1 |         18 |          0 |          4 |         22 |
+| src\app\api\auth\set-password                                                         |          1 |         51 |         14 |          9 |         74 |
+| src\app\api\categories                                                                |          2 |        180 |          6 |         29 |        215 |
+| src\app\api\categories\[id]                                                           |          1 |        119 |          4 |         19 |        142 |
+| src\app\api\categories\create                                                         |          1 |         61 |          2 |         10 |         73 |
+| src\app\api\disable-draft                                                             |          1 |          7 |          0 |          2 |          9 |
+| src\app\api\draft                                                                     |          1 |         46 |          5 |         10 |         61 |
+| src\app\api\feedback                                                                  |          2 |        167 |          8 |         26 |        201 |
+| src\app\api\feedback\[id]                                                             |          1 |         80 |          4 |         12 |         96 |
+| src\app\api\feedback\[id]\message                                                     |          1 |         80 |          4 |         12 |         96 |
+| src\app\api\feedback\create                                                           |          1 |         87 |          4 |         14 |        105 |
+| src\app\api\media                                                                     |          3 |        236 |         27 |         39 |        302 |
+| src\app\api\media (Files)                                                             |          1 |        169 |         14 |         21 |        204 |
+| src\app\api\media\file                                                                |          1 |         34 |          6 |          9 |         49 |
+| src\app\api\media\file\[filename]                                                     |          1 |         34 |          6 |          9 |         49 |
+| src\app\api\media\sign                                                                |          1 |         33 |          7 |          9 |         49 |
+| src\app\api\newsletter                                                                |          7 |        475 |         69 |         86 |        630 |
+| src\app\api\newsletter\preferences                                                    |          1 |         57 |          7 |         13 |         77 |
+| src\app\api\newsletter\subscribe                                                      |          1 |         89 |         19 |         15 |        123 |
+| src\app\api\newsletter\subscribers                                                    |          2 |        165 |          6 |         28 |        199 |
+| src\app\api\newsletter\subscribers\export                                             |          1 |         65 |          3 |         10 |         78 |
+| src\app\api\newsletter\subscribers\import                                             |          1 |        100 |          3 |         18 |        121 |
+| src\app\api\newsletter\track                                                          |          2 |         97 |         25 |         17 |        139 |
+| src\app\api\newsletter\track\click                                                    |          1 |         38 |         12 |          7 |         57 |
+| src\app\api\newsletter\track\open                                                     |          1 |         59 |         13 |         10 |         82 |
+| src\app\api\newsletter\unsubscribe                                                    |          1 |         67 |         12 |         13 |         92 |
+| src\app\api\posts                                                                     |          3 |        332 |         21 |         40 |        393 |
+| src\app\api\posts (Files)                                                             |          1 |        125 |          8 |         17 |        150 |
+| src\app\api\posts\[id]                                                                |          1 |         91 |          6 |         11 |        108 |
+| src\app\api\posts\create                                                              |          1 |        116 |          7 |         12 |        135 |
+| src\app\api\resolve-tenant                                                            |          1 |         67 |         14 |         12 |         93 |
+| src\app\api\revalidate                                                                |          1 |         55 |         17 |         11 |         83 |
+| src\app\api\seed-posts                                                                |          1 |        183 |          5 |         16 |        204 |
+| src\app\api\track                                                                     |          1 |         78 |          9 |         15 |        102 |
+| src\app\api\users                                                                     |          1 |         43 |          2 |          7 |         52 |
+| src\app\api\users\me                                                                  |          1 |         43 |          2 |          7 |         52 |
+| src\app\api\votes                                                                     |          1 |         86 |         10 |         13 |        109 |
+| src\app\contributor                                                                   |         23 |      2,963 |         93 |        280 |      3,336 |
+| src\app\contributor (Files)                                                           |          4 |        363 |          7 |         39 |        409 |
+| src\app\contributor\components                                                        |          5 |        422 |         21 |         41 |        484 |
+| src\app\contributor\create                                                            |          2 |        525 |         23 |         44 |        592 |
+| src\app\contributor\drafts                                                            |          3 |        198 |          3 |         25 |        226 |
+| src\app\contributor\feedback                                                          |          3 |        346 |         10 |         25 |        381 |
+| src\app\contributor\profile                                                           |          1 |        495 |         10 |         44 |        549 |
+| src\app\contributor\submissions                                                       |          3 |        228 |          3 |         24 |        255 |
+| src\app\contributor\templates                                                         |          2 |        386 |         16 |         38 |        440 |
+| src\app\platform                                                                      |         10 |      1,627 |         31 |        139 |      1,797 |
+| src\app\platform (Files)                                                              |          3 |        394 |         11 |         42 |        447 |
+| src\app\platform\components                                                           |          2 |        601 |         11 |         43 |        655 |
+| src\app\platform\institutions                                                         |          4 |        446 |          5 |         38 |        489 |
+| src\app\platform\institutions (Files)                                                 |          1 |        142 |          2 |          9 |        153 |
+| src\app\platform\institutions\[id]                                                    |          1 |        129 |          1 |         12 |        142 |
+| src\app\platform\institutions\components                                              |          1 |        139 |          1 |         10 |        150 |
+| src\app\platform\institutions\new                                                     |          1 |         36 |          1 |          7 |         44 |
+| src\app\platform\users                                                                |          1 |        186 |          4 |         16 |        206 |
+| src\app\user                                                                          |         75 |     14,894 |        628 |      1,401 |     16,923 |
+| src\app\user (Files)                                                                  |          3 |        315 |          8 |         33 |        356 |
+| src\app\user\activity                                                                 |          3 |        230 |          1 |         23 |        254 |
+| src\app\user\analytics                                                                |          2 |        372 |         23 |         18 |        413 |
+| src\app\user\categories                                                               |          4 |        542 |          7 |         53 |        602 |
+| src\app\user\clubs                                                                    |          5 |      1,236 |         36 |        101 |      1,373 |
+| src\app\user\clubs (Files)                                                            |          1 |        225 |          5 |         13 |        243 |
+| src\app\user\clubs\[id]                                                               |          1 |        128 |          5 |         19 |        152 |
+| src\app\user\clubs\[id]\edit                                                          |          1 |        128 |          5 |         19 |        152 |
+| src\app\user\clubs\create                                                             |          2 |        701 |         22 |         56 |        779 |
+| src\app\user\clubs\sync-preview                                                       |          1 |        182 |          4 |         13 |        199 |
+| src\app\user\comments                                                                 |          3 |        404 |         10 |         44 |        458 |
+| src\app\user\content                                                                  |          4 |        807 |         26 |         65 |        898 |
+| src\app\user\events                                                                   |          5 |      1,309 |         44 |        108 |      1,461 |
+| src\app\user\events (Files)                                                           |          1 |        242 |          6 |         15 |        263 |
+| src\app\user\events\[id]                                                              |          1 |        138 |          6 |         19 |        163 |
+| src\app\user\events\[id]\edit                                                         |          1 |        138 |          6 |         19 |        163 |
+| src\app\user\events\create                                                            |          2 |        731 |         24 |         61 |        816 |
+| src\app\user\events\sync-preview                                                      |          1 |        198 |          8 |         13 |        219 |
+| src\app\user\logs                                                                     |          3 |        201 |          1 |         22 |        224 |
+| src\app\user\media                                                                    |          3 |        454 |         15 |         36 |        505 |
+| src\app\user\newsletter                                                               |         10 |      1,643 |        124 |        185 |      1,952 |
+| src\app\user\newsletter (Files)                                                       |          4 |        692 |         72 |         88 |        852 |
+| src\app\user\newsletter\[id]                                                          |          1 |        286 |         10 |         21 |        317 |
+| src\app\user\newsletter\compose                                                       |          2 |        290 |         19 |         29 |        338 |
+| src\app\user\newsletter\subscribers                                                   |          3 |        375 |         23 |         47 |        445 |
+| src\app\user\pages                                                                    |          4 |      1,615 |         98 |        150 |      1,863 |
+| src\app\user\pages (Files)                                                            |          1 |        209 |          5 |         14 |        228 |
+| src\app\user\pages\[id]                                                               |          1 |        179 |         11 |         24 |        214 |
+| src\app\user\pages\[id]\edit                                                          |          1 |        179 |         11 |         24 |        214 |
+| src\app\user\pages\create                                                             |          2 |      1,227 |         82 |        112 |      1,421 |
+| src\app\user\posts                                                                    |          4 |      1,469 |         49 |        124 |      1,642 |
+| src\app\user\posts\[id]                                                               |          2 |        753 |         24 |         65 |        842 |
+| src\app\user\posts\[id]\edit                                                          |          2 |        753 |         24 |         65 |        842 |
+| src\app\user\posts\create                                                             |          2 |        716 |         25 |         59 |        800 |
+| src\app\user\profile                                                                  |          1 |        495 |         14 |         44 |        553 |
+| src\app\user\queue                                                                    |          6 |        688 |         23 |         76 |        787 |
+| src\app\user\settings                                                                 |          2 |        328 |         12 |         26 |        366 |
+| src\app\user\system                                                                   |          1 |        229 |          9 |         19 |        257 |
+| src\app\user\system\conosco                                                           |          1 |        229 |          9 |         19 |        257 |
+| src\app\user\templates                                                                |          6 |      1,164 |         51 |        107 |      1,322 |
+| src\app\user\templates (Files)                                                        |          4 |      1,089 |         51 |         94 |      1,234 |
+| src\app\user\templates\[id]                                                           |          1 |         54 |          0 |          8 |         62 |
+| src\app\user\templates\[id]\edit                                                      |          1 |         54 |          0 |          8 |         62 |
+| src\app\user\templates\create                                                         |          1 |         21 |          0 |          5 |         26 |
+| src\app\user\users                                                                    |          6 |      1,393 |         77 |        167 |      1,637 |
+| src\blocks                                                                            |         56 |      3,910 |         15 |        301 |      4,226 |
+| src\blocks (Files)                                                                    |          1 |         59 |          1 |         10 |         70 |
+| src\blocks\ArchiveBlock                                                               |          2 |        146 |          0 |         15 |        161 |
+| src\blocks\Banner                                                                     |          2 |         58 |          0 |          7 |         65 |
+| src\blocks\CallToAction                                                               |          2 |         59 |          0 |          8 |         67 |
+| src\blocks\Code                                                                       |          4 |        109 |          0 |         15 |        124 |
+| src\blocks\Contact                                                                    |          2 |        186 |          2 |         10 |        198 |
+| src\blocks\Content                                                                    |          2 |        111 |          0 |         13 |        124 |
+| src\blocks\Countdown                                                                  |          2 |        120 |          0 |         14 |        134 |
+| src\blocks\EventsFeed                                                                 |          2 |        202 |          1 |         14 |        217 |
+| src\blocks\Form                                                                       |         16 |      1,625 |          2 |         82 |      1,709 |
+| src\blocks\Form (Files)                                                               |          3 |        208 |          2 |         28 |        238 |
+| src\blocks\Form\Checkbox                                                              |          1 |         40 |          0 |          6 |         46 |
+| src\blocks\Form\Country                                                               |          2 |      1,042 |          0 |          7 |      1,049 |
+| src\blocks\Form\Email                                                                 |          1 |         33 |          0 |          6 |         39 |
+| src\blocks\Form\Error                                                                 |          1 |         13 |          0 |          3 |         16 |
+| src\blocks\Form\Message                                                               |          1 |         11 |          0 |          3 |         14 |
+| src\blocks\Form\Number                                                                |          1 |         33 |          0 |          4 |         37 |
+| src\blocks\Form\Select                                                                |          1 |         59 |          0 |          5 |         64 |
+| src\blocks\Form\State                                                                 |          2 |        112 |          0 |          6 |        118 |
+| src\blocks\Form\Text                                                                  |          1 |         28 |          0 |          5 |         33 |
+| src\blocks\Form\Textarea                                                              |          1 |         34 |          0 |          7 |         41 |
+| src\blocks\Form\Width                                                                 |          1 |         12 |          0 |          2 |         14 |
+| src\blocks\GalleryPreview                                                             |          2 |        152 |          1 |         10 |        163 |
+| src\blocks\InstagramEmbed                                                             |          3 |        121 |          4 |         17 |        142 |
+| src\blocks\MediaBlock                                                                 |          2 |         73 |          0 |         10 |         83 |
+| src\blocks\RelatedPosts                                                               |          1 |         25 |          0 |          8 |         33 |
+| src\blocks\Schedule                                                                   |          2 |        163 |          0 |         11 |        174 |
+| src\blocks\Sponsors                                                                   |          2 |        145 |          1 |         14 |        160 |
+| src\blocks\StatsBlock                                                                 |          2 |        128 |          0 |          9 |        137 |
+| src\blocks\TeamGrid                                                                   |          2 |        180 |          1 |          9 |        190 |
+| src\blocks\Testimonials                                                               |          2 |        152 |          1 |         10 |        163 |
+| src\blocks\YouTubeEmbed                                                               |          3 |         96 |          1 |         15 |        112 |
+| src\collections                                                                       |         20 |      2,769 |        119 |        112 |      3,000 |
+| src\collections (Files)                                                               |          4 |        471 |          1 |         17 |        489 |
+| src\collections\AdminLogs                                                             |          1 |        142 |          0 |          2 |        144 |
+| src\collections\Comments                                                              |          1 |        217 |          8 |          7 |        232 |
+| src\collections\Institutions                                                          |          1 |        327 |         18 |          9 |        354 |
+| src\collections\Media                                                                 |          2 |         57 |         11 |         14 |         82 |
+| src\collections\Media\hooks                                                           |          2 |         57 |         11 |         14 |         82 |
+| src\collections\NewsletterEvents                                                      |          1 |         86 |          3 |          2 |         91 |
+| src\collections\NewsletterSubscribers                                                 |          1 |        155 |          4 |          2 |        161 |
+| src\collections\Newsletters                                                           |          1 |        193 |          7 |          8 |        208 |
+| src\collections\PageViews                                                             |          1 |        112 |          3 |          2 |        117 |
+| src\collections\Pages                                                                 |          2 |        179 |          6 |         17 |        202 |
+| src\collections\Pages (Files)                                                         |          1 |        147 |          5 |          6 |        158 |
+| src\collections\Pages\hooks                                                           |          1 |         32 |          1 |         11 |         44 |
+| src\collections\Posts                                                                 |          3 |        473 |         19 |         26 |        518 |
+| src\collections\Posts (Files)                                                         |          1 |        410 |         13 |          8 |        431 |
+| src\collections\Posts\hooks                                                           |          2 |         63 |          6 |         18 |         87 |
+| src\collections\Users                                                                 |          1 |        262 |         31 |          3 |        296 |
+| src\collections\Votes                                                                 |          1 |         95 |          8 |          3 |        106 |
+| src\components                                                                        |         93 |      7,566 |        364 |        915 |      8,845 |
+| src\components (Files)                                                                |          5 |        233 |         12 |         29 |        274 |
+| src\components\AdminBar                                                               |          2 |         85 |          0 |         13 |         98 |
+| src\components\AdminLogout                                                            |          2 |         42 |          2 |          7 |         51 |
+| src\components\AdminUI                                                                |          3 |        456 |         12 |         33 |        501 |
+| src\components\BeforeDashboard                                                        |          4 |        152 |          0 |         24 |        176 |
+| src\components\BeforeDashboard (Files)                                                |          2 |         63 |          0 |         11 |         74 |
+| src\components\BeforeDashboard\SeedButton                                             |          2 |         89 |          0 |         13 |        102 |
+| src\components\BeforeLogin                                                            |          1 |         12 |          0 |          3 |         15 |
+| src\components\Card                                                                   |          1 |        126 |          5 |         14 |        145 |
+| src\components\CollectionArchive                                                      |          1 |         25 |          0 |          6 |         31 |
+| src\components\CommentForm                                                            |          1 |         83 |          0 |         15 |         98 |
+| src\components\CommentList                                                            |          1 |        267 |         12 |         27 |        306 |
+| src\components\GlobalSearchBar                                                        |          1 |        330 |         19 |         22 |        371 |
+| src\components\Header                                                                 |          1 |         68 |          0 |         10 |         78 |
+| src\components\LandingPage                                                            |          8 |        812 |         38 |         76 |        926 |
+| src\components\Link                                                                   |          1 |         63 |          0 |          4 |         67 |
+| src\components\LivePreviewListener                                                    |          1 |          9 |          0 |          2 |         11 |
+| src\components\Logo                                                                   |          1 |         24 |          1 |          5 |         30 |
+| src\components\LogoutButton                                                           |          1 |         39 |          4 |          7 |         50 |
+| src\components\Media                                                                  |          4 |        135 |          5 |         35 |        175 |
+| src\components\Media (Files)                                                          |          2 |         40 |          0 |          9 |         49 |
+| src\components\Media\ImageMedia                                                       |          1 |         61 |          2 |         16 |         79 |
+| src\components\Media\VideoMedia                                                       |          1 |         34 |          3 |         10 |         47 |
+| src\components\ModernCTA                                                              |          1 |         61 |          4 |          7 |         72 |
+| src\components\ModernFeatures                                                         |          1 |         95 |          4 |          8 |        107 |
+| src\components\NewsletterSignup                                                       |          1 |        125 |          9 |         12 |        146 |
+| src\components\PageRange                                                              |          1 |         51 |          0 |          7 |         58 |
+| src\components\PageViewTracker                                                        |          1 |         34 |         10 |          9 |         53 |
+| src\components\Pagination                                                             |          1 |         91 |          0 |         11 |        102 |
+| src\components\PayloadRedirects                                                       |          1 |         40 |          1 |          8 |         49 |
+| src\components\PostComments                                                           |          1 |         49 |          5 |         10 |         64 |
+| src\components\RichText                                                               |          1 |        172 |         12 |         15 |        199 |
+| src\components\RichTextEditor                                                         |          7 |      1,150 |         94 |        171 |      1,415 |
+| src\components\RichTextEditor (Files)                                                 |          5 |        913 |         88 |        139 |      1,140 |
+| src\components\RichTextEditor\extensions                                              |          2 |        237 |          6 |         32 |        275 |
+| src\components\ShareButtons                                                           |          1 |        152 |          3 |         10 |        165 |
+| src\components\UserInfo                                                               |          1 |         42 |          0 |          7 |         49 |
+| src\components\VoteButtons                                                            |          1 |        133 |         13 |         18 |        164 |
+| src\components\base                                                                   |         10 |        714 |         79 |         75 |        868 |
+| src\components\templates                                                              |          5 |        437 |         20 |         44 |        501 |
+| src\components\ui                                                                     |         20 |      1,259 |          0 |        171 |      1,430 |
+| src\core                                                                              |          1 |         24 |         18 |         10 |         52 |
+| src\custom                                                                            |          2 |         93 |         47 |         23 |        163 |
+| src\endpoints                                                                         |         12 |      2,296 |         15 |         61 |      2,372 |
+| src\endpoints\seed                                                                    |         12 |      2,296 |         15 |         61 |      2,372 |
+| src\fields                                                                            |          8 |        383 |         26 |         58 |        467 |
+| src\fields (Files)                                                                    |          4 |        235 |         24 |         26 |        285 |
+| src\fields\slug                                                                       |          4 |        148 |          2 |         32 |        182 |
+| src\heros                                                                             |          6 |        300 |         13 |         45 |        358 |
+| src\heros (Files)                                                                     |          2 |         86 |          0 |         13 |         99 |
+| src\heros\HighImpact                                                                  |          1 |         72 |          9 |         13 |         94 |
+| src\heros\LowImpact                                                                   |          1 |         21 |          0 |          5 |         26 |
+| src\heros\MediumImpact                                                                |          1 |         42 |          0 |          5 |         47 |
+| src\heros\PostHero                                                                    |          1 |         79 |          4 |          9 |         92 |
+| src\hooks                                                                             |          5 |        298 |         75 |         67 |        440 |
+| src\jobs                                                                              |          1 |        163 |         31 |         33 |        227 |
+| src\modules                                                                           |         16 |      1,876 |        189 |        181 |      2,246 |
+| src\modules\clubs                                                                     |          9 |        908 |         74 |         87 |      1,069 |
+| src\modules\clubs (Files)                                                             |          1 |          3 |          0 |          1 |          4 |
+| src\modules\clubs\collections                                                         |          1 |        289 |         13 |          5 |        307 |
+| src\modules\clubs\components                                                          |          5 |        415 |         23 |         33 |        471 |
+| src\modules\clubs\services                                                            |          1 |        135 |         14 |         29 |        178 |
+| src\modules\clubs\types                                                               |          1 |         66 |         24 |         19 |        109 |
+| src\modules\events                                                                    |          7 |        968 |        115 |         94 |      1,177 |
+| src\modules\events (Files)                                                            |          1 |          3 |          0 |          1 |          4 |
+| src\modules\events\collections                                                        |          1 |        287 |         16 |          5 |        308 |
+| src\modules\events\components                                                         |          3 |        364 |         21 |         28 |        413 |
+| src\modules\events\services                                                           |          1 |        256 |         43 |         43 |        342 |
+| src\modules\events\types                                                              |          1 |         58 |         35 |         17 |        110 |
+| src\plugins                                                                           |          1 |         88 |          1 |          6 |         95 |
+| src\providers                                                                         |         12 |        508 |         49 |        114 |        671 |
+| src\providers (Files)                                                                 |          1 |         15 |          0 |          3 |         18 |
+| src\providers\Auth                                                                    |          1 |         85 |          2 |         15 |        102 |
+| src\providers\HeaderTheme                                                             |          1 |         23 |          0 |         11 |         34 |
+| src\providers\NavigationProgress                                                      |          1 |         78 |         11 |         18 |        107 |
+| src\providers\Tenant                                                                  |          1 |         35 |         26 |          8 |         69 |
+| src\providers\Theme                                                                   |          6 |        158 |          1 |         37 |        196 |
+| src\providers\Theme (Files)                                                           |          3 |         64 |          0 |         23 |         87 |
+| src\providers\Theme\InitTheme                                                         |          1 |         47 |          1 |          3 |         51 |
+| src\providers\Theme\ThemeSelector                                                     |          2 |         47 |          0 |         11 |         58 |
+| src\providers\User                                                                    |          1 |        114 |          9 |         22 |        145 |
+| src\search                                                                            |          3 |        148 |          0 |         17 |        165 |
+| src\services                                                                          |         20 |      2,322 |        453 |        428 |      3,203 |
+| src\services\conosco                                                                  |          6 |        735 |        189 |        147 |      1,071 |
+| src\services\email                                                                    |         14 |      1,587 |        264 |        281 |      2,132 |
+| src\services\email (Files)                                                            |          5 |        622 |        181 |        126 |        929 |
+| src\services\email\providers                                                          |          4 |        407 |         34 |         62 |        503 |
+| src\services\email\templates                                                          |          5 |        558 |         49 |         93 |        700 |
+| src\utilities                                                                         |         23 |      1,061 |        438 |        243 |      1,742 |
+| tests                                                                                 |          2 |         30 |          0 |         12 |         42 |
+| tests\e2e                                                                             |          1 |         14 |          0 |          7 |         21 |
+| tests\int                                                                             |          1 |         16 |          0 |          5 |         21 |
++---------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++---------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                                              | language           | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| a:\GCET BLOG\GcetBlog\.github\copilot-instructions.md                                 | Markdown           |        386 |          0 |         99 |        485 |
+| a:\GCET BLOG\GcetBlog\.prettierignore                                                 | Ignore             |         13 |          0 |          2 |         15 |
+| a:\GCET BLOG\GcetBlog\.prettierrc.json                                                | JSON               |          6 |          0 |          1 |          7 |
+| a:\GCET BLOG\GcetBlog\ARCHITECTURE.md                                                 | Markdown           |        360 |          0 |         39 |        399 |
+| a:\GCET BLOG\GcetBlog\CHEAT_SHEET.md                                                  | Markdown           |        209 |          0 |         66 |        275 |
+| a:\GCET BLOG\GcetBlog\CODEBASE_GUIDE.md                                               | Markdown           |        877 |          0 |        233 |      1,110 |
+| a:\GCET BLOG\GcetBlog\DOCUMENTATION_INDEX.md                                          | Markdown           |        204 |          0 |         85 |        289 |
+| a:\GCET BLOG\GcetBlog\DOCUMENTATION_SUMMARY.md                                        | Markdown           |        270 |          0 |         82 |        352 |
+| a:\GCET BLOG\GcetBlog\Dockerfile                                                      | Docker             |         35 |         19 |         18 |         72 |
+| a:\GCET BLOG\GcetBlog\IMAGE_GUIDELINES.md                                             | Markdown           |         90 |          0 |         29 |        119 |
+| a:\GCET BLOG\GcetBlog\QUICK_START.md                                                  | Markdown           |        145 |          0 |         64 |        209 |
+| a:\GCET BLOG\GcetBlog\README.md                                                       | Markdown           |        212 |          0 |        126 |        338 |
+| a:\GCET BLOG\GcetBlog\START_HERE.md                                                   | Markdown           |        151 |          0 |         78 |        229 |
+| a:\GCET BLOG\GcetBlog\clear-database.js                                               | JavaScript         |         37 |          5 |         11 |         53 |
+| a:\GCET BLOG\GcetBlog\components.json                                                 | JSON               |         17 |          0 |          1 |         18 |
+| a:\GCET BLOG\GcetBlog\docker-compose.yml                                              | YAML               |         28 |          0 |          4 |         32 |
+| a:\GCET BLOG\GcetBlog\docs\01-project-overview.md                                     | Markdown           |        187 |          0 |         49 |        236 |
+| a:\GCET BLOG\GcetBlog\docs\02-architecture.md                                         | Markdown           |        338 |          0 |         84 |        422 |
+| a:\GCET BLOG\GcetBlog\docs\03-folder-structure.md                                     | Markdown           |        490 |          0 |        104 |        594 |
+| a:\GCET BLOG\GcetBlog\docs\04-authentication.md                                       | Markdown           |        445 |          0 |        110 |        555 |
+| a:\GCET BLOG\GcetBlog\docs\05-route-groups.md                                         | Markdown           |        347 |          0 |         91 |        438 |
+| a:\GCET BLOG\GcetBlog\docs\11-development.md                                          | Markdown           |        532 |          0 |        160 |        692 |
+| a:\GCET BLOG\GcetBlog\docs\12-roadmap.md                                              | Markdown           |        381 |          0 |         93 |        474 |
+| a:\GCET BLOG\GcetBlog\docs\COMPLETE.md                                                | Markdown           |        272 |          0 |         56 |        328 |
+| a:\GCET BLOG\GcetBlog\docs\DIAGRAMS.md                                                | Markdown           |        476 |          0 |         47 |        523 |
+| a:\GCET BLOG\GcetBlog\docs\INDEX.md                                                   | Markdown           |        226 |          0 |        120 |        346 |
+| a:\GCET BLOG\GcetBlog\docs\QUICK-REFERENCE.md                                         | Markdown           |        348 |          0 |         97 |        445 |
+| a:\GCET BLOG\GcetBlog\docs\README.md                                                  | Markdown           |         54 |          0 |         22 |         76 |
+| a:\GCET BLOG\GcetBlog\docs\SUMMARY.md                                                 | Markdown           |        275 |          0 |         54 |        329 |
+| a:\GCET BLOG\GcetBlog\docs\content-engine\MASTER_PLAN.md                              | Markdown           |        402 |          0 |         87 |        489 |
+| a:\GCET BLOG\GcetBlog\docs\content-engine\V2_ROADMAP.md                               | Markdown           |      1,467 |          0 |        298 |      1,765 |
+| a:\GCET BLOG\GcetBlog\docs\newsletter-email-setup.md                                  | Markdown           |        162 |          0 |         47 |        209 |
+| a:\GCET BLOG\GcetBlog\eslint.config.mjs                                               | JavaScript         |         34 |          0 |          5 |         39 |
+| a:\GCET BLOG\GcetBlog\next-env.d.ts                                                   | TypeScript         |          0 |          5 |          2 |          7 |
+| a:\GCET BLOG\GcetBlog\next-sitemap.config.cjs                                         | JavaScript         |         23 |          1 |          2 |         26 |
+| a:\GCET BLOG\GcetBlog\next.config.js                                                  | JavaScript         |         38 |         18 |          8 |         64 |
+| a:\GCET BLOG\GcetBlog\package-lock.json                                               | JSON               |     16,729 |          0 |          1 |     16,730 |
+| a:\GCET BLOG\GcetBlog\package.json                                                    | JSON               |        140 |          0 |          1 |        141 |
+| a:\GCET BLOG\GcetBlog\playwright.config.ts                                            | TypeScript         |         23 |         15 |          4 |         42 |
+| a:\GCET BLOG\GcetBlog\pnpm-lock.yaml                                                  | YAML               |     10,127 |          0 |      2,481 |     12,608 |
+| a:\GCET BLOG\GcetBlog\postcss.config.js                                               | JavaScript         |          7 |          0 |          2 |          9 |
+| a:\GCET BLOG\GcetBlog\public\favicon.svg                                              | SVG                |         10 |          0 |          1 |         11 |
+| a:\GCET BLOG\GcetBlog\redirects.js                                                    | JavaScript         |         17 |          0 |          4 |         21 |
+| a:\GCET BLOG\GcetBlog\scripts\clear-database.ts                                       | TypeScript         |          0 |          0 |          1 |          1 |
+| a:\GCET BLOG\GcetBlog\scripts\create-sample-posts.js                                  | JavaScript         |        157 |         10 |         17 |        184 |
+| a:\GCET BLOG\GcetBlog\scripts\create-sample-posts.ts                                  | TypeScript         |        154 |          4 |         16 |        174 |
+| a:\GCET BLOG\GcetBlog\scripts\migrate-admin-role.ts                                   | TypeScript         |        121 |         19 |         24 |        164 |
+| a:\GCET BLOG\GcetBlog\scripts\migrate-to-multitenant.ts                               | TypeScript         |        131 |         28 |         24 |        183 |
+| a:\GCET BLOG\GcetBlog\scripts\migrate-to-rbac.js                                      | JavaScript         |        199 |         49 |         31 |        279 |
+| a:\GCET BLOG\GcetBlog\scripts\seed-database.ts                                        | TypeScript         |        581 |         27 |         35 |        643 |
+| a:\GCET BLOG\GcetBlog\scripts\seed-templates.ts                                       | TypeScript         |        598 |         15 |         26 |        639 |
+| a:\GCET BLOG\GcetBlog\scripts\test-admin.mjs                                          | JavaScript         |        180 |         17 |         31 |        228 |
+| a:\GCET BLOG\GcetBlog\scripts\test-contributor.mjs                                    | JavaScript         |        593 |         92 |         82 |        767 |
+| a:\GCET BLOG\GcetBlog\scripts\test-editor.mjs                                         | JavaScript         |        405 |         66 |         47 |        518 |
+| a:\GCET BLOG\GcetBlog\src\Footer\Component.tsx                                        | TypeScript JSX     |         66 |          5 |          9 |         80 |
+| a:\GCET BLOG\GcetBlog\src\Footer\RowLabel.tsx                                         | TypeScript JSX     |         10 |          0 |          4 |         14 |
+| a:\GCET BLOG\GcetBlog\src\Footer\config.ts                                            | TypeScript         |         30 |          0 |          3 |         33 |
+| a:\GCET BLOG\GcetBlog\src\Footer\hooks\revalidateFooter.ts                            | TypeScript         |          9 |          0 |          5 |         14 |
+| a:\GCET BLOG\GcetBlog\src\Header\Component.client.tsx                                 | TypeScript JSX     |        192 |          9 |         20 |        221 |
+| a:\GCET BLOG\GcetBlog\src\Header\Component.tsx                                        | TypeScript JSX     |         29 |          3 |          6 |         38 |
+| a:\GCET BLOG\GcetBlog\src\Header\Nav\index.tsx                                        | TypeScript JSX     |         42 |          1 |          9 |         52 |
+| a:\GCET BLOG\GcetBlog\src\Header\RowLabel.tsx                                         | TypeScript JSX     |         10 |          0 |          4 |         14 |
+| a:\GCET BLOG\GcetBlog\src\Header\config.ts                                            | TypeScript         |         30 |          0 |          3 |         33 |
+| a:\GCET BLOG\GcetBlog\src\Header\hooks\revalidateHeader.ts                            | TypeScript         |          9 |          0 |          5 |         14 |
+| a:\GCET BLOG\GcetBlog\src\access\anyone.ts                                            | TypeScript         |          2 |          0 |          2 |          4 |
+| a:\GCET BLOG\GcetBlog\src\access\authenticated.ts                                     | TypeScript         |          6 |          0 |          4 |         10 |
+| a:\GCET BLOG\GcetBlog\src\access\authenticatedOrPublished.ts                          | TypeScript         |         11 |          0 |          3 |         14 |
+| a:\GCET BLOG\GcetBlog\src\access\hasBlogAccess.ts                                     | TypeScript         |         52 |         32 |         17 |        101 |
+| a:\GCET BLOG\GcetBlog\src\access\hasClubAccess.ts                                     | TypeScript         |         73 |         30 |         18 |        121 |
+| a:\GCET BLOG\GcetBlog\src\access\hasPermission.ts                                     | TypeScript         |        178 |        124 |         59 |        361 |
+| a:\GCET BLOG\GcetBlog\src\access\isSuperAdmin.ts                                      | TypeScript         |          9 |         12 |          4 |         25 |
+| a:\GCET BLOG\GcetBlog\src\access\permissions.ts                                       | TypeScript         |         95 |         67 |         26 |        188 |
+| a:\GCET BLOG\GcetBlog\src\access\selfOrAdmin.ts                                       | TypeScript         |         16 |         19 |          6 |         41 |
+| a:\GCET BLOG\GcetBlog\src\app\(auth)\layout.tsx                                       | TypeScript JSX     |         49 |          0 |          4 |         53 |
+| a:\GCET BLOG\GcetBlog\src\app\(auth)\login\LoginForm.tsx                              | TypeScript JSX     |        122 |          2 |         15 |        139 |
+| a:\GCET BLOG\GcetBlog\src\app\(auth)\login\RegisterLink.tsx                           | TypeScript JSX     |         30 |          0 |          5 |         35 |
+| a:\GCET BLOG\GcetBlog\src\app\(auth)\login\actions.ts                                 | TypeScript         |         87 |          7 |         17 |        111 |
+| a:\GCET BLOG\GcetBlog\src\app\(auth)\login\page.tsx                                   | TypeScript JSX     |         56 |          6 |         11 |         73 |
+| a:\GCET BLOG\GcetBlog\src\app\(auth)\register\RegistrationForm.tsx                    | TypeScript JSX     |        153 |          1 |         16 |        170 |
+| a:\GCET BLOG\GcetBlog\src\app\(auth)\register\SignInLink.tsx                          | TypeScript JSX     |         30 |          0 |          5 |         35 |
+| a:\GCET BLOG\GcetBlog\src\app\(auth)\register\actions.ts                              | TypeScript         |         52 |          3 |         11 |         66 |
+| a:\GCET BLOG\GcetBlog\src\app\(auth)\register\page.tsx                                | TypeScript JSX     |         42 |          1 |          7 |         50 |
+| a:\GCET BLOG\GcetBlog\src\app\(auth)\set-password\SetPasswordForm.tsx                 | TypeScript JSX     |        163 |          2 |         16 |        181 |
+| a:\GCET BLOG\GcetBlog\src\app\(auth)\set-password\page.tsx                            | TypeScript JSX     |         17 |          0 |          3 |         20 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\(sitemaps)\pages-sitemap.xml\route.ts        | TypeScript         |         60 |          0 |          9 |         69 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\(sitemaps)\posts-sitemap.xml\route.ts        | TypeScript         |         48 |          0 |          8 |         56 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\ConditionalLayout.tsx                        | TypeScript JSX     |         12 |          1 |          5 |         18 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\[slug]\page.client.tsx                       | TypeScript JSX     |         11 |          1 |          4 |         16 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\[slug]\page.tsx                              | TypeScript JSX     |        137 |          9 |         32 |        178 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\clubs\ClubsFilterBar.tsx                     | TypeScript JSX     |         92 |          4 |         14 |        110 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\clubs\[slug]\achievements\page.tsx           | TypeScript JSX     |        146 |          2 |         16 |        164 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\clubs\[slug]\events\page.tsx                 | TypeScript JSX     |        112 |          5 |         17 |        134 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\clubs\[slug]\page.client.tsx                 | TypeScript JSX     |         11 |          0 |          4 |         15 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\clubs\[slug]\page.tsx                        | TypeScript JSX     |        247 |         17 |         30 |        294 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\clubs\[slug]\team\page.tsx                   | TypeScript JSX     |        138 |          4 |         14 |        156 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\clubs\page.client.tsx                        | TypeScript JSX     |         11 |          0 |          4 |         15 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\clubs\page.tsx                               | TypeScript JSX     |        186 |          7 |         20 |        213 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\content\[slug]\page.tsx                      | TypeScript JSX     |         33 |         12 |         11 |         56 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\dashboard\admin\page.tsx                     | TypeScript JSX     |          4 |          3 |          2 |          9 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\dashboard\editor\page.tsx                    | TypeScript JSX     |        172 |          9 |         13 |        194 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\dashboard\page.tsx                           | TypeScript JSX     |         23 |          2 |          5 |         30 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\dashboard\user\page.tsx                      | TypeScript JSX     |         87 |          2 |          7 |         96 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\editor\components\DashboardErrorFallback.tsx | TypeScript JSX     |         27 |          0 |          3 |         30 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\editor\components\EditorHeader.tsx           | TypeScript JSX     |        148 |          5 |         11 |        164 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\editor\components\EditorLayoutClient.tsx     | TypeScript JSX     |         75 |          3 |          8 |         86 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\editor\components\EditorSidebar.tsx          | TypeScript JSX     |        221 |         10 |         11 |        242 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\editor\components\ErrorBoundary.tsx          | TypeScript JSX     |         50 |          0 |         10 |         60 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\editor\components\MobileMenuButton.tsx       | TypeScript JSX     |         38 |          2 |          6 |         46 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\events\EventsFilterBar.tsx                   | TypeScript JSX     |        112 |          5 |         16 |        133 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\events\[slug]\page.client.tsx                | TypeScript JSX     |         11 |          0 |          4 |         15 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\events\[slug]\page.tsx                       | TypeScript JSX     |        142 |          9 |         19 |        170 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\events\page.client.tsx                       | TypeScript JSX     |         11 |          0 |          4 |         15 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\events\page.tsx                              | TypeScript JSX     |        189 |          6 |         19 |        214 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\globals.css                                  | PostCSS            |        202 |         15 |         53 |        270 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\home\page.tsx                                | TypeScript JSX     |         72 |          5 |         11 |         88 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\layout.tsx                                   | TypeScript JSX     |         62 |          1 |          6 |         69 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\newsletter\confirm\page.tsx                  | TypeScript JSX     |         99 |          9 |         14 |        122 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\newsletter\preferences\PreferencesForm.tsx   | TypeScript JSX     |        136 |          8 |         12 |        156 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\newsletter\preferences\page.tsx              | TypeScript JSX     |         76 |         10 |         14 |        100 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\newsletter\unsubscribe\page.tsx              | TypeScript JSX     |         92 |          9 |         14 |        115 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\next\exit-preview\route.ts                   | TypeScript         |          6 |          0 |          2 |          8 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\next\preview\route.ts                        | TypeScript         |         40 |          1 |         16 |         57 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\next\seed\route.ts                           | TypeScript         |         26 |          5 |          9 |         40 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\not-found.tsx                                | TypeScript JSX     |         16 |          0 |          3 |         19 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\page.tsx                                     | TypeScript JSX     |          3 |          0 |          3 |          6 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\posts\PostsFilterBar.tsx                     | TypeScript JSX     |        128 |          8 |         12 |        148 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\posts\[slug]\PostEngagement.tsx              | TypeScript JSX     |         67 |          4 |          7 |         78 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\posts\[slug]\actions.ts                      | TypeScript         |        163 |         13 |         30 |        206 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\posts\[slug]\page.client.tsx                 | TypeScript JSX     |         11 |          0 |          4 |         15 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\posts\[slug]\page.tsx                        | TypeScript JSX     |        251 |         16 |         30 |        297 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\posts\page.client.tsx                        | TypeScript JSX     |         11 |          1 |          4 |         16 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\posts\page.tsx                               | TypeScript JSX     |        213 |         13 |         24 |        250 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\posts\page\[pageNumber]\page.client.tsx      | TypeScript JSX     |         11 |          1 |          4 |         16 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\posts\page\[pageNumber]\page.tsx             | TypeScript JSX     |         78 |          1 |         19 |         98 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\profile\[id]\page.tsx                        | TypeScript JSX     |        246 |         10 |         17 |        273 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\search\page.client.tsx                       | TypeScript JSX     |         11 |          1 |          4 |         16 |
+| a:\GCET BLOG\GcetBlog\src\app\(frontend)\search\page.tsx                              | TypeScript JSX     |         80 |          1 |          8 |         89 |
+| a:\GCET BLOG\GcetBlog\src\app\(payload)\admin\[[...segments]]\not-found.tsx           | TypeScript JSX     |         17 |          2 |          6 |         25 |
+| a:\GCET BLOG\GcetBlog\src\app\(payload)\admin\[[...segments]]\page.tsx                | TypeScript JSX     |         17 |          2 |          6 |         25 |
+| a:\GCET BLOG\GcetBlog\src\app\(payload)\admin\importMap.js                            | JavaScript         |         58 |          0 |          2 |         60 |
+| a:\GCET BLOG\GcetBlog\src\app\(payload)\api\[...slug]\route.ts                        | TypeScript         |         16 |          2 |          3 |         21 |
+| a:\GCET BLOG\GcetBlog\src\app\(payload)\api\graphql-playground\route.ts               | TypeScript         |          4 |          2 |          2 |          8 |
+| a:\GCET BLOG\GcetBlog\src\app\(payload)\api\graphql\route.ts                          | TypeScript         |          4 |          2 |          3 |          9 |
+| a:\GCET BLOG\GcetBlog\src\app\(payload)\custom.scss                                   | SCSS               |         39 |          7 |          9 |         55 |
+| a:\GCET BLOG\GcetBlog\src\app\(payload)\layout.tsx                                    | TypeScript JSX     |         24 |          2 |          6 |         32 |
+| a:\GCET BLOG\GcetBlog\src\app\admin-dashboard\error.tsx                               | TypeScript JSX     |         51 |          0 |          4 |         55 |
+| a:\GCET BLOG\GcetBlog\src\app\admin-dashboard\layout.tsx                              | TypeScript JSX     |         80 |          4 |          9 |         93 |
+| a:\GCET BLOG\GcetBlog\src\app\admin-dashboard\loading.tsx                             | TypeScript JSX     |          4 |          0 |          2 |          6 |
+| a:\GCET BLOG\GcetBlog\src\app\admin-dashboard\page.tsx                                | TypeScript JSX     |          4 |          1 |          1 |          6 |
+| a:\GCET BLOG\GcetBlog\src\app\admin-dashboard\profile\page.tsx                        | TypeScript JSX     |        484 |          9 |         39 |        532 |
+| a:\GCET BLOG\GcetBlog\src\app\admin-dashboard\users\UserActions.tsx                   | TypeScript JSX     |        215 |          0 |         20 |        235 |
+| a:\GCET BLOG\GcetBlog\src\app\admin-dashboard\users\UsersTableClient.tsx              | TypeScript JSX     |        246 |          4 |          9 |        259 |
+| a:\GCET BLOG\GcetBlog\src\app\admin-dashboard\users\actions.ts                        | TypeScript         |        240 |         18 |         46 |        304 |
+| a:\GCET BLOG\GcetBlog\src\app\admin-dashboard\users\page.tsx                          | TypeScript JSX     |         99 |          7 |         17 |        123 |
+| a:\GCET BLOG\GcetBlog\src\app\api\admin\stats\route.ts                                | TypeScript         |         48 |          4 |          8 |         60 |
+| a:\GCET BLOG\GcetBlog\src\app\api\auth\google\callback\route.ts                       | TypeScript         |        203 |         37 |         36 |        276 |
+| a:\GCET BLOG\GcetBlog\src\app\api\auth\google\route.ts                                | TypeScript         |         52 |          6 |         11 |         69 |
+| a:\GCET BLOG\GcetBlog\src\app\api\auth\logout\route.ts                                | TypeScript         |         10 |          0 |          2 |         12 |
+| a:\GCET BLOG\GcetBlog\src\app\api\auth\me\route.ts                                    | TypeScript         |         18 |          0 |          4 |         22 |
+| a:\GCET BLOG\GcetBlog\src\app\api\auth\set-password\route.ts                          | TypeScript         |         51 |         14 |          9 |         74 |
+| a:\GCET BLOG\GcetBlog\src\app\api\categories\[id]\route.ts                            | TypeScript         |        119 |          4 |         19 |        142 |
+| a:\GCET BLOG\GcetBlog\src\app\api\categories\create\route.ts                          | TypeScript         |         61 |          2 |         10 |         73 |
+| a:\GCET BLOG\GcetBlog\src\app\api\disable-draft\route.ts                              | TypeScript         |          7 |          0 |          2 |          9 |
+| a:\GCET BLOG\GcetBlog\src\app\api\draft\route.ts                                      | TypeScript         |         46 |          5 |         10 |         61 |
+| a:\GCET BLOG\GcetBlog\src\app\api\feedback\[id]\message\route.ts                      | TypeScript         |         80 |          4 |         12 |         96 |
+| a:\GCET BLOG\GcetBlog\src\app\api\feedback\create\route.ts                            | TypeScript         |         87 |          4 |         14 |        105 |
+| a:\GCET BLOG\GcetBlog\src\app\api\media\file\[filename]\route.ts                      | TypeScript         |         34 |          6 |          9 |         49 |
+| a:\GCET BLOG\GcetBlog\src\app\api\media\route.ts                                      | TypeScript         |        169 |         14 |         21 |        204 |
+| a:\GCET BLOG\GcetBlog\src\app\api\media\sign\route.ts                                 | TypeScript         |         33 |          7 |          9 |         49 |
+| a:\GCET BLOG\GcetBlog\src\app\api\newsletter\preferences\route.ts                     | TypeScript         |         57 |          7 |         13 |         77 |
+| a:\GCET BLOG\GcetBlog\src\app\api\newsletter\subscribe\route.ts                       | TypeScript         |         89 |         19 |         15 |        123 |
+| a:\GCET BLOG\GcetBlog\src\app\api\newsletter\subscribers\export\route.ts              | TypeScript         |         65 |          3 |         10 |         78 |
+| a:\GCET BLOG\GcetBlog\src\app\api\newsletter\subscribers\import\route.ts              | TypeScript         |        100 |          3 |         18 |        121 |
+| a:\GCET BLOG\GcetBlog\src\app\api\newsletter\track\click\route.ts                     | TypeScript         |         38 |         12 |          7 |         57 |
+| a:\GCET BLOG\GcetBlog\src\app\api\newsletter\track\open\route.ts                      | TypeScript         |         59 |         13 |         10 |         82 |
+| a:\GCET BLOG\GcetBlog\src\app\api\newsletter\unsubscribe\route.ts                     | TypeScript         |         67 |         12 |         13 |         92 |
+| a:\GCET BLOG\GcetBlog\src\app\api\posts\[id]\route.ts                                 | TypeScript         |         91 |          6 |         11 |        108 |
+| a:\GCET BLOG\GcetBlog\src\app\api\posts\create\route.ts                               | TypeScript         |        116 |          7 |         12 |        135 |
+| a:\GCET BLOG\GcetBlog\src\app\api\posts\route.ts                                      | TypeScript         |        125 |          8 |         17 |        150 |
+| a:\GCET BLOG\GcetBlog\src\app\api\resolve-tenant\route.ts                             | TypeScript         |         67 |         14 |         12 |         93 |
+| a:\GCET BLOG\GcetBlog\src\app\api\revalidate\route.ts                                 | TypeScript         |         55 |         17 |         11 |         83 |
+| a:\GCET BLOG\GcetBlog\src\app\api\seed-posts\route.ts                                 | TypeScript         |        183 |          5 |         16 |        204 |
+| a:\GCET BLOG\GcetBlog\src\app\api\track\route.ts                                      | TypeScript         |         78 |          9 |         15 |        102 |
+| a:\GCET BLOG\GcetBlog\src\app\api\users\me\route.ts                                   | TypeScript         |         43 |          2 |          7 |         52 |
+| a:\GCET BLOG\GcetBlog\src\app\api\votes\route.ts                                      | TypeScript         |         86 |         10 |         13 |        109 |
+| a:\GCET BLOG\GcetBlog\src\app\contributor\components\ContributorErrorFallback.tsx     | TypeScript JSX     |         27 |          0 |          3 |         30 |
+| a:\GCET BLOG\GcetBlog\src\app\contributor\components\ContributorHeader.tsx            | TypeScript JSX     |        134 |          5 |         11 |        150 |
+| a:\GCET BLOG\GcetBlog\src\app\contributor\components\ContributorLayoutClient.tsx      | TypeScript JSX     |         62 |          3 |          7 |         72 |
+| a:\GCET BLOG\GcetBlog\src\app\contributor\components\ContributorSidebar.tsx           | TypeScript JSX     |        149 |          6 |         10 |        165 |
+| a:\GCET BLOG\GcetBlog\src\app\contributor\components\PayloadBlocker.tsx               | TypeScript JSX     |         50 |          7 |         10 |         67 |
+| a:\GCET BLOG\GcetBlog\src\app\contributor\create\CreateContentForm.tsx                | TypeScript JSX     |        521 |         22 |         42 |        585 |
+| a:\GCET BLOG\GcetBlog\src\app\contributor\create\page.tsx                             | TypeScript JSX     |          4 |          1 |          2 |          7 |
+| a:\GCET BLOG\GcetBlog\src\app\contributor\drafts\DraftsGridClient.tsx                 | TypeScript JSX     |        125 |          1 |          9 |        135 |
+| a:\GCET BLOG\GcetBlog\src\app\contributor\drafts\loading.tsx                          | TypeScript JSX     |          4 |          0 |          2 |          6 |
+| a:\GCET BLOG\GcetBlog\src\app\contributor\drafts\page.tsx                             | TypeScript JSX     |         69 |          2 |         14 |         85 |
+| a:\GCET BLOG\GcetBlog\src\app\contributor\error.tsx                                   | TypeScript JSX     |          5 |          0 |          3 |          8 |
+| a:\GCET BLOG\GcetBlog\src\app\contributor\feedback\FeedbackCenter.tsx                 | TypeScript JSX     |        336 |          8 |         20 |        364 |
+| a:\GCET BLOG\GcetBlog\src\app\contributor\feedback\loading.tsx                        | TypeScript JSX     |          4 |          0 |          2 |          6 |
+| a:\GCET BLOG\GcetBlog\src\app\contributor\feedback\page.tsx                           | TypeScript JSX     |          6 |          2 |          3 |         11 |
+| a:\GCET BLOG\GcetBlog\src\app\contributor\layout.tsx                                  | TypeScript JSX     |         71 |          3 |         10 |         84 |
+| a:\GCET BLOG\GcetBlog\src\app\contributor\loading.tsx                                 | TypeScript JSX     |          4 |          0 |          2 |          6 |
+| a:\GCET BLOG\GcetBlog\src\app\contributor\page.tsx                                    | TypeScript JSX     |        283 |          4 |         24 |        311 |
+| a:\GCET BLOG\GcetBlog\src\app\contributor\profile\page.tsx                            | TypeScript JSX     |        495 |         10 |         44 |        549 |
+| a:\GCET BLOG\GcetBlog\src\app\contributor\submissions\SubmissionsClient.tsx           | TypeScript JSX     |        158 |          0 |          7 |        165 |
+| a:\GCET BLOG\GcetBlog\src\app\contributor\submissions\loading.tsx                     | TypeScript JSX     |          4 |          0 |          2 |          6 |
+| a:\GCET BLOG\GcetBlog\src\app\contributor\submissions\page.tsx                        | TypeScript JSX     |         66 |          3 |         15 |         84 |
+| a:\GCET BLOG\GcetBlog\src\app\contributor\templates\ContributorTemplatesClient.tsx    | TypeScript JSX     |        322 |         14 |         28 |        364 |
+| a:\GCET BLOG\GcetBlog\src\app\contributor\templates\page.tsx                          | TypeScript JSX     |         64 |          2 |         10 |         76 |
+| a:\GCET BLOG\GcetBlog\src\app\layout.tsx                                              | TypeScript JSX     |         24 |          0 |          5 |         29 |
+| a:\GCET BLOG\GcetBlog\src\app\platform\actions.ts                                     | TypeScript         |        126 |          3 |         21 |        150 |
+| a:\GCET BLOG\GcetBlog\src\app\platform\components\InstitutionForm.tsx                 | TypeScript JSX     |        532 |          8 |         33 |        573 |
+| a:\GCET BLOG\GcetBlog\src\app\platform\components\PlatformSidebar.tsx                 | TypeScript JSX     |         69 |          3 |         10 |         82 |
+| a:\GCET BLOG\GcetBlog\src\app\platform\institutions\[id]\page.tsx                     | TypeScript JSX     |        129 |          1 |         12 |        142 |
+| a:\GCET BLOG\GcetBlog\src\app\platform\institutions\components\InstitutionActions.tsx | TypeScript JSX     |        139 |          1 |         10 |        150 |
+| a:\GCET BLOG\GcetBlog\src\app\platform\institutions\new\page.tsx                      | TypeScript JSX     |         36 |          1 |          7 |         44 |
+| a:\GCET BLOG\GcetBlog\src\app\platform\institutions\page.tsx                          | TypeScript JSX     |        142 |          2 |          9 |        153 |
+| a:\GCET BLOG\GcetBlog\src\app\platform\layout.tsx                                     | TypeScript JSX     |         47 |          1 |          7 |         55 |
+| a:\GCET BLOG\GcetBlog\src\app\platform\page.tsx                                       | TypeScript JSX     |        221 |          7 |         14 |        242 |
+| a:\GCET BLOG\GcetBlog\src\app\platform\users\page.tsx                                 | TypeScript JSX     |        186 |          4 |         16 |        206 |
+| a:\GCET BLOG\GcetBlog\src\app\user\activity\ActivityClient.tsx                        | TypeScript JSX     |        170 |          0 |          8 |        178 |
+| a:\GCET BLOG\GcetBlog\src\app\user\activity\loading.tsx                               | TypeScript JSX     |          4 |          0 |          2 |          6 |
+| a:\GCET BLOG\GcetBlog\src\app\user\activity\page.tsx                                  | TypeScript JSX     |         56 |          1 |         13 |         70 |
+| a:\GCET BLOG\GcetBlog\src\app\user\analytics\loading.tsx                              | TypeScript JSX     |         22 |          0 |          2 |         24 |
+| a:\GCET BLOG\GcetBlog\src\app\user\analytics\page.tsx                                 | TypeScript JSX     |        350 |         23 |         16 |        389 |
+| a:\GCET BLOG\GcetBlog\src\app\user\categories\CategoryForm.tsx                        | TypeScript JSX     |        110 |          0 |         14 |        124 |
+| a:\GCET BLOG\GcetBlog\src\app\user\categories\CategoryManager.tsx                     | TypeScript JSX     |        379 |          4 |         29 |        412 |
+| a:\GCET BLOG\GcetBlog\src\app\user\categories\loading.tsx                             | TypeScript JSX     |          4 |          0 |          2 |          6 |
+| a:\GCET BLOG\GcetBlog\src\app\user\categories\page.tsx                                | TypeScript JSX     |         49 |          3 |          8 |         60 |
+| a:\GCET BLOG\GcetBlog\src\app\user\clubs\[id]\edit\page.tsx                           | TypeScript JSX     |        128 |          5 |         19 |        152 |
+| a:\GCET BLOG\GcetBlog\src\app\user\clubs\create\ClubForm.tsx                          | TypeScript JSX     |        659 |         20 |         46 |        725 |
+| a:\GCET BLOG\GcetBlog\src\app\user\clubs\create\page.tsx                              | TypeScript JSX     |         42 |          2 |         10 |         54 |
+| a:\GCET BLOG\GcetBlog\src\app\user\clubs\page.tsx                                     | TypeScript JSX     |        225 |          5 |         13 |        243 |
+| a:\GCET BLOG\GcetBlog\src\app\user\clubs\sync-preview\page.tsx                        | TypeScript JSX     |        182 |          4 |         13 |        199 |
+| a:\GCET BLOG\GcetBlog\src\app\user\comments\CommentModerationList.tsx                 | TypeScript JSX     |        215 |          2 |         22 |        239 |
+| a:\GCET BLOG\GcetBlog\src\app\user\comments\loading.tsx                               | TypeScript JSX     |          4 |          0 |          2 |          6 |
+| a:\GCET BLOG\GcetBlog\src\app\user\comments\page.tsx                                  | TypeScript JSX     |        185 |          8 |         20 |        213 |
+| a:\GCET BLOG\GcetBlog\src\app\user\content\ContentManagerClient.tsx                   | TypeScript JSX     |        654 |         13 |         35 |        702 |
+| a:\GCET BLOG\GcetBlog\src\app\user\content\actions.ts                                 | TypeScript         |        108 |          9 |         21 |        138 |
+| a:\GCET BLOG\GcetBlog\src\app\user\content\loading.tsx                                | TypeScript JSX     |          4 |          0 |          2 |          6 |
+| a:\GCET BLOG\GcetBlog\src\app\user\content\page.tsx                                   | TypeScript JSX     |         41 |          4 |          7 |         52 |
+| a:\GCET BLOG\GcetBlog\src\app\user\events\[id]\edit\page.tsx                          | TypeScript JSX     |        138 |          6 |         19 |        163 |
+| a:\GCET BLOG\GcetBlog\src\app\user\events\create\EventForm.tsx                        | TypeScript JSX     |        676 |         22 |         51 |        749 |
+| a:\GCET BLOG\GcetBlog\src\app\user\events\create\page.tsx                             | TypeScript JSX     |         55 |          2 |         10 |         67 |
+| a:\GCET BLOG\GcetBlog\src\app\user\events\page.tsx                                    | TypeScript JSX     |        242 |          6 |         15 |        263 |
+| a:\GCET BLOG\GcetBlog\src\app\user\events\sync-preview\page.tsx                       | TypeScript JSX     |        198 |          8 |         13 |        219 |
+| a:\GCET BLOG\GcetBlog\src\app\user\layout.tsx                                         | TypeScript JSX     |         88 |          4 |         12 |        104 |
+| a:\GCET BLOG\GcetBlog\src\app\user\loading.tsx                                        | TypeScript JSX     |          4 |          0 |          2 |          6 |
+| a:\GCET BLOG\GcetBlog\src\app\user\logs\LogsClient.tsx                                | TypeScript JSX     |        141 |          0 |          7 |        148 |
+| a:\GCET BLOG\GcetBlog\src\app\user\logs\loading.tsx                                   | TypeScript JSX     |          4 |          0 |          2 |          6 |
+| a:\GCET BLOG\GcetBlog\src\app\user\logs\page.tsx                                      | TypeScript JSX     |         56 |          1 |         13 |         70 |
+| a:\GCET BLOG\GcetBlog\src\app\user\media\MediaGridClient.tsx                          | TypeScript JSX     |        378 |         11 |         22 |        411 |
+| a:\GCET BLOG\GcetBlog\src\app\user\media\loading.tsx                                  | TypeScript JSX     |          4 |          0 |          2 |          6 |
+| a:\GCET BLOG\GcetBlog\src\app\user\media\page.tsx                                     | TypeScript JSX     |         72 |          4 |         12 |         88 |
+| a:\GCET BLOG\GcetBlog\src\app\user\newsletter\NewslettersTable.tsx                    | TypeScript JSX     |        123 |         13 |         15 |        151 |
+| a:\GCET BLOG\GcetBlog\src\app\user\newsletter\[id]\page.tsx                           | TypeScript JSX     |        286 |         10 |         21 |        317 |
+| a:\GCET BLOG\GcetBlog\src\app\user\newsletter\actions.ts                              | TypeScript         |        343 |         44 |         49 |        436 |
+| a:\GCET BLOG\GcetBlog\src\app\user\newsletter\compose\ComposeForm.tsx                 | TypeScript JSX     |        230 |         12 |         18 |        260 |
+| a:\GCET BLOG\GcetBlog\src\app\user\newsletter\compose\page.tsx                        | TypeScript JSX     |         60 |          7 |         11 |         78 |
+| a:\GCET BLOG\GcetBlog\src\app\user\newsletter\loading.tsx                             | TypeScript JSX     |          4 |          0 |          2 |          6 |
+| a:\GCET BLOG\GcetBlog\src\app\user\newsletter\page.tsx                                | TypeScript JSX     |        222 |         15 |         22 |        259 |
+| a:\GCET BLOG\GcetBlog\src\app\user\newsletter\subscribers\SubscriberActions.tsx       | TypeScript JSX     |         84 |          1 |         15 |        100 |
+| a:\GCET BLOG\GcetBlog\src\app\user\newsletter\subscribers\SubscribersTable.tsx        | TypeScript JSX     |        125 |         11 |         14 |        150 |
+| a:\GCET BLOG\GcetBlog\src\app\user\newsletter\subscribers\page.tsx                    | TypeScript JSX     |        166 |         11 |         18 |        195 |
+| a:\GCET BLOG\GcetBlog\src\app\user\page.tsx                                           | TypeScript JSX     |        223 |          4 |         19 |        246 |
+| a:\GCET BLOG\GcetBlog\src\app\user\pages\[id]\edit\page.tsx                           | TypeScript JSX     |        179 |         11 |         24 |        214 |
+| a:\GCET BLOG\GcetBlog\src\app\user\pages\create\PageForm.tsx                          | TypeScript JSX     |      1,186 |         80 |        103 |      1,369 |
+| a:\GCET BLOG\GcetBlog\src\app\user\pages\create\page.tsx                              | TypeScript JSX     |         41 |          2 |          9 |         52 |
+| a:\GCET BLOG\GcetBlog\src\app\user\pages\page.tsx                                     | TypeScript JSX     |        209 |          5 |         14 |        228 |
+| a:\GCET BLOG\GcetBlog\src\app\user\posts\[id]\edit\PostForm.tsx                       | TypeScript JSX     |        646 |         19 |         49 |        714 |
+| a:\GCET BLOG\GcetBlog\src\app\user\posts\[id]\edit\page.tsx                           | TypeScript JSX     |        107 |          5 |         16 |        128 |
+| a:\GCET BLOG\GcetBlog\src\app\user\posts\create\PostForm.tsx                          | TypeScript JSX     |        646 |         19 |         49 |        714 |
+| a:\GCET BLOG\GcetBlog\src\app\user\posts\create\page.tsx                              | TypeScript JSX     |         70 |          6 |         10 |         86 |
+| a:\GCET BLOG\GcetBlog\src\app\user\profile\page.tsx                                   | TypeScript JSX     |        495 |         14 |         44 |        553 |
+| a:\GCET BLOG\GcetBlog\src\app\user\queue\ApprovalButtons.tsx                          | TypeScript JSX     |        122 |          2 |          9 |        133 |
+| a:\GCET BLOG\GcetBlog\src\app\user\queue\EditorQueueList.tsx                          | TypeScript JSX     |        196 |          4 |         19 |        219 |
+| a:\GCET BLOG\GcetBlog\src\app\user\queue\QueueTableClient.tsx                         | TypeScript JSX     |        111 |          0 |          8 |        119 |
+| a:\GCET BLOG\GcetBlog\src\app\user\queue\actions.ts                                   | TypeScript         |        123 |         11 |         22 |        156 |
+| a:\GCET BLOG\GcetBlog\src\app\user\queue\loading.tsx                                  | TypeScript JSX     |          4 |          0 |          2 |          6 |
+| a:\GCET BLOG\GcetBlog\src\app\user\queue\page.tsx                                     | TypeScript JSX     |        132 |          6 |         16 |        154 |
+| a:\GCET BLOG\GcetBlog\src\app\user\settings\loading.tsx                               | TypeScript JSX     |         19 |          0 |          2 |         21 |
+| a:\GCET BLOG\GcetBlog\src\app\user\settings\page.tsx                                  | TypeScript JSX     |        309 |         12 |         24 |        345 |
+| a:\GCET BLOG\GcetBlog\src\app\user\system\conosco\page.tsx                            | TypeScript JSX     |        229 |          9 |         19 |        257 |
+| a:\GCET BLOG\GcetBlog\src\app\user\templates\TemplateForm.tsx                         | TypeScript JSX     |        541 |         29 |         50 |        620 |
+| a:\GCET BLOG\GcetBlog\src\app\user\templates\TemplatesPageClient.tsx                  | TypeScript JSX     |        468 |         21 |         31 |        520 |
+| a:\GCET BLOG\GcetBlog\src\app\user\templates\[id]\edit\page.tsx                       | TypeScript JSX     |         54 |          0 |          8 |         62 |
+| a:\GCET BLOG\GcetBlog\src\app\user\templates\create\page.tsx                          | TypeScript JSX     |         21 |          0 |          5 |         26 |
+| a:\GCET BLOG\GcetBlog\src\app\user\templates\loading.tsx                              | TypeScript JSX     |          4 |          0 |          2 |          6 |
+| a:\GCET BLOG\GcetBlog\src\app\user\templates\page.tsx                                 | TypeScript JSX     |         76 |          1 |         11 |         88 |
+| a:\GCET BLOG\GcetBlog\src\app\user\users\RoleManagementDialog.tsx                     | TypeScript JSX     |        413 |         19 |         36 |        468 |
+| a:\GCET BLOG\GcetBlog\src\app\user\users\UserActions.tsx                              | TypeScript JSX     |        198 |          3 |         20 |        221 |
+| a:\GCET BLOG\GcetBlog\src\app\user\users\UsersTableClient.tsx                         | TypeScript JSX     |        247 |          5 |         10 |        262 |
+| a:\GCET BLOG\GcetBlog\src\app\user\users\actions.ts                                   | TypeScript         |        424 |         42 |         80 |        546 |
+| a:\GCET BLOG\GcetBlog\src\app\user\users\loading.tsx                                  | TypeScript JSX     |          4 |          0 |          2 |          6 |
+| a:\GCET BLOG\GcetBlog\src\app\user\users\page.tsx                                     | TypeScript JSX     |        107 |          8 |         19 |        134 |
+| a:\GCET BLOG\GcetBlog\src\blocks\ArchiveBlock\Component.tsx                           | TypeScript JSX     |         54 |          0 |         12 |         66 |
+| a:\GCET BLOG\GcetBlog\src\blocks\ArchiveBlock\config.ts                               | TypeScript         |         92 |          0 |          3 |         95 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Banner\Component.tsx                                 | TypeScript JSX     |         23 |          0 |          4 |         27 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Banner\config.ts                                     | TypeScript         |         35 |          0 |          3 |         38 |
+| a:\GCET BLOG\GcetBlog\src\blocks\CallToAction\Component.tsx                           | TypeScript JSX     |         20 |          0 |          4 |         24 |
+| a:\GCET BLOG\GcetBlog\src\blocks\CallToAction\config.ts                               | TypeScript         |         39 |          0 |          4 |         43 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Code\Component.client.tsx                            | TypeScript JSX     |         30 |          0 |          4 |         34 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Code\Component.tsx                                   | TypeScript JSX     |         17 |          0 |          5 |         22 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Code\CopyButton.tsx                                  | TypeScript JSX     |         30 |          0 |          4 |         34 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Code\config.ts                                       | TypeScript         |         32 |          0 |          2 |         34 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Contact\Component.tsx                                | TypeScript JSX     |        125 |          2 |          8 |        135 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Contact\config.ts                                    | TypeScript         |         61 |          0 |          2 |         63 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Content\Component.tsx                                | TypeScript JSX     |         36 |          0 |          8 |         44 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Content\config.ts                                    | TypeScript         |         75 |          0 |          5 |         80 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Countdown\Component.tsx                              | TypeScript JSX     |         87 |          0 |         12 |         99 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Countdown\config.ts                                  | TypeScript         |         33 |          0 |          2 |         35 |
+| a:\GCET BLOG\GcetBlog\src\blocks\EventsFeed\Component.tsx                             | TypeScript JSX     |        156 |          1 |         12 |        169 |
+| a:\GCET BLOG\GcetBlog\src\blocks\EventsFeed\config.ts                                 | TypeScript         |         46 |          0 |          2 |         48 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Form\Checkbox\index.tsx                              | TypeScript JSX     |         40 |          0 |          6 |         46 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Form\Component.tsx                                   | TypeScript JSX     |        139 |          2 |         23 |        164 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Form\Country\index.tsx                               | TypeScript JSX     |         60 |          0 |          6 |         66 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Form\Country\options.ts                              | TypeScript         |        982 |          0 |          1 |        983 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Form\Email\index.tsx                                 | TypeScript JSX     |         33 |          0 |          6 |         39 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Form\Error\index.tsx                                 | TypeScript JSX     |         13 |          0 |          3 |         16 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Form\Message\index.tsx                               | TypeScript JSX     |         11 |          0 |          3 |         14 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Form\Number\index.tsx                                | TypeScript JSX     |         33 |          0 |          4 |         37 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Form\Select\index.tsx                                | TypeScript JSX     |         59 |          0 |          5 |         64 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Form\State\index.tsx                                 | TypeScript JSX     |         60 |          0 |          5 |         65 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Form\State\options.ts                                | TypeScript         |         52 |          0 |          1 |         53 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Form\Text\index.tsx                                  | TypeScript JSX     |         28 |          0 |          5 |         33 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Form\Textarea\index.tsx                              | TypeScript JSX     |         34 |          0 |          7 |         41 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Form\Width\index.tsx                                 | TypeScript JSX     |         12 |          0 |          2 |         14 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Form\config.ts                                       | TypeScript         |         49 |          0 |          3 |         52 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Form\fields.tsx                                      | TypeScript JSX     |         20 |          0 |          2 |         22 |
+| a:\GCET BLOG\GcetBlog\src\blocks\GalleryPreview\Component.tsx                         | TypeScript JSX     |        101 |          1 |          8 |        110 |
+| a:\GCET BLOG\GcetBlog\src\blocks\GalleryPreview\config.ts                             | TypeScript         |         51 |          0 |          2 |         53 |
+| a:\GCET BLOG\GcetBlog\src\blocks\InstagramEmbed\Component.client.tsx                  | TypeScript JSX     |         75 |          4 |         11 |         90 |
+| a:\GCET BLOG\GcetBlog\src\blocks\InstagramEmbed\Component.tsx                         | TypeScript JSX     |         17 |          0 |          4 |         21 |
+| a:\GCET BLOG\GcetBlog\src\blocks\InstagramEmbed\config.ts                             | TypeScript         |         29 |          0 |          2 |         31 |
+| a:\GCET BLOG\GcetBlog\src\blocks\MediaBlock\Component.tsx                             | TypeScript JSX     |         60 |          0 |          8 |         68 |
+| a:\GCET BLOG\GcetBlog\src\blocks\MediaBlock\config.ts                                 | TypeScript         |         13 |          0 |          2 |         15 |
+| a:\GCET BLOG\GcetBlog\src\blocks\RelatedPosts\Component.tsx                           | TypeScript JSX     |         25 |          0 |          8 |         33 |
+| a:\GCET BLOG\GcetBlog\src\blocks\RenderBlocks.tsx                                     | TypeScript JSX     |         59 |          1 |         10 |         70 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Schedule\Component.tsx                               | TypeScript JSX     |        104 |          0 |          9 |        113 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Schedule\config.ts                                   | TypeScript         |         59 |          0 |          2 |         61 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Sponsors\Component.tsx                               | TypeScript JSX     |         89 |          1 |         12 |        102 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Sponsors\config.ts                                   | TypeScript         |         56 |          0 |          2 |         58 |
+| a:\GCET BLOG\GcetBlog\src\blocks\StatsBlock\Component.tsx                             | TypeScript JSX     |         76 |          0 |          7 |         83 |
+| a:\GCET BLOG\GcetBlog\src\blocks\StatsBlock\config.ts                                 | TypeScript         |         52 |          0 |          2 |         54 |
+| a:\GCET BLOG\GcetBlog\src\blocks\TeamGrid\Component.tsx                               | TypeScript JSX     |        122 |          1 |          7 |        130 |
+| a:\GCET BLOG\GcetBlog\src\blocks\TeamGrid\config.ts                                   | TypeScript         |         58 |          0 |          2 |         60 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Testimonials\Component.tsx                           | TypeScript JSX     |         99 |          1 |          8 |        108 |
+| a:\GCET BLOG\GcetBlog\src\blocks\Testimonials\config.ts                               | TypeScript         |         53 |          0 |          2 |         55 |
+| a:\GCET BLOG\GcetBlog\src\blocks\YouTubeEmbed\Component.client.tsx                    | TypeScript JSX     |         50 |          1 |          9 |         60 |
+| a:\GCET BLOG\GcetBlog\src\blocks\YouTubeEmbed\Component.tsx                           | TypeScript JSX     |         17 |          0 |          4 |         21 |
+| a:\GCET BLOG\GcetBlog\src\blocks\YouTubeEmbed\config.ts                               | TypeScript         |         29 |          0 |          2 |         31 |
+| a:\GCET BLOG\GcetBlog\src\collections\AdminLogs\index.ts                              | TypeScript         |        142 |          0 |          2 |        144 |
+| a:\GCET BLOG\GcetBlog\src\collections\Categories.ts                                   | TypeScript         |         28 |          0 |          3 |         31 |
+| a:\GCET BLOG\GcetBlog\src\collections\Comments\index.ts                               | TypeScript         |        217 |          8 |          7 |        232 |
+| a:\GCET BLOG\GcetBlog\src\collections\Feedback.ts                                     | TypeScript         |        103 |          0 |          2 |        105 |
+| a:\GCET BLOG\GcetBlog\src\collections\Institutions\index.ts                           | TypeScript         |        327 |         18 |          9 |        354 |
+| a:\GCET BLOG\GcetBlog\src\collections\Media.ts                                        | TypeScript         |        124 |          1 |          4 |        129 |
+| a:\GCET BLOG\GcetBlog\src\collections\Media\hooks\uploadToCloudinary.ts               | TypeScript         |         42 |          6 |         11 |         59 |
+| a:\GCET BLOG\GcetBlog\src\collections\Media\hooks\useCloudinaryFallback.ts            | TypeScript         |         15 |          5 |          3 |         23 |
+| a:\GCET BLOG\GcetBlog\src\collections\NewsletterEvents\index.ts                       | TypeScript         |         86 |          3 |          2 |         91 |
+| a:\GCET BLOG\GcetBlog\src\collections\NewsletterSubscribers\index.ts                  | TypeScript         |        155 |          4 |          2 |        161 |
+| a:\GCET BLOG\GcetBlog\src\collections\Newsletters\index.ts                            | TypeScript         |        193 |          7 |          8 |        208 |
+| a:\GCET BLOG\GcetBlog\src\collections\PageViews\index.ts                              | TypeScript         |        112 |          3 |          2 |        117 |
+| a:\GCET BLOG\GcetBlog\src\collections\Pages\hooks\revalidatePage.ts                   | TypeScript         |         32 |          1 |         11 |         44 |
+| a:\GCET BLOG\GcetBlog\src\collections\Pages\index.ts                                  | TypeScript         |        147 |          5 |          6 |        158 |
+| a:\GCET BLOG\GcetBlog\src\collections\Posts\hooks\populateAuthors.ts                  | TypeScript         |         27 |          5 |          6 |         38 |
+| a:\GCET BLOG\GcetBlog\src\collections\Posts\hooks\revalidatePost.ts                   | TypeScript         |         36 |          1 |         12 |         49 |
+| a:\GCET BLOG\GcetBlog\src\collections\Posts\index.ts                                  | TypeScript         |        410 |         13 |          8 |        431 |
+| a:\GCET BLOG\GcetBlog\src\collections\Templates.ts                                    | TypeScript         |        216 |          0 |          8 |        224 |
+| a:\GCET BLOG\GcetBlog\src\collections\Users\index.ts                                  | TypeScript         |        262 |         31 |          3 |        296 |
+| a:\GCET BLOG\GcetBlog\src\collections\Votes\index.ts                                  | TypeScript         |         95 |          8 |          3 |        106 |
+| a:\GCET BLOG\GcetBlog\src\components\AdminBar\index.scss                              | SCSS               |          6 |          0 |          2 |          8 |
+| a:\GCET BLOG\GcetBlog\src\components\AdminBar\index.tsx                               | TypeScript JSX     |         79 |          0 |         11 |         90 |
+| a:\GCET BLOG\GcetBlog\src\components\AdminLogout\index.tsx                            | TypeScript JSX     |         29 |          2 |          5 |         36 |
+| a:\GCET BLOG\GcetBlog\src\components\AdminLogout\styles.css                           | PostCSS            |         13 |          0 |          2 |         15 |
+| a:\GCET BLOG\GcetBlog\src\components\AdminUI\CustomDashboard.tsx                      | TypeScript JSX     |        358 |          9 |         20 |        387 |
+| a:\GCET BLOG\GcetBlog\src\components\AdminUI\CustomLogo.tsx                           | TypeScript JSX     |         14 |          0 |          3 |         17 |
+| a:\GCET BLOG\GcetBlog\src\components\AdminUI\CustomNav.tsx                            | TypeScript JSX     |         84 |          3 |         10 |         97 |
+| a:\GCET BLOG\GcetBlog\src\components\BeforeDashboard\SeedButton\index.scss            | SCSS               |         11 |          0 |          2 |         13 |
+| a:\GCET BLOG\GcetBlog\src\components\BeforeDashboard\SeedButton\index.tsx             | TypeScript JSX     |         78 |          0 |         11 |         89 |
+| a:\GCET BLOG\GcetBlog\src\components\BeforeDashboard\index.scss                       | SCSS               |         19 |          0 |          6 |         25 |
+| a:\GCET BLOG\GcetBlog\src\components\BeforeDashboard\index.tsx                        | TypeScript JSX     |         44 |          0 |          5 |         49 |
+| a:\GCET BLOG\GcetBlog\src\components\BeforeLogin\index.tsx                            | TypeScript JSX     |         12 |          0 |          3 |         15 |
+| a:\GCET BLOG\GcetBlog\src\components\Card\index.tsx                                   | TypeScript JSX     |        126 |          5 |         14 |        145 |
+| a:\GCET BLOG\GcetBlog\src\components\ClubThemeWrapper.tsx                             | TypeScript JSX     |         41 |          9 |          5 |         55 |
+| a:\GCET BLOG\GcetBlog\src\components\CollectionArchive\index.tsx                      | TypeScript JSX     |         25 |          0 |          6 |         31 |
+| a:\GCET BLOG\GcetBlog\src\components\CommentForm\index.tsx                            | TypeScript JSX     |         83 |          0 |         15 |         98 |
+| a:\GCET BLOG\GcetBlog\src\components\CommentList\index.tsx                            | TypeScript JSX     |        267 |         12 |         27 |        306 |
+| a:\GCET BLOG\GcetBlog\src\components\DraftModeBanner.tsx                              | TypeScript JSX     |         28 |          0 |          2 |         30 |
+| a:\GCET BLOG\GcetBlog\src\components\GlobalSearchBar\index.tsx                        | TypeScript JSX     |        330 |         19 |         22 |        371 |
+| a:\GCET BLOG\GcetBlog\src\components\GoogleSignInButton.tsx                           | TypeScript JSX     |         63 |          0 |          6 |         69 |
+| a:\GCET BLOG\GcetBlog\src\components\Header\AuthButton.tsx                            | TypeScript JSX     |         68 |          0 |         10 |         78 |
+| a:\GCET BLOG\GcetBlog\src\components\InstagramEmbedLoader.tsx                         | TypeScript JSX     |         27 |          2 |          6 |         35 |
+| a:\GCET BLOG\GcetBlog\src\components\LandingPage\CTASection.tsx                       | TypeScript JSX     |         97 |          4 |         10 |        111 |
+| a:\GCET BLOG\GcetBlog\src\components\LandingPage\FeaturedPosts.tsx                    | TypeScript JSX     |        115 |          8 |         12 |        135 |
+| a:\GCET BLOG\GcetBlog\src\components\LandingPage\FeaturesSection.tsx                  | TypeScript JSX     |         81 |          2 |          4 |         87 |
+| a:\GCET BLOG\GcetBlog\src\components\LandingPage\HeroSection.tsx                      | TypeScript JSX     |        124 |          4 |         13 |        141 |
+| a:\GCET BLOG\GcetBlog\src\components\LandingPage\HomePosts.tsx                        | TypeScript JSX     |        161 |          8 |         12 |        181 |
+| a:\GCET BLOG\GcetBlog\src\components\LandingPage\RecentPostsSection.tsx               | TypeScript JSX     |        127 |          8 |         12 |        147 |
+| a:\GCET BLOG\GcetBlog\src\components\LandingPage\StatsSection.tsx                     | TypeScript JSX     |        102 |          4 |         12 |        118 |
+| a:\GCET BLOG\GcetBlog\src\components\LandingPage\index.ts                             | TypeScript         |          5 |          0 |          1 |          6 |
+| a:\GCET BLOG\GcetBlog\src\components\Link\index.tsx                                   | TypeScript JSX     |         63 |          0 |          4 |         67 |
+| a:\GCET BLOG\GcetBlog\src\components\LivePreviewListener\index.tsx                    | TypeScript JSX     |          9 |          0 |          2 |         11 |
+| a:\GCET BLOG\GcetBlog\src\components\Logo\Logo.tsx                                    | TypeScript JSX     |         24 |          1 |          5 |         30 |
+| a:\GCET BLOG\GcetBlog\src\components\LogoutButton\index.tsx                           | TypeScript JSX     |         39 |          4 |          7 |         50 |
+| a:\GCET BLOG\GcetBlog\src\components\Media\ImageMedia\index.tsx                       | TypeScript JSX     |         61 |          2 |         16 |         79 |
+| a:\GCET BLOG\GcetBlog\src\components\Media\VideoMedia\index.tsx                       | TypeScript JSX     |         34 |          3 |         10 |         47 |
+| a:\GCET BLOG\GcetBlog\src\components\Media\index.tsx                                  | TypeScript JSX     |         20 |          0 |          6 |         26 |
+| a:\GCET BLOG\GcetBlog\src\components\Media\types.ts                                   | TypeScript         |         20 |          0 |          3 |         23 |
+| a:\GCET BLOG\GcetBlog\src\components\ModernCTA\index.tsx                              | TypeScript JSX     |         61 |          4 |          7 |         72 |
+| a:\GCET BLOG\GcetBlog\src\components\ModernFeatures\index.tsx                         | TypeScript JSX     |         95 |          4 |          8 |        107 |
+| a:\GCET BLOG\GcetBlog\src\components\NewsletterSignup\index.tsx                       | TypeScript JSX     |        125 |          9 |         12 |        146 |
+| a:\GCET BLOG\GcetBlog\src\components\PageRange\index.tsx                              | TypeScript JSX     |         51 |          0 |          7 |         58 |
+| a:\GCET BLOG\GcetBlog\src\components\PageViewTracker\index.tsx                        | TypeScript JSX     |         34 |         10 |          9 |         53 |
+| a:\GCET BLOG\GcetBlog\src\components\Pagination\index.tsx                             | TypeScript JSX     |         91 |          0 |         11 |        102 |
+| a:\GCET BLOG\GcetBlog\src\components\PayloadRedirects\index.tsx                       | TypeScript JSX     |         40 |          1 |          8 |         49 |
+| a:\GCET BLOG\GcetBlog\src\components\PostComments\index.tsx                           | TypeScript JSX     |         49 |          5 |         10 |         64 |
+| a:\GCET BLOG\GcetBlog\src\components\RichTextEditor\RichTextEditor.tsx                | TypeScript JSX     |        347 |         23 |         45 |        415 |
+| a:\GCET BLOG\GcetBlog\src\components\RichTextEditor\editor.css                        | PostCSS            |         22 |          2 |          6 |         30 |
+| a:\GCET BLOG\GcetBlog\src\components\RichTextEditor\extensions\InstagramEmbed.ts      | TypeScript         |        111 |          3 |         15 |        129 |
+| a:\GCET BLOG\GcetBlog\src\components\RichTextEditor\extensions\YouTubeEmbed.ts        | TypeScript         |        126 |          3 |         17 |        146 |
+| a:\GCET BLOG\GcetBlog\src\components\RichTextEditor\htmlToLexical.ts                  | TypeScript         |        438 |         47 |         56 |        541 |
+| a:\GCET BLOG\GcetBlog\src\components\RichTextEditor\index.ts                          | TypeScript         |          3 |          0 |          1 |          4 |
+| a:\GCET BLOG\GcetBlog\src\components\RichTextEditor\lexicalToHtml.ts                  | TypeScript         |        103 |         16 |         31 |        150 |
+| a:\GCET BLOG\GcetBlog\src\components\RichText\index.tsx                               | TypeScript JSX     |        172 |         12 |         15 |        199 |
+| a:\GCET BLOG\GcetBlog\src\components\ShareButtons\index.tsx                           | TypeScript JSX     |        152 |          3 |         10 |        165 |
+| a:\GCET BLOG\GcetBlog\src\components\UpgradeToConoscoPrompt.tsx                       | TypeScript JSX     |         74 |          1 |         10 |         85 |
+| a:\GCET BLOG\GcetBlog\src\components\UserInfo\index.tsx                               | TypeScript JSX     |         42 |          0 |          7 |         49 |
+| a:\GCET BLOG\GcetBlog\src\components\VoteButtons\index.tsx                            | TypeScript JSX     |        133 |         13 |         18 |        164 |
+| a:\GCET BLOG\GcetBlog\src\components\base\DataTable.tsx                               | TypeScript JSX     |        232 |         27 |         21 |        280 |
+| a:\GCET BLOG\GcetBlog\src\components\base\DataTablePagination.tsx                     | TypeScript JSX     |        100 |          7 |         12 |        119 |
+| a:\GCET BLOG\GcetBlog\src\components\base\DataTableSkeleton.tsx                       | TypeScript JSX     |         58 |          6 |          5 |         69 |
+| a:\GCET BLOG\GcetBlog\src\components\base\EmptyState.tsx                              | TypeScript JSX     |         25 |          5 |          3 |         33 |
+| a:\GCET BLOG\GcetBlog\src\components\base\FilterBar.tsx                               | TypeScript JSX     |         67 |          7 |          8 |         82 |
+| a:\GCET BLOG\GcetBlog\src\components\base\LoadingButton.tsx                           | TypeScript JSX     |         29 |          2 |          3 |         34 |
+| a:\GCET BLOG\GcetBlog\src\components\base\PageHeader.tsx                              | TypeScript JSX     |         20 |          4 |          3 |         27 |
+| a:\GCET BLOG\GcetBlog\src\components\base\PageSkeleton.tsx                            | TypeScript JSX     |         83 |         13 |          7 |        103 |
+| a:\GCET BLOG\GcetBlog\src\components\base\SearchInput.tsx                             | TypeScript JSX     |         92 |          8 |         12 |        112 |
+| a:\GCET BLOG\GcetBlog\src\components\base\index.ts                                    | TypeScript         |          8 |          0 |          1 |          9 |
+| a:\GCET BLOG\GcetBlog\src\components\templates\TemplateCard.tsx                       | TypeScript JSX     |         73 |          0 |          6 |         79 |
+| a:\GCET BLOG\GcetBlog\src\components\templates\TemplatePreview.tsx                    | TypeScript JSX     |         78 |          3 |          7 |         88 |
+| a:\GCET BLOG\GcetBlog\src\components\templates\TemplateSelector.tsx                   | TypeScript JSX     |        238 |         17 |         24 |        279 |
+| a:\GCET BLOG\GcetBlog\src\components\templates\index.ts                               | TypeScript         |          4 |          0 |          1 |          5 |
+| a:\GCET BLOG\GcetBlog\src\components\templates\templateUtils.ts                       | TypeScript         |         44 |          0 |          6 |         50 |
+| a:\GCET BLOG\GcetBlog\src\components\ui\alert-dialog.tsx                              | TypeScript JSX     |        127 |          0 |         15 |        142 |
+| a:\GCET BLOG\GcetBlog\src\components\ui\alert.tsx                                     | TypeScript JSX     |         43 |          0 |          7 |         50 |
+| a:\GCET BLOG\GcetBlog\src\components\ui\avatar.tsx                                    | TypeScript JSX     |         44 |          0 |          7 |         51 |
+| a:\GCET BLOG\GcetBlog\src\components\ui\badge.tsx                                     | TypeScript JSX     |         28 |          0 |          5 |         33 |
+| a:\GCET BLOG\GcetBlog\src\components\ui\button.tsx                                    | TypeScript JSX     |         48 |          0 |          5 |         53 |
+| a:\GCET BLOG\GcetBlog\src\components\ui\card.tsx                                      | TypeScript JSX     |         41 |          0 |          8 |         49 |
+| a:\GCET BLOG\GcetBlog\src\components\ui\checkbox.tsx                                  | TypeScript JSX     |         24 |          0 |          4 |         28 |
+| a:\GCET BLOG\GcetBlog\src\components\ui\dialog.tsx                                    | TypeScript JSX     |         91 |          0 |         14 |        105 |
+| a:\GCET BLOG\GcetBlog\src\components\ui\dropdown-menu.tsx                             | TypeScript JSX     |        182 |          0 |         19 |        201 |
+| a:\GCET BLOG\GcetBlog\src\components\ui\input.tsx                                     | TypeScript JSX     |         20 |          0 |          4 |         24 |
+| a:\GCET BLOG\GcetBlog\src\components\ui\label.tsx                                     | TypeScript JSX     |         15 |          0 |          5 |         20 |
+| a:\GCET BLOG\GcetBlog\src\components\ui\pagination.tsx                                | TypeScript JSX     |         82 |          0 |         11 |         93 |
+| a:\GCET BLOG\GcetBlog\src\components\ui\radio-group.tsx                               | TypeScript JSX     |         54 |          0 |         11 |         65 |
+| a:\GCET BLOG\GcetBlog\src\components\ui\select.tsx                                    | TypeScript JSX     |        146 |          0 |         15 |        161 |
+| a:\GCET BLOG\GcetBlog\src\components\ui\separator.tsx                                 | TypeScript JSX     |         27 |          0 |          5 |         32 |
+| a:\GCET BLOG\GcetBlog\src\components\ui\skeleton.tsx                                  | TypeScript JSX     |         13 |          0 |          3 |         16 |
+| a:\GCET BLOG\GcetBlog\src\components\ui\table.tsx                                     | TypeScript JSX     |        107 |          0 |         11 |        118 |
+| a:\GCET BLOG\GcetBlog\src\components\ui\textarea.tsx                                  | TypeScript JSX     |         19 |          0 |          4 |         23 |
+| a:\GCET BLOG\GcetBlog\src\components\ui\toast.tsx                                     | TypeScript JSX     |        116 |          0 |         14 |        130 |
+| a:\GCET BLOG\GcetBlog\src\components\ui\toaster.tsx                                   | TypeScript JSX     |         32 |          0 |          4 |         36 |
+| a:\GCET BLOG\GcetBlog\src\core\types.ts                                               | TypeScript         |         24 |         18 |         10 |         52 |
+| a:\GCET BLOG\GcetBlog\src\cssVariables.js                                             | JavaScript         |         10 |          1 |          2 |         13 |
+| a:\GCET BLOG\GcetBlog\src\custom\departments.ts                                       | TypeScript         |         29 |         21 |          7 |         57 |
+| a:\GCET BLOG\GcetBlog\src\custom\theme.ts                                             | TypeScript         |         64 |         26 |         16 |        106 |
+| a:\GCET BLOG\GcetBlog\src\endpoints\seed\contact-form.ts                              | TypeScript         |        110 |          0 |          2 |        112 |
+| a:\GCET BLOG\GcetBlog\src\endpoints\seed\contact-page.ts                              | TypeScript         |         54 |          0 |          3 |         57 |
+| a:\GCET BLOG\GcetBlog\src\endpoints\seed\home-static.ts                               | TypeScript         |         86 |          1 |          2 |         89 |
+| a:\GCET BLOG\GcetBlog\src\endpoints\seed\home.ts                                      | TypeScript         |        573 |          0 |          3 |        576 |
+| a:\GCET BLOG\GcetBlog\src\endpoints\seed\image-1.ts                                   | TypeScript         |         66 |          0 |          2 |         68 |
+| a:\GCET BLOG\GcetBlog\src\endpoints\seed\image-2.ts                                   | TypeScript         |         66 |          0 |          2 |         68 |
+| a:\GCET BLOG\GcetBlog\src\endpoints\seed\image-3.ts                                   | TypeScript         |         66 |          0 |          2 |         68 |
+| a:\GCET BLOG\GcetBlog\src\endpoints\seed\image-hero-1.ts                              | TypeScript         |          4 |          0 |          2 |          6 |
+| a:\GCET BLOG\GcetBlog\src\endpoints\seed\index.ts                                     | TypeScript         |        460 |         14 |         36 |        510 |
+| a:\GCET BLOG\GcetBlog\src\endpoints\seed\post-1.ts                                    | TypeScript         |        313 |          0 |          3 |        316 |
+| a:\GCET BLOG\GcetBlog\src\endpoints\seed\post-2.ts                                    | TypeScript         |        231 |          0 |          2 |        233 |
+| a:\GCET BLOG\GcetBlog\src\endpoints\seed\post-3.ts                                    | TypeScript         |        267 |          0 |          2 |        269 |
+| a:\GCET BLOG\GcetBlog\src\environment.d.ts                                            | TypeScript         |         32 |          8 |          8 |         48 |
+| a:\GCET BLOG\GcetBlog\src\fields\defaultLexical.ts                                    | TypeScript         |         45 |          0 |          3 |         48 |
+| a:\GCET BLOG\GcetBlog\src\fields\institution.ts                                       | TypeScript         |         40 |         24 |          4 |         68 |
+| a:\GCET BLOG\GcetBlog\src\fields\link.ts                                              | TypeScript         |        127 |          0 |         13 |        140 |
+| a:\GCET BLOG\GcetBlog\src\fields\linkGroup.ts                                         | TypeScript         |         23 |          0 |          6 |         29 |
+| a:\GCET BLOG\GcetBlog\src\fields\slug\SlugComponent.tsx                               | TypeScript JSX     |         72 |          0 |         16 |         88 |
+| a:\GCET BLOG\GcetBlog\src\fields\slug\formatSlug.ts                                   | TypeScript         |         20 |          0 |          6 |         26 |
+| a:\GCET BLOG\GcetBlog\src\fields\slug\index.scss                                      | SCSS               |         12 |          0 |          2 |         14 |
+| a:\GCET BLOG\GcetBlog\src\fields\slug\index.ts                                        | TypeScript         |         44 |          2 |          8 |         54 |
+| a:\GCET BLOG\GcetBlog\src\heros\HighImpact\index.tsx                                  | TypeScript JSX     |         72 |          9 |         13 |         94 |
+| a:\GCET BLOG\GcetBlog\src\heros\LowImpact\index.tsx                                   | TypeScript JSX     |         21 |          0 |          5 |         26 |
+| a:\GCET BLOG\GcetBlog\src\heros\MediumImpact\index.tsx                                | TypeScript JSX     |         42 |          0 |          5 |         47 |
+| a:\GCET BLOG\GcetBlog\src\heros\PostHero\index.tsx                                    | TypeScript JSX     |         79 |          4 |          9 |         92 |
+| a:\GCET BLOG\GcetBlog\src\heros\RenderHero.tsx                                        | TypeScript JSX     |         17 |          0 |          9 |         26 |
+| a:\GCET BLOG\GcetBlog\src\heros\config.ts                                             | TypeScript         |         69 |          0 |          4 |         73 |
+| a:\GCET BLOG\GcetBlog\src\hooks\formatSlug.ts                                         | TypeScript         |         21 |          0 |          7 |         28 |
+| a:\GCET BLOG\GcetBlog\src\hooks\populatePublishedAt.ts                                | TypeScript         |         13 |          0 |          3 |         16 |
+| a:\GCET BLOG\GcetBlog\src\hooks\revalidateRedirects.ts                                | TypeScript         |          7 |          0 |          5 |         12 |
+| a:\GCET BLOG\GcetBlog\src\hooks\tenantIsolation.ts                                    | TypeScript         |         97 |         72 |         20 |        189 |
+| a:\GCET BLOG\GcetBlog\src\hooks\use-toast.ts                                          | TypeScript         |        160 |          3 |         32 |        195 |
+| a:\GCET BLOG\GcetBlog\src\jobs\newsletter.ts                                          | TypeScript         |        163 |         31 |         33 |        227 |
+| a:\GCET BLOG\GcetBlog\src\middleware.ts                                               | TypeScript         |        207 |         53 |         47 |        307 |
+| a:\GCET BLOG\GcetBlog\src\modules\clubs\collections\Clubs.ts                          | TypeScript         |        289 |         13 |          5 |        307 |
+| a:\GCET BLOG\GcetBlog\src\modules\clubs\components\ClubArchive.tsx                    | TypeScript JSX     |         15 |          0 |          3 |         18 |
+| a:\GCET BLOG\GcetBlog\src\modules\clubs\components\ClubCard.tsx                       | TypeScript JSX     |         99 |          7 |         10 |        116 |
+| a:\GCET BLOG\GcetBlog\src\modules\clubs\components\ClubEnrichment.tsx                 | TypeScript JSX     |        182 |          9 |          7 |        198 |
+| a:\GCET BLOG\GcetBlog\src\modules\clubs\components\ClubNav.tsx                        | TypeScript JSX     |         68 |          3 |          8 |         79 |
+| a:\GCET BLOG\GcetBlog\src\modules\clubs\components\ClubSubPageHeader.tsx              | TypeScript JSX     |         51 |          4 |          5 |         60 |
+| a:\GCET BLOG\GcetBlog\src\modules\clubs\index.ts                                      | TypeScript         |          3 |          0 |          1 |          4 |
+| a:\GCET BLOG\GcetBlog\src\modules\clubs\services\club-context.ts                      | TypeScript         |        135 |         14 |         29 |        178 |
+| a:\GCET BLOG\GcetBlog\src\modules\clubs\types\index.ts                                | TypeScript         |         66 |         24 |         19 |        109 |
+| a:\GCET BLOG\GcetBlog\src\modules\events\collections\Events.ts                        | TypeScript         |        287 |         16 |          5 |        308 |
+| a:\GCET BLOG\GcetBlog\src\modules\events\components\EventArchive.tsx                  | TypeScript JSX     |         15 |          0 |          3 |         18 |
+| a:\GCET BLOG\GcetBlog\src\modules\events\components\EventCard.tsx                     | TypeScript JSX     |        121 |          8 |         12 |        141 |
+| a:\GCET BLOG\GcetBlog\src\modules\events\components\EventHero.tsx                     | TypeScript JSX     |        228 |         13 |         13 |        254 |
+| a:\GCET BLOG\GcetBlog\src\modules\events\index.ts                                     | TypeScript         |          3 |          0 |          1 |          4 |
+| a:\GCET BLOG\GcetBlog\src\modules\events\services\event-context.ts                    | TypeScript         |        256 |         43 |         43 |        342 |
+| a:\GCET BLOG\GcetBlog\src\modules\events\types\index.ts                               | TypeScript         |         58 |         35 |         17 |        110 |
+| a:\GCET BLOG\GcetBlog\src\payload-types.ts                                            | TypeScript         |      2,853 |      1,056 |          4 |      3,913 |
+| a:\GCET BLOG\GcetBlog\src\payload.config.ts                                           | TypeScript         |        161 |         12 |          9 |        182 |
+| a:\GCET BLOG\GcetBlog\src\plugins\index.ts                                            | TypeScript         |         88 |          1 |          6 |         95 |
+| a:\GCET BLOG\GcetBlog\src\providers\Auth\index.tsx                                    | TypeScript JSX     |         85 |          2 |         15 |        102 |
+| a:\GCET BLOG\GcetBlog\src\providers\HeaderTheme\index.tsx                             | TypeScript JSX     |         23 |          0 |         11 |         34 |
+| a:\GCET BLOG\GcetBlog\src\providers\NavigationProgress\index.tsx                      | TypeScript JSX     |         78 |         11 |         18 |        107 |
+| a:\GCET BLOG\GcetBlog\src\providers\Tenant\index.tsx                                  | TypeScript JSX     |         35 |         26 |          8 |         69 |
+| a:\GCET BLOG\GcetBlog\src\providers\Theme\InitTheme\index.tsx                         | TypeScript JSX     |         47 |          1 |          3 |         51 |
+| a:\GCET BLOG\GcetBlog\src\providers\Theme\ThemeSelector\index.tsx                     | TypeScript JSX     |         44 |          0 |          8 |         52 |
+| a:\GCET BLOG\GcetBlog\src\providers\Theme\ThemeSelector\types.ts                      | TypeScript         |          3 |          0 |          3 |          6 |
+| a:\GCET BLOG\GcetBlog\src\providers\Theme\index.tsx                                   | TypeScript JSX     |         44 |          0 |         14 |         58 |
+| a:\GCET BLOG\GcetBlog\src\providers\Theme\shared.ts                                   | TypeScript         |         12 |          0 |          6 |         18 |
+| a:\GCET BLOG\GcetBlog\src\providers\Theme\types.ts                                    | TypeScript         |          8 |          0 |          3 |         11 |
+| a:\GCET BLOG\GcetBlog\src\providers\User\index.tsx                                    | TypeScript JSX     |        114 |          9 |         22 |        145 |
+| a:\GCET BLOG\GcetBlog\src\providers\index.tsx                                         | TypeScript JSX     |         15 |          0 |          3 |         18 |
+| a:\GCET BLOG\GcetBlog\src\search\Component.tsx                                        | TypeScript JSX     |         37 |          0 |          5 |         42 |
+| a:\GCET BLOG\GcetBlog\src\search\beforeSync.ts                                        | TypeScript         |         51 |          0 |         10 |         61 |
+| a:\GCET BLOG\GcetBlog\src\search\fieldOverrides.ts                                    | TypeScript         |         60 |          0 |          2 |         62 |
+| a:\GCET BLOG\GcetBlog\src\services\conosco\cached.ts                                  | TypeScript         |        182 |         25 |         19 |        226 |
+| a:\GCET BLOG\GcetBlog\src\services\conosco\client.ts                                  | TypeScript         |        163 |         34 |         32 |        229 |
+| a:\GCET BLOG\GcetBlog\src\services\conosco\disconnected.ts                            | TypeScript         |         91 |         17 |         19 |        127 |
+| a:\GCET BLOG\GcetBlog\src\services\conosco\factory.ts                                 | TypeScript         |         61 |         17 |         13 |         91 |
+| a:\GCET BLOG\GcetBlog\src\services\conosco\index.ts                                   | TypeScript         |         54 |         24 |         14 |         92 |
+| a:\GCET BLOG\GcetBlog\src\services\conosco\types.ts                                   | TypeScript         |        184 |         72 |         50 |        306 |
+| a:\GCET BLOG\GcetBlog\src\services\email\factory.ts                                   | TypeScript         |         78 |         15 |         18 |        111 |
+| a:\GCET BLOG\GcetBlog\src\services\email\index.ts                                     | TypeScript         |         36 |         25 |         13 |         74 |
+| a:\GCET BLOG\GcetBlog\src\services\email\providers\console.ts                         | TypeScript         |         71 |          6 |         14 |         91 |
+| a:\GCET BLOG\GcetBlog\src\services\email\providers\resend.ts                          | TypeScript         |        130 |          9 |         18 |        157 |
+| a:\GCET BLOG\GcetBlog\src\services\email\providers\sendgrid.ts                        | TypeScript         |         96 |         12 |         15 |        123 |
+| a:\GCET BLOG\GcetBlog\src\services\email\providers\smtp.ts                            | TypeScript         |        110 |          7 |         15 |        132 |
+| a:\GCET BLOG\GcetBlog\src\services\email\sender.ts                                    | TypeScript         |        376 |         52 |         60 |        488 |
+| a:\GCET BLOG\GcetBlog\src\services\email\templates\BaseLayout.tsx                     | TypeScript JSX     |        156 |         12 |         24 |        192 |
+| a:\GCET BLOG\GcetBlog\src\services\email\templates\NewsletterDigest.tsx               | TypeScript JSX     |        174 |         12 |         22 |        208 |
+| a:\GCET BLOG\GcetBlog\src\services\email\templates\NewsletterManual.tsx               | TypeScript JSX     |         52 |         11 |         10 |         73 |
+| a:\GCET BLOG\GcetBlog\src\services\email\templates\UnsubscribeConfirmation.tsx        | TypeScript JSX     |         75 |          8 |         17 |        100 |
+| a:\GCET BLOG\GcetBlog\src\services\email\templates\WelcomeEmail.tsx                   | TypeScript JSX     |        101 |          6 |         20 |        127 |
+| a:\GCET BLOG\GcetBlog\src\services\email\tracking.ts                                  | TypeScript         |         64 |         37 |         15 |        116 |
+| a:\GCET BLOG\GcetBlog\src\services\email\types.ts                                     | TypeScript         |         68 |         52 |         20 |        140 |
+| a:\GCET BLOG\GcetBlog\src\utilities\canUseDOM.ts                                      | TypeScript         |          1 |          0 |          1 |          2 |
+| a:\GCET BLOG\GcetBlog\src\utilities\checkUserRole.ts                                  | TypeScript         |         50 |         28 |         12 |         90 |
+| a:\GCET BLOG\GcetBlog\src\utilities\deepMerge.ts                                      | TypeScript         |         20 |         12 |          4 |         36 |
+| a:\GCET BLOG\GcetBlog\src\utilities\domainScope.ts                                    | TypeScript         |         90 |         50 |         19 |        159 |
+| a:\GCET BLOG\GcetBlog\src\utilities\formatAuthors.ts                                  | TypeScript         |         10 |         11 |          4 |         25 |
+| a:\GCET BLOG\GcetBlog\src\utilities\formatDateTime.ts                                 | TypeScript         |         10 |          0 |          2 |         12 |
+| a:\GCET BLOG\GcetBlog\src\utilities\generateMeta.ts                                   | TypeScript         |         39 |          1 |         12 |         52 |
+| a:\GCET BLOG\GcetBlog\src\utilities\generatePreviewPath.ts                            | TypeScript         |         20 |          0 |          6 |         26 |
+| a:\GCET BLOG\GcetBlog\src\utilities\getDocument.ts                                    | TypeScript         |         22 |          3 |          7 |         32 |
+| a:\GCET BLOG\GcetBlog\src\utilities\getGlobals.ts                                     | TypeScript         |         17 |          3 |          7 |         27 |
+| a:\GCET BLOG\GcetBlog\src\utilities\getMeUser.ts                                      | TypeScript         |         35 |          1 |          8 |         44 |
+| a:\GCET BLOG\GcetBlog\src\utilities\getMediaUrl.ts                                    | TypeScript         |         12 |          8 |          5 |         25 |
+| a:\GCET BLOG\GcetBlog\src\utilities\getRedirects.ts                                   | TypeScript         |         17 |          5 |          5 |         27 |
+| a:\GCET BLOG\GcetBlog\src\utilities\getURL.ts                                         | TypeScript         |         21 |          0 |          6 |         27 |
+| a:\GCET BLOG\GcetBlog\src\utilities\mergeOpenGraph.ts                                 | TypeScript         |         20 |          0 |          3 |         23 |
+| a:\GCET BLOG\GcetBlog\src\utilities\tenantContext.ts                                  | TypeScript         |         58 |         64 |         17 |        139 |
+| a:\GCET BLOG\GcetBlog\src\utilities\tenantQuery.ts                                    | TypeScript         |        262 |        148 |         51 |        461 |
+| a:\GCET BLOG\GcetBlog\src\utilities\tenantResolver.ts                                 | TypeScript         |        174 |         84 |         35 |        293 |
+| a:\GCET BLOG\GcetBlog\src\utilities\toKebabCase.ts                                    | TypeScript         |          5 |          0 |          1 |          6 |
+| a:\GCET BLOG\GcetBlog\src\utilities\ui.ts                                             | TypeScript         |          5 |          5 |          3 |         13 |
+| a:\GCET BLOG\GcetBlog\src\utilities\uploadToCloudinaryDirect.ts                       | TypeScript         |         71 |         12 |         13 |         96 |
+| a:\GCET BLOG\GcetBlog\src\utilities\useClickableCard.ts                               | TypeScript         |         89 |          3 |         17 |        109 |
+| a:\GCET BLOG\GcetBlog\src\utilities\useDebounce.ts                                    | TypeScript         |         13 |          0 |          5 |         18 |
+| a:\GCET BLOG\GcetBlog\tailwind.config.mjs                                             | JavaScript         |        158 |          1 |          3 |        162 |
+| a:\GCET BLOG\GcetBlog\test.env                                                        | Dotenv             |          1 |          0 |          1 |          2 |
+| a:\GCET BLOG\GcetBlog\tests\e2e\frontend.e2e.spec.ts                                  | TypeScript         |         14 |          0 |          7 |         21 |
+| a:\GCET BLOG\GcetBlog\tests\int\api.int.spec.ts                                       | TypeScript         |         16 |          0 |          5 |         21 |
+| a:\GCET BLOG\GcetBlog\tsconfig.json                                                   | JSON with Comments |         51 |          0 |          1 |         52 |
+| a:\GCET BLOG\GcetBlog\vitest.config.mts                                               | TypeScript         |         11 |          0 |          2 |         13 |
+| a:\GCET BLOG\GcetBlog\vitest.setup.ts                                                 | TypeScript         |          1 |          2 |          2 |          5 |
+| Total                                                                                 |                    |     96,800 |      5,018 |     11,355 |    113,173 |
++---------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
