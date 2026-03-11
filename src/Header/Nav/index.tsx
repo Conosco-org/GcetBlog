@@ -22,23 +22,23 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
       {/* Role-based navigation items */}
       {user && (user.roleAssignments?.length ?? 0) > 0 && (
         <Link 
-          href="/editor" 
+          href="/user" 
           className="flex items-center gap-1 text-sm hover:text-primary transition-colors"
-          title="Editor Dashboard"
+          title="Dashboard"
         >
           <FileText className="w-4 h-4" />
-          <span className="hidden sm:inline">Editor</span>
+          <span className="hidden sm:inline">Dashboard</span>
         </Link>
       )}
       
-      {user && (user.role === 'superadmin' || user.roleAssignments?.some(a => a.assignedRole === 'institution_admin')) && (
+      {user && user.role === 'superadmin' && (
         <Link 
-          href={user.role === 'superadmin' ? '/platform' : '/admin-dashboard'}
+          href="/platform"
           className="flex items-center gap-1 text-sm hover:text-primary transition-colors"
-          title="Admin Dashboard"
+          title="Platform Admin"
         >
           <Settings className="w-4 h-4" />
-          <span className="hidden sm:inline">Admin</span>
+          <span className="hidden sm:inline">Platform</span>
         </Link>
       )}
       

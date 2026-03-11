@@ -21,7 +21,7 @@ async function requireSuperAdmin() {
 function parseDomains(formData: FormData) {
   const domains: Array<{
     hostname: string
-    purpose: 'main' | 'club' | 'department'
+    purpose: 'main' | 'blog' | 'club' | 'department'
     scopeId?: string
     verified?: boolean
   }> = []
@@ -36,7 +36,7 @@ function parseDomains(formData: FormData) {
     if (hostname) {
       domains.push({
         hostname,
-        purpose: purpose as 'main' | 'club' | 'department',
+        purpose: purpose as 'main' | 'blog' | 'club' | 'department',
         scopeId,
         verified,
       })

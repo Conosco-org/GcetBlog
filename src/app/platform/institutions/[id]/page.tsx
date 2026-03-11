@@ -55,7 +55,7 @@ export default async function EditInstitutionPage({ params }: Props) {
   } | undefined
   const domains = (institution.domains as Array<{
     hostname: string
-    purpose: 'main' | 'club' | 'department'
+    purpose: 'main' | 'blog' | 'club' | 'department'
     scopeId?: string
     verified?: boolean
   }>) ?? []

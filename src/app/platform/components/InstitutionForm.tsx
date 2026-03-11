@@ -41,7 +41,7 @@ const ALL_MODULES = [
 
 interface DomainEntry {
   hostname: string
-  purpose: 'main' | 'club' | 'department'
+  purpose: 'main' | 'blog' | 'club' | 'department'
   scopeId?: string
   verified?: boolean
 }
@@ -266,6 +266,7 @@ export function InstitutionForm({ institution }: InstitutionFormProps) {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="main">Main Site</SelectItem>
+                      <SelectItem value="blog">Blog Only</SelectItem>
                       <SelectItem value="club">Club Site</SelectItem>
                       <SelectItem value="department">Department</SelectItem>
                     </SelectContent>
