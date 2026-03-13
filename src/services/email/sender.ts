@@ -340,6 +340,7 @@ export async function sendNewsletter(
 
 export async function generateDigest(
   frequency: 'daily' | 'weekly' | 'monthly',
+  institutionId?: string,  // ✅ Add institution parameter
 ): Promise<{ created: boolean; newsletterId?: string; postCount: number }> {
   const payload = await getPayload({ config: configPromise })
 
@@ -359,14 +360,21 @@ export async function generateDigest(
       break
   }
 
-  // Query recently published posts
+  // ✅ Query recently published posts (institution-scoped)
+  const whereConditions: any[] = [
+    { _status: { equals: 'published' } },
+    { publishedAt: { greater_than: rangeStart.toISOString() } },
+  ]
+  
+  // Add institution filter if provided
+  if (institutionId) {
+    whereConditions.push({ institution: { equals: institutionId } })
+  }
+
   const recentPosts = await payload.find({
     collection: 'posts',
     where: {
-      and: [
-        { _status: { equals: 'published' } },
-        { publishedAt: { greater_than: rangeStart.toISOString() } },
-      ],
+      and: whereConditions,
     },
     sort: '-publishedAt',
     limit: 20,
@@ -378,21 +386,41 @@ export async function generateDigest(
     return { created: false, postCount: 0 }
   }
 
-  // Check if there are active subscribers for this frequency
+  // ✅ Check if there are active subscribers for this frequency (institution-scoped)
+  const subscriberWhereConditions: any[] = [
+    { status: { equals: 'active' } },
+    { confirmedAt: { exists: true } },
+    { frequency: { equals: frequency } },
+  ]
+  
+  if (institutionId) {
+    subscriberWhereConditions.push({ institution: { equals: institutionId } })
+  }
+
   const subscriberCount = await payload.count({
     collection: 'newsletter-subscribers',
     where: {
-      and: [
-        { status: { equals: 'active' } },
-        { confirmedAt: { exists: true } },
-        { frequency: { equals: frequency } },
-      ],
+      and: subscriberWhereConditions,
     },
   })
 
   if (subscriberCount.totalDocs === 0) {
     console.log(`[Digest] No active ${frequency} subscribers, skipping.`)
     return { created: false, postCount: recentPosts.docs.length }
+  }
+
+  // ✅ Get institution name for subject line
+  let institutionName = 'Blog'
+  if (institutionId) {
+    try {
+      const institution = await payload.findByID({
+        collection: 'institutions',
+        id: institutionId,
+      })
+      institutionName = institution.shortName || institution.name
+    } catch {
+      // Use default if institution not found
+    }
   }
 
   // Create the digest newsletter
@@ -407,17 +435,18 @@ export async function generateDigest(
     collection: 'newsletters',
     data: {
       title: `${frequencyLabel} Digest - ${dateStr}`,
-      subject: `📰 Your ${frequencyLabel} GCET Blog Digest - ${recentPosts.docs.length} new post${recentPosts.docs.length !== 1 ? 's' : ''}`,
+      subject: `📰 Your ${frequencyLabel} ${institutionName} Digest - ${recentPosts.docs.length} new post${recentPosts.docs.length !== 1 ? 's' : ''}`,
       type: 'auto_digest',
       frequency,
       status: 'draft',
       posts: recentPosts.docs.map((p) => p.id),
       templateId: 'digest',
+      institution: institutionId,  // ✅ Add institution to newsletter
     },
   })
 
   console.log(
-    `[Digest] Created ${frequency} digest "${newsletter.title}" with ${recentPosts.docs.length} posts`,
+    `[Digest] Created ${frequency} digest "${newsletter.title}" for ${institutionName} with ${recentPosts.docs.length} posts`,
   )
 
   return {

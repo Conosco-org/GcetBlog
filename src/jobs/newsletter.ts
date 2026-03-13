@@ -2,7 +2,7 @@
  * Newsletter Job Handlers
  *
  * Cron tasks for automated newsletter operations:
- * - Daily/weekly/monthly digest generation
+ * - Daily/weekly/monthly digest generation (per-institution)
  * - Scheduled newsletter sending
  */
 
@@ -14,56 +14,138 @@ import configPromise from '@payload-config'
 
 /**
  * Daily Digest Job
- * Generates and sends daily digest of recent posts
+ * Generates and sends daily digest of recent posts FOR EACH INSTITUTION
  */
 export const newsletterDailyDigest = (async () => {
   console.log('[Job] Running daily digest generation...')
   
-  const result = await generateDigest('daily')
+  const payload = await getPayload({ config: configPromise })
   
-  if (result.created) {
-    console.log(`[Job] Daily digest created with ${result.postCount} posts.`)
-  } else {
-    console.log('[Job] Daily digest skipped - no new posts.')
+  // ✅ Get all active institutions
+  const institutions = await payload.find({
+    collection: 'institutions',
+    where: {
+      status: { not_equals: 'suspended' },
+    },
+    limit: 100,
+  })
+  
+  let totalCreated = 0
+  let totalPosts = 0
+  
+  // ✅ Run digest for each institution
+  for (const institution of institutions.docs) {
+    try {
+      console.log(`[Job] Generating daily digest for ${institution.name}...`)
+      
+      // Pass institution ID to generateDigest
+      const result = await generateDigest('daily', institution.id)
+      
+      if (result.created) {
+        totalCreated++
+        totalPosts += result.postCount
+        console.log(`[Job] Daily digest created for ${institution.name} with ${result.postCount} posts.`)
+      } else {
+        console.log(`[Job] Daily digest skipped for ${institution.name} - no new posts.`)
+      }
+    } catch (error) {
+      console.error(`[Job] Failed to generate digest for ${institution.name}:`, error)
+    }
   }
   
-  return result
+  console.log(`[Job] Daily digest complete. Created ${totalCreated} digests with ${totalPosts} total posts.`)
+  
+  return { created: totalCreated > 0, totalCreated, totalPosts }
 }) as any
 
 /**
  * Weekly Digest Job
- * Generates and sends weekly digest of recent posts
+ * Generates and sends weekly digest of recent posts FOR EACH INSTITUTION
  */
 export const newsletterWeeklyDigest = (async () => {
   console.log('[Job] Running weekly digest generation...')
   
-  const result = await generateDigest('weekly')
+  const payload = await getPayload({ config: configPromise })
   
-  if (result.created) {
-    console.log(`[Job] Weekly digest created with ${result.postCount} posts.`)
-  } else {
-    console.log('[Job] Weekly digest skipped - no new posts.')
+  // ✅ Get all active institutions
+  const institutions = await payload.find({
+    collection: 'institutions',
+    where: {
+      status: { not_equals: 'suspended' },
+    },
+    limit: 100,
+  })
+  
+  let totalCreated = 0
+  let totalPosts = 0
+  
+  // ✅ Run digest for each institution
+  for (const institution of institutions.docs) {
+    try {
+      console.log(`[Job] Generating weekly digest for ${institution.name}...`)
+      
+      const result = await generateDigest('weekly', institution.id)
+      
+      if (result.created) {
+        totalCreated++
+        totalPosts += result.postCount
+        console.log(`[Job] Weekly digest created for ${institution.name} with ${result.postCount} posts.`)
+      } else {
+        console.log(`[Job] Weekly digest skipped for ${institution.name} - no new posts.`)
+      }
+    } catch (error) {
+      console.error(`[Job] Failed to generate digest for ${institution.name}:`, error)
+    }
   }
   
-  return result
+  console.log(`[Job] Weekly digest complete. Created ${totalCreated} digests with ${totalPosts} total posts.`)
+  
+  return { created: totalCreated > 0, totalCreated, totalPosts }
 }) as any
 
 /**
  * Monthly Digest Job
- * Generates and sends monthly digest of recent posts
+ * Generates and sends monthly digest of recent posts FOR EACH INSTITUTION
  */
 export const newsletterMonthlyDigest = (async () => {
   console.log('[Job] Running monthly digest generation...')
   
-  const result = await generateDigest('monthly')
+  const payload = await getPayload({ config: configPromise })
   
-  if (result.created) {
-    console.log(`[Job] Monthly digest created with ${result.postCount} posts.`)
-  } else {
-    console.log('[Job] Monthly digest skipped - no new posts.')
+  // ✅ Get all active institutions
+  const institutions = await payload.find({
+    collection: 'institutions',
+    where: {
+      status: { not_equals: 'suspended' },
+    },
+    limit: 100,
+  })
+  
+  let totalCreated = 0
+  let totalPosts = 0
+  
+  // ✅ Run digest for each institution
+  for (const institution of institutions.docs) {
+    try {
+      console.log(`[Job] Generating monthly digest for ${institution.name}...`)
+      
+      const result = await generateDigest('monthly', institution.id)
+      
+      if (result.created) {
+        totalCreated++
+        totalPosts += result.postCount
+        console.log(`[Job] Monthly digest created for ${institution.name} with ${result.postCount} posts.`)
+      } else {
+        console.log(`[Job] Monthly digest skipped for ${institution.name} - no new posts.`)
+      }
+    } catch (error) {
+      console.error(`[Job] Failed to generate digest for ${institution.name}:`, error)
+    }
   }
   
-  return result
+  console.log(`[Job] Monthly digest complete. Created ${totalCreated} digests with ${totalPosts} total posts.`)
+  
+  return { created: totalCreated > 0, totalCreated, totalPosts }
 }) as any
 
 /**
