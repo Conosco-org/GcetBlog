@@ -9,7 +9,7 @@ import {
 import { anyone } from '../access/anyone'
 import { hasPermission } from '../access/hasPermission'
 import { authenticated } from '../access/authenticated'
-import { optionalInstitutionField } from '../fields/institution'
+import { institutionField } from '../fields/institution'
 import { useCloudinaryFallback } from './Media/hooks/useCloudinaryFallback'
 import { uploadToCloudinary } from './Media/hooks/uploadToCloudinary'
 import { withTenantIsolation } from '@/hooks/tenantIsolation'
@@ -26,11 +26,42 @@ export const Media: CollectionConfig = {
     description: '📸 Recommended sizes: Hero 1920×1080 (16:9), Cards 900×600 (3:2), OG 1200×630. Optimize images to <500KB. See IMAGE_GUIDELINES.md for details.',
   },
   hooks: withTenantIsolation({
-    beforeChange: [uploadToCloudinary],
+    beforeChange: [
+      uploadToCloudinary,
+      // Auto-assign institution for non-superadmin users
+      ({ data, req }) => {
+        if (!data.institution && req.user) {
+          const user = req.user as { 
+            role?: string
+            institution?: string | { id: string }
+          }
+          
+          // Regular users: use their institution
+          if (user.role !== 'superadmin' && user.institution) {
+            data.institution = typeof user.institution === 'object'
+              ? user.institution.id
+              : user.institution
+          }
+        }
+        return data
+      },
+    ],
     afterRead: [useCloudinaryFallback],
   }),
   fields: [
-    optionalInstitutionField,
+    {
+      ...institutionField,
+      // Make institution required for non-superadmin uploads
+      required: false, // Keep optional to allow superadmin platform assets
+      admin: {
+        ...institutionField.admin,
+        description: 'Institution this media belongs to. Auto-assigned for regular users.',
+        condition: (data, siblingData, { user }) => {
+          // Show field for superadmin, hide for others (auto-assigned)
+          return user?.role === 'superadmin'
+        },
+      },
+    },
     {
       name: 'alt',
       type: 'text',
