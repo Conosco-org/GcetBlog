@@ -5,6 +5,7 @@ import { Plus, Calendar, ExternalLink, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import type { Metadata } from 'next'
+import { getCurrentTenant } from '@/utilities/tenantContext'
 
 export const metadata: Metadata = {
   title: 'Events Manager',
@@ -30,9 +31,16 @@ export default async function EditorEventsPage({ searchParams: searchParamsPromi
   const page = Number(searchParams.page || '1')
 
   const payload = await getPayload({ config: configPromise })
+  const tenant = await getCurrentTenant()
 
-  // Build where clause
+  // Build where clause with institution filter
   const conditions: Record<string, unknown>[] = []
+  
+  // Add institution filter
+  if (tenant) {
+    conditions.push({ institution: { equals: tenant.institutionId } })
+  }
+  
   if (query) {
     conditions.push({ title: { like: query } })
   }

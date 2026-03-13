@@ -4,6 +4,7 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
 import RichText from '@/components/RichText'
+import { getCurrentTenant } from '@/utilities/tenantContext'
 
 import { CollectionArchive } from '@/components/CollectionArchive'
 
@@ -20,25 +21,31 @@ export const ArchiveBlock: React.FC<
 
   if (populateBy === 'collection') {
     const payload = await getPayload({ config: configPromise })
+    const tenant = await getCurrentTenant()
 
     const flattenedCategories = categories?.map((category) => {
       if (typeof category === 'object') return category.id
       else return category
     })
 
+    // Build where clause with institution filter
+    const whereConditions: any[] = []
+    
+    // Add institution filter
+    if (tenant) {
+      whereConditions.push({ institution: { equals: tenant.institutionId } })
+    }
+    
+    // Add category filter if provided
+    if (flattenedCategories && flattenedCategories.length > 0) {
+      whereConditions.push({ categories: { in: flattenedCategories } })
+    }
+
     const fetchedPosts = await payload.find({
       collection: 'posts',
       depth: 1,
       limit,
-      ...(flattenedCategories && flattenedCategories.length > 0
-        ? {
-            where: {
-              categories: {
-                in: flattenedCategories,
-              },
-            },
-          }
-        : {}),
+      where: whereConditions.length > 0 ? { and: whereConditions } : undefined,
     })
 
     posts = fetchedPosts.docs

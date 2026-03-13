@@ -4,6 +4,7 @@ import { headers } from 'next/headers'
 import type { User } from '@/payload-types'
 import { PageHeader } from '@/components/base/PageHeader'
 import { UsersTableClient } from './UsersTableClient'
+import { getCurrentTenant } from '@/utilities/tenantContext'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -30,6 +31,9 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
   const adminFilter = params.admin || ''
 
   const isSuperAdmin = fullCurrentUser?.role === 'superadmin'
+  
+  // Get current tenant for institution filtering
+  const tenant = await getCurrentTenant()
 
   // Build where clause
   const conditions: Where[] = []
@@ -37,6 +41,11 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
   // Non-superadmins should NEVER see superadmin users
   if (!isSuperAdmin) {
     conditions.push({ role: { not_equals: 'superadmin' } })
+    
+    // Non-superadmins should only see users from their institution
+    if (tenant) {
+      conditions.push({ institution: { equals: tenant.institutionId } })
+    }
   }
 
   if (query) {

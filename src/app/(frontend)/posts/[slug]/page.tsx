@@ -8,6 +8,7 @@ import { draftMode, headers as nextHeaders } from 'next/headers'
 import React, { cache } from 'react'
 import Link from 'next/link'
 import RichText from '@/components/RichText'
+import { getCurrentTenant } from '@/utilities/tenantContext'
 
 import type { Post } from '@/payload-types'
 
@@ -23,6 +24,10 @@ import { InstagramEmbedLoader } from '@/components/InstagramEmbedLoader'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
+  
+  // Note: This runs at build time without tenant context
+  // We generate params for ALL institutions' posts
+  // Access control at runtime will filter appropriately
   const posts = await payload.find({
     collection: 'posts',
     draft: false,
@@ -55,24 +60,35 @@ export default async function Post({ params: paramsPromise }: Args) {
 
   if (!post) return <PayloadRedirects url={url} />
 
-  // Fetch recommended posts (same categories, excluding current post)
+  // Fetch recommended posts (same categories, excluding current post, institution-scoped)
   const payload = await getPayload({ config: configPromise })
+  const tenant = await getCurrentTenant()
+  
   const categoryIds = post.categories
     ? post.categories.filter((c) => typeof c === 'object').map((c: any) => c.id)
     : []
+
+  const whereConditions: any[] = [
+    { _status: { equals: 'published' } },
+    { id: { not_equals: post.id } },
+  ]
+  
+  // Add institution filter
+  if (tenant) {
+    whereConditions.push({ institution: { equals: tenant.institutionId } })
+  }
+  
+  // Add category filter if available
+  if (categoryIds.length > 0) {
+    whereConditions.push({ categories: { in: categoryIds } })
+  }
 
   const recommendedPosts = await payload.find({
     collection: 'posts',
     limit: 4,
     overrideAccess: true,
     where: {
-      and: [
-        { _status: { equals: 'published' } },
-        { id: { not_equals: post.id } },
-        ...(categoryIds.length > 0
-          ? [{ categories: { in: categoryIds } }]
-          : []),
-      ],
+      and: whereConditions,
     },
     sort: '-publishedAt',
     depth: 1,
