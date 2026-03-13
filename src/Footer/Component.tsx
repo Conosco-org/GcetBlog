@@ -1,6 +1,7 @@
 ﻿import { getCachedGlobal } from '@/utilities/getGlobals'
 import Link from 'next/link'
 import React from 'react'
+import { getCurrentTenantFull } from '@/utilities/tenantContext'
 
 import type { Footer } from '@/payload-types'
 
@@ -11,6 +12,10 @@ import { NewsletterSignup } from '@/components/NewsletterSignup'
 
 export async function Footer() {
   const footerData: Footer = await getCachedGlobal('footer', 1)()
+  const tenant = await getCurrentTenantFull()
+  
+  const institutionName = tenant?.name || 'GCET'
+  const institutionShort = tenant?.shortName || 'GCET'
 
   const navItems = footerData?.navItems || []
 
@@ -24,7 +29,7 @@ export async function Footer() {
               <Logo />
             </Link>
             <p className="text-sm text-background/50 max-w-xs">
-              The platform where the GCET community spills their mind - tech, creativity, and everything in between.
+              The platform where the {institutionShort} community spills their mind - tech, creativity, and everything in between.
             </p>
           </div>
 
@@ -51,10 +56,10 @@ export async function Footer() {
         {/* Bottom bar */}
         <div className="mt-12 pt-8 border-t border-background/10 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-xs text-background/40">
-            &copy; {new Date().getFullYear()} GCET. All rights reserved.
+            &copy; {new Date().getFullYear()} {institutionName}. All rights reserved.
           </p>
           <div className="flex items-center gap-2 text-xs text-background/40 text-center md:text-right">
-            <span>Built for the GCET community • Powered by</span>
+            <span>Built for the {institutionShort} community • Powered by</span>
             <a
               href="https://conosco.in"
               target="_blank"

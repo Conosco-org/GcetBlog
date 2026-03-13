@@ -21,16 +21,24 @@ const sora = Sora({
   display: 'swap',
 })
 
-export const metadata: Metadata = {
-  title: {
-    default: 'GCET Blog',
-    template: '%s | GCET Blog',
-  },
-  description: 'Official blog platform for Geethanjali College of Engineering and Technology',
-  icons: {
-    icon: '/gcet-logo.png',
-    apple: '/gcet-logo.png',
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const tenant = await getCurrentTenantFull()
+  
+  const institutionName = tenant?.shortName || tenant?.name || 'Blog'
+  const tagline = tenant?.branding?.tagline || 'Official blog platform'
+  const faviconUrl = tenant?.branding?.favicon?.url || '/gcet-logo.png'
+  
+  return {
+    title: {
+      default: `${institutionName} Blog`,
+      template: `%s | ${institutionName} Blog`,
+    },
+    description: `${tagline} for ${tenant?.name || 'our institution'}`,
+    icons: {
+      icon: faviconUrl,
+      apple: faviconUrl,
+    },
+  }
 }
 
 export default async function FrontendLayout({ children }: { children: React.ReactNode }) {

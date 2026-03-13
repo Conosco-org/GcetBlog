@@ -213,7 +213,7 @@ export default async function Post({ params: paramsPromise }: Args) {
                 <div>
                   <h3 className="text-lg font-semibold leading-snug">Stay in the loop</h3>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Get new articles from GCET directly in your inbox. No spam, just knowledge.
+                    Get new articles directly in your inbox. No spam, just knowledge.
                   </p>
                 </div>
               </div>
