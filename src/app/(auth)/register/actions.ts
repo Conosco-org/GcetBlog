@@ -3,6 +3,7 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { redirect } from 'next/navigation'
+import { getCurrentTenant } from '@/utilities/tenantContext'
 
 export async function registerAction(formData: FormData) {
   const payload = await getPayload({ config })
@@ -25,14 +26,18 @@ export async function registerAction(formData: FormData) {
     return { error: 'Password must be at least 8 characters long' }
   }
 
+  // Resolve current tenant — all registrations must be scoped to an institution
+  const tenant = await getCurrentTenant()
+  if (!tenant) {
+    return { error: 'Could not determine institution. Please try again or contact support.' }
+  }
+
   try {
     // Check if user already exists
     const existingUsers = await payload.find({
       collection: 'users',
       where: {
-        email: {
-          equals: email,
-        },
+        email: { equals: email },
       },
     })
 
@@ -40,7 +45,7 @@ export async function registerAction(formData: FormData) {
       return { error: 'A user with this email already exists' }
     }
 
-    // Create new user with contributor role
+    // Create new user — auto-assign institution from current domain's tenant
     const user = await payload.create({
       collection: 'users',
       data: {
@@ -49,11 +54,11 @@ export async function registerAction(formData: FormData) {
         password,
         role: 'user',
         bio,
+        institution: tenant.institutionId,
       },
     })
 
     if (user) {
-      // Redirect to login with success message
       redirect('/login?message=Account created successfully! Please sign in.')
     } else {
       return { error: 'Failed to create account' }

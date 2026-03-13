@@ -2,11 +2,12 @@ import { getCurrentUser } from './actions'
 import { redirect } from 'next/navigation'
 import { RegisterLink } from './RegisterLink'
 import { LoginForm } from './LoginForm'
+import { getCurrentTenantFull } from '@/utilities/tenantContext'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Login',
-  description: 'Sign in to your GCET Blog account',
+  description: 'Sign in to your account',
 }
 
 export default async function LoginPage({
@@ -14,22 +15,21 @@ export default async function LoginPage({
 }: {
   searchParams: Promise<{ redirect?: string; message?: string }>
 }) {
-  // Await searchParams (Next.js 15 requirement)
   const params = await searchParams
-  
+
+  // Resolve tenant for branding
+  const tenant = await getCurrentTenantFull()
+  const institutionName = tenant?.name ?? 'GCET Blog'
+  const institutionShort = tenant?.shortName ?? 'GCET'
+
   // If user is already logged in, redirect to appropriate dashboard or requested page
   const user = await getCurrentUser()
 
   if (user) {
-    // If there's a redirect parameter, validate and use it
     const redirectTo = params.redirect
-    
     if (redirectTo && redirectTo.startsWith('/')) {
-      // Ensure redirect is to a safe internal path
       redirect(redirectTo)
     }
-    
-    // Default role-based redirect
     const typedUser = user as unknown as { role?: string; roleAssignments?: Array<{ assignedRole: string }> }
     if (typedUser.role === 'superadmin') {
       redirect('/platform')
@@ -45,13 +45,12 @@ export default async function LoginPage({
       <div className="max-w-md w-full space-y-6">
         <div>
           <h2 className="text-center text-3xl font-extrabold text-foreground">
-            Sign in to Geethanjali Blog
+            Sign in to {institutionShort} Blog
           </h2>
           <p className="mt-2 text-center text-sm text-muted-foreground">
-            Access your contributor, editor, or admin dashboard
+            {institutionName} &mdash; Access your dashboard
           </p>
-          
-          {/* Show session expired or other messages */}
+
           {params.message && (
             <div className="mt-4 p-3 rounded-md bg-warning/20 border border-warning">
               <p className="text-sm text-foreground text-center">{params.message}</p>
@@ -59,7 +58,7 @@ export default async function LoginPage({
           )}
         </div>
 
-        <LoginForm redirectTo={params.redirect} />
+        <LoginForm redirectTo={params.redirect} institutionShort={institutionShort} />
 
         <div className="text-center">
           <p className="text-sm text-muted-foreground">

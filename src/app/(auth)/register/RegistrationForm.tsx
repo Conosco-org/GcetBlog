@@ -17,7 +17,7 @@ import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import { registerAction } from './actions'
 import { GoogleSignInButton } from '@/components/GoogleSignInButton'
 
-export function RegistrationForm() {
+export function RegistrationForm({ institutionShort = 'GCET' }: { institutionShort?: string }) {
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -41,7 +41,7 @@ export function RegistrationForm() {
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl text-center">Create Account</CardTitle>
         <CardDescription className="text-center">
-          Join the Geethanjali Blog community as a contributor
+          Join {institutionShort} Blog as a contributor
         </CardDescription>
       </CardHeader>
 

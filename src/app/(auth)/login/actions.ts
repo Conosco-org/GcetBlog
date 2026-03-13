@@ -3,7 +3,9 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { redirect } from 'next/navigation'
-import { cookies, headers } from 'next/headers'
+import { cookies } from 'next/headers'
+import { getCurrentTenant } from '@/utilities/tenantContext'
+import type { Institution } from '@/payload-types'
 
 export async function loginAction(formData: FormData) {
   const payload = await getPayload({ config })
@@ -17,51 +19,86 @@ export async function loginAction(formData: FormData) {
   }
 
   try {
-    // Authenticate the user
+    // Authenticate the user (password check only — no institution check yet)
     const result = await payload.login({
       collection: 'users',
-      data: {
-        email,
-        password,
-      },
+      data: { email, password },
     })
 
-    if (result.token) {
-      // Set the token in cookies for authentication
-      const cookieStore = await cookies()
-      cookieStore.set('payload-token', result.token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/',
-        maxAge: 60 * 60 * 24 * 7, // 7 days
-      })
-
-      // Determine redirect path
-      const user = result.user
-      let redirectPath: string
-      
-      if (redirectTo && redirectTo.startsWith('/')) {
-        // Use the redirect parameter if it's a safe internal path
-        redirectPath = redirectTo
-      } else {
-        // New RBAC-based redirect
-        const u = user as { role?: string; roleAssignments?: Array<{ assignedRole: string }> }
-        if (u.role === 'superadmin') {
-          redirectPath = '/platform'
-        } else {
-          const hasAnyRole = Array.isArray(u.roleAssignments) && u.roleAssignments.length > 0
-          redirectPath = hasAnyRole ? '/user' : '/'
-        }
-      }
-      
-      console.log('Login successful - role:', (user as { role?: string })?.role, '→', redirectPath)
-      
-      // Return success with redirect path for client-side handling
-      return { success: true, redirectPath }
-    } else {
+    if (!result.token) {
       return { error: 'Invalid credentials' }
     }
+
+    const user = result.user
+    const isSuperAdmin = (user as { role?: string }).role === 'superadmin'
+
+    // --- Institution scope check (superadmin bypasses all institution checks) ---
+    if (!isSuperAdmin) {
+      const tenant = await getCurrentTenant()
+
+      if (tenant) {
+        const userInstitutionRaw = (user as { institution?: string | Institution | null }).institution
+        const userInstitutionId =
+          typeof userInstitutionRaw === 'string'
+            ? userInstitutionRaw
+            : (userInstitutionRaw as Institution | null)?.id ?? null
+
+        if (!userInstitutionId) {
+          return {
+            error:
+              'Your account is not associated with any institution. Please contact support.',
+          }
+        }
+
+        if (userInstitutionId !== tenant.institutionId) {
+          // Look up the correct institution to show a helpful redirect message
+          try {
+            const correctInst = (await payload.findByID({
+              collection: 'institutions',
+              id: userInstitutionId,
+              depth: 0,
+            })) as Institution
+            const mainHostname = correctInst.domains?.find((d) => d.purpose === 'main')?.hostname
+            const correctLoginUrl = mainHostname ? `https://${mainHostname}/login` : null
+            const institutionName = correctInst.shortName || correctInst.name
+            return {
+              error: `This account belongs to ${institutionName}. ${correctLoginUrl ? `Please login at ${mainHostname}/login` : 'Please use the correct institution login page.'}`,
+              correctLoginUrl,
+              correctInstitutionName: institutionName,
+            }
+          } catch {
+            return { error: 'Your account does not belong to this institution.' }
+          }
+        }
+      }
+    }
+
+    // Set the auth cookie
+    const cookieStore = await cookies()
+    cookieStore.set('payload-token', result.token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    })
+
+    // Determine redirect path
+    let redirectPath: string
+    if (redirectTo && redirectTo.startsWith('/')) {
+      redirectPath = redirectTo
+    } else {
+      const u = user as { role?: string; roleAssignments?: Array<{ assignedRole: string }> }
+      if (u.role === 'superadmin') {
+        redirectPath = '/platform'
+      } else {
+        const hasAnyRole = Array.isArray(u.roleAssignments) && u.roleAssignments.length > 0
+        redirectPath = hasAnyRole ? '/user' : '/'
+      }
+    }
+
+    console.log('Login successful - role:', (user as { role?: string })?.role, '→', redirectPath)
+    return { success: true, redirectPath }
   } catch (error) {
     console.error('Login error:', error)
     

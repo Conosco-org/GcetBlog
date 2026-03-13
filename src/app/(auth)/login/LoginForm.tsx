@@ -13,24 +13,29 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Eye, EyeOff, Loader2 } from 'lucide-react'
+import { Eye, EyeOff, ExternalLink, Loader2 } from 'lucide-react'
 import { loginAction } from './actions'
 import { GoogleSignInButton } from '@/components/GoogleSignInButton'
 
 interface LoginFormProps {
   redirectTo?: string
+  institutionShort?: string
 }
 
-export function LoginForm({ redirectTo }: LoginFormProps) {
+export function LoginForm({ redirectTo, institutionShort = 'GCET' }: LoginFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [correctLoginUrl, setCorrectLoginUrl] = useState<string | null>(null)
+  const [correctInstitutionName, setCorrectInstitutionName] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const router = useRouter()
 
   async function handleSubmit(formData: FormData) {
     setIsLoading(true)
     setError(null)
+    setCorrectLoginUrl(null)
+    setCorrectInstitutionName(null)
     setSuccess(false)
 
     // Add redirect parameter if present
@@ -42,6 +47,10 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
 
     if (result?.error) {
       setError(result.error)
+      setCorrectLoginUrl((result as { correctLoginUrl?: string | null }).correctLoginUrl ?? null)
+      setCorrectInstitutionName(
+        (result as { correctInstitutionName?: string | null }).correctInstitutionName ?? null,
+      )
       setIsLoading(false)
     } else if (result?.success && result?.redirectPath) {
       // Login successful - show in button, then redirect
@@ -55,7 +64,7 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl text-center">Sign In</CardTitle>
         <CardDescription className="text-center">
-          Enter your email and password to access your account
+          Sign in to your {institutionShort} Blog account
         </CardDescription>
       </CardHeader>
 
@@ -98,8 +107,17 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
           </div>
 
           {error && (
-            <div className="p-3 rounded-md bg-destructive/10 text-foreground border border-destructive">
-              {error}
+            <div className="p-3 rounded-md bg-destructive/10 text-foreground border border-destructive space-y-2">
+              <p className="text-sm">{error}</p>
+              {correctLoginUrl && (
+                <a
+                  href={correctLoginUrl}
+                  className="flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  Go to {correctInstitutionName} login
+                </a>
+              )}
             </div>
           )}
         </CardContent>
