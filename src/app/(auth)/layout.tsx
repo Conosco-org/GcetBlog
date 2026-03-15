@@ -24,7 +24,7 @@ const sora = Sora({
 
 export default async function AuthLayout({ children }: { children: React.ReactNode }) {
   const tenant = await getCurrentTenantFull()
-  const institutionName = tenant?.name ?? 'Geethanjali College of Engineering and Technology'
+  const institutionName = tenant?.name ?? 'Platform'
 
   return (
     <html className={cn(GeistSans.variable, GeistMono.variable, sora.variable)} lang="en" suppressHydrationWarning>
@@ -37,17 +37,31 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
             <p className="text-center text-sm text-muted-foreground">
               &copy; {new Date().getFullYear()} {institutionName}. All rights reserved.
             </p>
-            <p className="text-center text-xs text-muted-foreground mt-2">
-              Built for the {tenant?.shortName ?? 'GCET'} community &bull; Powered by{' '}
-              <a
-                href="https://conosco.in"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-foreground transition-colors"
-              >
-                Conosco
-              </a>
-            </p>
+            {tenant ? (
+              <p className="text-center text-xs text-muted-foreground mt-2">
+                Built for the {tenant.shortName ?? tenant.name} community &bull; Powered by{' '}
+                <a
+                  href="https://conosco.in"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-foreground transition-colors"
+                >
+                  Conosco
+                </a>
+              </p>
+            ) : (
+              <p className="text-center text-xs text-muted-foreground mt-2">
+                Multi-tenant blog platform &bull; Powered by{' '}
+                <a
+                  href="https://conosco.in"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-foreground transition-colors"
+                >
+                  Conosco
+                </a>
+              </p>
+            )}
           </footer>
         </Providers>
       </body>

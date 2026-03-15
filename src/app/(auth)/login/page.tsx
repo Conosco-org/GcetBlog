@@ -19,8 +19,8 @@ export default async function LoginPage({
 
   // Resolve tenant for branding
   const tenant = await getCurrentTenantFull()
-  const institutionName = tenant?.name ?? 'GCET Blog'
-  const institutionShort = tenant?.shortName ?? 'GCET'
+  const institutionName = tenant?.name ?? 'Platform'
+  const institutionShort = tenant?.shortName ?? 'Platform'
 
   // If user is already logged in, redirect to appropriate dashboard or requested page
   const user = await getCurrentUser()
@@ -45,10 +45,10 @@ export default async function LoginPage({
       <div className="max-w-md w-full space-y-6">
         <div>
           <h2 className="text-center text-3xl font-extrabold text-foreground">
-            Sign in to {institutionShort} Blog
+            {tenant ? `Sign in to ${institutionShort} Blog` : 'Platform Sign In'}
           </h2>
           <p className="mt-2 text-center text-sm text-muted-foreground">
-            {institutionName} &mdash; Access your dashboard
+            {tenant ? `${institutionName} — Access your dashboard` : 'SuperAdmin Platform Access'}
           </p>
 
           {params.message && (

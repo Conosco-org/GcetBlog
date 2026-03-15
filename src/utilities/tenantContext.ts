@@ -78,11 +78,13 @@ export async function getCurrentTenant(): Promise<TenantContext | null> {
 /**
  * Get the current tenant with full institution data (DB hit).
  * Use when you need branding, tier, enabled modules, etc.
+ * Returns null if no tenant headers are present (platform context).
  */
 export async function getCurrentTenantFull(): Promise<ResolvedTenant | null> {
   const basic = await getCurrentTenant()
   if (!basic) return null
 
+  // If we have tenant headers, get the full data
   const payload = await getPayload({ config: configPromise })
   const hostname = (await headers()).get('host') || 'localhost'
 
