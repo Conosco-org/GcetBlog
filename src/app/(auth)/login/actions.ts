@@ -90,7 +90,7 @@ export async function loginAction(formData: FormData) {
     } else {
       const u = user as { role?: string; roleAssignments?: Array<{ assignedRole: string }> }
       if (u.role === 'superadmin') {
-        redirectPath = '/platform'
+        redirectPath = '/'
       } else {
         const hasAnyRole = Array.isArray(u.roleAssignments) && u.roleAssignments.length > 0
         redirectPath = hasAnyRole ? '/user' : '/'

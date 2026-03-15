@@ -143,7 +143,7 @@ function hasAnyRole(user: MiddlewareUser): boolean {
 
 /** Get the best dashboard URL for a user based on their roles. */
 function getDashboardUrl(user: MiddlewareUser): string {
-  if (isSuperAdmin(user)) return '/platform'
+  if (isSuperAdmin(user)) return '/'
   if (hasAnyRole(user)) return '/user'
   return '/' // regular user with no roles — public site only
 }
@@ -195,18 +195,10 @@ export async function middleware(request: NextRequest) {
     return new NextResponse(null, { status: 404 })
   }
 
-  // ── /platform/* — SuperAdmin only (platform management) ──────────────
+  // ── /platform/* — Keep for backwards compatibility, redirect to root ──
   if (pathname.startsWith('/platform')) {
-    if (!token) return loginRedirect(request)
-
-    const user = await getUser(token, request)
-    if (!user) return loginRedirect(request, { message: 'Session expired' })
-
-    if (!isSuperAdmin(user)) {
-      return NextResponse.redirect(new URL(getDashboardUrl(user), request.url))
-    }
-
-    return NextResponse.next()
+    const subPath = pathname.replace('/platform', '') || '/'
+    return NextResponse.redirect(new URL(subPath, request.url))
   }
 
   // ── /user — unified dashboard for all role holders ────────────────────
@@ -217,7 +209,7 @@ export async function middleware(request: NextRequest) {
     if (!user) return loginRedirect(request, { message: 'Session expired' })
 
     if (isSuperAdmin(user)) {
-      return NextResponse.redirect(new URL('/platform', request.url))
+      return NextResponse.redirect(new URL('/', request.url))
     }
 
     if (!hasAnyRole(user)) {
@@ -281,19 +273,24 @@ export async function middleware(request: NextRequest) {
   // If tenant resolved (institution domain), show institution blog
   if (pathname === '/') {
     if (!tenantInfo) {
-      // No institution resolved → redirect to platform dashboard
+      // No institution resolved → platform dashboard (SuperAdmin only)
       if (!token) {
-        // Not logged in → redirect to login with platform redirect
-        return loginRedirect(request, { redirect: '/platform' })
+        return loginRedirect(request)
       }
       
       const user = await getUser(token, request)
       if (!user) {
-        return loginRedirect(request, { message: 'Session expired', redirect: '/platform' })
+        return loginRedirect(request, { message: 'Session expired' })
       }
       
-      // Redirect to appropriate dashboard based on role
-      return NextResponse.redirect(new URL(getDashboardUrl(user), request.url))
+      // Check if user is SuperAdmin
+      if (!isSuperAdmin(user)) {
+        // Not SuperAdmin → redirect to their appropriate dashboard
+        return NextResponse.redirect(new URL(getDashboardUrl(user), request.url))
+      }
+      
+      // SuperAdmin → continue to platform dashboard at root
+      return NextResponse.next()
     }
     // Tenant resolved → continue to institution blog home page
   }
@@ -307,7 +304,7 @@ export async function middleware(request: NextRequest) {
     // No tenant resolved and trying to access institution content
     // Redirect to platform or show error
     return new NextResponse(
-      '<html><body><h1>Institution Not Found</h1><p>This content is only accessible via institution-specific domains.</p><p><a href="/platform">Go to Platform Dashboard</a></p></body></html>',
+      '<html><body><h1>Institution Not Found</h1><p>This content is only accessible via institution-specific domains.</p><p><a href="/">Go to Platform Dashboard</a></p></body></html>',
       {
         status: 404,
         headers: { 'Content-Type': 'text/html' },

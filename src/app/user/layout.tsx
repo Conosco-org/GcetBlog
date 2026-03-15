@@ -29,9 +29,9 @@ export default async function UserLayout({ children }: { children: React.ReactNo
     redirect('/login')
   }
 
-  // Superadmin belongs in /platform, not here
+  // Superadmin belongs at root (/), not here
   if ((user as { role?: string }).role === 'superadmin') {
-    redirect('/platform')
+    redirect('/')
   }
 
   const fullUser = await payload.findByID({

@@ -100,7 +100,7 @@ export async function createInstitution(formData: FormData) {
     return { error: msg }
   }
 
-  revalidatePath('/platform')
+  revalidatePath('/')
   revalidatePath('/platform/institutions')
   redirect('/platform/institutions')
 }
@@ -119,7 +119,7 @@ export async function updateInstitution(id: string, formData: FormData) {
     return { error: msg }
   }
 
-  revalidatePath('/platform')
+  revalidatePath('/')
   revalidatePath('/platform/institutions')
   redirect('/platform/institutions')
 }

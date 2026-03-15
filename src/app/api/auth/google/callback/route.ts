@@ -310,7 +310,7 @@ export async function GET(request: NextRequest) {
     } else {
       const u = loginResult.user as { role?: string; roleAssignments?: Array<unknown> }
       if (u.role === 'superadmin') {
-        redirectPath = '/platform'
+        redirectPath = '/'
       } else {
         redirectPath =
           Array.isArray(u.roleAssignments) && u.roleAssignments.length > 0 ? '/user' : '/'

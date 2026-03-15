@@ -32,7 +32,7 @@ export default async function LoginPage({
     }
     const typedUser = user as unknown as { role?: string; roleAssignments?: Array<{ assignedRole: string }> }
     if (typedUser.role === 'superadmin') {
-      redirect('/platform')
+      redirect('/')
     } else if (Array.isArray(typedUser.roleAssignments) && typedUser.roleAssignments.length > 0) {
       redirect('/user')
     } else {
