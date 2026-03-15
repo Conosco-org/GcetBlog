@@ -333,7 +333,7 @@ export interface Institution {
 export interface Media {
   id: string;
   /**
-   * Auto-set from your institution
+   * Institution this media belongs to. Auto-assigned for regular users.
    */
   institution?: (string | null) | Institution;
   alt?: string | null;

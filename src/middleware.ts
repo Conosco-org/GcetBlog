@@ -276,6 +276,45 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
+  // ── Root path (/) — Platform dashboard or institution blog ───────────
+  // If no tenant resolved (main platform domain), show platform dashboard
+  // If tenant resolved (institution domain), show institution blog
+  if (pathname === '/') {
+    if (!tenantInfo) {
+      // No institution resolved → redirect to platform dashboard
+      if (!token) {
+        // Not logged in → redirect to login with platform redirect
+        return loginRedirect(request, { redirect: '/platform' })
+      }
+      
+      const user = await getUser(token, request)
+      if (!user) {
+        return loginRedirect(request, { message: 'Session expired', redirect: '/platform' })
+      }
+      
+      // Redirect to appropriate dashboard based on role
+      return NextResponse.redirect(new URL(getDashboardUrl(user), request.url))
+    }
+    // Tenant resolved → continue to institution blog home page
+  }
+
+  // ── Public routes — require tenant for non-auth pages ────────────────
+  // Block access to institution content if no tenant is resolved
+  const publicAuthPaths = ['/login', '/register', '/set-password', '/forgot-password']
+  const isAuthPath = publicAuthPaths.some(p => pathname.startsWith(p))
+  
+  if (!isAuthPath && !tenantInfo && pathname !== '/') {
+    // No tenant resolved and trying to access institution content
+    // Redirect to platform or show error
+    return new NextResponse(
+      '<html><body><h1>Institution Not Found</h1><p>This content is only accessible via institution-specific domains.</p><p><a href="/platform">Go to Platform Dashboard</a></p></body></html>',
+      {
+        status: 404,
+        headers: { 'Content-Type': 'text/html' },
+      },
+    )
+  }
+
   // ── Public routes — inject tenant headers ─────────────────────────────
   const response = NextResponse.next()
   if (tenantInfo) {

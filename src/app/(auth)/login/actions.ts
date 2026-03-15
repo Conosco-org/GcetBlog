@@ -3,7 +3,7 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { redirect } from 'next/navigation'
-import { cookies } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 import { getCurrentTenant } from '@/utilities/tenantContext'
 import type { Institution } from '@/payload-types'
 

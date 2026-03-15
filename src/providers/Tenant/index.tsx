@@ -25,6 +25,9 @@ export interface ClientTenant {
     primaryColor?: string
     accentColor?: string
     tagline?: string
+    favicon?: {
+      url?: string
+    }
   }
 }
 

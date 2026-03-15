@@ -47,6 +47,9 @@ export interface ResolvedTenant {
     primaryColor?: string
     accentColor?: string
     tagline?: string
+    favicon?: {
+      url?: string
+    }
   }
 }
 
@@ -127,8 +130,9 @@ export async function resolveTenant(
     tenant = await resolveByPilotSubdomain(normalizedHost, payload)
   }
 
-  // Strategy 3: Localhost / development fallback
-  if (!tenant && isLocalhost(normalizedHost)) {
+  // Strategy 3: Localhost / development fallback (ONLY if DEFAULT_INSTITUTION_CODE is explicitly set)
+  // This allows testing institution sites locally without hosts file modification
+  if (!tenant && isLocalhost(normalizedHost) && process.env.DEFAULT_INSTITUTION_CODE) {
     tenant = await resolveByDefault(payload)
   }
 
@@ -255,6 +259,13 @@ function buildTenantFromDoc(
           primaryColor: doc.branding.primaryColor ?? undefined,
           accentColor: doc.branding.accentColor ?? undefined,
           tagline: doc.branding.tagline ?? undefined,
+          favicon: doc.branding.favicon
+            ? {
+                url: typeof doc.branding.favicon === 'string'
+                  ? undefined
+                  : (doc.branding.favicon as { url?: string })?.url,
+              }
+            : undefined,
         }
       : undefined,
   }

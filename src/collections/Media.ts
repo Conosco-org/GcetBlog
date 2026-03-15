@@ -50,11 +50,12 @@ export const Media: CollectionConfig = {
   }),
   fields: [
     {
-      ...institutionField,
-      // Make institution required for non-superadmin uploads
+      name: 'institution',
+      type: 'relationship',
+      relationTo: 'institutions',
       required: false, // Keep optional to allow superadmin platform assets
       admin: {
-        ...institutionField.admin,
+        position: 'sidebar',
         description: 'Institution this media belongs to. Auto-assigned for regular users.',
         condition: (data, siblingData, { user }) => {
           // Show field for superadmin, hide for others (auto-assigned)
