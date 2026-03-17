@@ -46,7 +46,7 @@ export async function registerAction(formData: FormData) {
     }
 
     // Create new user — auto-assign institution from current domain's tenant
-    const user = await payload.create({
+    await payload.create({
       collection: 'users',
       data: {
         name,
@@ -57,14 +57,10 @@ export async function registerAction(formData: FormData) {
         institution: tenant.institutionId,
       },
     })
-
-    if (user) {
-      redirect('/login?message=Account created successfully! Please sign in.')
-    } else {
-      return { error: 'Failed to create account' }
-    }
   } catch (error) {
     console.error('Registration error:', error)
     return { error: 'Failed to create account. Please try again.' }
   }
+
+  redirect('/login?message=Account created successfully! Please sign in.')
 }
