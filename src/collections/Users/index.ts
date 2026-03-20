@@ -13,8 +13,7 @@ export const Users: CollectionConfig = {
     },
     create: authenticated,
     delete: adminOnly,
-    // Public can read basic profile info, authenticated users see more
-    read: () => true,
+    read: adminOrSelf,
     update: adminOrSelf,
   },
   admin: {
