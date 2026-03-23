@@ -32,7 +32,7 @@ export default async function EditorDashboardPage() {
 
     // Parallelize all independent queries
     const [
-      pendingPosts,
+      pendingPostsCount,
       newPostsToday,
       approvedPosts,
       previousDayApprovals,
@@ -44,8 +44,8 @@ export default async function EditorDashboardPage() {
       allComments,
       recentLogs,
     ] = await Promise.all([
-      // Pending posts for review
-      payload.find({
+      // Pending posts for review (matching review queue page exactly)
+      payload.count({
         collection: 'posts',
         where: { 
           and: [
@@ -53,8 +53,6 @@ export default async function EditorDashboardPage() {
             { reviewStatus: { equals: 'pending_review' } }
           ]
         },
-        limit: 10,
-        sort: '-submittedForReviewAt',
       }),
       // New posts submitted for review today count
       payload.count({
@@ -190,7 +188,7 @@ export default async function EditorDashboardPage() {
           <CardContent>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-2xl sm:text-3xl font-bold text-foreground">{pendingPosts.totalDocs}</p>
+                <p className="text-2xl sm:text-3xl font-bold text-foreground">{pendingPostsCount.totalDocs}</p>
                 {newPostsToday.totalDocs > 0 && (
                   <p className="text-sm text-orange-600 dark:text-orange-400 mt-1">+{newPostsToday.totalDocs} submitted today</p>
                 )}
