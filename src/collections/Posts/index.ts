@@ -158,7 +158,18 @@ export const Posts: CollectionConfig<'posts'> = {
               relationTo: 'media',
             }),
 
-            MetaDescriptionField({}),
+            MetaDescriptionField({
+              validate: (value: string) => {
+                if (!value) return true // Optional field
+                if (value.length > 160) {
+                  return `Meta description must be 160 characters or less (currently ${value.length} characters)`
+                }
+                if (value.length < 120) {
+                  return `Meta description should be at least 120 characters for better SEO (currently ${value.length} characters)`
+                }
+                return true
+              },
+            }),
             PreviewField({
               // if the `generateUrl` function is configured
               hasGenerateFn: true,

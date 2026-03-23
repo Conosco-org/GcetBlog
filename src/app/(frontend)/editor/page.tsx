@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { PageHeader } from '@/components/base'
 import { DashboardErrorFallback } from './components/DashboardErrorFallback'
+import { formatDateTimeIST } from '@/utilities/formatDateTime'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -46,16 +47,24 @@ export default async function EditorDashboardPage() {
       // Pending posts for review
       payload.find({
         collection: 'posts',
-        where: { _status: { equals: 'draft' } },
+        where: { 
+          and: [
+            { _status: { equals: 'draft' } },
+            { reviewStatus: { equals: 'pending_review' } }
+          ]
+        },
         limit: 10,
-        sort: '-createdAt',
+        sort: '-submittedForReviewAt',
       }),
-      // New posts today count
+      // New posts submitted for review today count
       payload.count({
         collection: 'posts',
         where: {
-          _status: { equals: 'draft' },
-          createdAt: { greater_than: today.toISOString() },
+          and: [
+            { _status: { equals: 'draft' } },
+            { reviewStatus: { equals: 'pending_review' } },
+            { submittedForReviewAt: { greater_than: today.toISOString() } },
+          ]
         },
       }),
       // Approved posts (last 24h)
@@ -183,7 +192,7 @@ export default async function EditorDashboardPage() {
               <div>
                 <p className="text-2xl sm:text-3xl font-bold text-foreground">{pendingPosts.totalDocs}</p>
                 {newPostsToday.totalDocs > 0 && (
-                  <p className="text-sm text-orange-600 dark:text-orange-400 mt-1">+{newPostsToday.totalDocs} new today</p>
+                  <p className="text-sm text-orange-600 dark:text-orange-400 mt-1">+{newPostsToday.totalDocs} submitted today</p>
                 )}
               </div>
             </div>
@@ -308,7 +317,7 @@ export default async function EditorDashboardPage() {
                             {log.details || actionLabel}
                           </p>
                           <p className="text-xs text-muted-foreground mt-1">
-                            {new Date(log.timestamp).toLocaleString()}
+                            {formatDateTimeIST(log.timestamp)}
                           </p>
                         </div>
                         {isTemplate ? (
@@ -342,7 +351,7 @@ export default async function EditorDashboardPage() {
                             <span className="font-medium">&quot;{post.title}&quot;</span>
                           </p>
                           <p className="text-xs text-muted-foreground mt-1">
-                            {new Date(post.updatedAt).toLocaleString()}
+                            {formatDateTimeIST(post.updatedAt)}
                           </p>
                         </div>
                         {status === 'published' ? (
@@ -369,7 +378,7 @@ export default async function EditorDashboardPage() {
                             <span className="font-semibold">{author?.name || 'Anonymous'}</span> commented
                           </p>
                           <p className="text-xs text-muted-foreground mt-1">
-                            {new Date(comment.createdAt).toLocaleString()}
+                            {formatDateTimeIST(comment.createdAt)}
                           </p>
                         </div>
                         <MessageSquare className="w-4 h-4 text-blue-500" />
@@ -467,7 +476,7 @@ export default async function EditorDashboardPage() {
                           <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
                             <span>{author?.name || 'Unknown'}</span>
                             <span>•</span>
-                            <span>{new Date(post.publishedAt || post.updatedAt).toLocaleDateString()}</span>
+                            <span>{formatDateTimeIST(post.publishedAt || post.updatedAt)}</span>
                           </div>
                         </div>
                       </div>
@@ -514,7 +523,7 @@ export default async function EditorDashboardPage() {
                           </td>
                           <td className="py-4 text-sm text-muted-foreground">{author?.name || 'Unknown'}</td>
                           <td className="py-4 text-sm text-muted-foreground">
-                            {new Date(post.publishedAt || post.updatedAt).toLocaleDateString()}
+                            {formatDateTimeIST(post.publishedAt || post.updatedAt)}
                           </td>
                           <td className="py-4">
                             <Badge className="bg-green-500/10 text-green-700 dark:text-green-400 hover:bg-green-500/20">

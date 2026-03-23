@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { Media } from '@/components/Media'
 import type { Post, Media as MediaType } from '@/payload-types'
 import { Star } from 'lucide-react'
+import { formatDateTimeIST } from '@/utilities/formatDateTime'
 
 interface FeaturedPostsProps {
   posts: Post[]
@@ -38,12 +39,15 @@ export const FeaturedPosts: React.FC<FeaturedPostsProps> = ({ posts }) => {
                 : null
             const displayImage = metaImage || heroImage
 
-            // Calculate remaining time for featured period
+            // Calculate remaining time for featured period (in IST)
             const featuredUntil = post.featuredUntil ? new Date(post.featuredUntil) : null
             const now = new Date()
             const daysRemaining = featuredUntil
               ? Math.ceil((featuredUntil.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
               : null
+
+            // Format featured until date in IST
+            const featuredUntilIST = featuredUntil ? formatDateTimeIST(post.featuredUntil) : null
 
             return (
               <Link
@@ -107,15 +111,22 @@ export const FeaturedPosts: React.FC<FeaturedPostsProps> = ({ posts }) => {
 
                   {/* Footer with time remaining */}
                   <div className="flex items-center justify-between text-xs text-muted-foreground pt-3 border-t border-border">
-                    {daysRemaining !== null && daysRemaining > 0 && (
-                      <span className="flex items-center gap-1 text-accent">
-                        <span className="w-1.5 h-1.5 bg-accent rounded-full animate-pulse" />
-                        {daysRemaining === 1 ? 'Last day!' : `${daysRemaining} days left`}
-                      </span>
-                    )}
-                    {daysRemaining !== null && daysRemaining <= 0 && (
-                      <span className="text-muted-foreground">Ending soon</span>
-                    )}
+                    <div className="flex flex-col gap-1">
+                      {daysRemaining !== null && daysRemaining > 0 && (
+                        <span className="flex items-center gap-1 text-accent">
+                          <span className="w-1.5 h-1.5 bg-accent rounded-full animate-pulse" />
+                          {daysRemaining === 1 ? 'Last day!' : `${daysRemaining} days left`}
+                        </span>
+                      )}
+                      {daysRemaining !== null && daysRemaining <= 0 && (
+                        <span className="text-muted-foreground">Ending soon</span>
+                      )}
+                      {featuredUntilIST && (
+                        <span className="text-[10px] text-muted-foreground">
+                          Until: {featuredUntilIST}
+                        </span>
+                      )}
+                    </div>
                     <span className="ml-auto flex items-center gap-1 font-medium tracking-wider uppercase text-accent opacity-0 group-hover:opacity-100 transition-opacity">
                       Read More
                       <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
