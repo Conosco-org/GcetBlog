@@ -47,7 +47,7 @@ export const FeaturedPosts: React.FC<FeaturedPostsProps> = ({ posts }) => {
               : null
 
             // Format featured until date in IST
-            const featuredUntilIST = featuredUntil ? formatDateTimeIST(post.featuredUntil) : null
+            const featuredUntilIST = featuredUntil && post.featuredUntil ? formatDateTimeIST(post.featuredUntil) : null
 
             return (
               <Link

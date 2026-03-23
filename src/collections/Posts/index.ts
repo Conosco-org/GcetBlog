@@ -158,18 +158,7 @@ export const Posts: CollectionConfig<'posts'> = {
               relationTo: 'media',
             }),
 
-            MetaDescriptionField({
-              validate: (value: string) => {
-                if (!value) return true // Optional field
-                if (value.length > 160) {
-                  return `Meta description must be 160 characters or less (currently ${value.length} characters)`
-                }
-                if (value.length < 120) {
-                  return `Meta description should be at least 120 characters for better SEO (currently ${value.length} characters)`
-                }
-                return true
-              },
-            }),
+            MetaDescriptionField({}),
             PreviewField({
               // if the `generateUrl` function is configured
               hasGenerateFn: true,
@@ -376,6 +365,22 @@ export const Posts: CollectionConfig<'posts'> = {
     afterChange: [revalidatePost],
     afterRead: [populateAuthors],
     afterDelete: [revalidateDelete],
+    beforeValidate: [
+      ({ data }) => {
+        // Validate meta description length
+        if (data?.meta?.description && typeof data.meta.description === 'string') {
+          const description = data.meta.description
+          if (description.length > 160) {
+            throw new Error(`Meta description must be 160 characters or less (currently ${description.length} characters)`)
+          }
+          // Note: We don't throw for minimum length, just log a warning
+          if (description.length < 120) {
+            console.warn(`Meta description should be at least 120 characters for better SEO (currently ${description.length} characters)`)
+          }
+        }
+        return data
+      },
+    ],
   },
   versions: {
     drafts: {
