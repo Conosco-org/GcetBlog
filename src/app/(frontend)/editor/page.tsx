@@ -30,6 +30,14 @@ export default async function EditorDashboardPage() {
     const weekAgo = new Date()
     weekAgo.setDate(weekAgo.getDate() - 7)
 
+    // Get contributor user IDs first
+    const contributors = await payload.find({
+      collection: 'users',
+      where: { role: { equals: 'contributor' } },
+      limit: 1000,
+    })
+    const contributorIds = contributors.docs.map(user => user.id)
+
     // Parallelize all independent queries
     const [
       pendingPostsCount,
@@ -44,23 +52,25 @@ export default async function EditorDashboardPage() {
       allComments,
       recentLogs,
     ] = await Promise.all([
-      // Pending posts for review (matching review queue page exactly)
+      // Pending posts for review (matching review queue page exactly - contributors only)
       payload.count({
         collection: 'posts',
         where: { 
           and: [
             { _status: { equals: 'draft' } },
-            { reviewStatus: { equals: 'pending_review' } }
+            { reviewStatus: { equals: 'pending_review' } },
+            { authors: { in: contributorIds } }, // Only posts authored by contributors
           ]
         },
       }),
-      // New posts submitted for review today count
+      // New posts submitted for review today count (contributors only)
       payload.count({
         collection: 'posts',
         where: {
           and: [
             { _status: { equals: 'draft' } },
             { reviewStatus: { equals: 'pending_review' } },
+            { authors: { in: contributorIds } }, // Only posts authored by contributors
             { submittedForReviewAt: { greater_than: today.toISOString() } },
           ]
         },

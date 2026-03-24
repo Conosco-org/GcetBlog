@@ -23,10 +23,20 @@ export default async function EditorQueuePage({ searchParams }: PageProps) {
   const query = params.q || ''
   const page = Math.max(1, Number(params.page) || 1)
 
-  // Build where clause
+  // First, get all contributor user IDs
+  const contributors = await payload.find({
+    collection: 'users',
+    where: { role: { equals: 'contributor' } },
+    limit: 1000, // Assuming we don't have more than 1000 contributors
+  })
+
+  const contributorIds = contributors.docs.map(user => user.id)
+
+  // Build where clause - only posts from contributors
   const baseConditions: Where[] = [
     { _status: { equals: 'draft' } },
     { reviewStatus: { equals: 'pending_review' } },
+    { authors: { in: contributorIds } }, // Only posts authored by contributors
   ]
 
   if (query) {
