@@ -35,6 +35,11 @@ export default async function EditorDashboardPage() {
       collection: 'users',
       where: { role: { equals: 'contributor' } },
       limit: 1000,
+      overrideAccess: true,
+      depth: 0,
+      select: {
+        id: true,
+      },
     })
     const contributorIds = contributors.docs.map(user => user.id)
 
