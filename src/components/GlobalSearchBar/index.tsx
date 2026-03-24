@@ -126,7 +126,7 @@ export function GlobalSearchBar({ categories = [], className, variant = 'header'
             setTimeout(() => inputRef.current?.focus(), 100)
           }}
           className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl border border-border/60 bg-card hover:bg-muted/80 transition-all duration-150 text-muted-foreground text-sm shadow-sm hover:shadow"
-          aria-label="Search posts (Ctrl+K)"
+          aria-label="Search posts (Ctrl/Cmd+K)"
         >
           <Search className="h-4 w-4" />
           <span className="hidden sm:inline">Search...</span>
