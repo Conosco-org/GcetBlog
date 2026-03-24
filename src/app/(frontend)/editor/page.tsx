@@ -35,26 +35,9 @@ export default async function EditorDashboardPage() {
       collection: 'users',
       where: { role: { equals: 'contributor' } },
       limit: 1000,
-    // Get contributor user IDs first (paginate through all contributors to avoid truncation)
-    const contributorIds: string[] = []
-    let contributorPage = 1
-    let contributorTotalPages = 1
+    })
+    const contributorIds = contributors.docs.map(user => user.id)
 
-    while (contributorPage <= contributorTotalPages) {
-      const contributorsPage = await payload.find({
-        collection: 'users',
-        where: { role: { equals: 'contributor' } },
-        page: contributorPage,
-        limit: 100,
-      })
-
-      contributorIds.push(
-        ...contributorsPage.docs.map(user => user.id as string),
-      )
-
-      contributorTotalPages = contributorsPage.totalPages ?? contributorTotalPages
-      contributorPage += 1
-    }
     // Parallelize all independent queries
     const [
       pendingPostsCount,
