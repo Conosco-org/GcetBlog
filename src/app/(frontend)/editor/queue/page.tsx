@@ -23,15 +23,28 @@ export default async function EditorQueuePage({ searchParams }: PageProps) {
   const query = params.q || ''
   const page = Math.max(1, Number(params.page) || 1)
 
-  // First, get all contributor user IDs
-  const contributors = await payload.find({
-    collection: 'users',
-    where: { role: { equals: 'contributor' } },
-    limit: 1000, // Assuming we don't have more than 1000 contributors
-  })
+  // First, get all contributor user IDs using pagination to avoid hard limits
+  const contributorIds: string[] = []
+  let contributorsPage = 1
+  let hasMoreContributors = true
 
-  const contributorIds = contributors.docs.map(user => user.id)
+  while (hasMoreContributors) {
+    const contributors = await payload.find({
+      collection: 'users',
+      where: { role: { equals: 'contributor' } },
+      limit: 100,
+      page: contributorsPage,
+    })
 
+    contributorIds.push(...contributors.docs.map(user => user.id))
+
+    // Continue until there are no more contributor pages
+    if (!contributors.hasNextPage || !contributors.nextPage) {
+      hasMoreContributors = false
+    } else {
+      contributorsPage = contributors.nextPage
+    }
+  }
   // Build where clause - only posts from contributors
   const baseConditions: Where[] = [
     { _status: { equals: 'draft' } },
