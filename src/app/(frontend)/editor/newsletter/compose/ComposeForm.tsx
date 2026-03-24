@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/select'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Badge } from '@/components/ui/badge'
-import { Save, Send, Loader2 } from 'lucide-react'
+import { Save, Send, Loader2, X } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import type { Newsletter, Category, Post } from '@/payload-types'
 
@@ -234,22 +234,24 @@ export function ComposeForm({ newsletter, categories, recentPosts, mode: _mode }
       </Card>
 
       {/* Actions */}
-      <div className="flex gap-3 justify-end sticky bottom-4 bg-background p-4 border rounded-lg shadow-lg">
-        <Button type="button" variant="outline" onClick={() => router.back()} disabled={isPending}>
-          Cancel
+      <div className="flex items-center gap-2 sm:gap-3 justify-end sticky bottom-4 bg-background p-3 sm:p-4 border rounded-lg shadow-lg">
+        <Button type="button" variant="outline" size="sm" onClick={() => router.back()} disabled={isPending}>
+          <X className="w-4 h-4 sm:mr-1.5" />
+          <span className="hidden sm:inline">Cancel</span>
         </Button>
         <Button
           type="button"
           variant="outline"
+          size="sm"
           onClick={() => handleSave('draft')}
           disabled={isPending}
         >
-          {isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-          Save Draft
+          {isPending ? <Loader2 className="w-4 h-4 sm:mr-1.5 animate-spin" /> : <Save className="w-4 h-4 sm:mr-1.5" />}
+          <span className="hidden sm:inline">Save Draft</span>
         </Button>
-        <Button type="button" onClick={() => handleSave('send')} disabled={isPending}>
-          {isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
-          Send Now
+        <Button type="button" size="sm" onClick={() => handleSave('send')} disabled={isPending}>
+          {isPending ? <Loader2 className="w-4 h-4 sm:mr-1.5 animate-spin" /> : <Send className="w-4 h-4 sm:mr-1.5" />}
+          <span className="hidden sm:inline">Send Now</span>
         </Button>
       </div>
     </form>

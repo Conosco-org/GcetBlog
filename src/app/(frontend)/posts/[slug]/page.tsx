@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 
 import { RelatedPosts } from '@/blocks/RelatedPosts/Component'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
@@ -78,7 +78,7 @@ export default async function Post({ params: paramsPromise }: Args) {
     depth: 1,
   })
 
-  // Check the current user's vote server-side — no client GET needed
+  // Check the current user's vote server-side - no client GET needed
   const initialLikes: number = (post as any).likesCount ?? 0
   let initialUserVote: 1 | -1 | null = null
   try {
@@ -95,7 +95,7 @@ export default async function Post({ params: paramsPromise }: Args) {
       }
     }
   } catch {
-    // Unauthenticated — fine
+    // Unauthenticated - fine
   }
 
   return (
@@ -106,10 +106,10 @@ export default async function Post({ params: paramsPromise }: Args) {
       <PayloadRedirects disableNotFound url={url} />
       {draft && <LivePreviewListener />}
 
-      {/* Hero — full width, no top padding (header floats over it) */}
+      {/* Hero - full width, no top padding (header floats over it) */}
       <PostHero post={post} />
 
-      {/* Main content — industry standard two-col layout on desktop */}
+      {/* Main content - industry standard two-col layout on desktop */}
       <div className="container mx-auto px-4 sm:px-6 mt-10 sm:mt-14">
         <div className="lg:grid lg:grid-cols-[1fr_680px_1fr] xl:grid-cols-[1fr_720px_1fr]">
           {/* Left: Sticky vote buttons on desktop */}
@@ -183,7 +183,7 @@ export default async function Post({ params: paramsPromise }: Args) {
               />
             </div>
 
-            {/* Related posts — inline on mobile */}
+            {/* Related posts - inline on mobile */}
             {recommendedPosts.docs.length > 0 && (
               <div className="lg:hidden mt-12 pt-8 border-t border-border">
                 <h2 className="text-xl font-display font-bold mb-5">More to read</h2>
@@ -191,7 +191,7 @@ export default async function Post({ params: paramsPromise }: Args) {
               </div>
             )}
 
-            {/* Newsletter signup banner — invite visitors to subscribe */}
+            {/* Newsletter signup banner - invite visitors to subscribe */}
             <div className="mt-12 rounded-2xl bg-accent/5 dark:bg-accent/10 border border-accent/20 p-6 sm:p-8">
               <div className="flex items-start gap-3 mb-4">
                 <div>

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import {
@@ -52,6 +52,8 @@ interface DataTableProps<T> {
   className?: string
   /** Unique key extractor for rows */
   getRowKey?: (item: T, index: number) => string
+  /** Optional mobile card renderer - shown on small screens instead of the table */
+  mobileRender?: (item: T, index: number) => React.ReactNode
 }
 
 export function DataTable<T>({
@@ -65,6 +67,7 @@ export function DataTable<T>({
   emptyState,
   className,
   getRowKey,
+  mobileRender,
 }: DataTableProps<T>) {
   const router = useRouter()
   const pathname = usePathname()
@@ -96,7 +99,29 @@ export function DataTable<T>({
 
   return (
     <div className={cn('space-y-4', className)}>
-      <div className="rounded-md border">
+      {/* Mobile card view - shown when mobileRender is provided */}
+      {mobileRender && (
+        <div className="md:hidden space-y-3">
+          {isLoading ? (
+            Array.from({ length: pageSize || 5 }).map((_, i) => (
+              <div key={`mobile-loading-${i}`} className="rounded-lg border bg-card p-4 space-y-3">
+                <div className="h-4 bg-muted animate-pulse rounded w-3/4" />
+                <div className="h-3 bg-muted animate-pulse rounded w-1/2" />
+                <div className="h-3 bg-muted animate-pulse rounded w-1/3" />
+              </div>
+            ))
+          ) : (
+            data.map((item, index) => (
+              <div key={getRowKey ? getRowKey(item, index) : index}>
+                {mobileRender(item, index)}
+              </div>
+            ))
+          )}
+        </div>
+      )}
+
+      {/* Desktop table view */}
+      <div className={cn('rounded-md border overflow-x-auto', mobileRender && 'hidden md:block')}>
         <Table>
           <TableHeader>
             <TableRow>

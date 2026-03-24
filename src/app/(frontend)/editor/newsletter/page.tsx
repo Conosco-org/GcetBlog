@@ -1,5 +1,5 @@
-/**
- * Newsletter Dashboard — Editor View
+﻿/**
+ * Newsletter Dashboard - Editor View
  *
  * Shows campaign overview, stats, and recent newsletters.
  * Editors can create, manage, and send newsletters.
@@ -37,8 +37,8 @@ export default async function NewsletterDashboardPage({ searchParams }: PageProp
 
   const payload = await getPayload({ config: configPromise })
 
-  // Fetch stats in parallel
-  const [subscribersCount, campaignsCount, draftsCount, newsletters] = await Promise.all([
+  // Fetch all stats in a single parallel round-trip
+  const [subscribersCount, campaignsCount, draftsCount, newsletters, sentNewsletters] = await Promise.all([
     // Total active subscribers
     payload.count({
       collection: 'newsletter-subscribers',
@@ -78,15 +78,16 @@ export default async function NewsletterDashboardPage({ searchParams }: PageProp
         ],
       },
     }),
-  ])
 
-  // Calculate average open rate from sent newsletters
-  const sentNewsletters = await payload.find({
-    collection: 'newsletters',
-    where: { status: { equals: 'sent' } },
-    limit: 50,
-    depth: 0,
-  })
+    // Sent newsletters for open rate calc (moved into parallel block)
+    payload.find({
+      collection: 'newsletters',
+      where: { status: { equals: 'sent' } },
+      limit: 50,
+      depth: 0,
+      select: { stats: true },
+    }),
+  ])
 
   const totalRecipients = sentNewsletters.docs.reduce(
     (sum, n) => sum + (n.stats?.totalRecipients ?? 0),

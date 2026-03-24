@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 
@@ -6,7 +6,7 @@ export async function GET(request: NextRequest) {
   try {
     const payload = await getPayload({ config: configPromise })
 
-    // Require authentication — only admins (isAdmin) can seed
+    // Require authentication - only admins (isAdmin) can seed
     const { user } = await payload.auth({ headers: request.headers })
     const typedUser = user as { isAdmin?: boolean } | null
     if (!user || !typedUser?.isAdmin) {

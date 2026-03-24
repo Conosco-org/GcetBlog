@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import { revalidatePath } from 'next/cache'
 import config from '@/payload.config'
 
-// GET handler — list posts (proxies to Payload's built-in REST)
+// GET handler - list posts (proxies to Payload's built-in REST)
 export async function GET(request: NextRequest) {
   try {
     const payload = await getPayload({ config })

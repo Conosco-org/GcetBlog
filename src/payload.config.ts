@@ -46,6 +46,13 @@ export default buildConfig({
     meta: {
       title: 'GCET Blog Admin',
       titleSuffix: '- GCET Blog',
+      icons: [
+        {
+          rel: 'icon',
+          type: 'image/png',
+          url: '/gcet-logo.png',
+        },
+      ],
     },
     components: {
       // Custom branding and navigation

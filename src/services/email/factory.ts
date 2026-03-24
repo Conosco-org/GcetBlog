@@ -1,8 +1,8 @@
-/**
+﻿/**
  * Email Provider Factory
  *
  * Reads environment variables and instantiates the correct provider.
- * Switch providers by changing EMAIL_PROVIDER env var — zero code changes.
+ * Switch providers by changing EMAIL_PROVIDER env var - zero code changes.
  */
 
 import type { EmailProvider, EmailProviderConfig, EmailSettings, EmailAddress } from './types'

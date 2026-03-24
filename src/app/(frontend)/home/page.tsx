@@ -30,6 +30,8 @@ export default async function HomePage() {
     where: {
       and: [
         { _status: { equals: 'published' } },
+        { featuredFrom: { exists: true } },
+        { featuredUntil: { exists: true } },
         { featuredFrom: { less_than_equal: now } },
         { featuredUntil: { greater_than_equal: now } },
       ],

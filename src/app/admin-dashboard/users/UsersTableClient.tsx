@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import type { User } from '@/payload-types'
 import { SearchInput } from '@/components/base/SearchInput'
@@ -66,7 +66,7 @@ const columns: Column<User>[] = [
           </Badge>
         )}
         {!user.isAdmin && !user.canManageAdmins && (
-          <span className="text-xs text-muted-foreground">—</span>
+          <span className="text-xs text-muted-foreground">-</span>
         )}
       </div>
     ),
@@ -164,6 +164,46 @@ export function UsersTableClient({
             ? 'Try adjusting your search or filters'
             : 'No users have registered yet',
         }}
+        mobileRender={(user) => (
+          <div className="rounded-lg border bg-card p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-xs font-semibold text-white flex-shrink-0">
+                  {(user.name || user.email || 'U').charAt(0).toUpperCase()}
+                </div>
+                <div className="min-w-0">
+                  <p className="font-medium text-sm truncate">{user.name || 'Unnamed'}</p>
+                  <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                </div>
+              </div>
+              <UserActions
+                user={user}
+                currentUserId={currentUserId}
+                currentUserCanManageAdmins={currentUserCanManageAdmins}
+              />
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant={user.role === 'editor' ? 'default' : 'secondary'} className="capitalize text-xs">
+                {user.role || 'unknown'}
+              </Badge>
+              {user.isAdmin && (
+                <Badge variant="destructive" className="text-xs">
+                  <Shield className="h-3 w-3 mr-1" />
+                  Admin
+                </Badge>
+              )}
+              {user.canManageAdmins && (
+                <Badge variant="outline" className="text-xs border-amber-500 text-amber-600">
+                  <ShieldCheck className="h-3 w-3 mr-1" />
+                  Super
+                </Badge>
+              )}
+              <span className="text-xs text-muted-foreground ml-auto">
+                Joined {new Date(user.createdAt).toLocaleDateString()}
+              </span>
+            </div>
+          </div>
+        )}
       />
     </div>
   )

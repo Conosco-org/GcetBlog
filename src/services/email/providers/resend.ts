@@ -1,7 +1,7 @@
-/**
+﻿/**
  * Resend Email Provider
  *
- * Uses the Resend HTTP API — no SMTP needed.
+ * Uses the Resend HTTP API - no SMTP needed.
  * https://resend.com
  */
 
@@ -89,7 +89,7 @@ export class ResendProvider implements EmailProvider {
   }
 
   async sendBatch(messages: EmailMessage[]): Promise<BatchSendResult> {
-    // Resend supports native batch — up to 100 per call
+    // Resend supports native batch - up to 100 per call
     const results: SendResult[] = []
     let successful = 0
     let failed = 0

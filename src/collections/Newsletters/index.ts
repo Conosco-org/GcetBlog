@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+﻿import type { CollectionConfig } from 'payload'
 import { editorOnly } from '../../access/editorOnly'
 import {
   BlocksFeature,
@@ -21,7 +21,7 @@ export const Newsletters: CollectionConfig = {
   admin: {
     defaultColumns: ['title', 'subject', 'type', 'status', 'sentAt', 'createdAt'],
     useAsTitle: 'title',
-    description: 'Newsletter campaigns — manual compose or auto-generated digests',
+    description: 'Newsletter campaigns - manual compose or auto-generated digests',
   },
   access: {
     read: editorOnly,
@@ -49,7 +49,7 @@ export const Newsletters: CollectionConfig = {
       name: 'subject',
       type: 'text',
       required: true,
-      admin: { description: 'Email subject line — seen in inbox' },
+      admin: { description: 'Email subject line - seen in inbox' },
     },
     {
       name: 'previewText',

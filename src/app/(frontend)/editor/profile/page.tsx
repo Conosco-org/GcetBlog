@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useToast } from '@/hooks/use-toast'
+import { uploadToCloudinaryDirect } from '@/utilities/uploadToCloudinaryDirect'
 import {
   User as UserIcon,
   Mail,
@@ -20,6 +21,8 @@ import {
   Calendar,
   Shield,
   AlertTriangle,
+  Trash2,
+  X,
 } from 'lucide-react'
 
 interface UserData {
@@ -218,30 +221,14 @@ export default function ProfilePage() {
 
     setUploadingAvatar(true)
     try {
-      // Upload to media collection
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('alt', `${user.name}'s avatar`)
-
-      const uploadRes = await fetch('/api/media', {
-        method: 'POST',
-        credentials: 'include',
-        body: formData,
-      })
-
-      if (!uploadRes.ok) {
-        toast({ title: 'Error', description: 'Failed to upload image.', variant: 'destructive' })
-        return
-      }
-
-      const uploaded = await uploadRes.json()
+      const uploaded = await uploadToCloudinaryDirect(file, `${user.name}'s avatar`)
 
       // Update user avatar field
       const res = await fetch(`/api/users/${user.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ avatar: uploaded.doc.id }),
+        body: JSON.stringify({ avatar: uploaded.id }),
       })
 
       if (res.ok) {
@@ -312,7 +299,7 @@ export default function ProfilePage() {
   if (!user) return null
 
   return (
-    <div className="p-6 max-w-3xl mx-auto space-y-6">
+    <div className="p-4 md:p-6 max-w-3xl mx-auto space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Profile & Account</h1>
         <p className="text-muted-foreground">Manage your personal information and account settings.</p>
@@ -406,9 +393,9 @@ export default function ProfilePage() {
               </p>
             </div>
             <div className="flex justify-end">
-              <Button type="submit" disabled={savingProfile}>
-                {savingProfile ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
-                Save Profile
+              <Button type="submit" disabled={savingProfile} title="Save Profile" aria-label="Save Profile">
+                {savingProfile ? <Loader2 className="h-4 w-4 sm:mr-2 animate-spin" /> : <Save className="h-4 w-4 sm:mr-2" />}
+                <span className="hidden sm:inline">Save Profile</span>
               </Button>
             </div>
           </form>
@@ -437,9 +424,9 @@ export default function ProfilePage() {
               />
             </div>
             <div className="flex justify-end">
-              <Button type="submit" disabled={savingEmail}>
-                {savingEmail ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
-                Update Email
+              <Button type="submit" disabled={savingEmail} title="Update Email" aria-label="Update Email">
+                {savingEmail ? <Loader2 className="h-4 w-4 sm:mr-2 animate-spin" /> : <Save className="h-4 w-4 sm:mr-2" />}
+                <span className="hidden sm:inline">Update Email</span>
               </Button>
             </div>
           </form>
@@ -481,9 +468,9 @@ export default function ProfilePage() {
               />
             </div>
             <div className="flex justify-end">
-              <Button type="submit" disabled={savingPassword}>
-                {savingPassword ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Lock className="h-4 w-4 mr-2" />}
-                Change Password
+              <Button type="submit" disabled={savingPassword} title="Change Password" aria-label="Change Password">
+                {savingPassword ? <Loader2 className="h-4 w-4 sm:mr-2 animate-spin" /> : <Lock className="h-4 w-4 sm:mr-2" />}
+                <span className="hidden sm:inline">Change Password</span>
               </Button>
             </div>
           </form>
@@ -510,8 +497,11 @@ export default function ProfilePage() {
               variant="destructive"
               onClick={() => setShowDeleteConfirm(true)}
               className="shrink-0"
+              title="Delete Account"
+              aria-label="Delete Account"
             >
-              Delete Account
+              <Trash2 className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Delete Account</span>
             </Button>
           </div>
 
@@ -533,9 +523,11 @@ export default function ProfilePage() {
                   size="sm"
                   disabled={deleteConfirmText !== 'DELETE' || deleting}
                   onClick={handleDeleteAccount}
+                  title="Confirm Delete"
+                  aria-label="Confirm Delete"
                 >
-                  {deleting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
-                  {deleting ? 'Deleting...' : 'Confirm Delete'}
+                  {deleting ? <Loader2 className="h-4 w-4 sm:mr-2 animate-spin" /> : <Trash2 className="h-4 w-4 sm:mr-2" />}
+                  <span className="hidden sm:inline">{deleting ? 'Deleting...' : 'Confirm Delete'}</span>
                 </Button>
                 <Button
                   variant="outline"
@@ -544,8 +536,11 @@ export default function ProfilePage() {
                     setShowDeleteConfirm(false)
                     setDeleteConfirmText('')
                   }}
+                  title="Cancel"
+                  aria-label="Cancel"
                 >
-                  Cancel
+                  <X className="h-4 w-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Cancel</span>
                 </Button>
               </div>
             </div>

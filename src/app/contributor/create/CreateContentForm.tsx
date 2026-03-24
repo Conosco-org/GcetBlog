@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -11,12 +11,6 @@ import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
 import { useToast } from '@/hooks/use-toast'
 import {
-  FileText,
-  Camera,
-  BookOpen,
-  FileEdit,
-  GraduationCap,
-  CalendarDays,
   Upload,
   Send,
   Eye,
@@ -26,48 +20,11 @@ import {
   FileStack,
   XCircle,
 } from 'lucide-react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { cn } from '@/utilities/ui'
 import { RichTextEditor, htmlToLexical, htmlToPlainText } from '@/components/RichTextEditor'
 import { TemplateSelector, type TemplateCardData } from '@/components/templates'
-
-const contentTypes = [
-  {
-    id: 'news',
-    icon: FileText,
-    title: 'News Article',
-    description: 'Breaking news, announcements, updates',
-  },
-  {
-    id: 'event',
-    icon: CalendarDays,
-    title: 'Event Coverage',
-    description: 'Event reports, reviews, previews',
-  },
-  {
-    id: 'literary',
-    icon: BookOpen,
-    title: 'Literary Post',
-    description: 'Poetry, stories, reviews, analysis',
-  },
-  {
-    id: 'media',
-    icon: Camera,
-    title: 'Media Post',
-    description: 'Photo stories, videos, multimedia',
-  },
-  {
-    id: 'tutorial',
-    icon: FileEdit,
-    title: 'Tutorial/Guide',
-    description: 'How-to guides, tutorials, tips',
-  },
-  {
-    id: 'academic',
-    icon: GraduationCap,
-    title: 'Academic Content',
-    description: 'Research, academic discussions',
-  },
-]
+import { uploadToCloudinaryDirect } from '@/utilities/uploadToCloudinaryDirect'
 
 // Categories will be passed from the server component
 
@@ -101,6 +58,7 @@ export function CreateContentForm({ user: _user, categories: dbCategories, initi
   const [featuredImagePreview, setFeaturedImagePreview] = useState<string | null>(null)
   const [uploadingImage, setUploadingImage] = useState(false)
   const [showTemplateSelector, setShowTemplateSelector] = useState(false)
+  const [showPreview, setShowPreview] = useState(false)
   const [activeTemplateName, setActiveTemplateName] = useState<string | null>(initialTemplate?.name || null)
 
   const toggleCategory = (category: string) => {
@@ -160,36 +118,22 @@ export function CreateContentForm({ user: _user, categories: dbCategories, initi
 
     setUploadingImage(true)
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('alt', title || 'Featured image')
-
-      const res = await fetch('/api/media', {
-        method: 'POST',
-        credentials: 'include',
-        body: formData,
-      })
-
-      if (!res.ok) {
-        throw new Error('Upload failed')
-      }
-
-      const data = await res.json()
-      setFeaturedImage(data.doc.id)
-      setFeaturedImagePreview(data.doc.url || URL.createObjectURL(file))
+      const result = await uploadToCloudinaryDirect(file, title || 'Featured image')
+      setFeaturedImage(result.id)
+      setFeaturedImagePreview(result.cloudinaryUrl)
       toast({ title: 'Image uploaded', description: 'Featured image has been set.' })
-    } catch {
-      toast({ title: 'Error', description: 'Failed to upload image.', variant: 'destructive' })
+    } catch (err) {
+      toast({ title: 'Error', description: err instanceof Error ? err.message : 'Failed to upload image.', variant: 'destructive' })
     } finally {
       setUploadingImage(false)
     }
   }
 
   const handleSubmit = async () => {
-    if (!title || !content || !selectedType) {
+    if (!title || !content) {
       toast({
         title: 'Missing Information',
-        description: 'Please fill in title, content, and select a content type',
+        description: 'Please fill in title and content',
         variant: 'destructive',
       })
       return
@@ -212,9 +156,9 @@ export function CreateContentForm({ user: _user, categories: dbCategories, initi
           tags,
           metaDescription,
           publishDate,
-          contentType: selectedType,
+          contentType: selectedType || undefined,
           featuredImage: featuredImage || undefined,
-          isDraft: false, // Submit for review
+          isDraft: false,
         }),
       })
 
@@ -309,14 +253,53 @@ export function CreateContentForm({ user: _user, categories: dbCategories, initi
   }
 
   const handlePreview = () => {
-    toast({
-      title: 'Coming Soon',
-      description: 'Preview feature will be available soon',
-    })
+    if (!title && !content) {
+      toast({ title: 'Nothing to preview', description: 'Add a title or content first.', variant: 'destructive' })
+      return
+    }
+    setShowPreview(true)
   }
 
   return (
     <div className="container max-w-7xl mx-auto p-6">
+      {/* Preview Dialog */}
+      <Dialog open={showPreview} onOpenChange={setShowPreview}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center justify-between">
+              <span>Preview</span>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            {featuredImagePreview && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={featuredImagePreview} alt="Featured" className="w-full rounded-lg object-cover max-h-64" />
+            )}
+            <div>
+              {selectedCategories.length > 0 && (
+                <div className="flex flex-wrap gap-1 mb-2">
+                  {selectedCategories.map((c) => (
+                    <Badge key={c} variant="secondary" className="text-xs">{c}</Badge>
+                  ))}
+                </div>
+              )}
+              <h1 className="text-2xl font-bold leading-tight">{title || <span className="text-muted-foreground italic">No title yet</span>}</h1>
+              {excerpt && <p className="text-muted-foreground mt-2 text-sm">{excerpt}</p>}
+            </div>
+            <div
+              className="prose dark:prose-invert max-w-none text-sm"
+              dangerouslySetInnerHTML={{ __html: content || '<p class="text-muted-foreground italic">No content yet</p>' }}
+            />
+            {tags.length > 0 && (
+              <div className="flex flex-wrap gap-1 pt-2 border-t">
+                {tags.map((tag) => (
+                  <Badge key={tag} variant="outline" className="text-xs">#{tag}</Badge>
+                ))}
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
       {/* Template Selector Modal */}
       <TemplateSelector
         open={showTemplateSelector}
@@ -328,21 +311,24 @@ export function CreateContentForm({ user: _user, categories: dbCategories, initi
       />
 
       {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
+      <div className="mb-6 sm:mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h1 className="text-3xl font-bold">Create New Content</h1>
-            <p className="text-muted-foreground mt-1">Share your ideas with the GCET community</p>
+            <h1 className="text-2xl sm:text-3xl font-bold">Create New Content</h1>
+            <p className="text-muted-foreground mt-1 text-sm sm:text-base">Share your ideas with the GCET community</p>
           </div>
           <div className="flex items-center gap-3">
             <Button
               type="button"
               variant="outline"
+              size="sm"
               onClick={() => setShowTemplateSelector(true)}
               className="gap-1.5"
+              title="Use Template"
+              aria-label="Use Template"
             >
               <FileStack className="w-4 h-4" />
-              Use Template
+              <span className="hidden sm:inline">Use Template</span>
             </Button>
             {saveStatus === 'saving' && (
               <div className="flex items-center gap-2 text-orange-500">
@@ -368,7 +354,7 @@ export function CreateContentForm({ user: _user, categories: dbCategories, initi
             <span>
               Using template: <strong>{activeTemplateName}</strong>
             </span>
-            <span className="text-muted-foreground">&mdash; edit freely</span>
+            <span className="text-muted-foreground">- edit freely</span>
           </div>
           <button
             type="button"
@@ -384,37 +370,6 @@ export function CreateContentForm({ user: _user, categories: dbCategories, initi
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Content - Left Column */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Content Type Selection */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Content Type *</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {contentTypes.map((type) => {
-                  const Icon = type.icon
-                  return (
-                    <button
-                      key={type.id}
-                      onClick={() => setSelectedType(type.id)}
-                      data-selected={selectedType === type.id}
-                      className={cn(
-                        'flex flex-col items-start p-4 rounded-lg border-2 transition-all text-left',
-                        selectedType === type.id
-                          ? 'border-primary bg-primary/5'
-                          : 'border-border hover:border-primary/50'
-                      )}
-                    >
-                      <Icon className="h-6 w-6 mb-2" />
-                      <h3 className="font-semibold text-sm mb-1">{type.title}</h3>
-                      <p className="text-xs text-muted-foreground">{type.description}</p>
-                    </button>
-                  )
-                })}
-              </div>
-            </CardContent>
-          </Card>
-
           {/* Title */}
           <div className="space-y-2">
             <Label htmlFor="title">Title *</Label>
@@ -588,49 +543,17 @@ export function CreateContentForm({ user: _user, categories: dbCategories, initi
             </CardContent>
           </Card>
 
-          {/* Guidelines */}
-          <Card className="border-blue-200 bg-blue-50/50 dark:bg-blue-950/20 dark:border-blue-800">
-            <CardHeader>
-              <CardTitle className="text-blue-900 dark:text-blue-100 flex items-center gap-2">
-                <Check className="h-5 w-5" />
-                Guidelines
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2 text-sm">
-              <div className="flex items-start gap-2">
-                <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                <span>Use clear, engaging headlines</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                <span>Include relevant images</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                <span>Proofread before submitting</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                <span>Use appropriate tags</span>
-              </div>
-              <Button variant="link" className="p-0 h-auto text-blue-600 dark:text-blue-400" type="button">
-                <FileText className="h-4 w-4 mr-1" />
-                Full Guidelines
-              </Button>
-            </CardContent>
-          </Card>
-
           {/* Actions */}
           <div className="space-y-2">
-            {(!title || !content || !selectedType) && (
+            {(!title || !content) && (
               <div className="text-xs text-muted-foreground p-2 bg-muted rounded">
-                Required: {!title && 'Title'} {!content && 'Content'} {!selectedType && 'Content Type'}
+                Required: {!title && 'Title'} {!content && 'Content'}
               </div>
             )}
             <Button
               className="w-full gap-2"
               onClick={handleSubmit}
-              disabled={isSaving || !title || !content || !selectedType}
+              disabled={isSaving || !title || !content}
             >
               <Send className="h-4 w-4" />
               Submit for Review

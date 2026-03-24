@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Newsletter Subscribe API
  *
  * POST /api/newsletter/subscribe
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
       const subscriber = existing.docs[0]
 
       if (subscriber.status === 'active' && subscriber.confirmedAt) {
-        // Already subscribed and confirmed — return success silently (privacy)
+        // Already subscribed and confirmed - return success silently (privacy)
         return NextResponse.json({
           success: true,
           message: 'Thanks for subscribing! Check your email for confirmation.',
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
         })
       }
 
-      // Bounced or complained — return generic success (privacy)
+      // Bounced or complained - return generic success (privacy)
       return NextResponse.json({
         success: true,
         message: 'Thanks for subscribing! Check your email for confirmation.',

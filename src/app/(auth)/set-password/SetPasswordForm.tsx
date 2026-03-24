@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -62,7 +62,7 @@ export function SetPasswordForm() {
   }
 
   async function handleSkip() {
-    // Just redirect to dashboard — they can set a password later in profile
+    // Just redirect to dashboard - they can set a password later in profile
     try {
       const res = await fetch('/api/auth/me', { credentials: 'include' })
       const data = await res.json()
@@ -171,7 +171,7 @@ export function SetPasswordForm() {
             onClick={handleSkip}
             disabled={isLoading}
           >
-            Skip for now — I&apos;ll set it later
+            Skip for now - I&apos;ll set it later
           </Button>
         </CardFooter>
       </form>

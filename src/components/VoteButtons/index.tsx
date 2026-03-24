@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React, { useState, useRef } from 'react'
 import { ThumbsUp, ThumbsDown } from 'lucide-react'
@@ -35,7 +35,7 @@ export function VoteButtons({
   const handleVote = async (value: 1 | -1) => {
     if (pendingRef.current) return
 
-    // Optimistic update — instant feedback
+    // Optimistic update - instant feedback
     const prev = { ...state }
     setState((s) => {
       const isSame = s.userVote === value
@@ -100,7 +100,7 @@ export function VoteButtons({
           <span className="text-xs font-medium tabular-nums leading-none">{state.likes}</span>
         </button>
 
-        {/* Dislike — no count */}
+        {/* Dislike - no count */}
         <button
           onClick={() => handleVote(-1)}
           className={cn(
@@ -141,7 +141,7 @@ export function VoteButtons({
       {/* Divider */}
       <div className="w-px h-6 bg-border mx-1" />
 
-      {/* Dislike — no count */}
+      {/* Dislike - no count */}
       <button
         onClick={() => handleVote(-1)}
         aria-label="Dislike"

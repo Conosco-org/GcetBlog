@@ -108,6 +108,22 @@ export const Pages: CollectionConfig<'pages'> = {
     afterChange: [revalidatePage],
     beforeChange: [populatePublishedAt],
     afterDelete: [revalidateDelete],
+    beforeValidate: [
+      ({ data }) => {
+        // Validate meta description length
+        if (data?.meta?.description && typeof data.meta.description === 'string') {
+          const description = data.meta.description
+          if (description.length > 160) {
+            throw new Error(`Meta description must be 160 characters or less (currently ${description.length} characters)`)
+          }
+          // Note: We don't throw for minimum length, just log a warning
+          if (description.length < 120) {
+            console.warn(`Meta description should be at least 120 characters for better SEO (currently ${description.length} characters)`)
+          }
+        }
+        return data
+      },
+    ],
   },
   versions: {
     drafts: {

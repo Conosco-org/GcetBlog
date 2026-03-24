@@ -1,4 +1,4 @@
-import { getPayload } from 'payload'
+﻿import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
@@ -41,7 +41,7 @@ export default async function ContributorLayout({
     redirect('/dashboard')
   }
 
-  // Fetch badge counts for sidebar — use count() for efficiency
+  // Fetch badge counts for sidebar - use count() for efficiency
   const authorWhere = { authors: { equals: typedUser.id } }
 
   const [draftCount, submittedCount, publishedCount, feedbackCount] = await Promise.all([

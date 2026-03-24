@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import { revalidatePath } from 'next/cache'
 import config from '@/payload.config'
@@ -58,7 +58,7 @@ export async function PATCH(
 
     const isPublishing = body._status === 'published'
 
-    // Update the post — use draft: false when publishing to properly create a published version
+    // Update the post - use draft: false when publishing to properly create a published version
     const post = await payload.update({
       collection: 'posts',
       id: id,

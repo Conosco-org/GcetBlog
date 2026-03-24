@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+﻿import { NextRequest, NextResponse } from 'next/server'
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -55,7 +55,7 @@ export async function middleware(request: NextRequest) {
     return new NextResponse(null, { status: 404 })
   }
 
-  // ── /admin-dashboard — requires isAdmin flag ─────────────────────────
+  // ── /admin-dashboard - requires isAdmin flag ─────────────────────────
   // (Must come BEFORE the /admin check since /admin-dashboard starts with /admin)
   if (pathname.startsWith('/admin-dashboard')) {
     if (!token) return loginRedirect(request)
@@ -71,7 +71,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // ── /admin (Payload panel) — redirect to appropriate dashboard ───────
+  // ── /admin (Payload panel) - redirect to appropriate dashboard ───────
   if (pathname.startsWith('/admin')) {
     if (!token) return loginRedirect(request)
 
@@ -88,7 +88,7 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // ── /editor — requires role === 'editor' ─────────────────────────────
+  // ── /editor - requires role === 'editor' ─────────────────────────────
   // Contributors are allowed on /editor/posts/*/edit (own-post editing).
   if (pathname.startsWith('/editor')) {
     if (!token) return loginRedirect(request, { redirect: pathname })
@@ -113,7 +113,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // ── /contributor — requires role === 'contributor' ────────────────────
+  // ── /contributor - requires role === 'contributor' ────────────────────
   if (pathname.startsWith('/contributor')) {
     if (!token) return loginRedirect(request, { redirect: pathname })
 
@@ -139,7 +139,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  // Don't handle auth route redirects in middleware — the login page
+  // Don't handle auth route redirects in middleware - the login page
   // itself calls getCurrentUser() and redirects appropriately.
 
   return NextResponse.next()

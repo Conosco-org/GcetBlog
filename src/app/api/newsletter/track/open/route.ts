@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Newsletter Open Tracking Pixel Endpoint
  *
  * GET /api/newsletter/track/open?nid={newsletterId}&sid={subscriberId}
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
   const newsletterId = searchParams.get('nid')
   const subscriberId = searchParams.get('sid')
 
-  // Always return the GIF, even if params are missing — don't break email rendering
+  // Always return the GIF, even if params are missing - don't break email rendering
   const gifResponse = () =>
     new NextResponse(TRANSPARENT_GIF, {
       status: 200,
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
       })
     }
   } catch (err) {
-    // Silently fail — never break the email rendering experience
+    // Silently fail - never break the email rendering experience
     console.error('[Newsletter Track Open] Error:', err)
   }
 

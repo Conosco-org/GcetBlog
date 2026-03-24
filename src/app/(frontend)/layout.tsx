@@ -26,7 +26,8 @@ export const metadata: Metadata = {
   },
   description: 'Official blog platform for Geethanjali College of Engineering and Technology',
   icons: {
-    icon: 'https://res.cloudinary.com/dqpvhbkdd/image/upload/b_white,c_pad,w_512,h_512/v1761577830/Gcet_Logo_i9fkbt.png',
+    icon: '/gcet-logo.png',
+    apple: '/gcet-logo.png',
   },
 }
 

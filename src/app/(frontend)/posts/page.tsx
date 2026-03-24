@@ -1,4 +1,4 @@
-import type { Metadata } from 'next/types'
+﻿import type { Metadata } from 'next/types'
 
 import { CollectionArchive } from '@/components/CollectionArchive'
 import { PageRange } from '@/components/PageRange'
@@ -7,10 +7,35 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React, { Suspense } from 'react'
 import Link from 'next/link'
+import { unstable_cache } from 'next/cache'
 import PageClient from './page.client'
 import { PostsFilterBar } from './PostsFilterBar'
 import { NewsletterSignup } from '@/components/NewsletterSignup'
 import type { Where } from 'payload'
+
+// Cache popular tags for 10 minutes - they rarely change
+const getCachedPopularTags = unstable_cache(
+  async () => {
+    const payload = await getPayload({ config: configPromise })
+    const result = await payload.find({
+      collection: 'posts',
+      limit: 100,
+      overrideAccess: true,
+      where: { _status: { equals: 'published' } },
+      select: { tags: true },
+      pagination: false,
+    })
+    const allTags = new Set<string>()
+    result.docs.forEach((post) => {
+      if (post.tags && Array.isArray(post.tags)) {
+        ;(post.tags as string[]).forEach((t) => allTags.add(t))
+      }
+    })
+    return Array.from(allTags)
+  },
+  ['popular-tags'],
+  { revalidate: 600, tags: ['posts'] },
+)
 
 export const dynamic = 'force-dynamic'
 
@@ -98,42 +123,29 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
       sortField = '-publishedAt'
   }
 
-  const posts = await payload.find({
-    collection: 'posts',
-    depth: 1,
-    limit: 12,
-    page: pageNumber,
-    overrideAccess: true,
-    where: { and: conditions },
-    sort: sortField,
-    select: {
-      title: true,
-      slug: true,
-      categories: true,
-      meta: true,
-      heroImage: true,
-      tags: true,
-      voteScore: true,
-    },
-  })
+  const [posts, popularTags] = await Promise.all([
+    payload.find({
+      collection: 'posts',
+      depth: 1,
+      limit: 12,
+      page: pageNumber,
+      overrideAccess: true,
+      where: { and: conditions },
+      sort: sortField,
+      select: {
+        title: true,
+        slug: true,
+        categories: true,
+        meta: true,
+        heroImage: true,
+        tags: true,
+        voteScore: true,
+      },
+    }),
+    getCachedPopularTags(),
+  ])
 
-  // Extract unique tags from all posts for "popular tags" display
-  const allTagsResult = await payload.find({
-    collection: 'posts',
-    limit: 100,
-    overrideAccess: true,
-    where: { _status: { equals: 'published' } },
-    select: { tags: true },
-    pagination: false,
-  })
-
-  const allTags = new Set<string>()
-  allTagsResult.docs.forEach((post) => {
-    if (post.tags && Array.isArray(post.tags)) {
-      ;(post.tags as string[]).forEach((t) => allTags.add(t))
-    }
-  })
-
+  const allTags = popularTags
   const hasActiveFilters = Boolean(query || categorySlug || tag || sort !== 'latest')
 
   return (

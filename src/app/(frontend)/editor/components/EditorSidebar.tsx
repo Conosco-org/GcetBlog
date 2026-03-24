@@ -104,6 +104,11 @@ export function EditorSidebar({
       label: 'Newsletter',
       href: '/editor/newsletter',
       icon: <Mail className="w-5 h-5" />,
+    },
+    {
+      label: 'Subscribers',
+      href: '/editor/newsletter/subscribers',
+      icon: <Users className="w-5 h-5" />,
       badge: subscribersCount,
     },
     {
@@ -120,8 +125,8 @@ export function EditorSidebar({
   ]
 
   const isActive = useCallback((href: string) => {
-    // Dashboard routes: exact match only
-    if (href === '/editor' || href === '/admin-dashboard') {
+    // Exact match for top-level dashboard routes and parent routes with sub-pages
+    if (href === '/editor' || href === '/admin-dashboard' || href === '/editor/newsletter') {
       return pathname === href
     }
     return pathname.startsWith(href)
@@ -149,9 +154,8 @@ export function EditorSidebar({
 
   return (
     <>
-      {/* Sidebar - Fixed positioning */}
-      {isOpen && (
-        <aside className="w-64 border-r bg-background flex flex-col fixed left-0 top-16 bottom-0 z-30">
+      {/* Sidebar - Fixed positioning with mobile overlay support */}
+      <aside className={`w-64 border-r bg-background flex flex-col fixed left-0 top-16 bottom-0 z-30 transition-transform duration-200 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
           {/* Navigation */}
           <nav className="flex-1 p-4 overflow-y-auto">
             <ul className="space-y-1">
@@ -211,7 +215,6 @@ export function EditorSidebar({
             </p>
           </div>
         </aside>
-      )}
     </>
   )
 }

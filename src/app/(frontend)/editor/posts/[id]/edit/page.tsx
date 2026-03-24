@@ -1,100 +1,122 @@
-import { redirect, notFound } from 'next/navigation'
+﻿import { redirect, notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
-import { PostForm } from '../../create/PostForm'
+import { lexicalToHtml } from '@/components/RichTextEditor/lexicalToHtml'
+import { PostForm } from './PostForm'
+import type { Post } from '@/payload-types'
 
-// Helper to extract plain text from Lexical content
-function lexicalToPlainText(content: unknown): string {
-  if (!content || typeof content !== 'object' || !('root' in (content as Record<string, unknown>))) {
-    return typeof content === 'string' ? content : ''
-  }
-  const root = (content as { root: { children?: Array<{ children?: Array<{ text?: string }> }> } }).root
-  if (!root.children || !Array.isArray(root.children)) return ''
-  return root.children
-    .map((child) => {
-      if (child.children && Array.isArray(child.children)) {
-        return child.children.map((textNode) => textNode.text || '').join('')
-      }
-      return ''
-    })
-    .filter((text: string) => text.trim())
-    .join('\n\n')
+interface PageProps {
+  params: Promise<{ id: string }>
 }
 
-export default async function EditPostPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function EditPostPage({ params }: PageProps) {
+  const { id } = await params
   const payload = await getPayload({ config: configPromise })
   const requestHeaders = await headers()
-  const { id } = await params
 
-  // Authenticate the request
   const { user } = await payload.auth({ headers: requestHeaders })
 
   if (!user) {
     redirect('/login')
   }
 
-  // Editors and contributors can edit posts
   if (!user.role || !['contributor', 'editor'].includes(user.role)) {
-    redirect('/dashboard')
+    redirect('/editor')
   }
 
-  // Get the post
+  // Fetch the post
+  let post: Post | null = null
   try {
-    const post = await payload.findByID({
+    post = await payload.findByID({
       collection: 'posts',
-      id: id,
-      depth: 2,
-    })
-
-    if (!post) {
-      notFound()
-    }
-
-    // Get categories for the form
-    const categories = await payload.find({
-      collection: 'categories',
-      limit: 100,
-      sort: 'title',
-    })
-
-    // Extract category IDs
-    const categoryIds = Array.isArray(post.categories)
-      ? post.categories.map(cat => typeof cat === 'object' ? cat.id : cat)
-      : []
-
-    // Convert Lexical content to plain text for editing
-    const plainTextContent = lexicalToPlainText(post.content)
-
-    return (
-      <div className="min-h-screen">
-        <div className="max-w-4xl mx-auto p-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-foreground mb-2">Edit Post</h1>
-            <p className="text-muted-foreground">Update your blog post</p>
-          </div>
-
-          <PostForm
-            categories={categories.docs}
-            user={user}
-            postId={post.id}
-            isEdit={true}
-            initialData={{
-              title: post.title,
-              content: plainTextContent,
-              categories: categoryIds,
-              meta: post.meta ? {
-                title: typeof post.meta === 'object' && 'title' in post.meta && post.meta.title ? String(post.meta.title) : undefined,
-                description: typeof post.meta === 'object' && 'description' in post.meta && post.meta.description ? String(post.meta.description) : undefined,
-              } : undefined,
-              heroImage: typeof post.heroImage === 'object' && post.heroImage ? post.heroImage.id : (typeof post.heroImage === 'string' ? post.heroImage : undefined),
-            }}
-          />
-        </div>
-      </div>
-    )
-  } catch (error) {
-    console.error('Error fetching post:', error)
+      id,
+      draft: true,
+      depth: 1,
+    }) as Post
+  } catch {
     notFound()
   }
+
+  if (!post) notFound()
+
+  // Contributors can only edit their own posts
+  if (user.role === 'contributor') {
+    const authorIds = (post.authors || []).map((a: unknown) =>
+      typeof a === 'object' && a !== null && 'id' in a ? String((a as { id: unknown }).id) : String(a)
+    )
+    if (!authorIds.includes(String(user.id))) {
+      redirect('/contributor')
+    }
+  }
+
+  // Fetch categories
+  const categories = await payload.find({
+    collection: 'categories',
+    limit: 100,
+    sort: 'title',
+  })
+
+  // Convert Lexical content back to HTML for the editor
+  let contentHtml = ''
+  if (post.content) {
+    try {
+      contentHtml = lexicalToHtml(post.content as Parameters<typeof lexicalToHtml>[0])
+    } catch {
+      contentHtml = ''
+    }
+  }
+
+  // Build initialData
+  const categoryIds = (post.categories || []).map((c: unknown) =>
+    typeof c === 'object' && c !== null && 'id' in c ? String((c as { id: unknown }).id) : String(c)
+  )
+
+  const heroImage =
+    post.heroImage && typeof post.heroImage === 'object'
+      ? { id: String(post.heroImage.id), url: post.heroImage.url || undefined }
+      : post.heroImage
+        ? { id: String(post.heroImage), url: undefined }
+        : null
+
+  const initialData = {
+    title: post.title || '',
+    content: contentHtml,
+    categories: categoryIds,
+    tags: (post.tags as string[] | null) || [],
+    publishedAt: post.publishedAt
+      ? new Date(post.publishedAt).toISOString().slice(0, 16)
+      : '',
+    featuredFrom: post.featuredFrom
+      ? new Date(post.featuredFrom as string).toISOString().slice(0, 16)
+      : '',
+    featuredUntil: post.featuredUntil
+      ? new Date(post.featuredUntil as string).toISOString().slice(0, 16)
+      : '',
+    meta: {
+      title: post.meta?.title || '',
+      description: post.meta?.description || '',
+    },
+    heroImage: heroImage?.id,
+    heroImageUrl: heroImage?.url,
+  }
+
+  return (
+    <div className="min-h-screen">
+      <div className="max-w-4xl mx-auto p-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-foreground mb-2">Edit Post</h1>
+          <p className="text-muted-foreground">Update and republish your post</p>
+        </div>
+
+        <PostForm
+          categories={categories.docs}
+          user={user}
+          initialData={initialData}
+          postId={id}
+          isEdit={true}
+        />
+      </div>
+    </div>
+  )
 }

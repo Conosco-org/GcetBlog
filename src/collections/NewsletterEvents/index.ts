@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+﻿import type { CollectionConfig } from 'payload'
 import { editorOnly } from '../../access/editorOnly'
 
 export const NewsletterEvents: CollectionConfig = {
@@ -17,7 +17,7 @@ export const NewsletterEvents: CollectionConfig = {
     read: editorOnly,
     // System-only creation (via server actions / tracking endpoints)
     create: () => true,
-    // Immutable — no updates or deletes
+    // Immutable - no updates or deletes
     update: () => false,
     delete: () => false,
   },

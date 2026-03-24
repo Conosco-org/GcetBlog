@@ -6,7 +6,7 @@ import { useState, useTransition } from 'react'
 import { Button } from '@/components/ui/button'
 import { LogoutButton } from '@/components/LogoutButton'
 import { useUser } from '@/providers/User'
-import { Loader2 } from 'lucide-react'
+import { Loader2, LayoutDashboard, LogIn } from 'lucide-react'
 
 export function AuthButton() {
   const { user, loading } = useUser()
@@ -33,10 +33,11 @@ export function AuthButton() {
       'Dashboard'
 
     return (
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3">
         <Link href={dashboardUrl}>
-          <Button variant="default" size="sm">
-            {dashboardLabel}
+          <Button variant="default" size="sm" title={dashboardLabel} aria-label={dashboardLabel}>
+            <LayoutDashboard className="w-4 h-4 sm:mr-1.5" />
+            <span className="hidden sm:inline">{dashboardLabel}</span>
           </Button>
         </Link>
         <LogoutButton className="text-sm" />
@@ -59,12 +60,12 @@ export function AuthButton() {
       disabled={isPending || isNavigating}
     >
       {isPending || isNavigating ? (
-        <>
-          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-          Loading...
-        </>
+        <Loader2 className="w-4 h-4 animate-spin" />
       ) : (
-        'Sign In'
+        <>
+          <LogIn className="w-4 h-4 sm:mr-1.5" />
+          <span className="hidden sm:inline">Sign In</span>
+        </>
       )}
     </Button>
   )

@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useToast } from '@/hooks/use-toast'
+import { uploadToCloudinaryDirect } from '@/utilities/uploadToCloudinaryDirect'
 import {
   User as UserIcon,
   Mail,
@@ -230,39 +231,18 @@ export default function AdminProfilePage() {
 
     setUploadingAvatar(true)
     try {
-      const formData = new FormData()
-      formData.append('file', file)
+      const uploaded = await uploadToCloudinaryDirect(file, `${user.name ?? 'User'}'s avatar`)
 
-      const uploadRes = await fetch('/api/media', {
-        method: 'POST',
+      const patchRes = await fetch(`/api/users/${user.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: formData,
+        body: JSON.stringify({ avatar: uploaded.id }),
       })
 
-      if (!uploadRes.ok) {
-        toast({
-          title: 'Upload failed',
-          description: 'Could not upload avatar.',
-          variant: 'destructive',
-        })
-        return
-      }
-
-      const uploaded = await uploadRes.json()
-      const mediaId = uploaded.doc?.id
-
-      if (mediaId) {
-        const patchRes = await fetch(`/api/users/${user.id}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ avatar: mediaId }),
-        })
-
-        if (patchRes.ok) {
-          await fetchUser()
-          toast({ title: 'Avatar updated', description: 'Your profile picture has been changed.' })
-        }
+      if (patchRes.ok) {
+        await fetchUser()
+        toast({ title: 'Avatar updated', description: 'Your profile picture has been changed.' })
       }
     } catch {
       toast({

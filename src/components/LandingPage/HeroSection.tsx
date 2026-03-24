@@ -46,7 +46,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             </p>
 
             <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg mb-8">
-              Got opinions, ideas, or something the world needs to hear? This is your space. Write about anything &mdash; tech, life, art, campus, or that random 3 AM thought.
+              Got opinions, ideas, or something the world needs to hear? This is your space. Write about anything - tech, life, art, campus, or that random 3 AM thought.
             </p>
 
             <div className="flex flex-wrap items-center gap-3 mb-12">
@@ -67,14 +67,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             </div>
 
             {/* Stats Strip */}
-            <div className="flex items-center gap-8 md:gap-12 pt-6 border-t border-border animate-fade-up stagger-3">
+            <div className="flex items-center gap-6 sm:gap-8 md:gap-12 pt-6 border-t border-border animate-fade-up stagger-3">
               <div>
-                <div className="font-display text-3xl md:text-4xl font-bold text-foreground">{totalPosts || 0}+</div>
+                <div className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">{totalPosts || 0}+</div>
                 <div className="text-[10px] md:text-xs tracking-widest uppercase text-muted-foreground mt-1">Articles</div>
               </div>
               <div className="w-px h-10 bg-border" />
               <div>
-                <div className="font-display text-3xl md:text-4xl font-bold text-foreground">{totalUsers || 0}+</div>
+                <div className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">{totalUsers || 0}+</div>
                 <div className="text-[10px] md:text-xs tracking-widest uppercase text-muted-foreground mt-1">Contributors</div>
               </div>
             </div>

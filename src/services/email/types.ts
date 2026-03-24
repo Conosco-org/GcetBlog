@@ -1,5 +1,5 @@
-/**
- * Email Provider Abstraction Layer — Types
+﻿/**
+ * Email Provider Abstraction Layer - Types
  *
  * Strategy pattern interfaces for provider-agnostic email sending.
  * Supports SMTP (any provider), Resend API, SendGrid API, and a
@@ -18,7 +18,7 @@ export interface EmailAddress {
 export interface EmailMessage {
   /** Recipient(s) */
   to: string | EmailAddress | (string | EmailAddress)[]
-  /** Sender — falls back to EMAIL_FROM env var */
+  /** Sender - falls back to EMAIL_FROM env var */
   from?: string | EmailAddress
   /** Email subject line */
   subject: string

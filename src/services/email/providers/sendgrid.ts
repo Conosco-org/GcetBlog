@@ -1,4 +1,4 @@
-/**
+﻿/**
  * SendGrid Email Provider
  *
  * Uses the SendGrid v3 HTTP API via @sendgrid/mail.
@@ -112,7 +112,7 @@ export class SendGridProvider implements EmailProvider {
     // SendGrid doesn't have a simple verify; check API key validity
     // by attempting to list suppression groups (lightweight call)
     try {
-      // A simple send with empty data would error — instead just
+      // A simple send with empty data would error - instead just
       // verify the API key is set and non-empty
       return true
     } catch {

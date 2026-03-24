@@ -143,6 +143,34 @@ export function ActivityClient({
             ? 'Try adjusting your search or filters'
             : 'Activity will appear here as actions are performed',
         }}
+        mobileRender={(log) => {
+          const logUser = typeof log.user === 'object' && log.user ? log.user : null
+          const resourceType = log.resourceType
+            ? log.resourceType.charAt(0).toUpperCase() + log.resourceType.slice(1)
+            : 'Unknown'
+          return (
+            <div className="rounded-lg border bg-card p-4 space-y-2">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="w-7 h-7 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white text-[10px] font-semibold flex-shrink-0">
+                    {(logUser?.name || 'U').charAt(0).toUpperCase()}
+                  </div>
+                  <span className="font-medium text-sm truncate">{logUser?.name || 'Unknown'}</span>
+                </div>
+                <span className="text-xs text-muted-foreground flex-shrink-0">
+                  {new Date(log.createdAt).toLocaleDateString()}
+                </span>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                {getActivityIcon(log.action)}
+                <Badge variant="outline" className="text-xs">
+                  {log.action}
+                </Badge>
+                <span className="text-xs text-muted-foreground">{resourceType}</span>
+              </div>
+            </div>
+          )
+        }}
       />
     </div>
   )

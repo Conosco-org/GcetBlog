@@ -1,4 +1,4 @@
-import type { CollectionSlug, GlobalSlug, Payload, PayloadRequest, File } from 'payload'
+﻿import type { CollectionSlug, GlobalSlug, Payload, PayloadRequest, File } from 'payload'
 
 import { contactForm as contactFormData } from './contact-form'
 import { contact as contactPageData } from './contact-page'
@@ -38,7 +38,7 @@ export const seed = async ({
   // as well as the collections and globals
   // this is because while `yarn seed` drops the database
   // the custom `/api/seed` endpoint does not
-  payload.logger.info(`— Clearing collections and globals...`)
+  payload.logger.info(`- Clearing collections and globals...`)
 
   // clear the database
   await Promise.all(
@@ -66,7 +66,7 @@ export const seed = async ({
       .map((collection) => payload.db.deleteVersions({ collection, req, where: {} })),
   )
 
-  payload.logger.info(`— Seeding demo users with different roles...`)
+  payload.logger.info(`- Seeding demo users with different roles...`)
 
   // Delete existing demo users if they exist
   await Promise.all([
@@ -108,7 +108,7 @@ export const seed = async ({
     }),
   ])
 
-  payload.logger.info(`— Seeding media...`)
+  payload.logger.info(`- Seeding media...`)
 
   const [image1Buffer, image2Buffer, image3Buffer, hero1Buffer] = await Promise.all([
     fetchFileByURL(
@@ -263,7 +263,7 @@ export const seed = async ({
     }),
   ])
 
-  payload.logger.info(`— Seeding posts...`)
+  payload.logger.info(`- Seeding posts...`)
 
   // Do not create posts with `Promise.all` because we want the posts to be created in order
   // This way we can sort them by `createdAt` or `publishedAt` and they will be in the expected order
@@ -317,7 +317,7 @@ export const seed = async ({
     },
   })
 
-  payload.logger.info(`— Seeding contact form...`)
+  payload.logger.info(`- Seeding contact form...`)
 
   const contactForm = await payload.create({
     collection: 'forms',
@@ -325,7 +325,7 @@ export const seed = async ({
     data: contactFormData,
   })
 
-  payload.logger.info(`— Seeding pages...`)
+  payload.logger.info(`- Seeding pages...`)
 
   const [_, contactPage] = await Promise.all([
     payload.create({
@@ -340,7 +340,7 @@ export const seed = async ({
     }),
   ])
 
-  payload.logger.info(`— Seeding globals...`)
+  payload.logger.info(`- Seeding globals...`)
 
   await Promise.all([
     payload.updateGlobal({

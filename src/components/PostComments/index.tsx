@@ -1,4 +1,4 @@
-import { getPayload } from 'payload'
+﻿import { getPayload } from 'payload'
 import { headers as nextHeaders } from 'next/headers'
 import configPromise from '@payload-config'
 import { CommentForm } from '@/components/CommentForm'
@@ -12,14 +12,21 @@ interface PostCommentsProps {
 export async function PostComments({ post }: PostCommentsProps) {
   const payload = await getPayload({ config: configPromise })
 
-  // Check if the current request belongs to an authenticated editor
-  let isEditor = false
+  // Check if the current request belongs to an authenticated user
+  let currentUser: { id: string; name: string; email: string; role: string } | null = null
   try {
     const headersList = await nextHeaders()
     const { user } = await payload.auth({ headers: headersList })
-    isEditor = user?.role === 'editor'
+    if (user) {
+      currentUser = {
+        id: String(user.id),
+        name: user.name || '',
+        email: user.email || '',
+        role: user.role || 'contributor',
+      }
+    }
   } catch {
-    // unauthenticated — fine
+    // unauthenticated - fine
   }
 
   // Fetch all comments for this post (top-level + replies in one query)
@@ -40,14 +47,14 @@ export async function PostComments({ post }: PostCommentsProps) {
       <h2 className="text-xl font-bold mb-6">Discussion</h2>
 
       {/* New comment form */}
-      <CommentForm postId={postId} />
+      <CommentForm postId={postId} user={currentUser} />
 
       {/* Comments list */}
       <div className="mt-8">
         <CommentList
           comments={comments.docs}
           postId={postId}
-          currentUser={isEditor ? ({ role: 'editor' } as any) : null}
+          currentUser={currentUser as any}
         />
       </div>
     </section>

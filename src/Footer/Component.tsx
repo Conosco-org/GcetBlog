@@ -1,4 +1,4 @@
-import { getCachedGlobal } from '@/utilities/getGlobals'
+﻿import { getCachedGlobal } from '@/utilities/getGlobals'
 import Link from 'next/link'
 import React from 'react'
 
@@ -16,7 +16,7 @@ export async function Footer() {
 
   return (
     <footer className="mt-auto border-t border-border bg-foreground text-background">
-      <div className="container mx-auto px-6 py-12">
+      <div className="container mx-auto px-4 md:px-6 py-8 md:py-12">
         <div className="flex flex-col gap-8 md:flex-row md:justify-between md:items-start">
           {/* Brand */}
           <div className="flex flex-col gap-3">
@@ -24,7 +24,7 @@ export async function Footer() {
               <Logo />
             </Link>
             <p className="text-sm text-background/50 max-w-xs">
-              The platform where the GCET community spills their mind &mdash; tech, creativity, and everything in between.
+              The platform where the GCET community spills their mind - tech, creativity, and everything in between.
             </p>
           </div>
 

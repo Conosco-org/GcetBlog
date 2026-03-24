@@ -16,6 +16,10 @@ export const metadata: Metadata = {
     default: 'GCET Blog - Geethanjali College of Engineering and Technology',
   },
   description: 'Official blog of Geethanjali College of Engineering and Technology. Explore insights, updates, and stories from our academic community.',
+  icons: {
+    icon: '/gcet-logo.png',
+    apple: '/gcet-logo.png',
+  },
   openGraph: mergeOpenGraph(),
   twitter: {
     card: 'summary_large_image',

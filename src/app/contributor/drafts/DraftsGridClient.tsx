@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { formatDateTime } from '@/utilities/formatDateTime'
 import Link from 'next/link'
-import { Edit, FileText, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Edit, FileText, ChevronLeft, ChevronRight, Plus } from 'lucide-react'
 
 interface DraftsGridClientProps {
   drafts: Post[]
@@ -62,7 +62,10 @@ export function DraftsGridClient({
           description={query ? 'Try adjusting your search' : 'All your draft posts will appear here'}
           action={
             <Button asChild>
-              <Link href="/contributor/create">Create New Draft</Link>
+              <Link href="/contributor/create">
+                <Plus className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Create New Draft</span>
+              </Link>
             </Button>
           }
         />
@@ -81,10 +84,10 @@ export function DraftsGridClient({
               </CardHeader>
               <CardContent>
                 <div className="flex gap-2">
-                  <Button variant="default" size="sm" asChild className="flex-1">
+                  <Button variant="default" size="sm" asChild className="flex-1" title="Continue editing" aria-label="Continue editing">
                     <Link href={`/editor/posts/${post.id}/edit`}>
-                      <Edit className="h-4 w-4 mr-1" />
-                      Continue
+                      <Edit className="h-4 w-4 sm:mr-1" />
+                      <span className="hidden sm:inline">Continue</span>
                     </Link>
                   </Button>
                 </div>
@@ -106,18 +109,22 @@ export function DraftsGridClient({
               size="sm"
               disabled={currentPage <= 1}
               onClick={() => goToPage(currentPage - 1)}
+              title="Previous"
+              aria-label="Previous page"
             >
-              <ChevronLeft className="h-4 w-4 mr-1" />
-              Previous
+              <ChevronLeft className="h-4 w-4 sm:mr-1" />
+              <span className="hidden sm:inline">Previous</span>
             </Button>
             <Button
               variant="outline"
               size="sm"
               disabled={currentPage >= totalPages}
               onClick={() => goToPage(currentPage + 1)}
+              title="Next"
+              aria-label="Next page"
             >
-              Next
-              <ChevronRight className="h-4 w-4 ml-1" />
+              <span className="hidden sm:inline">Next</span>
+              <ChevronRight className="h-4 w-4 sm:ml-1" />
             </Button>
           </div>
         </div>
