@@ -52,6 +52,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <div className="flex flex-wrap items-center gap-3 mb-12">
               <Link
                 href="/posts"
+                prefetch={true}
                 className="group inline-flex items-center gap-2.5 px-6 py-3 bg-accent text-accent-foreground rounded-full text-sm font-medium tracking-wide hover:opacity-90 transition-opacity"
               >
                 Explore Posts
@@ -83,7 +84,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           {/* Right: Latest Post Card */}
           <div className="lg:col-span-5 animate-slide-right stagger-4 hidden lg:block">
             {latestPost ? (
-              <Link href={`/posts/${latestPost.slug}`} className="group block">
+              <Link href={`/posts/${latestPost.slug}`} prefetch={true} className="group block">
                 <article className="relative overflow-hidden rounded-2xl border border-border bg-card shadow-sm hover:shadow-lg transition-shadow duration-300">
                   <div className="relative aspect-[4/3] overflow-hidden">
                     {heroImage?.url ? (

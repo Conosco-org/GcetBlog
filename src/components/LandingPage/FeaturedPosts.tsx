@@ -49,6 +49,7 @@ export const FeaturedPosts: React.FC<FeaturedPostsProps> = ({ posts }) => {
               <Link
                 key={post.id}
                 href={`/posts/${post.slug}`}
+                prefetch={true}
                 className="group relative overflow-hidden rounded-2xl border-2 border-accent/20 bg-card hover:border-accent/40 hover:shadow-xl transition-all duration-300"
               >
                 {/* Featured badge */}
