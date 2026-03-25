@@ -17,12 +17,14 @@ interface Props {
   external?: boolean
   newTab?: boolean
   scroll?: boolean
+  onNavigateStart?: () => void
 }
 
 function useClickableCard<T extends HTMLElement>({
   external = false,
   newTab = false,
   scroll = true,
+  onNavigateStart,
 }: Props): UseClickableCardType<T> {
   const router = useRouter()
   const card = useRef<T>(null)
@@ -65,6 +67,7 @@ function useClickableCard<T extends HTMLElement>({
               const target = newTab ? '_blank' : '_self'
               window.open(link.current.href, target)
             } else {
+              onNavigateStart?.()
               router.push(link.current.href, { scroll })
             }
           }
@@ -72,7 +75,7 @@ function useClickableCard<T extends HTMLElement>({
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [router, card, link, timeDown],
+    [router, card, link, timeDown, onNavigateStart, scroll, external, newTab],
   )
 
   useEffect(() => {

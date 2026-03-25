@@ -12,6 +12,9 @@ import config from '@payload-config'
 
 export const metadata: Metadata = {
   title: 'Home',
+  alternates: {
+    canonical: '/',
+  },
 }
 
 export const dynamic = 'force-dynamic'

@@ -59,6 +59,7 @@ export const HomePosts: React.FC<HomePostsProps> = ({ posts }) => {
           </div>
           <Link
             href="/posts"
+            prefetch={true}
             className="group inline-flex items-center gap-2 text-sm font-medium tracking-wide hover:text-accent transition-colors"
           >
             View All
@@ -70,7 +71,7 @@ export const HomePosts: React.FC<HomePostsProps> = ({ posts }) => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 animate-fade-up stagger-2">
           {/* Featured Post - Large */}
           {featured && (
-            <Link href={`/posts/${featured.slug}`} className="group block lg:row-span-2">
+            <Link href={`/posts/${featured.slug}`} prefetch={true} className="group block lg:row-span-2">
               <article className="relative h-full min-h-[300px] sm:min-h-[400px] lg:min-h-full overflow-hidden rounded-2xl border border-border bg-card">
                 <div className="relative h-full">
                   {featuredImage?.url ? (
@@ -122,7 +123,7 @@ export const HomePosts: React.FC<HomePostsProps> = ({ posts }) => {
           {rest.map((post) => {
             const image = getPostImage(post)
             return (
-              <Link key={post.id} href={`/posts/${post.slug}`} className="group block">
+              <Link key={post.id} href={`/posts/${post.slug}`} prefetch={true} className="group block">
                 <article className="flex gap-4 p-4 sm:p-5 rounded-2xl border border-border bg-card hover:shadow-md transition-shadow duration-300 h-full">
                   {/* Thumbnail */}
                   <div className="relative w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 flex-shrink-0 rounded-xl overflow-hidden bg-muted">
@@ -169,6 +170,7 @@ export const HomePosts: React.FC<HomePostsProps> = ({ posts }) => {
         <div className="text-center sm:hidden mt-8">
           <Link
             href="/posts"
+            prefetch={true}
             className="group inline-flex items-center gap-2 px-6 py-3 border border-border rounded-full text-sm font-medium hover:bg-card transition-colors"
           >
             View All Posts

@@ -245,5 +245,8 @@ export function generateMetadata(): Metadata {
   return {
     title: 'Posts',
     description: 'Browse all posts from the GCET Blog community.',
+    alternates: {
+      canonical: '/posts',
+    },
   }
 }

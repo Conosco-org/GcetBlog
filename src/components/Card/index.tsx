@@ -3,7 +3,7 @@ import { cn } from '@/utilities/ui'
 import useClickableCard from '@/utilities/useClickableCard'
 import Link from 'next/link'
 import React, { Fragment, useState, useCallback } from 'react'
-import { Copy, Check } from 'lucide-react'
+import { Copy, Check, Loader2 } from 'lucide-react'
 
 import type { Post, Media as MediaType } from '@/payload-types'
 
@@ -19,7 +19,6 @@ export const Card: React.FC<{
   showCategories?: boolean
   title?: string
 }> = (props) => {
-  const { card, link } = useClickableCard({})
   const { className, doc, relationTo, showCategories, title: titleFromProps } = props
 
   const { slug, categories, meta, title, heroImage } = doc || {}
@@ -31,6 +30,26 @@ export const Card: React.FC<{
   const href = `/${relationTo}/${slug}`
 
   const [copied, setCopied] = useState(false)
+  const [isNavigating, setIsNavigating] = useState(false)
+  const { card, link } = useClickableCard({
+    onNavigateStart: () => setIsNavigating(true),
+  })
+
+  const handleLinkClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (
+      e.defaultPrevented ||
+      e.button !== 0 ||
+      e.metaKey ||
+      e.ctrlKey ||
+      e.shiftKey ||
+      e.altKey
+    ) {
+      return
+    }
+
+    setIsNavigating(true)
+  }, [])
+
   const handleCopy = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault()
@@ -58,6 +77,7 @@ export const Card: React.FC<{
     <article
       className={cn(
         'group relative overflow-hidden rounded-2xl border border-border bg-card hover:shadow-lg transition-all duration-300 hover:cursor-pointer',
+        isNavigating && 'opacity-80',
         className,
       )}
       ref={card.ref}
@@ -110,7 +130,13 @@ export const Card: React.FC<{
 
         {titleToUse && (
           <h3 className="text-base sm:text-lg font-semibold leading-snug mb-1.5 sm:mb-2 group-hover:text-accent transition-colors line-clamp-2">
-            <Link className="no-underline" href={href} ref={link.ref}>
+            <Link
+              className="no-underline"
+              href={href}
+              ref={link.ref}
+              prefetch={true}
+              onClick={handleLinkClick}
+            >
               {titleToUse}
             </Link>
           </h3>
@@ -125,14 +151,24 @@ export const Card: React.FC<{
         {/* Bottom action bar */}
         <div className="mt-3 pt-3 sm:mt-4 sm:pt-4 border-t border-border flex items-center justify-between">
           <div className="flex items-center gap-2 text-xs font-medium tracking-wider uppercase text-accent sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-            Read Article
-            <svg className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
+            {isNavigating ? (
+              <>
+                Opening...
+                <Loader2 className="w-3 h-3 animate-spin" />
+              </>
+            ) : (
+              <>
+                Read Article
+                <svg className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </>
+            )}
           </div>
           <button
             type="button"
             onClick={handleCopy}
+            disabled={isNavigating}
             aria-label={copied ? 'Link copied!' : 'Copy link to post'}
             className="sm:opacity-0 sm:group-hover:opacity-100 transition-opacity p-1.5 rounded-md hover:bg-accent/10 text-muted-foreground hover:text-accent"
           >
