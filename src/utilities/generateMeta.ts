@@ -21,10 +21,12 @@ const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
 
 export const generateMeta = async (args: {
   doc: Partial<Page> | Partial<Post> | null
+  pathname?: string
 }): Promise<Metadata> => {
-  const { doc } = args
+  const { doc, pathname } = args
 
   const ogImage = getImageURL(doc?.meta?.image)
+  const pagePath = pathname || (doc?.slug ? `/${doc.slug}` : '/')
 
   const rawTitle = doc?.meta?.title
   // Sanitize the default Payload seed title
@@ -34,6 +36,9 @@ export const generateMeta = async (args: {
 
   return {
     description: doc?.meta?.description,
+    alternates: {
+      canonical: pagePath,
+    },
     openGraph: mergeOpenGraph({
       description: doc?.meta?.description || '',
       images: ogImage
@@ -44,7 +49,7 @@ export const generateMeta = async (args: {
           ]
         : undefined,
       title,
-      url: Array.isArray(doc?.slug) ? doc?.slug.join('/') : '/',
+      url: pagePath,
     }),
     title,
   }

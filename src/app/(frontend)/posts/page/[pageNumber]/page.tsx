@@ -73,8 +73,13 @@ export default async function Page({ params: paramsPromise }: Args) {
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { pageNumber } = await paramsPromise
+  const currentPage = Number(pageNumber || '1')
+
   return {
     title: `GCET Blog Posts Page ${pageNumber || ''}`,
+    alternates: {
+      canonical: currentPage <= 1 ? '/posts' : `/posts/page/${currentPage}`,
+    },
   }
 }
 

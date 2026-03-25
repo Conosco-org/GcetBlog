@@ -1,6 +1,8 @@
 const SITE_URL =
   process.env.NEXT_PUBLIC_SERVER_URL ||
-  process.env.VERCEL_PROJECT_PRODUCTION_URL ||
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : null) ||
   'https://example.com'
 
 /** @type {import('next-sitemap').IConfig} */
@@ -12,7 +14,15 @@ module.exports = {
     policies: [
       {
         userAgent: '*',
-        disallow: '/admin/*',
+        disallow: [
+          '/admin/*',
+          '/admin-dashboard/*',
+          '/contributor/*',
+          '/editor/*',
+          '/dashboard/*',
+          '/login',
+          '/register',
+        ],
       },
     ],
     additionalSitemaps: [`${SITE_URL}/pages-sitemap.xml`, `${SITE_URL}/posts-sitemap.xml`],
