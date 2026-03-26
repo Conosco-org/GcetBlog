@@ -5,6 +5,7 @@ import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
 import { Sora } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
@@ -44,6 +45,7 @@ export default async function FrontendLayout({ children }: { children: React.Rea
           </ConditionalLayout>
         </Providers>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
