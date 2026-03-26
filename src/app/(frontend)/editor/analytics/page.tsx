@@ -4,6 +4,7 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { PageHeader } from '@/components/base/PageHeader'
+import { formatDateTimeIST } from '@/utilities/formatDateTime'
 import {
   Eye,
   Users,
@@ -360,14 +361,7 @@ export default async function AnalyticsPage() {
                       <td className="py-2">{view.browser || '-'}</td>
                       <td className="py-2 max-w-[150px] truncate">{view.referrer || 'Direct'}</td>
                       <td className="py-2 text-right text-muted-foreground">
-                        {view.viewedAt
-                          ? new Date(view.viewedAt).toLocaleString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            })
-                          : '-'}
+                        {view.viewedAt ? formatDateTimeIST(view.viewedAt) : '-'}
                       </td>
                     </tr>
                   ))}
