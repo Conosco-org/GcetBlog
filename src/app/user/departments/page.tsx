@@ -2,8 +2,11 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import Link from 'next/link'
 import { Plus, GraduationCap, ExternalLink } from 'lucide-react'
+import { Suspense } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { SearchInput } from '@/components/base/SearchInput'
+import { FilterBar } from '@/components/base/FilterBar'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -69,24 +72,30 @@ export default async function UserDepartmentsPage({ searchParams: searchParamsPr
 
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-2 mb-6">
-        <input
-          type="text"
-          placeholder="Search departments…"
-          defaultValue={query}
-          className="px-3 py-2 text-sm rounded-lg border border-border bg-background w-64"
-        />
-        <select
-          defaultValue={categoryFilter}
-          className="px-3 py-2 text-sm rounded-lg border border-border bg-background"
-        >
-          <option value="">All Categories</option>
-          <option value="engineering">Engineering</option>
-          <option value="science">Science</option>
-          <option value="arts">Arts & Humanities</option>
-          <option value="commerce">Commerce</option>
-          <option value="management">Management</option>
-          <option value="other">Other</option>
-        </select>
+        <Suspense fallback={null}>
+          <SearchInput
+            placeholder="Search departments…"
+            defaultValue={query}
+            paramName="q"
+          />
+          <FilterBar
+            filters={[
+              {
+                paramName: 'category',
+                label: 'Category',
+                options: [
+                  { label: 'All Categories', value: '' },
+                  { label: 'Engineering', value: 'engineering' },
+                  { label: 'Science', value: 'science' },
+                  { label: 'Arts & Humanities', value: 'arts' },
+                  { label: 'Commerce', value: 'commerce' },
+                  { label: 'Management', value: 'management' },
+                  { label: 'Other', value: 'other' },
+                ],
+              },
+            ]}
+          />
+        </Suspense>
       </div>
 
       {/* Stats */}

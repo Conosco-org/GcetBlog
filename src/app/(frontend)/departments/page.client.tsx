@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import React, { useCallback } from 'react'
+import React, { useCallback, useRef } from 'react'
 
 export default function DepartmentsPageClient() {
   return null
@@ -16,6 +16,7 @@ export function DepartmentsFilterBar({
   const searchParams = useSearchParams()
   const category = searchParams.get('category') || ''
   const query = searchParams.get('q') || ''
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const update = useCallback(
     (key: string, value: string) => {
@@ -31,6 +32,16 @@ export function DepartmentsFilterBar({
     [router, searchParams],
   )
 
+  const handleSearch = useCallback(
+    (value: string) => {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+      debounceRef.current = setTimeout(() => {
+        update('q', value)
+      }, 300)
+    },
+    [update],
+  )
+
   const categoryOptions = [{ label: 'All Categories', value: '' }, ...categories]
 
   return (
@@ -40,7 +51,7 @@ export function DepartmentsFilterBar({
         type="search"
         placeholder="Search departments…"
         defaultValue={query}
-        onChange={(e) => update('q', e.target.value)}
+        onChange={(e) => handleSearch(e.target.value)}
         className="px-3 py-2 text-sm rounded-lg border border-border bg-background w-60 focus:outline-none focus:ring-2 focus:ring-accent/40"
       />
 

@@ -7,6 +7,8 @@
 
 import { getPayload } from 'payload'
 import config from '@payload-config'
+import { getCurrentTenant } from '@/utilities/tenantContext'
+import { tenantFind } from '@/utilities/tenantQuery'
 import type { DepartmentDisplayData, DepartmentCardData } from '../types'
 
 // ---------------------------------------------------------------------------
@@ -15,13 +17,24 @@ import type { DepartmentDisplayData, DepartmentCardData } from '../types'
 
 export async function getDepartmentDisplayData(slug: string): Promise<DepartmentDisplayData | null> {
   const payload = await getPayload({ config })
+  const tenant = await getCurrentTenant()
 
-  const result = await payload.find({
-    collection: 'departments',
-    where: { slug: { equals: slug } },
-    limit: 1,
-    depth: 1,
-  })
+  let result
+  if (tenant?.institutionId) {
+    result = await tenantFind(payload, 'departments', tenant.institutionId, {
+      where: { slug: { equals: slug } },
+      limit: 1,
+      depth: 1,
+    })
+  } else {
+    // Fallback for super-admin context (no tenant resolution)
+    result = await payload.find({
+      collection: 'departments',
+      where: { slug: { equals: slug } },
+      limit: 1,
+      depth: 1,
+    })
+  }
 
   const doc = result.docs[0]
   if (!doc) return null
@@ -87,6 +100,7 @@ export async function getDepartmentListingData(params: {
   page: number
 }> {
   const payload = await getPayload({ config })
+  const tenant = await getCurrentTenant()
   const page = params.page ?? 1
   const limit = params.limit ?? 12
 
@@ -99,14 +113,25 @@ export async function getDepartmentListingData(params: {
     ]
   }
 
-  const result = await payload.find({
-    collection: 'departments',
-    where: where as import('payload').Where,
-    page,
-    limit,
-    sort: '-featured,-publishedAt',
-    depth: 1,
-  })
+  let result
+  if (tenant?.institutionId) {
+    result = await tenantFind(payload, 'departments', tenant.institutionId, {
+      where: where as import('payload').Where,
+      page,
+      limit,
+      sort: '-featured,-publishedAt',
+      depth: 1,
+    })
+  } else {
+    result = await payload.find({
+      collection: 'departments',
+      where: where as import('payload').Where,
+      page,
+      limit,
+      sort: '-featured,-publishedAt',
+      depth: 1,
+    })
+  }
 
   const departments: DepartmentCardData[] = result.docs.map((doc) => {
     const heroImage = doc.heroImage as { url?: string } | string | undefined

@@ -53,6 +53,7 @@ type TenantScopedCollection =
   | 'media'
   | 'clubs'
   | 'events'
+  | 'departments'
 
 /** The document type for a given collection slug */
 type DocType<T extends TenantScopedCollection> = Config['collections'][T]

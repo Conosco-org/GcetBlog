@@ -2,6 +2,7 @@
 
 import { cn } from '@/utilities/ui'
 import Link from 'next/link'
+import Image from 'next/image'
 import React from 'react'
 import { BookOpen, GraduationCap, Users } from 'lucide-react'
 import type { DepartmentCardData } from '../types'
@@ -41,11 +42,12 @@ export const DepartmentCard: React.FC<{
         {/* Image / Banner */}
         <div className="relative aspect-[16/9] overflow-hidden bg-muted">
           {imageUrl ? (
-            <img
+            <Image
               src={imageUrl}
               alt={department.title}
-              className="object-cover w-full h-full group-hover:scale-[1.03] transition-transform duration-500"
-              loading="lazy"
+              fill
+              className="object-cover group-hover:scale-[1.03] transition-transform duration-500"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
             />
           ) : (
             <div className="absolute inset-0 bg-gradient-to-br from-blue-500/15 to-indigo-500/10 flex items-center justify-center">
