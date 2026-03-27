@@ -219,6 +219,7 @@ export const Institutions: CollectionConfig = {
             { label: 'Blog', value: 'blog' },
             { label: 'Events', value: 'events' },
             { label: 'Clubs', value: 'clubs' },
+            { label: 'Departments', value: 'departments' },
             { label: 'Gallery', value: 'gallery' },
             { label: 'Newsletter', value: 'newsletter' },
             { label: 'Conosco Integration', value: 'conosco' },

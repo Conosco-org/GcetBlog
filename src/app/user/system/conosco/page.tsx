@@ -251,6 +251,73 @@ export default async function ConoscoSystemPage() {
           </ul>
         </div>
       )}
+
+      {/* Join the Conosco Ecosystem — shown when not yet connected */}
+      {!isConnected && (
+        <div className="rounded-2xl border border-accent/30 bg-gradient-to-br from-accent/5 to-accent/10 p-8 mt-6">
+          <div className="flex items-start gap-4 mb-6">
+            <div className="h-10 w-10 rounded-xl bg-accent/10 flex items-center justify-center shrink-0">
+              <Zap className="h-5 w-5 text-accent" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold">Join the Conosco Ecosystem</h2>
+              <p className="text-muted-foreground text-sm mt-1">
+                This Content Engine is part of the Conosco institutional OS. Connect it to unlock
+                live data sync, NAAC evidence, and unified college management.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            {[
+              {
+                title: 'Live Event Sync',
+                description: 'Events created in Conosco ERP automatically appear on your site — no double entry.',
+                badge: 'Events',
+              },
+              {
+                title: 'Club Directory Sync',
+                description: 'Club memberships, advisors, and achievements pulled directly from the operational system.',
+                badge: 'Clubs',
+              },
+              {
+                title: 'NAAC Evidence',
+                description: 'Every event and activity automatically generates criterion-tagged evidence for accreditation.',
+                badge: 'Compliance',
+              },
+            ].map((feature) => (
+              <div key={feature.title} className="rounded-xl border border-border bg-card p-5">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-accent mb-2 block">
+                  {feature.badge}
+                </span>
+                <h3 className="font-semibold text-sm mb-1">{feature.title}</h3>
+                <p className="text-xs text-muted-foreground">{feature.description}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <Link href="https://conosco.in" target="_blank" rel="noopener noreferrer">
+              <Button className="gap-2">
+                <Globe className="h-4 w-4" />
+                Learn about Conosco
+              </Button>
+            </Link>
+            <Link href="mailto:hello@conosco.in?subject=Pilot%20Request%20-%20Content%20Engine%20Integration">
+              <Button variant="outline" className="gap-2">
+                Request a Pilot
+              </Button>
+            </Link>
+            <p className="text-xs text-muted-foreground">
+              Already have Conosco? Set{' '}
+              <code className="bg-muted px-1 py-0.5 rounded text-[10px]">CONOSCO_API_URL</code>,{' '}
+              <code className="bg-muted px-1 py-0.5 rounded text-[10px]">CONOSCO_API_KEY</code>, and{' '}
+              <code className="bg-muted px-1 py-0.5 rounded text-[10px]">CONOSCO_INSTITUTION_CODE</code>{' '}
+              in your environment.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

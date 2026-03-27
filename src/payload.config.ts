@@ -22,6 +22,7 @@ import { Newsletters } from './collections/Newsletters'
 import { NewsletterEvents } from './collections/NewsletterEvents'
 import { Events } from './modules/events/collections/Events'
 import { Clubs } from './modules/clubs/collections/Clubs'
+import { Departments } from './modules/departments/collections/Departments'
 import { Institutions } from './collections/Institutions'
 import {
   newsletterDailyDigest,
@@ -125,6 +126,7 @@ export default buildConfig({
     NewsletterEvents,
     Events,
     Clubs,
+    Departments,
   ],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],

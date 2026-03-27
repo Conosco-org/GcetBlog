@@ -45,6 +45,7 @@ export type ModuleIdentifier =
   | 'content'
   | 'events'
   | 'clubs'
+  | 'departments'
   | 'media'
   | 'newsletter'
   | 'users'
