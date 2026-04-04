@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
+import { validateMetaDescription } from '@/utilities/postValidation'
 
 export async function POST(request: NextRequest) {
   try {
@@ -40,23 +41,21 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const metaError = validateMetaDescription(String(metaDescription || excerpt || '').trim())
+    if (metaError) {
+      return NextResponse.json({ error: metaError }, { status: 400 })
+    }
+
     // Determine review status based on action
     const reviewStatus = isDraft ? 'draft' : 'pending_review'
-    const status = isDraft ? 'draft' : 'draft' // Keep as draft until editor approves
+    const status = 'draft' // Keep as draft until editor approves
 
-    // Find category IDs if categories are provided
+    // Normalize category IDs if categories are provided
     let categoryIds: string[] = []
     if (categories && categories.length > 0) {
-      const categoryDocs = await payload.find({
-        collection: 'categories',
-        where: {
-          title: {
-            in: categories,
-          },
-        },
-        limit: categories.length,
-      })
-      categoryIds = categoryDocs.docs.map((cat) => cat.id)
+      categoryIds = Array.from(
+        new Set((categories as unknown[]).map((category) => String(category)).filter(Boolean)),
+      )
     }
 
     // Generate a slug from the title

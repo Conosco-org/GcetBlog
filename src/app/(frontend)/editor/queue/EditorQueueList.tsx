@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { approvePost, rejectPost } from './actions'
+import { approvePost, requestChanges } from './actions'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
@@ -40,11 +40,11 @@ export function EditorQueueList({ posts }: EditorQueueListProps) {
     }
   }
 
-  async function handleReject(postId: string) {
+  async function handleRequestChanges(postId: string) {
     if (!feedback[postId]) {
       setMessages((prev) => ({
         ...prev,
-        [postId]: { type: 'error', text: 'Please provide feedback for rejection' },
+        [postId]: { type: 'error', text: 'Please provide feedback for requesting changes' },
       }))
       return
     }
@@ -52,7 +52,7 @@ export function EditorQueueList({ posts }: EditorQueueListProps) {
     setProcessingIds((prev) => [...prev, postId])
 
     try {
-      const result = await rejectPost(postId, feedback[postId])
+      const result = await requestChanges(postId, feedback[postId])
 
       if (result.success) {
         setMessages((prev) => ({ ...prev, [postId]: { type: 'success', text: result.message } }))
@@ -158,7 +158,7 @@ export function EditorQueueList({ posts }: EditorQueueListProps) {
               <div className="space-y-3 border-t pt-4">
                 <div>
                   <label htmlFor={`feedback-${post.id}`} className="block text-sm font-medium mb-1">
-                    Editor Notes (optional for approval, required for rejection):
+                    Editor Notes (optional for approval, required for requesting changes):
                   </label>
                   <Textarea
                     id={`feedback-${post.id}`}
@@ -192,11 +192,11 @@ export function EditorQueueList({ posts }: EditorQueueListProps) {
                     {isProcessing ? 'Processing...' : 'Approve & Publish'}
                   </Button>
                   <Button
-                    onClick={() => handleReject(post.id)}
+                    onClick={() => handleRequestChanges(post.id)}
                     disabled={isProcessing}
                     variant="destructive"
                   >
-                    {isProcessing ? 'Processing...' : 'Reject'}
+                    {isProcessing ? 'Processing...' : 'Request Changes'}
                   </Button>
                   <Button asChild variant="outline">
                     <Link href={`/posts/${post.slug}?draft=true`} target="_blank">

@@ -2,6 +2,7 @@
 import { getPayload } from 'payload'
 import { revalidatePath } from 'next/cache'
 import config from '@/payload.config'
+import { validateFeaturedRange, validateMetaDescription } from '@/utilities/postValidation'
 
 // GET handler - list posts (proxies to Payload's built-in REST)
 export async function GET(request: NextRequest) {
@@ -76,6 +77,18 @@ export async function POST(request: NextRequest) {
         { message: 'Unauthorized' },
         { status: 401 }
       )
+    }
+
+    const incomingMetaDescription =
+      typeof body?.meta?.description === 'string' ? body.meta.description : undefined
+    const metaError = validateMetaDescription(incomingMetaDescription)
+    if (metaError) {
+      return NextResponse.json({ message: metaError }, { status: 400 })
+    }
+
+    const featuredError = validateFeaturedRange(body.featuredFrom, body.featuredUntil)
+    if (featuredError) {
+      return NextResponse.json({ message: featuredError }, { status: 400 })
     }
 
     // Convert plain text content to Lexical format

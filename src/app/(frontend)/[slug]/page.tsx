@@ -14,7 +14,8 @@ import { RenderHero } from '@/heros/RenderHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
-import { HeroSection, HomePosts, FeaturesSection, CTASection } from '@/components/LandingPage'
+import { HeroSection, HomePosts, FeaturedPosts, FeaturesSection, CTASection } from '@/components/LandingPage'
+import { publishedVisibilityWhere } from '@/utilities/postValidation'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -69,6 +70,26 @@ export default async function Page({ params: paramsPromise }: Args) {
   // Modern landing page for home - show latest 10 posts
   if (slug === 'home') {
     const payload = await getPayload({ config: configPromise })
+    const now = new Date().toISOString()
+    const publishVisibility = publishedVisibilityWhere(now)
+
+    const featuredResult = await payload.find({
+      collection: 'posts',
+      depth: 2,
+      limit: 6,
+      overrideAccess: true,
+      sort: '-featuredFrom',
+      where: {
+        and: [
+          { _status: { equals: 'published' } },
+          publishVisibility,
+          { featuredFrom: { less_than_equal: now } },
+          { featuredUntil: { greater_than_equal: now } },
+        ],
+      },
+    })
+
+    const featuredIDs = featuredResult.docs.map((doc) => doc.id)
     
     // Fetch latest 10 published posts, sorted by publish date
     const postsResult = await payload.find({
@@ -77,9 +98,11 @@ export default async function Page({ params: paramsPromise }: Args) {
       limit: 10,
       overrideAccess: true,
       where: {
-        _status: {
-          equals: 'published',
-        },
+        and: [
+          { _status: { equals: 'published' } },
+          publishVisibility,
+          ...(featuredIDs.length > 0 ? [{ id: { not_in: featuredIDs } }] : []),
+        ],
       },
       sort: '-publishedAt',
     })
@@ -88,9 +111,7 @@ export default async function Page({ params: paramsPromise }: Args) {
     const totalPosts = await payload.count({
       collection: 'posts',
       where: {
-        _status: {
-          equals: 'published',
-        },
+        and: [{ _status: { equals: 'published' } }, publishVisibility],
       },
     })
 
@@ -112,6 +133,7 @@ export default async function Page({ params: paramsPromise }: Args) {
           totalUsers={totalUsers.totalDocs}
           latestPost={latestPost}
         />
+        <FeaturedPosts posts={featuredResult.docs} />
         <HomePosts posts={postsResult.docs} />
         <FeaturesSection />
         <CTASection />
@@ -141,9 +163,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
     slug,
   })
 
-  const pathname = slug === 'home' ? '/' : `/${slug}`
-
-  return generateMeta({ doc: page, pathname })
+  return generateMeta({ doc: page })
 }
 
 const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {

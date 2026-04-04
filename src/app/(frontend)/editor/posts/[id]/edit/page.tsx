@@ -5,6 +5,7 @@ import { headers } from 'next/headers'
 import { lexicalToHtml } from '@/components/RichTextEditor/lexicalToHtml'
 import { PostForm } from './PostForm'
 import type { Post } from '@/payload-types'
+import { toISTDateTimeInput } from '@/utilities/dateTimeIST'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -84,15 +85,9 @@ export default async function EditPostPage({ params }: PageProps) {
     content: contentHtml,
     categories: categoryIds,
     tags: (post.tags as string[] | null) || [],
-    publishedAt: post.publishedAt
-      ? new Date(post.publishedAt).toISOString().slice(0, 16)
-      : '',
-    featuredFrom: post.featuredFrom
-      ? new Date(post.featuredFrom as string).toISOString().slice(0, 16)
-      : '',
-    featuredUntil: post.featuredUntil
-      ? new Date(post.featuredUntil as string).toISOString().slice(0, 16)
-      : '',
+    publishedAt: toISTDateTimeInput(post.publishedAt),
+    featuredFrom: toISTDateTimeInput(post.featuredFrom as string | undefined),
+    featuredUntil: toISTDateTimeInput(post.featuredUntil as string | undefined),
     meta: {
       title: post.meta?.title || '',
       description: post.meta?.description || '',

@@ -12,16 +12,18 @@ import PageClient from './page.client'
 import { PostsFilterBar } from './PostsFilterBar'
 import { NewsletterSignup } from '@/components/NewsletterSignup'
 import type { Where } from 'payload'
+import { publishedVisibilityWhere } from '@/utilities/postValidation'
 
 // Cache popular tags for 10 minutes - they rarely change
 const getCachedPopularTags = unstable_cache(
   async () => {
     const payload = await getPayload({ config: configPromise })
+    const publishVisibility = publishedVisibilityWhere()
     const result = await payload.find({
       collection: 'posts',
       limit: 100,
       overrideAccess: true,
-      where: { _status: { equals: 'published' } },
+      where: { and: [{ _status: { equals: 'published' } }, publishVisibility] },
       select: { tags: true },
       pagination: false,
     })
@@ -56,6 +58,7 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
   const tag = searchParams.tag || ''
   const sort = searchParams.sort || 'latest'
   const pageNumber = Number(searchParams.page || '1')
+  const publishVisibility = publishedVisibilityWhere()
 
   const payload = await getPayload({ config: configPromise })
 
@@ -74,7 +77,7 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
   }))
 
   // Build where clause
-  const conditions: Where[] = [{ _status: { equals: 'published' } }]
+  const conditions: Where[] = [{ _status: { equals: 'published' } }, publishVisibility]
 
   // Search query
   if (query) {
@@ -245,8 +248,5 @@ export function generateMetadata(): Metadata {
   return {
     title: 'Posts',
     description: 'Browse all posts from the GCET Blog community.',
-    alternates: {
-      canonical: '/posts',
-    },
   }
 }
