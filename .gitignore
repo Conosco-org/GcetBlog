@@ -1,22 +1,57 @@
-﻿build
+﻿# Build outputs
+build
 dist/media
-node_modules
-.DS_Store
-.env
 .next
-.vercel
-.github
+.next/
+out/
+dist/
 
-public/robots.txt
-public/sitemap*.xml
-
-# Playwright
+# Dependencies
+node_modules
 node_modules/
+
+# Testing
 /test-results/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+coverage/
+.nyc_output/
 
-# Build artifacts & logs
+# IDE & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 tsconfig.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Vercel
+.vercel
+
+# GitHub
+.github
+
+# Generated files
+public/robots.txt
+public/sitemap*.xml
+
+# Temporary
+*.tmp
+.cache/
