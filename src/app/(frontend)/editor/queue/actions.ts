@@ -104,14 +104,14 @@ export async function requestChanges(postId: string, feedback: string) {
       throw new Error('Post not found')
     }
 
-    // Add feedback and mark as rejected (needs revision)
+    // Add feedback and return to draft status so contributor can edit
     const updatedPost = await payload.update({
       collection: 'posts',
       id: postId,
       data: {
         editorFeedback: feedback || 'Changes requested by editor',
-        reviewStatus: 'rejected',
-        _status: 'draft', // Keep as draft
+        reviewStatus: 'draft', // Back to draft so contributor can edit
+        _status: 'draft',
       },
       draft: true,
     })
@@ -136,6 +136,7 @@ export async function requestChanges(postId: string, feedback: string) {
     // Revalidate multiple paths to ensure UI updates
     revalidatePath('/editor/queue')
     revalidatePath('/editor')
+    revalidatePath('/contributor/drafts')
     revalidatePath('/contributor/submissions')
     
     console.log('Changes requested successfully:', {
@@ -144,7 +145,7 @@ export async function requestChanges(postId: string, feedback: string) {
       editorFeedback: updatedPost.editorFeedback,
     })
 
-    return { success: true, message: 'Feedback sent to contributor' }
+    return { success: true, message: 'Feedback sent to contributor. Post returned to their drafts.' }
   } catch (error) {
     return {
       success: false,
@@ -165,7 +166,7 @@ export async function deletePost(postId: string, reason: string) {
       throw new Error('Editor access required')
     }
 
-    // Get the post before deletion for logging
+    // Get the post before deletion for logging and notification
     const post = await payload.findByID({
       collection: 'posts',
       id: postId,
@@ -176,16 +177,45 @@ export async function deletePost(postId: string, reason: string) {
       throw new Error('Post not found')
     }
 
+    // Get the contributor (first author)
+    const contributorId = Array.isArray(post.authors) && post.authors.length > 0
+      ? typeof post.authors[0] === 'string' 
+        ? post.authors[0] 
+        : post.authors[0]?.id
+      : null
+
+    if (!contributorId) {
+      throw new Error('Post has no author')
+    }
+
+    // Create rejection notification for the contributor
+    try {
+      await payload.create({
+        collection: 'rejection-notifications',
+        data: {
+          postTitle: post.title,
+          contributor: contributorId,
+          rejectedBy: user.id,
+          reason: reason,
+          originalPostId: postId,
+          isRead: false,
+        },
+      })
+    } catch (error) {
+      console.error('Failed to create rejection notification:', error)
+      // Continue with deletion even if notification fails
+    }
+
     // Create audit log entry before deletion
     try {
       await payload.create({
         collection: 'admin-logs',
         data: {
-          action: 'delete_post',
+          action: 'reject_post',
           resourceType: 'posts',
           resourceId: postId,
           user: user.id,
-          details: `Post "${post.title}" deleted. Reason: ${reason}`,
+          details: `Post "${post.title}" rejected and deleted. Reason: ${reason}`,
           timestamp: new Date().toISOString(),
         },
       })
@@ -202,20 +232,22 @@ export async function deletePost(postId: string, reason: string) {
     // Revalidate paths
     revalidatePath('/editor/queue')
     revalidatePath('/editor')
+    revalidatePath('/contributor/rejections')
     revalidatePath('/posts')
     revalidatePath('/')
     
-    console.log('Post deleted successfully:', {
+    console.log('Post rejected and deleted successfully:', {
       postId,
       title: post.title,
       reason,
+      contributorNotified: true,
     })
 
-    return { success: true, message: 'Post deleted permanently' }
+    return { success: true, message: 'Post rejected and contributor notified' }
   } catch (error) {
     return {
       success: false,
-      message: error instanceof Error ? error.message : 'Failed to delete post',
+      message: error instanceof Error ? error.message : 'Failed to reject post',
     }
   }
 }
