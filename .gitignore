@@ -59,6 +59,7 @@ public/sitemap*.xml
 .cache/
 
 # Documentation (keep only README.md in root)
+docs/
 ARCHITECTURE.md
 CHEAT_SHEET.md
 CODEBASE_GUIDE.md
