@@ -11,12 +11,14 @@ node_modules
 node_modules/
 
 # Testing
+tests/
 /test-results/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
 coverage/
 .nyc_output/
+test.env
 
 # IDE & Editors
 .vscode/
@@ -45,8 +47,8 @@ tsconfig.tsbuildinfo
 # Vercel
 .vercel
 
-# GitHub
-.github
+# GitHub specific files
+.github/
 
 # Generated files
 public/robots.txt
@@ -55,3 +57,13 @@ public/sitemap*.xml
 # Temporary
 *.tmp
 .cache/
+
+# Documentation (keep only README.md in root)
+ARCHITECTURE.md
+CHEAT_SHEET.md
+CODEBASE_GUIDE.md
+DOCUMENTATION_INDEX.md
+DOCUMENTATION_SUMMARY.md
+IMAGE_GUIDELINES.md
+QUICK_START.md
+START_HERE.md
