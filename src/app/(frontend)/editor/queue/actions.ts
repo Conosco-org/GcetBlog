@@ -81,7 +81,7 @@ export async function approvePost(postId: string, editorNotes?: string) {
   }
 }
 
-export async function rejectPost(postId: string, reason?: string) {
+export async function requestChanges(postId: string, feedback: string) {
   try {
     const payload = await getPayload({ config: configPromise })
     const requestHeaders = await headers()
@@ -104,12 +104,12 @@ export async function rejectPost(postId: string, reason?: string) {
       throw new Error('Post not found')
     }
 
-    // Add rejection feedback to the post
+    // Add feedback and mark as rejected (needs revision)
     const updatedPost = await payload.update({
       collection: 'posts',
       id: postId,
       data: {
-        editorFeedback: reason || 'Post rejected by editor',
+        editorFeedback: feedback || 'Changes requested by editor',
         reviewStatus: 'rejected',
         _status: 'draft', // Keep as draft
       },
@@ -125,7 +125,7 @@ export async function rejectPost(postId: string, reason?: string) {
           resourceType: 'posts',
           resourceId: postId,
           user: user.id,
-          details: reason || 'Post rejected',
+          details: `Changes requested: ${feedback}`,
           timestamp: new Date().toISOString(),
         },
       })
@@ -138,17 +138,84 @@ export async function rejectPost(postId: string, reason?: string) {
     revalidatePath('/editor')
     revalidatePath('/contributor/submissions')
     
-    console.log('Post rejected successfully:', {
+    console.log('Changes requested successfully:', {
       postId,
       reviewStatus: updatedPost.reviewStatus,
       editorFeedback: updatedPost.editorFeedback,
     })
 
-    return { success: true, message: 'Post rejected with feedback' }
+    return { success: true, message: 'Feedback sent to contributor' }
   } catch (error) {
     return {
       success: false,
-      message: error instanceof Error ? error.message : 'Failed to reject post',
+      message: error instanceof Error ? error.message : 'Failed to request changes',
+    }
+  }
+}
+
+export async function deletePost(postId: string, reason: string) {
+  try {
+    const payload = await getPayload({ config: configPromise })
+    const requestHeaders = await headers()
+
+    // Authenticate the request
+    const { user } = await payload.auth({ headers: requestHeaders })
+
+    if (!user || (user as { role: string }).role !== 'editor') {
+      throw new Error('Editor access required')
+    }
+
+    // Get the post before deletion for logging
+    const post = await payload.findByID({
+      collection: 'posts',
+      id: postId,
+      draft: true,
+    })
+
+    if (!post) {
+      throw new Error('Post not found')
+    }
+
+    // Create audit log entry before deletion
+    try {
+      await payload.create({
+        collection: 'admin-logs',
+        data: {
+          action: 'delete_post',
+          resourceType: 'posts',
+          resourceId: postId,
+          user: user.id,
+          details: `Post "${post.title}" deleted. Reason: ${reason}`,
+          timestamp: new Date().toISOString(),
+        },
+      })
+    } catch (error) {
+      console.log('Could not create audit log:', error)
+    }
+
+    // Delete the post permanently
+    await payload.delete({
+      collection: 'posts',
+      id: postId,
+    })
+
+    // Revalidate paths
+    revalidatePath('/editor/queue')
+    revalidatePath('/editor')
+    revalidatePath('/posts')
+    revalidatePath('/')
+    
+    console.log('Post deleted successfully:', {
+      postId,
+      title: post.title,
+      reason,
+    })
+
+    return { success: true, message: 'Post deleted permanently' }
+  } catch (error) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : 'Failed to delete post',
     }
   }
 }

@@ -25,6 +25,8 @@ import { cn } from '@/utilities/ui'
 import { RichTextEditor, htmlToLexical, htmlToPlainText } from '@/components/RichTextEditor'
 import { TemplateSelector, type TemplateCardData } from '@/components/templates'
 import { uploadToCloudinaryDirect } from '@/utilities/uploadToCloudinaryDirect'
+import { fromISTInputToISOString } from '@/utilities/dateTimeIST'
+import { validateMetaDescription } from '@/utilities/postValidation'
 
 // Categories will be passed from the server component
 
@@ -61,9 +63,9 @@ export function CreateContentForm({ user: _user, categories: dbCategories, initi
   const [showPreview, setShowPreview] = useState(false)
   const [activeTemplateName, setActiveTemplateName] = useState<string | null>(initialTemplate?.name || null)
 
-  const toggleCategory = (category: string) => {
+  const toggleCategory = (categoryID: string) => {
     setSelectedCategories((prev) =>
-      prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category]
+      prev.includes(categoryID) ? prev.filter((c) => c !== categoryID) : [...prev, categoryID]
     )
   }
 
@@ -139,6 +141,16 @@ export function CreateContentForm({ user: _user, categories: dbCategories, initi
       return
     }
 
+    const metaError = validateMetaDescription(metaDescription.trim())
+    if (metaError) {
+      toast({
+        title: 'Error',
+        description: metaError,
+        variant: 'destructive',
+      })
+      return
+    }
+
     setIsSaving(true)
     setSaveStatus('saving')
     
@@ -155,7 +167,7 @@ export function CreateContentForm({ user: _user, categories: dbCategories, initi
           categories: selectedCategories,
           tags,
           metaDescription,
-          publishDate,
+          publishDate: publishDate ? fromISTInputToISOString(publishDate) : undefined,
           contentType: selectedType || undefined,
           featuredImage: featuredImage || undefined,
           isDraft: false,
@@ -204,6 +216,16 @@ export function CreateContentForm({ user: _user, categories: dbCategories, initi
       return
     }
 
+    const metaError = validateMetaDescription(metaDescription.trim())
+    if (metaError) {
+      toast({
+        title: 'Error',
+        description: metaError,
+        variant: 'destructive',
+      })
+      return
+    }
+
     setSaveStatus('saving')
     try {
       const response = await fetch('/api/posts/create', {
@@ -218,7 +240,7 @@ export function CreateContentForm({ user: _user, categories: dbCategories, initi
           categories: selectedCategories,
           tags,
           metaDescription,
-          publishDate,
+          publishDate: publishDate ? fromISTInputToISOString(publishDate) : undefined,
           contentType: selectedType,
           featuredImage: featuredImage || undefined,
           isDraft: true, // Save as draft
@@ -389,9 +411,9 @@ export function CreateContentForm({ user: _user, categories: dbCategories, initi
               {dbCategories.map((category) => (
                 <Badge
                   key={category.id}
-                  variant={selectedCategories.includes(category.title) ? 'default' : 'outline'}
+                  variant={selectedCategories.includes(category.id) ? 'default' : 'outline'}
                   className="cursor-pointer"
-                  onClick={() => toggleCategory(category.title)}
+                  onClick={() => toggleCategory(category.id)}
                 >
                   {category.title}
                 </Badge>
@@ -527,6 +549,7 @@ export function CreateContentForm({ user: _user, categories: dbCategories, initi
                   value={publishDate}
                   onChange={(e) => setPublishDate(e.target.value)}
                 />
+                <p className="text-xs text-muted-foreground">Time is interpreted in IST.</p>
               </div>
 
               {/* SEO Meta Description */}
@@ -538,7 +561,9 @@ export function CreateContentForm({ user: _user, categories: dbCategories, initi
                   value={metaDescription}
                   onChange={(e) => setMetaDescription(e.target.value)}
                   rows={2}
+                  maxLength={160}
                 />
+                <p className="text-xs text-muted-foreground">{metaDescription.length}/160 characters</p>
               </div>
             </CardContent>
           </Card>

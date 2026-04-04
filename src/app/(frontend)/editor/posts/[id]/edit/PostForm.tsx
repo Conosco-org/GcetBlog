@@ -14,6 +14,8 @@ import { RichTextEditor, htmlToLexical, htmlToPlainText } from '@/components/Ric
 import { TemplateSelector, type TemplateCardData } from '@/components/templates'
 import type { Category, User } from '@/payload-types'
 import { uploadToCloudinaryDirect } from '@/utilities/uploadToCloudinaryDirect'
+import { fromISTInputToISOString } from '@/utilities/dateTimeIST'
+import { validateFeaturedRange, validateMetaDescription } from '@/utilities/postValidation'
 
 interface PostFormProps {
   categories: Category[]
@@ -181,6 +183,29 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
       return
     }
 
+    const metaError = validateMetaDescription(metaDescription.trim())
+    if (metaError) {
+      toast({
+        title: 'Error',
+        description: metaError,
+        variant: 'destructive',
+      })
+      return
+    }
+
+    const featuredError = validateFeaturedRange(
+      featuredFrom ? fromISTInputToISOString(featuredFrom) : undefined,
+      featuredUntil ? fromISTInputToISOString(featuredUntil) : undefined,
+    )
+    if (featuredError) {
+      toast({
+        title: 'Error',
+        description: featuredError,
+        variant: 'destructive',
+      })
+      return
+    }
+
     setIsSubmitting(true)
 
     try {
@@ -259,6 +284,29 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
       return
     }
 
+    const metaError = validateMetaDescription(metaDescription.trim())
+    if (metaError) {
+      toast({
+        title: 'Error',
+        description: metaError,
+        variant: 'destructive',
+      })
+      return
+    }
+
+    const featuredError = validateFeaturedRange(
+      featuredFrom ? fromISTInputToISOString(featuredFrom) : undefined,
+      featuredUntil ? fromISTInputToISOString(featuredUntil) : undefined,
+    )
+    if (featuredError) {
+      toast({
+        title: 'Error',
+        description: featuredError,
+        variant: 'destructive',
+      })
+      return
+    }
+
     setIsSubmitting(true)
 
     try {
@@ -278,9 +326,9 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
           tags,
           authors: [user.id],
           _status: status,
-          ...(publishedAt ? { publishedAt: new Date(publishedAt).toISOString() } : {}),
-          ...(isEditor && featuredFrom ? { featuredFrom: new Date(featuredFrom).toISOString() } : {}),
-          ...(isEditor && featuredUntil ? { featuredUntil: new Date(featuredUntil).toISOString() } : {}),
+          ...(publishedAt ? { publishedAt: fromISTInputToISOString(publishedAt) } : {}),
+          ...(isEditor && featuredFrom ? { featuredFrom: fromISTInputToISOString(featuredFrom) } : {}),
+          ...(isEditor && featuredUntil ? { featuredUntil: fromISTInputToISOString(featuredUntil) } : {}),
           heroImage: heroImageId,
           meta: {
             title: metaTitle.trim() || title.trim(),
@@ -621,7 +669,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
                 className="mt-1"
               />
               <p className="text-xs text-muted-foreground mt-1">
-                Leave empty to publish immediately, or set a future date to schedule.
+                Leave empty to publish immediately, or set a future date to schedule (IST).
               </p>
             </div>
           </div>
@@ -659,7 +707,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
                 </div>
               </div>
               <p className="text-xs text-muted-foreground mt-2">
-                Post will appear in the Featured section on the homepage during this date range.
+                Post will appear in the Featured section on the homepage during this date range (IST).
               </p>
             </div>
           )}

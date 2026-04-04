@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { CheckCircle, XCircle, Eye } from 'lucide-react'
-import { approvePost, rejectPost } from './actions'
+import { CheckCircle, XCircle, Eye, Edit, Trash2, MessageSquare } from 'lucide-react'
+import { approvePost, requestChanges, deletePost } from './actions'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/hooks/use-toast'
@@ -18,7 +18,8 @@ export function ApprovalButtons({ postId, postTitle, postSlug }: ApprovalButtons
   const router = useRouter()
   const { toast } = useToast()
   const [isApproving, setIsApproving] = useState(false)
-  const [isRejecting, setIsRejecting] = useState(false)
+  const [isRequestingChanges, setIsRequestingChanges] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   const handleApprove = async () => {
     if (!confirm(`Are you sure you want to approve and publish "${postTitle}"?`)) {
@@ -55,19 +56,28 @@ export function ApprovalButtons({ postId, postTitle, postSlug }: ApprovalButtons
     }
   }
 
-  const handleReject = async () => {
-    const reason = prompt(`Why are you rejecting "${postTitle}"? (This feedback will be sent to the author)`)
-    if (reason === null) {
+  const handleRequestChanges = async () => {
+    const feedback = prompt(`What changes are needed for "${postTitle}"? (This feedback will be sent to the contributor)`)
+    if (feedback === null) {
       return // User cancelled
     }
 
-    setIsRejecting(true)
+    if (!feedback.trim()) {
+      toast({
+        title: "Feedback Required",
+        description: "Please provide feedback for the contributor",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setIsRequestingChanges(true)
     try {
-      const result = await rejectPost(postId, reason || undefined)
+      const result = await requestChanges(postId, feedback)
       if (result.success) {
         toast({
-          title: "Post Rejected",
-          description: "Feedback sent to the author",
+          title: "Changes Requested",
+          description: "Feedback sent to contributor. Post removed from queue.",
         })
         // Wait a moment for the database to update, then refresh
         setTimeout(() => {
@@ -76,20 +86,74 @@ export function ApprovalButtons({ postId, postTitle, postSlug }: ApprovalButtons
       } else {
         toast({
           title: "Error",
-          description: result.message || 'Failed to reject post',
+          description: result.message || 'Failed to request changes',
           variant: "destructive",
         })
-        setIsRejecting(false)
+        setIsRequestingChanges(false)
       }
     } catch (_error) {
       toast({
         title: "Error",
-        description: "An error occurred while rejecting the post",
+        description: "An error occurred while requesting changes",
         variant: "destructive",
       })
-      setIsRejecting(false)
+      setIsRequestingChanges(false)
     }
   }
+
+  const handleDelete = async () => {
+    const confirmDelete = confirm(
+      `⚠️ WARNING: This will PERMANENTLY DELETE "${postTitle}" from the database.\n\nThis action cannot be undone. Are you sure?`
+    )
+    if (!confirmDelete) {
+      return
+    }
+
+    const reason = prompt(`Why are you deleting "${postTitle}"? (Required for audit log)`)
+    if (reason === null) {
+      return // User cancelled
+    }
+
+    if (!reason.trim()) {
+      toast({
+        title: "Reason Required",
+        description: "Please provide a reason for deletion",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setIsDeleting(true)
+    try {
+      const result = await deletePost(postId, reason)
+      if (result.success) {
+        toast({
+          title: "Post Deleted",
+          description: "Post permanently removed from database",
+        })
+        // Wait a moment for the database to update, then refresh
+        setTimeout(() => {
+          router.refresh()
+        }, 500)
+      } else {
+        toast({
+          title: "Error",
+          description: result.message || 'Failed to delete post',
+          variant: "destructive",
+        })
+        setIsDeleting(false)
+      }
+    } catch (_error) {
+      toast({
+        title: "Error",
+        description: "An error occurred while deleting the post",
+        variant: "destructive",
+      })
+      setIsDeleting(false)
+    }
+  }
+
+  const isProcessing = isApproving || isRequestingChanges || isDeleting
 
   return (
     <div className="flex items-center gap-2">
@@ -99,6 +163,7 @@ export function ApprovalButtons({ postId, postTitle, postSlug }: ApprovalButtons
         variant="outline"
         title="Preview"
         aria-label="Preview"
+        disabled={isProcessing}
       >
         <Link href={`/api/draft?slug=${postSlug}`} target="_blank">
           <Eye className="w-4 h-4 sm:mr-1" />
@@ -106,26 +171,51 @@ export function ApprovalButtons({ postId, postTitle, postSlug }: ApprovalButtons
         </Link>
       </Button>
       <Button
+        asChild
+        size="sm"
+        variant="outline"
+        title="Edit"
+        aria-label="Edit"
+        disabled={isProcessing}
+      >
+        <Link href={`/editor/posts/${postId}/edit`}>
+          <Edit className="w-4 h-4 sm:mr-1" />
+          <span className="hidden sm:inline">Edit</span>
+        </Link>
+      </Button>
+      <Button
         onClick={handleApprove}
-        disabled={isApproving || isRejecting}
+        disabled={isProcessing}
         size="sm"
         className="bg-green-600 hover:bg-green-700"
-        title="Approve"
+        title="Approve and Publish"
         aria-label="Approve"
       >
         <CheckCircle className="w-4 h-4 sm:mr-1" />
         <span className="hidden sm:inline">{isApproving ? 'Approving...' : 'Approve'}</span>
       </Button>
       <Button
-        onClick={handleReject}
-        disabled={isApproving || isRejecting}
+        onClick={handleRequestChanges}
+        disabled={isProcessing}
+        size="sm"
+        variant="outline"
+        className="border-orange-300 text-orange-700 hover:bg-orange-50 dark:border-orange-700 dark:text-orange-400 dark:hover:bg-orange-950"
+        title="Request Changes"
+        aria-label="Request Changes"
+      >
+        <MessageSquare className="w-4 h-4 sm:mr-1" />
+        <span className="hidden sm:inline">{isRequestingChanges ? 'Sending...' : 'Feedback'}</span>
+      </Button>
+      <Button
+        onClick={handleDelete}
+        disabled={isProcessing}
         size="sm"
         variant="destructive"
-        title="Reject"
-        aria-label="Reject"
+        title="Delete Post Permanently"
+        aria-label="Delete"
       >
-        <XCircle className="w-4 h-4 sm:mr-1" />
-        <span className="hidden sm:inline">{isRejecting ? 'Rejecting...' : 'Reject'}</span>
+        <Trash2 className="w-4 h-4 sm:mr-1" />
+        <span className="hidden sm:inline">{isDeleting ? 'Deleting...' : 'Delete'}</span>
       </Button>
     </div>
   )

@@ -20,16 +20,20 @@ import { DraftModeBanner } from '@/components/DraftModeBanner'
 import { PostEngagement } from './PostEngagement'
 import { NewsletterSignup } from '@/components/NewsletterSignup'
 import { InstagramEmbedLoader } from '@/components/InstagramEmbedLoader'
-import { getServerSideURL } from '@/utilities/getURL'
+import { publishedVisibilityWhere } from '@/utilities/postValidation'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
+  const publishVisibility = publishedVisibilityWhere()
   const posts = await payload.find({
     collection: 'posts',
     draft: false,
     limit: 1000,
     overrideAccess: false,
     pagination: false,
+    where: {
+      and: [{ _status: { equals: 'published' } }, publishVisibility],
+    },
     select: {
       slug: true,
     },
@@ -69,6 +73,7 @@ export default async function Post({ params: paramsPromise }: Args) {
     where: {
       and: [
         { _status: { equals: 'published' } },
+        publishedVisibilityWhere(),
         { id: { not_equals: post.id } },
         ...(categoryIds.length > 0
           ? [{ categories: { in: categoryIds } }]
@@ -99,27 +104,8 @@ export default async function Post({ params: paramsPromise }: Args) {
     // Unauthenticated - fine
   }
 
-  const canonicalUrl = `${getServerSideURL()}/posts/${post.slug}`
-  const postJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    headline: post.meta?.title || post.title,
-    description: post.meta?.description || '',
-    url: canonicalUrl,
-    datePublished: post.publishedAt || post.createdAt,
-    dateModified: post.updatedAt,
-    image:
-      typeof post.meta?.image === 'object' && post.meta.image?.url
-        ? `${getServerSideURL()}${post.meta.image.url}`
-        : `${getServerSideURL()}/gcet-logo.png`,
-  }
-
   return (
     <article className="pb-16">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(postJsonLd) }}
-      />
       {draft && <DraftModeBanner postStatus={post._status || 'draft'} />}
       <PageClient />
       <InstagramEmbedLoader />
@@ -270,7 +256,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const { slug = '' } = await paramsPromise
   const post = await queryPostBySlug({ slug })
 
-  return generateMeta({ doc: post, pathname: `/posts/${slug}` })
+  return generateMeta({ doc: post })
 }
 
 const queryPostBySlug = cache(async ({ slug }: { slug: string }) => {
@@ -299,6 +285,7 @@ const queryPostBySlug = cache(async ({ slug }: { slug: string }) => {
                   equals: 'published' as const,
                 },
               },
+              publishedVisibilityWhere(),
             ]),
       ],
     },
