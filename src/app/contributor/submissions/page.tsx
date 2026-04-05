@@ -36,16 +36,34 @@ export default async function SubmissionsPage({ searchParams }: PageProps) {
   const page = Math.max(1, Number(params.page) || 1)
   const statusFilter = params.status || ''
 
-  // Build where
+  // Build where - show all submitted posts (pending, approved, and posts with feedback)
   const conditions: Where[] = [
     { authors: { equals: typedUser.id } },
   ]
 
   if (statusFilter) {
-    conditions.push({ reviewStatus: { equals: statusFilter } })
+    if (statusFilter === 'requesting_changes') {
+      // Posts with editor feedback
+      conditions.push({ 
+        reviewStatus: { equals: 'draft' },
+        editorFeedback: { exists: true }
+      })
+    } else {
+      conditions.push({ reviewStatus: { equals: statusFilter } })
+    }
   } else {
+    // Show all submitted posts: pending review, approved, or with feedback
     conditions.push({
-      reviewStatus: { in: ['pending_review', 'approved', 'rejected'] },
+      or: [
+        { reviewStatus: { equals: 'pending_review' } },
+        { reviewStatus: { equals: 'approved' } },
+        { 
+          and: [
+            { reviewStatus: { equals: 'draft' } },
+            { editorFeedback: { exists: true } }
+          ]
+        }
+      ]
     })
   }
 

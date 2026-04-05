@@ -35,12 +35,11 @@ export const RejectionNotifications: CollectionConfig = {
 
       return false
     },
-    update: () => false, // Read-only after creation
-    delete: ({ req: { user } }) => {
+    update: ({ req: { user } }) => {
       const userRole = (user as { role?: string })?.role
       const userId = user?.id
 
-      // Contributors can delete their own notifications
+      // Contributors can only update their own notifications (to mark as read)
       if (userRole === 'contributor') {
         return {
           contributor: {
@@ -49,9 +48,10 @@ export const RejectionNotifications: CollectionConfig = {
         }
       }
 
-      // Editors and admins can delete any
+      // Editors and admins can update any
       return userRole === 'editor' || userRole === 'admin'
     },
+    delete: () => false, // Prevent deletion - notifications should persist
   },
   fields: [
     {

@@ -38,21 +38,41 @@ export default async function DraftsPage({ searchParams }: PageProps) {
   const query = params.q || ''
   const page = Math.max(1, Number(params.page) || 1)
 
-  const conditions: Where[] = [
+  // Fetch current drafts (no feedback)
+  const draftConditions: Where[] = [
     { authors: { equals: typedUser.id } },
     { reviewStatus: { equals: 'draft' } },
+    { editorFeedback: { exists: false } },
   ]
 
   if (query) {
-    conditions.push({ title: { like: query } })
+    draftConditions.push({ title: { like: query } })
   }
 
-  const drafts = await payload.find({
+  const currentDrafts = await payload.find({
     collection: 'posts',
-    where: { and: conditions },
+    where: { and: draftConditions },
     sort: '-updatedAt',
     limit: PAGE_SIZE,
     page,
+  })
+
+  // Fetch posts with feedback (requesting changes)
+  const feedbackConditions: Where[] = [
+    { authors: { equals: typedUser.id } },
+    { reviewStatus: { equals: 'draft' } },
+    { editorFeedback: { exists: true } },
+  ]
+
+  if (query) {
+    feedbackConditions.push({ title: { like: query } })
+  }
+
+  const requestingChanges = await payload.find({
+    collection: 'posts',
+    where: { and: feedbackConditions },
+    sort: '-updatedAt',
+    limit: 50, // Show all feedback posts
   })
 
   // Fetch rejection notifications for this contributor
@@ -82,11 +102,12 @@ export default async function DraftsPage({ searchParams }: PageProps) {
 
       <div className="mt-6">
         <DraftsGridClient
-          drafts={drafts.docs}
+          currentDrafts={currentDrafts.docs}
+          requestingChanges={requestingChanges.docs}
           rejections={rejections.docs}
-          totalPages={drafts.totalPages}
-          currentPage={drafts.page || page}
-          totalItems={drafts.totalDocs}
+          totalPages={currentDrafts.totalPages}
+          currentPage={currentDrafts.page || page}
+          totalItems={currentDrafts.totalDocs}
           pageSize={PAGE_SIZE}
           query={query}
         />

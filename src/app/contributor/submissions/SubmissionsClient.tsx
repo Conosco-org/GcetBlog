@@ -20,13 +20,25 @@ interface SubmissionsClientProps {
   statusFilter: string
 }
 
-function getStatusBadge(status: string) {
+function getStatusBadge(post: Post) {
+  const status = post.reviewStatus || 'draft'
+  const hasFeedback = post.editorFeedback && status === 'draft'
+  
+  if (hasFeedback) {
+    return (
+      <Badge variant="outline" className="gap-1 border-orange-500 text-orange-700 dark:text-orange-400">
+        <AlertCircle className="h-3 w-3" />
+        Requesting Changes
+      </Badge>
+    )
+  }
+  
   switch (status) {
     case 'pending_review':
       return (
         <Badge variant="outline" className="gap-1 border-yellow-500 text-yellow-700 dark:text-yellow-400">
           <Clock className="h-3 w-3" />
-          Pending
+          Pending Review
         </Badge>
       )
     case 'approved':
@@ -34,13 +46,6 @@ function getStatusBadge(status: string) {
         <Badge variant="outline" className="gap-1 border-green-500 text-green-700 dark:text-green-400">
           <CheckCircle2 className="h-3 w-3" />
           Approved
-        </Badge>
-      )
-    case 'rejected':
-      return (
-        <Badge variant="outline" className="gap-1 border-red-500 text-red-700 dark:text-red-400">
-          <XCircle className="h-3 w-3" />
-          Revision
         </Badge>
       )
     default:
@@ -62,7 +67,7 @@ const columns: Column<Post>[] = [
   {
     key: 'status',
     header: 'Status',
-    render: (post) => getStatusBadge(post.reviewStatus || 'draft'),
+    render: (post) => getStatusBadge(post),
   },
   {
     key: 'submitted',
@@ -83,24 +88,30 @@ const columns: Column<Post>[] = [
   {
     key: 'actions',
     header: 'Actions',
-    render: (post) => (
-      <div className="flex gap-2">
-        {post.reviewStatus === 'rejected' && (
-          <Button variant="default" size="sm" asChild>
-            <Link href={`/editor/posts/${post.id}/edit`}>
-              <Edit className="h-3 w-3 mr-1" />
-              Edit
+    render: (post) => {
+      const status = post.reviewStatus || 'draft'
+      const hasFeedback = post.editorFeedback && status === 'draft'
+      const canEdit = hasFeedback || status === 'pending_review'
+      
+      return (
+        <div className="flex gap-2">
+          {canEdit && (
+            <Button variant="default" size="sm" asChild>
+              <Link href={`/editor/posts/${post.id}/edit`}>
+                <Edit className="h-3 w-3 mr-1" />
+                Edit
+              </Link>
+            </Button>
+          )}
+          <Button variant="outline" size="sm" asChild>
+            <Link href={status === 'approved' ? `/posts/${post.slug}` : `/api/draft?slug=${post.slug}`} target="_blank">
+              <Eye className="h-3 w-3 mr-1" />
+              {status === 'approved' ? 'View' : 'Preview'}
             </Link>
           </Button>
-        )}
-        <Button variant="outline" size="sm" asChild>
-          <Link href={`/posts/${post.slug}`} target="_blank">
-            <Eye className="h-3 w-3 mr-1" />
-            View
-          </Link>
-        </Button>
-      </div>
-    ),
+        </div>
+      )
+    },
   },
 ]
 
@@ -130,8 +141,8 @@ export function SubmissionsClient({
               options: [
                 { label: 'All Statuses', value: '' },
                 { label: 'Pending Review', value: 'pending_review' },
+                { label: 'Requesting Changes', value: 'requesting_changes' },
                 { label: 'Approved', value: 'approved' },
-                { label: 'Needs Revision', value: 'rejected' },
               ],
             },
           ]}
