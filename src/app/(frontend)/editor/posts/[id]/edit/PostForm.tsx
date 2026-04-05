@@ -227,6 +227,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
           tags,
           authors: [user.id],
           _status: 'draft',
+          reviewStatus: 'pending_review', // Set status to pending_review
           submittedForReviewAt: new Date().toISOString(),
           heroImage: heroImageId,
           meta: {
@@ -338,6 +339,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
           tags,
           authors: [user.id],
           _status: status,
+          reviewStatus: status === 'draft' ? 'draft' : undefined, // Set reviewStatus to 'draft' when saving as draft
           ...(publishedAt ? { publishedAt: fromISTInputToISOString(publishedAt) } : {}),
           ...(isEditor && featuredFrom ? { featuredFrom: fromISTInputToISOString(featuredFrom) } : {}),
           ...(isEditor && featuredUntil ? { featuredUntil: fromISTInputToISOString(featuredUntil) } : {}),
