@@ -127,7 +127,7 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
   // Override paragraph to handle YouTube/Instagram shortcodes stored as text nodes
   // in older posts. New posts use proper Payload block nodes handled by the blocks
   // converters above. This is purely a backward-compatibility fallback.
-  paragraph: (props: any) => {
+  paragraph: (props) => {
     const embed = extractEmbedFromParagraph(props.node)
     if (embed) return embed
     // Delegate to Payload's default paragraph converter for normal paragraphs

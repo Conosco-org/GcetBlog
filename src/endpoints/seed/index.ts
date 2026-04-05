@@ -47,7 +47,7 @@ export const seed = async ({
         slug: global,
         data: {
           navItems: [],
-        } as any,
+        } as Record<string, unknown>,
         depth: 0,
         context: {
           disableRevalidate: true,
@@ -125,7 +125,7 @@ export const seed = async ({
     ),
   ])
 
-  const [demoAuthor, _adminUser, _editorUser, _contributorUser, image1Doc, image2Doc, image3Doc, imageHomeDoc] = await Promise.all([
+  const [demoAuthor, , , , image1Doc, image2Doc, image3Doc, imageHomeDoc] = await Promise.all([
     payload.create({
       collection: 'users',
       data: {
@@ -327,7 +327,7 @@ export const seed = async ({
 
   payload.logger.info(`- Seeding pages...`)
 
-  const [_, contactPage] = await Promise.all([
+  const [, contactPage] = await Promise.all([
     payload.create({
       collection: 'pages',
       depth: 0,

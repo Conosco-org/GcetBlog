@@ -126,7 +126,8 @@ export default async function AnalyticsPage() {
   const deviceTotal = Object.values(deviceStats).reduce((a, b) => a + b, 0)
 
   // Unique sessions last 30d (approximate from recent data)
-  const _uniqueSessions = new Set(topPosts.docs.map(() => Math.random())).size // We don't have sessionId in select, so just note total views
+  // Note: We don't have sessionId in select, so we just track total views
+  // const uniqueSessions = new Set(topPosts.docs.map(() => Math.random())).size
 
   return (
     <div className="p-8 min-h-screen">

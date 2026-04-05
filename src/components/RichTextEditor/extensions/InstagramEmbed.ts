@@ -1,5 +1,5 @@
 ﻿import { Node, mergeAttributes } from '@tiptap/core'
-import { ReactNodeViewRenderer, NodeViewWrapper } from '@tiptap/react'
+import { ReactNodeViewRenderer, NodeViewWrapper, type ReactNodeViewProps } from '@tiptap/react'
 import React from 'react'
 
 export interface InstagramEmbedOptions {
@@ -23,9 +23,9 @@ function getInstagramPostId(url: string): string | null {
   return match ? match[1] : null
 }
 
-function InstagramNodeView({ node }: { node: { attrs: { src: string } } }) {
-  const postId = getInstagramPostId(node.attrs.src || '')
-  const postUrl = node.attrs.src
+function InstagramNodeView({ node }: ReactNodeViewProps) {
+  const postId = getInstagramPostId((node.attrs.src as string) || '')
+  const postUrl = node.attrs.src as string
 
   return React.createElement(
     NodeViewWrapper,
@@ -110,7 +110,7 @@ export const InstagramEmbed = Node.create<InstagramEmbedOptions>({
   },
 
   addNodeView() {
-    return ReactNodeViewRenderer(InstagramNodeView as any)
+    return ReactNodeViewRenderer(InstagramNodeView)
   },
 
   addCommands() {

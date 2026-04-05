@@ -95,7 +95,7 @@ export function TemplatesPageClient({
   const [search, setSearch] = useState(query)
   const [previewTemplate, setPreviewTemplate] = useState<TemplateData | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
-  const [_isDeleting, startDeleteTransition] = useTransition()
+  const [, startDeleteTransition] = useTransition()
 
   /* ── URL helpers ────────────────────────────────────────────── */
   const updateParams = (updates: Record<string, string>) => {

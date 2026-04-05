@@ -2,7 +2,6 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
-import type { User } from '@/payload-types'
 
 export async function POST(
   request: NextRequest,
@@ -21,7 +20,6 @@ export async function POST(
       )
     }
 
-    const _typedUser = user as User & { role: string }
     const body = await request.json()
     const { content } = body
 

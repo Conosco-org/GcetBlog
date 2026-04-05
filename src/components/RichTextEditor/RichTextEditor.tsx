@@ -199,8 +199,6 @@ export function RichTextEditor({
       try {
         const result = await uploadToCloudinaryDirect(file, file.name.replace(/\.[^/.]+$/, ''))
         editor.chain().focus().setImage({ src: result.cloudinaryUrl, alt: file.name.replace(/\.[^/.]+$/, '') }).run()
-      } catch (err) {
-        console.error('Image upload failed:', err)
       } finally {
         setIsUploadingImage(false)
       }

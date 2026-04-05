@@ -32,8 +32,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(null)
         window.location.href = '/login'
       }
-    } catch (error) {
-      console.error('Error logging out:', error)
+    } catch {
+      // Silently fail - logout will still redirect
     }
   }
 
@@ -51,7 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         setUser(null)
       }
-    } catch (_error) {
+    } catch {
       // Silently fail - this is expected when not authenticated
       setUser(null)
     } finally {

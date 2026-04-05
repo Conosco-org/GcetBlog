@@ -12,7 +12,7 @@ import {
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { contributorOwn } from '../../access/contributorOwn'
 import { contributorOwnNotPublished } from '../../access/contributorOwnNotPublished'
-import { editorOrAdmin } from '../../access/editorOrAdmin'
+import { editorOnly } from '../../access/editorOnly'
 import { isAdmin } from '../../utilities/checkUserRole'
 import { Banner } from '../../blocks/Banner/config'
 import { Code } from '../../blocks/Code/config'
@@ -35,7 +35,7 @@ import { slugField } from '@/fields/slug'
 export const Posts: CollectionConfig<'posts'> = {
   slug: 'posts',
   access: {
-    create: editorOrAdmin,
+    create: editorOnly,
     delete: contributorOwnNotPublished, // Contributors can delete their own unpublished posts, editors/admins can delete all
     read: authenticatedOrPublished,
     update: contributorOwn, // Contributors can update their own posts, editors/admins can update all
@@ -379,9 +379,9 @@ export const Posts: CollectionConfig<'posts'> = {
           if (description.length > 160) {
             throw new Error(`Meta description must be 160 characters or less (currently ${description.length} characters)`)
           }
-          // Note: We don't throw for minimum length, just log a warning
+          // Note: We don't throw for minimum length - just a warning
           if (description.length < 120) {
-            console.warn(`Meta description should be at least 120 characters for better SEO (currently ${description.length} characters)`)
+            // SEO warning - not critical
           }
         }
         return data

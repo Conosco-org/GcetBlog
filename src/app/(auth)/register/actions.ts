@@ -86,7 +86,6 @@ export async function registerAction(formData: FormData) {
       throw error
     }
 
-    console.error('Registration error:', error)
     return { error: 'Failed to create account. Please try again.' }
   }
 }

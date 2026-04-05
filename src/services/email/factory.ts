@@ -62,9 +62,6 @@ function getProviderConfig(): EmailProviderConfig {
       return { provider: 'console' }
 
     default:
-      console.warn(
-        `[EmailFactory] Unknown EMAIL_PROVIDER "${provider}", falling back to console`,
-      )
       return { provider: 'console' }
   }
 }

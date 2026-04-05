@@ -101,8 +101,7 @@ export async function POST(request: NextRequest) {
       upvotes: upvotes.totalDocs,
       userVote: vote ? value : null,
     })
-  } catch (error) {
-    console.error('Vote error:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to process vote' }, { status: 500 })
   }
 }

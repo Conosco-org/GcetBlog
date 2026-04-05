@@ -43,7 +43,7 @@ export class SmtpProvider implements EmailProvider {
       },
       pool: config.pool ?? true,
       maxConnections: config.maxConnections ?? 5,
-    } as any)
+    } as nodemailer.TransportOptions)
   }
 
   async send(message: EmailMessage): Promise<SendResult> {
@@ -78,7 +78,6 @@ export class SmtpProvider implements EmailProvider {
       }
     } catch (err) {
       const error = err instanceof Error ? err.message : 'Unknown SMTP error'
-      console.error(`[SmtpProvider] Send failed:`, error)
       return {
         success: false,
         provider: this.name,
@@ -123,8 +122,7 @@ export class SmtpProvider implements EmailProvider {
     try {
       await this.transporter.verify()
       return true
-    } catch (err) {
-      console.error(`[SmtpProvider] Verification failed:`, err)
+    } catch {
       return false
     }
   }

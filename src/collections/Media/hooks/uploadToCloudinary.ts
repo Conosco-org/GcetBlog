@@ -24,7 +24,7 @@ export const uploadToCloudinary: CollectionBeforeChangeHook = async ({ data, req
   if (data.cloudinaryUrl) return data
 
   // Get file from the request (Payload stores it here during upload operations)
-  const file = (req as any).file as { data?: Buffer; tempFilePath?: string; mimetype?: string } | undefined
+  const file = 'file' in req ? (req.file as { data?: Buffer; tempFilePath?: string; mimetype?: string } | undefined) : undefined
   if (!file?.data) return data
 
   try {

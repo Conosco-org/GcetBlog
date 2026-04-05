@@ -58,21 +58,21 @@ export async function POST(request: NextRequest) {
         // Reactivate: set back to pending for re-confirmation
         await payload.update({
           collection: 'newsletter-subscribers',
-          id: subscriber.id as string,
+          id: String(subscriber.id),
           data: {
             status: 'pending',
             unsubscribedAt: null,
             ...(name ? { name } : {}),
             ...(categories?.length ? { categories } : {}),
             ...(frequency ? { frequency } : {}),
-          } as any,
+          } as never,
         })
 
         // Re-send welcome/confirmation email
         await sendWelcomeEmail(
           email,
           name ?? subscriber.name,
-          subscriber.unsubscribeToken as string,
+          String(subscriber.unsubscribeToken || ''),
         ).catch((err) => console.error('[Subscribe] Failed to send welcome email:', err))
 
         return NextResponse.json({
@@ -98,14 +98,14 @@ export async function POST(request: NextRequest) {
         source: 'public_form' as const,
         categories: categories?.length ? categories : undefined,
         frequency: (frequency ?? 'weekly') as 'daily' | 'weekly' | 'monthly',
-      } as any,
+      } as never,
     })
 
     // Send double opt-in confirmation email
     await sendWelcomeEmail(
       email,
       name,
-      newSubscriber.unsubscribeToken as string,
+      String(newSubscriber.unsubscribeToken || ''),
     ).catch((err) => console.error('[Subscribe] Failed to send welcome email:', err))
 
     return NextResponse.json({

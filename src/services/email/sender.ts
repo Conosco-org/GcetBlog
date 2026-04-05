@@ -105,12 +105,12 @@ export async function sendNewsletter(
   const emailService = getEmailService()
 
   // 1. Fetch newsletter with populated posts
-  // @ts-ignore - Payload RichText Lexical type is too strict
-  const newsletter = (await payload.findByID({
+  // @ts-expect-error - Payload RichText Lexical type is too strict for deeply populated relations
+  const newsletter: Record<string, unknown> = await payload.findByID({
     collection: 'newsletters',
     id: newsletterId,
     depth: 2,
-  })) as any
+  })
 
   if (!newsletter) {
     return { success: false, totalRecipients: 0, sent: 0, failed: 0, errors: ['Newsletter not found'] }
@@ -157,7 +157,8 @@ export async function sendNewsletter(
     while (hasMore) {
       const result = await payload.find({
         collection: 'newsletter-subscribers',
-        where: subscriberWhere as any,
+        // @ts-expect-error - Payload where clause type is too strict for dynamic queries
+        where: subscriberWhere,
         limit: 100,
         page,
         depth: 0,
@@ -229,7 +230,7 @@ export async function sendNewsletter(
 
       baseHtml = await render(
         React.createElement(NewsletterManual, {
-          subject: newsletter.subject,
+          subject: String(newsletter.subject ?? ''),
           contentHtml,
           unsubscribeUrl: '__UNSUB_URL__',
           preferencesUrl: '__PREF_URL__',
@@ -259,14 +260,14 @@ export async function sendNewsletter(
 
       return {
         to: { email: sub.email, name: sub.name ?? undefined },
-        subject: newsletter.subject,
+        subject: String(newsletter.subject ?? ''),
         html: personalizedHtml,
         headers: complianceHeaders,
         listUnsubscribe: complianceHeaders['List-Unsubscribe'],
         listUnsubscribePost: complianceHeaders['List-Unsubscribe-Post'],
         tags: [
           { name: 'campaign', value: newsletterId },
-          { name: 'type', value: newsletter.type ?? 'manual' },
+          { name: 'type', value: String(newsletter.type ?? 'manual') },
         ],
         metadata: {
           newsletterId,
@@ -374,7 +375,6 @@ export async function generateDigest(
   })
 
   if (recentPosts.docs.length === 0) {
-    console.log(`[Digest] No posts found for ${frequency} digest, skipping.`)
     return { created: false, postCount: 0 }
   }
 
@@ -391,7 +391,6 @@ export async function generateDigest(
   })
 
   if (subscriberCount.totalDocs === 0) {
-    console.log(`[Digest] No active ${frequency} subscribers, skipping.`)
     return { created: false, postCount: recentPosts.docs.length }
   }
 
@@ -415,10 +414,6 @@ export async function generateDigest(
       templateId: 'digest',
     },
   })
-
-  console.log(
-    `[Digest] Created ${frequency} digest "${newsletter.title}" with ${recentPosts.docs.length} posts`,
-  )
 
   return {
     created: true,

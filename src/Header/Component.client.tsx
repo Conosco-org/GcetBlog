@@ -16,7 +16,7 @@ interface HeaderClientProps {
   categories?: Array<{ id: string; title: string; slug: string }>
 }
 
-export const HeaderClient: React.FC<HeaderClientProps> = ({ data: _data, categories = [] }) => {
+export const HeaderClient: React.FC<HeaderClientProps> = ({ categories = [] }) => {
   const [theme, setTheme] = useState<string | null>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)

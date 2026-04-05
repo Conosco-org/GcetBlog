@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     const reqHeaders = await headers()
     const { user } = await payload.auth({ headers: reqHeaders })
 
-    if (!user || (user as any).role !== 'editor') {
+    if (!user || !('role' in user) || user.role !== 'editor') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     const frequencyFilter = searchParams.get('frequency') || ''
 
     // Build where clause from optional filters
-    const whereConditions: Record<string, unknown>[] = []
+    const whereConditions: Array<Record<string, { equals: string }>> = []
     if (statusFilter) whereConditions.push({ status: { equals: statusFilter } })
     if (frequencyFilter) whereConditions.push({ frequency: { equals: frequencyFilter } })
     const where = whereConditions.length > 0 ? { and: whereConditions } : undefined
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
       pagination: false,
       sort: '-createdAt',
       depth: 0,
-      where: where as any,
+      where,
       select: {
         email: true,
         name: true,
@@ -48,6 +48,7 @@ export async function GET(request: NextRequest) {
     ]
 
     for (const sub of result.docs) {
+      const confirmedAt = 'confirmedAt' in sub && sub.confirmedAt ? new Date(String(sub.confirmedAt)).toISOString() : ''
       const row = [
         sub.email ?? '',
         sub.name ? `"${String(sub.name).replace(/"/g, '""')}"` : '',
@@ -55,7 +56,7 @@ export async function GET(request: NextRequest) {
         sub.frequency ?? '',
         sub.source ?? '',
         sub.createdAt ? new Date(sub.createdAt).toISOString() : '',
-        (sub as any).confirmedAt ? new Date((sub as any).confirmedAt).toISOString() : '',
+        confirmedAt,
       ]
       csvRows.push(row.join(','))
     }

@@ -172,7 +172,7 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
           variant: 'destructive',
         })
       }
-    } catch (_error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to delete post',
@@ -204,7 +204,7 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
           variant: 'destructive',
         })
       }
-    } catch (_error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to unpublish post',

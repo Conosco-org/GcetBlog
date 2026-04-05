@@ -32,7 +32,7 @@ interface ContributorSidebarProps {
   isOpen: boolean
 }
 
-export function ContributorSidebar({ user: _user, stats, isOpen }: ContributorSidebarProps) {
+export function ContributorSidebar({ stats, isOpen }: ContributorSidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const [isPending, startTransition] = useTransition()

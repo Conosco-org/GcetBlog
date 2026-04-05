@@ -1,11 +1,7 @@
 import { BeforeSync, DocToSync } from '@payloadcms/plugin-search/types'
 
 export const beforeSyncWithSearch: BeforeSync = async ({ req, originalDoc, searchDoc }) => {
-  const {
-    doc: { relationTo: collection },
-  } = searchDoc
-
-  const { slug, id, categories, title, meta } = originalDoc
+  const { slug, categories, title, meta } = originalDoc
 
   const modifiedDoc: DocToSync = {
     ...searchDoc,
@@ -42,10 +38,6 @@ export const beforeSyncWithSearch: BeforeSync = async ({ req, originalDoc, searc
 
       if (doc !== null) {
         populatedCategories.push(doc)
-      } else {
-        console.error(
-          `Failed. Category not found when syncing collection '${collection}' with id: '${id}' to search.`,
-        )
       }
     }
 

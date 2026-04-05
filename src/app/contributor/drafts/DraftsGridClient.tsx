@@ -48,7 +48,6 @@ export function DraftsGridClient({
   totalPages,
   currentPage,
   totalItems,
-  pageSize: _pageSize,
   query,
 }: DraftsGridClientProps) {
   const router = useRouter()
@@ -99,7 +98,7 @@ export function DraftsGridClient({
           variant: 'destructive',
         })
       }
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to delete draft',
@@ -417,7 +416,7 @@ export function DraftsGridClient({
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Draft</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete "{postToDelete?.title}"? This action cannot be undone.
+              Are you sure you want to delete &ldquo;{postToDelete?.title}&rdquo;? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

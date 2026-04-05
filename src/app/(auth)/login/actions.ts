@@ -52,16 +52,12 @@ export async function loginAction(formData: FormData) {
                       '/contributor'
       }
       
-      console.log('Login successful - User role:', (user as { role?: string })?.role, 'isAdmin:', (user as { isAdmin?: boolean })?.isAdmin, 'Redirecting to:', redirectPath)
-      
       // Return success with redirect path for client-side handling
       return { success: true, redirectPath }
     } else {
       return { error: 'Invalid credentials' }
     }
   } catch (error) {
-    console.error('Login error:', error)
-    
     // Provide more specific error messages
     if (error instanceof Error) {
       const errorMessage = error.message.toLowerCase()

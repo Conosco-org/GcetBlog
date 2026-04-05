@@ -1,7 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { authenticated } from '../../access/authenticated'
-import { adminOnly } from '../../access/adminOnly'
+import { isAdminAccess } from '../../access/isAdminAccess'
 import { adminOrSelf } from '../../access/adminOrSelf'
 
 export const Users: CollectionConfig = {
@@ -12,7 +12,7 @@ export const Users: CollectionConfig = {
       return Boolean((user as unknown as Record<string, unknown>).isAdmin === true)
     },
     create: authenticated,
-    delete: adminOnly,
+    delete: isAdminAccess,
     read: adminOrSelf,
     update: adminOrSelf,
   },

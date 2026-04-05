@@ -186,8 +186,8 @@ export const Templates: CollectionConfig = {
               timestamp: new Date().toISOString(),
             },
           })
-        } catch (err) {
-          console.error('Failed to log template activity:', err)
+        } catch {
+          // Silently fail - logging is non-critical
         }
 
         return doc
@@ -209,8 +209,8 @@ export const Templates: CollectionConfig = {
               timestamp: new Date().toISOString(),
             },
           })
-        } catch (err) {
-          console.error('Failed to log template deletion:', err)
+        } catch {
+          // Silently fail - logging is non-critical
         }
 
         return doc

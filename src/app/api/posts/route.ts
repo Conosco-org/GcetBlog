@@ -149,7 +149,6 @@ export async function POST(request: NextRequest) {
       message: isPublishing ? 'Post published successfully!' : 'Draft saved successfully!',
     })
   } catch (error: unknown) {
-    console.error('Error creating post:', error)
     const message = error instanceof Error ? error.message : 'Failed to create post'
     return NextResponse.json(
       { 

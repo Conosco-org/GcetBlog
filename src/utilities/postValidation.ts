@@ -59,9 +59,8 @@ export function validateFeaturedRange(
 /**
  * Where clause for published and visible posts
  * Used for public-facing queries to ensure only published posts are shown
- * Optionally accepts a timestamp to filter by featured dates
  */
-export function publishedVisibilityWhere(_now?: string): Where {
+export function publishedVisibilityWhere(): Where {
   return {
     _status: { equals: 'published' },
   }

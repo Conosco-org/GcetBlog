@@ -36,7 +36,6 @@ export async function createNewsletter(data: {
   try {
     const payload = await getPayload({ config: configPromise })
 
-    // @ts-ignore - Payload RichText Lexical type is too strict for flexible server actions
     const newsletter = await payload.create({
       collection: 'newsletters',
       data: {
@@ -46,10 +45,10 @@ export async function createNewsletter(data: {
         type: data.type,
         frequency: data.frequency || 'weekly',
         status: 'draft',
-        content: data.content,
+        content: data.content as never,
         posts: data.posts || [],
         targetCategories: data.targetCategories || [],
-      } as any,
+      },
     })
 
     revalidatePath('/editor/newsletter')
@@ -86,11 +85,10 @@ export async function updateNewsletter(
   try {
     const payload = await getPayload({ config: configPromise })
 
-    // @ts-ignore - Payload RichText Lexical type is too strict for flexible server actions
     await payload.update({
       collection: 'newsletters',
       id,
-      data: data as any,
+      data: data as never,
     })
 
     revalidatePath('/editor/newsletter')
@@ -116,11 +114,11 @@ export async function deleteNewsletter(id: string): Promise<ActionResult> {
     const payload = await getPayload({ config: configPromise })
 
     // Check status first
-    const newsletter = (await payload.findByID({
+    const newsletter = await payload.findByID({
       collection: 'newsletters',
       id,
       depth: 0,
-    })) as any
+    })
 
     if (newsletter.status !== 'draft') {
       return {
@@ -174,11 +172,11 @@ export async function sendTestNewsletter(
 
     // Send test emails (without recording events)
     const emailService = getEmailService()
-    const newsletter = (await payload.findByID({
+    const newsletter = await payload.findByID({
       collection: 'newsletters',
       id,
       depth: 1,
-    })) as any
+    })
 
     for (const email of testRecipients) {
       // Simplified test send - just render and send without full tracking

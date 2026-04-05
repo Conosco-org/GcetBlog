@@ -111,7 +111,6 @@ export async function DELETE(
       message: 'Post deleted successfully',
     })
   } catch (error: unknown) {
-    console.error('Error deleting post:', error)
     const message = error instanceof Error ? error.message : 'Failed to delete post'
     return NextResponse.json(
       { 
@@ -197,7 +196,6 @@ export async function PATCH(
       message: isPublishing ? 'Post published successfully!' : 'Draft saved successfully!',
     })
   } catch (error: unknown) {
-    console.error('Error updating post:', error)
     const message = error instanceof Error ? error.message : 'Failed to update post'
     return NextResponse.json(
       { 

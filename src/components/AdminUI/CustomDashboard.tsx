@@ -75,8 +75,6 @@ export default function CustomDashboard() {
           const data = await response.json()
           setStats(data)
         }
-      } catch (error) {
-        console.error('Failed to fetch stats:', error)
       } finally {
         setLoading(false)
       }
