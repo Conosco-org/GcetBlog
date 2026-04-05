@@ -6,6 +6,33 @@ All notable changes to the GCET Blog platform will be documented in this file.
 
 ### Fixed - 2026-04-05
 
+#### Draft Preview Banner and Edit Button Fixes
+
+**Issues Resolved:**
+1. **Preview Message HTML Entity Bug**: Fixed "You&apos;" displaying instead of "You're"
+   - Changed from HTML entity `&apos;` to proper apostrophe in preview banner
+   - Improved readability of preview messages
+
+2. **Preview Message Updated for Contributors**: Removed outdated "only editors/admins" message
+   - Contributors can now preview their own drafts
+   - Message now says "You're previewing your unpublished draft" for authors
+   - Generic message "You're previewing an unpublished draft" for non-authors
+
+3. **Edit Button Optimization**: Added prefetch=false to Edit links
+   - Prevents unnecessary prefetching of edit pages
+   - Improves performance on drafts page
+   - Added security attributes to external preview links
+
+**Technical Changes:**
+- Updated `DraftModeBanner.tsx` preview message logic
+- Added `prefetch={false}` to Edit button links
+- Added `rel="noopener noreferrer"` to external preview links
+- Improved conditional messaging based on author status
+
+**Files Modified:**
+- `src/components/DraftModeBanner.tsx`
+- `src/app/contributor/drafts/DraftsGridClient.tsx`
+
 #### Contributor Preview and Edit URL Fixes
 
 **Issues Resolved:**
