@@ -54,8 +54,8 @@ export async function loginAction(formData: FormData) {
       
       console.log('Login successful - User role:', (user as { role?: string })?.role, 'isAdmin:', (user as { isAdmin?: boolean })?.isAdmin, 'Redirecting to:', redirectPath)
       
-      // Return success with redirect path for client-side handling
-      return { success: true, redirectPath }
+      // Do server-side redirect instead of client-side
+      redirect(redirectPath)
     } else {
       return { error: 'Invalid credentials' }
     }

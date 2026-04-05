@@ -38,20 +38,25 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
       formData.append('redirectTo', redirectTo)
     }
 
-    const result = await loginAction(formData)
+    try {
+      const result = await loginAction(formData)
 
-    if (result?.error) {
-      setError(result.error)
+      // If we get here, login failed (success case redirects server-side)
+      if (result?.error) {
+        setError(result.error)
+      }
+    } catch (error) {
+      // Server-side redirect throws an error in Next.js, which is expected
+      // If it's a NEXT_REDIRECT error, the redirect is happening
+      if (error && typeof error === 'object' && 'digest' in error) {
+        // This is a Next.js redirect, which is expected - do nothing
+        setSuccess(true)
+        return
+      }
+      // For other errors, show them
+      setError('An unexpected error occurred. Please try again.')
+    } finally {
       setIsLoading(false)
-    } else if (result?.success && result?.redirectPath) {
-      // Login successful - show in button, then redirect
-      setSuccess(true)
-      // Refresh to ensure server components get the new auth state
-      router.refresh()
-      // Small delay to ensure cookie is set before navigation
-      setTimeout(() => {
-        router.push(result.redirectPath)
-      }, 100)
     }
   }
 
