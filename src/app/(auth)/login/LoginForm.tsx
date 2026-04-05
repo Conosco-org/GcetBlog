@@ -46,7 +46,12 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
     } else if (result?.success && result?.redirectPath) {
       // Login successful - show in button, then redirect
       setSuccess(true)
-      router.push(result.redirectPath)
+      // Refresh to ensure server components get the new auth state
+      router.refresh()
+      // Small delay to ensure cookie is set before navigation
+      setTimeout(() => {
+        router.push(result.redirectPath)
+      }, 100)
     }
   }
 
