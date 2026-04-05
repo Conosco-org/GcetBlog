@@ -104,13 +104,13 @@ export async function requestChanges(postId: string, feedback: string) {
       throw new Error('Post not found')
     }
 
-    // Add feedback and return to draft status so contributor can edit
+    // Add feedback and return to requesting_changes status so contributor can edit
     const updatedPost = await payload.update({
       collection: 'posts',
       id: postId,
       data: {
         editorFeedback: feedback || 'Changes requested by editor',
-        reviewStatus: 'draft', // Back to draft so contributor can edit
+        reviewStatus: 'requesting_changes', // New status for posts with editor feedback
         _status: 'draft',
       },
       draft: true,

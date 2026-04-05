@@ -36,9 +36,9 @@ export const Posts: CollectionConfig<'posts'> = {
   slug: 'posts',
   access: {
     create: editorOrAdmin,
-    delete: contributorOwnNotPublished, // Contributors can delete their own posts (except published)
+    delete: contributorOwnNotPublished, // Contributors can delete their own unpublished posts, editors/admins can delete all
     read: authenticatedOrPublished,
-    update: contributorOwn, // Contributors can update their own posts, editors can update all
+    update: contributorOwn, // Contributors can update their own posts, editors/admins can update all
   },
   // This config controls what's populated by default when a post is referenced
   // https://payloadcms.com/docs/queries/select#defaultpopulate-collection-config-property
@@ -329,6 +329,10 @@ export const Posts: CollectionConfig<'posts'> = {
         {
           label: 'Pending Review',
           value: 'pending_review',
+        },
+        {
+          label: 'Requesting Changes',
+          value: 'requesting_changes',
         },
         {
           label: 'Approved',

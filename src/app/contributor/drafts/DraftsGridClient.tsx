@@ -112,13 +112,16 @@ export function DraftsGridClient({
 
   // Categorize drafts into sections
   const currentDrafts = drafts.filter(post => 
-    post.reviewStatus === 'draft' && !post.editorFeedback
+    post.reviewStatus === 'draft'
   )
   const requestingChangesPosts = drafts.filter(post => 
-    post.reviewStatus === 'draft' && post.editorFeedback
+    post.reviewStatus === 'requesting_changes'
   )
   const pendingReviewPosts = drafts.filter(post => 
     post.reviewStatus === 'pending_review'
+  )
+  const rejectedPosts = drafts.filter(post => 
+    post.reviewStatus === 'rejected'
   )
 
   const renderPostCard = (post: Post, showFeedback: boolean = false, isPending: boolean = false) => (
@@ -196,48 +199,11 @@ export function DraftsGridClient({
 
       <p className="text-sm text-muted-foreground">
         {totalItems} {totalItems === 1 ? 'draft' : 'drafts'}
-        {rejections.length > 0 && ` • ${rejections.length} ${rejections.length === 1 ? 'rejection' : 'rejections'}`}
       </p>
-
-      {/* Rejection Notifications Section */}
-      {rejections.length > 0 && (
-        <div className="space-y-3 mb-6">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            <XCircle className="w-5 h-5 text-red-600" />
-            Rejected Posts
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {rejections.map((rejection) => (
-              <Card key={rejection.id} className="border-red-300 dark:border-red-700 bg-red-50/50 dark:bg-red-950/20">
-                <CardHeader>
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex-1">
-                      <CardTitle className="text-lg line-clamp-2 flex items-center gap-2">
-                        <XCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
-                        {rejection.postTitle}
-                      </CardTitle>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Rejected: {formatDateTime(rejection.createdAt)}
-                      </p>
-                    </div>
-                    <Badge variant="outline" className="bg-red-100 text-red-800 border-red-300 dark:bg-red-950 dark:text-red-400 dark:border-red-700 flex-shrink-0">
-                      Rejected
-                    </Badge>
-                  </div>
-                  <div className="mt-3 p-3 bg-red-100 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-md">
-                    <p className="text-xs font-semibold text-red-900 dark:text-red-300 mb-1">Reason for Rejection:</p>
-                    <p className="text-sm text-red-800 dark:text-red-400">{rejection.reason}</p>
-                  </div>
-                </CardHeader>
-              </Card>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Tabs for Drafts */}
       <Tabs defaultValue="current" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="current">
             Current Drafts ({currentDrafts.length})
           </TabsTrigger>
@@ -246,6 +212,9 @@ export function DraftsGridClient({
           </TabsTrigger>
           <TabsTrigger value="pending">
             Pending Review ({pendingReviewPosts.length})
+          </TabsTrigger>
+          <TabsTrigger value="rejected">
+            Rejected ({rejectedPosts.length + rejections.length})
           </TabsTrigger>
         </TabsList>
 
@@ -295,6 +264,88 @@ export function DraftsGridClient({
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {pendingReviewPosts.map((post) => renderPostCard(post, false, true))}
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="rejected" className="mt-4">
+          {rejectedPosts.length === 0 && rejections.length === 0 ? (
+            <EmptyState
+              icon={XCircle}
+              title="No rejected posts"
+              description="Rejected posts will appear here"
+            />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Rejected posts from database */}
+              {rejectedPosts.map((post) => (
+                <Card key={post.id} className="border-red-300 dark:border-red-700 bg-red-50/50 dark:bg-red-950/20">
+                  <CardHeader>
+                    <div className="flex items-start justify-between gap-2">
+                      <CardTitle className="text-lg line-clamp-2">{post.title}</CardTitle>
+                      <Badge variant="outline" className="bg-red-100 text-red-800 border-red-300 dark:bg-red-950 dark:text-red-400 dark:border-red-700 flex-shrink-0">
+                        Rejected
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Last edited: {formatDateTime(post.updatedAt)}
+                    </p>
+                    {post.editorFeedback && (
+                      <div className="mt-2 p-3 bg-red-100 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-md">
+                        <p className="text-xs font-semibold text-red-900 dark:text-red-300 mb-1">Reason for Rejection:</p>
+                        <p className="text-sm text-red-800 dark:text-red-400">{post.editorFeedback}</p>
+                      </div>
+                    )}
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" asChild className="flex-1">
+                        <Link href={`/posts/${post.slug}`} target="_blank">
+                          <FileText className="h-4 w-4 mr-1" />
+                          View
+                        </Link>
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleDeleteClick(post)}
+                        className="text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+              
+              {/* Rejection notifications (deleted posts) */}
+              {rejections.map((rejection) => (
+                <Card key={rejection.id} className="border-red-300 dark:border-red-700 bg-red-50/50 dark:bg-red-950/20">
+                  <CardHeader>
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1">
+                        <CardTitle className="text-lg line-clamp-2 flex items-center gap-2">
+                          <XCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+                          {rejection.postTitle}
+                        </CardTitle>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Rejected: {formatDateTime(rejection.createdAt)}
+                        </p>
+                      </div>
+                      <Badge variant="outline" className="bg-red-100 text-red-800 border-red-300 dark:bg-red-950 dark:text-red-400 dark:border-red-700 flex-shrink-0">
+                        Deleted
+                      </Badge>
+                    </div>
+                    <div className="mt-3 p-3 bg-red-100 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-md">
+                      <p className="text-xs font-semibold text-red-900 dark:text-red-300 mb-1">Reason for Rejection:</p>
+                      <p className="text-sm text-red-800 dark:text-red-400">{rejection.reason}</p>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-xs text-muted-foreground italic">This post was permanently deleted</p>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           )}
         </TabsContent>

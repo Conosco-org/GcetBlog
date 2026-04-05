@@ -123,6 +123,101 @@ export async function POST(request: NextRequest) {
 }
 ```
 
+2. For resource-specific routes with DELETE (e.g., `/api/posts/[id]/route.ts`):
+
+```typescript
+import { NextRequest, NextResponse } from 'next/server'
+import { getPayload } from 'payload'
+import { revalidatePath } from 'next/cache'
+import config from '@/payload.config'
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const payload = await getPayload({ config })
+    const { id } = await params
+
+    // Verify user is authenticated
+    const { user } = await payload.auth({ headers: request.headers })
+    
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
+
+    // Fetch the resource to check permissions
+    const resource = await payload.findByID({
+      collection: 'your-collection',
+      id,
+      draft: true,
+    })
+
+    if (!resource) {
+      return NextResponse.json(
+        { error: 'Resource not found' },
+        { status: 404 }
+      )
+    }
+
+    // Check permissions (example: user role and ownership)
+    const userRole = (user as { role?: string }).role
+    const isAdmin = userRole === 'admin'
+
+    if (!isAdmin) {
+      // Check if user owns the resource
+      const authorIds = (resource.authors || []).map((a: unknown) =>
+        typeof a === 'object' && a !== null && 'id' in a 
+          ? String((a as { id: unknown }).id) 
+          : String(a)
+      )
+      
+      if (!authorIds.includes(String(user.id))) {
+        return NextResponse.json(
+          { error: 'You do not have permission to delete this resource' },
+          { status: 403 }
+        )
+      }
+    }
+
+    // Delete the resource
+    await payload.delete({
+      collection: 'your-collection',
+      id,
+    })
+
+    // Revalidate relevant paths
+    revalidatePath('/your-page')
+
+    return NextResponse.json({
+      success: true,
+      message: 'Resource deleted successfully',
+    })
+  } catch (error: unknown) {
+    console.error('Error deleting resource:', error)
+    const message = error instanceof Error ? error.message : 'Failed to delete resource'
+    return NextResponse.json(
+      { 
+        success: false,
+        error: message 
+      },
+      { status: 500 }
+    )
+  }
+}
+```
+
+**Key Points for DELETE Endpoints:**
+- Always authenticate the user first
+- Fetch the resource to verify it exists
+- Check permissions (role-based + ownership)
+- Return appropriate HTTP status codes (401, 403, 404, 500)
+- Revalidate affected paths after deletion
+- Use consistent error response format
+
 ### Adding Access Control
 
 Create access function in `src/access/`:
