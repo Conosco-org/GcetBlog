@@ -51,10 +51,37 @@ Draft → Review → Feedback/Approve/Reject → Published/Deleted
 
 1. **Draft**: Contributor creates content with loading states preventing duplicate submissions
 2. **Review**: Contributor submits for editor review (button shows "Submitting..." during action)
-3. **Feedback**: Editor requests changes (returns to draft with editor feedback visible)
+3. **Feedback**: Editor requests changes (sets reviewStatus to 'draft', adds editorFeedback)
 4. **Approve**: Editor approves content (button shows "Approving..." during action)
 5. **Reject**: Editor rejects and deletes post (creates rejection notification)
 6. **Published**: Content is live on the site
+
+### Contributor Drafts Workflow
+
+Contributors manage their posts through a tabbed interface:
+
+**Current Drafts Tab**:
+- Posts with `reviewStatus: 'draft'` AND no `editorFeedback`
+- Never submitted OR editor requested changes and contributor is revising
+- Actions: Edit, Delete, Submit for Review
+
+**Requesting Changes Tab**:
+- Posts with `reviewStatus: 'draft'` AND has `editorFeedback`
+- Editor sent feedback, waiting for contributor to revise
+- Shows editor feedback prominently with orange styling
+- Actions: Edit, Delete, Resubmit for Review
+
+**Pending Review Tab**:
+- Posts with `reviewStatus: 'pending_review'`
+- Submitted, waiting for editor review
+- Yellow/pending styling
+- Actions: View, Delete (cannot edit while under review)
+
+**Rejected Posts Section**:
+- Shows deleted posts from RejectionNotifications collection
+- Read-only informational cards with red styling
+- Shows rejection reason and date
+- No actions available (post is permanently deleted)
 
 ### Rejection Workflow
 
@@ -122,7 +149,10 @@ gcet-blog/
   - Create: Editors and admins only
   - Read: Authenticated users or published posts
   - Update: Contributors can edit their own posts, editors/admins can edit all
-  - Delete: Editors and admins only
+  - Delete: Contributors can delete their own unpublished posts, editors/admins can delete all
+- **Status System**:
+  - `_status`: Payload's draft/published state (controls website visibility)
+  - `reviewStatus`: Editorial workflow state (draft → pending_review → approved/rejected)
 
 ### Users
 - Role-based permissions

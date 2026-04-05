@@ -236,27 +236,30 @@ const handleSaveDraft = async () => {
 }
 ```
 
-**2. Organize Drafts by Status**
+**2. Organize Drafts by Status (Tabs)**
 ```typescript
-// Categorize posts into sections
-const rejectedPosts = drafts.filter(post => post.reviewStatus === 'rejected')
+// Categorize posts into tabs
+const currentDrafts = drafts.filter(post => 
+  post.reviewStatus === 'draft' && !post.editorFeedback
+)
 const requestingChangesPosts = drafts.filter(post => 
   post.reviewStatus === 'draft' && post.editorFeedback
 )
-const currentDrafts = drafts.filter(post => 
-  post.reviewStatus === 'draft' && !post.editorFeedback
+const pendingReviewPosts = drafts.filter(post => 
+  post.reviewStatus === 'pending_review'
 )
 ```
 
 **3. Fetch All Relevant Posts**
 ```typescript
-// Include both draft and rejected posts in query
+// Include draft, rejected, and pending_review posts in query
 const conditions: Where[] = [
   { authors: { equals: userId } },
   { 
     or: [
       { reviewStatus: { equals: 'draft' } },
       { reviewStatus: { equals: 'rejected' } },
+      { reviewStatus: { equals: 'pending_review' } },
     ]
   },
 ]
@@ -278,6 +281,88 @@ export const contributorOwn: Access = ({ req: { user } }) => {
     'authors.id': { equals: user.id },
   }
 }
+
+// Allow contributors to delete their own unpublished posts
+export const contributorOwnNotPublished: Access = ({ req: { user }, data }) => {
+  if (!user) return false
+  
+  // Editors and admins can delete everything
+  if (user.role === 'editor' || user.role === 'admin') {
+    return true
+  }
+  
+  // Contributors cannot delete published posts
+  if (data?._status === 'published') {
+    return false
+  }
+  
+  // Contributors can only delete their own content
+  return {
+    'authors.id': { equals: user.id },
+  }
+}
+```
+
+**5. Delete with Confirmation**
+```typescript
+const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+const [postToDelete, setPostToDelete] = useState<Post | null>(null)
+const [isDeleting, setIsDeleting] = useState(false)
+
+const handleDeleteClick = (post: Post) => {
+  setPostToDelete(post)
+  setDeleteDialogOpen(true)
+}
+
+const handleDeleteConfirm = async () => {
+  if (!postToDelete) return
+  
+  setIsDeleting(true)
+  try {
+    const response = await fetch(`/api/posts/${postToDelete.id}`, {
+      method: 'DELETE',
+    })
+    
+    if (response.ok) {
+      toast({ title: 'Success', description: 'Draft deleted successfully' })
+      setDeleteDialogOpen(false)
+      router.refresh()
+    }
+  } finally {
+    setIsDeleting(false)
+  }
+}
+```
+
+**6. Horizontal Tabs Layout**
+```typescript
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+
+<Tabs defaultValue="current" className="w-full">
+  <TabsList className="grid w-full grid-cols-3">
+    <TabsTrigger value="current">
+      Current Drafts ({currentDrafts.length})
+    </TabsTrigger>
+    <TabsTrigger value="changes">
+      Requesting Changes ({requestingChangesPosts.length})
+    </TabsTrigger>
+    <TabsTrigger value="pending">
+      Pending Review ({pendingReviewPosts.length})
+    </TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="current">
+    {/* Current drafts content */}
+  </TabsContent>
+  
+  <TabsContent value="changes">
+    {/* Requesting changes content */}
+  </TabsContent>
+  
+  <TabsContent value="pending">
+    {/* Pending review content */}
+  </TabsContent>
+</Tabs>
 ```
 
 ### Sending Emails

@@ -4,6 +4,69 @@ All notable changes to the GCET Blog platform will be documented in this file.
 
 ## [Unreleased]
 
+### Added - 2026-04-05
+
+#### Contributor Drafts Management with Tabs
+
+**New Features:**
+- **Horizontal Tabs Layout**: Contributor drafts page now has 3 tabs (similar to Editor Review Queue)
+  - **Current Drafts**: Posts never submitted OR being revised (no editor feedback)
+  - **Requesting Changes**: Posts with editor feedback waiting for revision
+  - **Pending Review**: Posts submitted and waiting for editor review
+  
+- **Delete Functionality**: Contributors can delete their own posts
+  - Can delete from "Current Drafts" tab
+  - Can delete from "Requesting Changes" tab
+  - Can delete from "Pending Review" tab
+  - CANNOT delete published posts
+  - Confirmation dialog with loading states
+
+- **Rejected Posts Section**: Shows deleted posts from RejectionNotifications
+  - Read-only informational cards
+  - Shows rejection reason and date
+  - No "Mark as Read" button (just historical reference)
+
+- **Editor Feedback Display**: Inline in cards with prominent styling
+  - Orange/warning styling for posts with feedback
+  - Yellow/pending styling for posts under review
+  - Clear visual hierarchy
+
+**Technical Improvements:**
+- Created `contributorOwnNotPublished` access control
+  - Prevents deleting published posts
+  - Allows editors/admins to delete everything
+  - Contributors can only delete their own unpublished posts
+- Added `@radix-ui/react-tabs` component
+- Created Tabs UI component with Radix primitives
+- Updated drafts page query to include `pending_review` posts
+- Delete API integration with confirmation dialog
+- Proper error handling and toast notifications
+
+**Workflow Changes:**
+- Editor "Request Changes" sets `reviewStatus: 'draft'` (keeps post in database)
+- Editor "Reject" deletes post permanently (creates RejectionNotification)
+- Contributor can edit and resubmit after "Request Changes"
+- Resubmit clears editor feedback for fresh submission
+
+**Files Added:**
+- `src/access/contributorOwnNotPublished.ts`
+- `src/components/ui/tabs.tsx`
+- `POST_STATUS_ANALYSIS.md` (documentation)
+- `WORKFLOW_DIAGRAM.md` (documentation)
+- `IMPLEMENTATION_QUESTIONS.md` (documentation)
+
+**Files Modified:**
+- `src/app/contributor/drafts/DraftsGridClient.tsx` (complete rewrite)
+- `src/app/contributor/drafts/page.tsx`
+- `src/collections/Posts/index.ts`
+- `package.json` (added @radix-ui/react-tabs)
+
+**Build Status:**
+- ✅ Production build successful (61 pages)
+- ✅ No TypeScript errors
+- ✅ No linting issues
+- ✅ All diagnostics passed
+
 ### Fixed - 2026-04-05
 
 #### Critical Contributor Workflow Fixes
