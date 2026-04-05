@@ -245,7 +245,12 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
         })
 
         setTimeout(() => {
-          router.push('/editor/content')
+          // Redirect based on user role
+          if (user.role === 'contributor') {
+            router.push('/contributor/drafts')
+          } else {
+            router.push('/editor/content')
+          }
           router.refresh()
         }, 1000)
       } else {
@@ -353,7 +358,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
           description: data.message || (status === 'published' ? 'Post published successfully!' : 'Draft saved successfully!'),
         })
 
-        // Navigate based on status
+        // Navigate based on status and user role
         if (status === 'published') {
           // Navigate to main blog page to see the published post
           setTimeout(() => {
@@ -361,9 +366,13 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
             router.refresh()
           }, 1000)
         } else {
-          // Navigate to editor content page for drafts
+          // Navigate based on user role for drafts
           setTimeout(() => {
-            router.push('/editor/content')
+            if (user.role === 'contributor') {
+              router.push('/contributor/drafts')
+            } else {
+              router.push('/editor/content')
+            }
             router.refresh()
           }, 1000)
         }
@@ -420,7 +429,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
       <div className="px-4 sm:px-6 py-3 sm:py-4 border-b flex items-center justify-between gap-2">
         <div className="flex items-center gap-1 sm:gap-3">
           <Link
-            href="/editor/content"
+            href={user.role === 'contributor' ? '/contributor/drafts' : '/editor/content'}
             className="inline-flex items-center justify-center h-8 w-8 sm:w-auto sm:px-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition"
             title="Back to Content"
             aria-label="Back to Content"

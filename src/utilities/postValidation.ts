@@ -5,7 +5,7 @@ import type { Where } from 'payload'
  */
 
 /**
- * Validate meta description length (120-160 characters recommended for SEO)
+ * Validate meta description length (20-160 characters recommended for SEO)
  * Returns error message if invalid, null if valid
  */
 export function validateMetaDescription(description: string | null | undefined): string | null {
@@ -15,12 +15,12 @@ export function validateMetaDescription(description: string | null | undefined):
 
   const length = description.trim().length
 
-  if (length < 120) {
-    return `Meta description is too short (${length} chars). Recommended: 120-160 characters.`
+  if (length < 20) {
+    return `Meta description is too short (${length} chars). Minimum: 20 characters.`
   }
 
   if (length > 160) {
-    return `Meta description is too long (${length} chars). Recommended: 120-160 characters.`
+    return `Meta description is too long (${length} chars). Maximum: 160 characters.`
   }
 
   return null
