@@ -30,7 +30,6 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
   const fetchUser = async () => {
     try {
-      console.log('[UserProvider] Fetching user from /api/users/me')
       const response = await fetch('/api/users/me', {
         credentials: 'include',
         cache: 'no-store',
@@ -38,10 +37,8 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       
       if (response.ok) {
         const data = await response.json()
-        console.log('[UserProvider] User fetched successfully:', data.user)
         setUser(data.user)
       } else if (response.status === 401) {
-        console.log('[UserProvider] 401 Unauthorized - user not logged in')
         const data = await response.json()
         
         // Handle session expiration
@@ -57,12 +54,10 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
           setUser(null)
         }
       } else {
-        console.log('[UserProvider] Unexpected response status:', response.status)
         setUser(null)
       }
     } catch (error) {
       // Silently fail - this is expected when not authenticated
-      console.log('[UserProvider] Fetch error:', error)
       setUser(null)
     } finally {
       setLoading(false)
@@ -115,7 +110,6 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     
     // Only refresh if navigating to protected route and not on auth page
     if (isProtectedRoute && !isAuthRoute && !loading) {
-      console.log('[UserProvider] Navigated to protected route, refreshing user')
       fetchUser()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

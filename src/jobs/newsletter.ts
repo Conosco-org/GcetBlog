@@ -17,16 +17,7 @@ import configPromise from '@payload-config'
  * Generates and sends daily digest of recent posts
  */
 export const newsletterDailyDigest = (async () => {
-  console.log('[Job] Running daily digest generation...')
-  
   const result = await generateDigest('daily')
-  
-  if (result.created) {
-    console.log(`[Job] Daily digest created with ${result.postCount} posts.`)
-  } else {
-    console.log('[Job] Daily digest skipped - no new posts.')
-  }
-  
   return result
 }) as any
 
@@ -35,16 +26,7 @@ export const newsletterDailyDigest = (async () => {
  * Generates and sends weekly digest of recent posts
  */
 export const newsletterWeeklyDigest = (async () => {
-  console.log('[Job] Running weekly digest generation...')
-  
   const result = await generateDigest('weekly')
-  
-  if (result.created) {
-    console.log(`[Job] Weekly digest created with ${result.postCount} posts.`)
-  } else {
-    console.log('[Job] Weekly digest skipped - no new posts.')
-  }
-  
   return result
 }) as any
 
@@ -53,16 +35,7 @@ export const newsletterWeeklyDigest = (async () => {
  * Generates and sends monthly digest of recent posts
  */
 export const newsletterMonthlyDigest = (async () => {
-  console.log('[Job] Running monthly digest generation...')
-  
   const result = await generateDigest('monthly')
-  
-  if (result.created) {
-    console.log(`[Job] Monthly digest created with ${result.postCount} posts.`)
-  } else {
-    console.log('[Job] Monthly digest skipped - no new posts.')
-  }
-  
   return result
 }) as any
 
@@ -71,8 +44,6 @@ export const newsletterMonthlyDigest = (async () => {
  * Checks for newsletters scheduled to be sent now and processes them
  */
 export const newsletterScheduledSend = (async () => {
-  console.log('[Job] Checking for scheduled newsletters...')
-  
   const payload = await getPayload({ config: configPromise })
   
   // Find newsletters scheduled for the past (should have been sent by now)
@@ -90,7 +61,6 @@ export const newsletterScheduledSend = (async () => {
   })
   
   if (scheduledNewsletters.docs.length === 0) {
-    console.log('[Job] No scheduled newsletters to send.')
     return { success: true, sent: 0 }
   }
   
@@ -99,24 +69,17 @@ export const newsletterScheduledSend = (async () => {
   
   for (const newsletter of scheduledNewsletters.docs) {
     try {
-      console.log(`[Job] Sending scheduled newsletter: ${newsletter.title}`)
-      
       const result = await sendNewsletter(newsletter.id as string)
       
       if (result.success) {
         sent++
-        console.log(`[Job] Scheduled newsletter sent: ${newsletter.title}`)
       } else {
         failed++
-        console.error(`[Job] Failed to send scheduled newsletter: ${newsletter.title}`, result.errors)
       }
     } catch (err) {
       failed++
-      console.error(`[Job] Error sending scheduled newsletter: ${newsletter.title}`, err)
     }
   }
-  
-  console.log(`[Job] Scheduled send complete. Sent: ${sent}, Failed: ${failed}`)
   
   return {
     success: true,
@@ -130,8 +93,6 @@ export const newsletterScheduledSend = (async () => {
  * Aggregates newsletter stats periodically for performance
  */
 export const newsletterStatsRollup = (async () => {
-  console.log('[Job] Running newsletter stats rollup...')
-  
   const payload = await getPayload({ config: configPromise })
   
   // Find all sent newsletters
@@ -213,11 +174,9 @@ export const newsletterStatsRollup = (async () => {
       
       updated++
     } catch (err) {
-      console.error(`[Job] Error updating stats for newsletter ${newsletter.id}:`, err)
+      // Silently continue on error
     }
   }
-  
-  console.log(`[Job] Stats rollup complete. Updated ${updated} newsletters.`)
   
   return {
     success: true,
