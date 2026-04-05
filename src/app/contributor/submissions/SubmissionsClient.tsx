@@ -99,7 +99,6 @@ const columns: Column<Post>[] = [
             Preview
           </Link>
         </Button>
-        </Button>
       </div>
     ),
   },
