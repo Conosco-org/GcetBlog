@@ -37,6 +37,26 @@ All notable changes to the GCET Blog platform will be documented in this file.
 
 ### Fixed - 2026-04-05
 
+#### Review Status Updates on Save and Submit
+
+**Issues Resolved:**
+- **Save Draft Status**: When clicking "Edit & Resubmit" and then "Save Draft", the post now correctly changes `reviewStatus` to `'draft'` and moves to "Current Drafts" tab
+- **Submit for Review Status**: When clicking "Edit & Resubmit" and then "Submit for Review", the post now correctly changes `reviewStatus` to `'pending_review'` and moves to "Pending Review" tab
+- Posts no longer stay in the wrong tab after editing
+
+**Technical Changes:**
+- Updated `PostForm.tsx` to set `reviewStatus: 'draft'` when saving as draft
+- Updated `PostForm.tsx` to set `reviewStatus: 'pending_review'` when submitting for review
+- API already supported reviewStatus field, just needed to be sent from frontend
+
+**User Experience:**
+- Contributors can now properly move posts between workflow stages
+- Status transitions work as expected
+- Posts appear in correct tabs immediately after save
+
+**Files Modified:**
+- `src/app/(frontend)/editor/posts/[id]/edit/PostForm.tsx`
+
 #### Draft Preview Banner and Edit Button Fixes
 
 **Issues Resolved:**
