@@ -165,6 +165,49 @@ hooks: {
 }
 ```
 
+### Implementing Loading States
+
+All action buttons should implement loading states to prevent duplicate submissions:
+
+```typescript
+const [isSubmitting, setIsSubmitting] = useState(false)
+
+const handleSubmit = async () => {
+  // Set loading state immediately
+  setIsSubmitting(true)
+  
+  try {
+    const result = await serverAction()
+    
+    if (result.success) {
+      toast({ title: "Success!", description: result.message })
+      // Keep loading state on success until redirect
+      setTimeout(() => router.refresh(), 500)
+    } else {
+      toast({ title: "Error", description: result.message, variant: "destructive" })
+      // Clear loading state on error
+      setIsSubmitting(false)
+    }
+  } catch (error) {
+    toast({ title: "Error", description: "An error occurred", variant: "destructive" })
+    // Clear loading state on error
+    setIsSubmitting(false)
+  }
+}
+
+// Button with loading state
+<Button onClick={handleSubmit} disabled={isSubmitting}>
+  {isSubmitting ? 'Submitting...' : 'Submit'}
+</Button>
+```
+
+**Loading State Rules:**
+1. Set loading state immediately on button click (before async operation)
+2. Disable all related buttons when any action is in progress
+3. Clear loading state on error to allow retry
+4. Keep loading state on success until page refresh
+5. Show loading text ("Submitting...", "Saving...", etc.)
+
 ### Sending Emails
 
 ```typescript

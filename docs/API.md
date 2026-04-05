@@ -411,16 +411,57 @@ Authorization: Bearer <token>
 #### Get User's Rejection Notifications
 
 ```http
-GET /api/rejection-notifications?where[user][equals]=user-id
+GET /api/rejection-notifications?where[contributor][equals]=user-id&where[isRead][equals]=false
 Authorization: Bearer <token>
 ```
 
-#### Dismiss Rejection Notification
+**Query Parameters:**
+- `where[contributor][equals]`: Filter by contributor user ID
+- `where[isRead][equals]`: Filter by read status (true/false)
+- `sort`: Sort field (e.g., `-createdAt` for newest first)
+
+**Response:**
+```json
+{
+  "docs": [
+    {
+      "id": "notification-id",
+      "postTitle": "My Rejected Post",
+      "contributor": "user-id",
+      "rejectedBy": "editor-id",
+      "reason": "Does not meet quality standards",
+      "originalPostId": "post-id",
+      "isRead": false,
+      "createdAt": "2026-04-05T10:00:00.000Z"
+    }
+  ],
+  "totalDocs": 5,
+  "limit": 10,
+  "page": 1
+}
+```
+
+#### Mark Rejection Notification as Read
 
 ```http
-DELETE /api/rejection-notifications/:id
+PATCH /api/rejection-notifications/:id
+Content-Type: application/json
 Authorization: Bearer <token>
+
+{
+  "isRead": true
+}
 ```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Notification marked as read"
+}
+```
+
+**Note:** Contributors can only mark their own notifications as read. Editors and admins can mark any notification as read.
 
 ### Analytics
 
@@ -455,8 +496,10 @@ Content-Type: application/json
   content: RichText
   excerpt?: string
   featuredImage?: Media
-  status: 'draft' | 'published' | 'archived'
-  reviewStatus?: 'draft' | 'pending' | 'approved' | 'rejected'
+  _status: 'draft' | 'published' | 'archived'
+  reviewStatus: 'draft' | 'pending_review' | 'approved' | 'rejected'
+  editorFeedback?: string
+  submittedForReviewAt?: Date
   author: User
   categories: Category[]
   tags?: string[]
@@ -574,11 +617,12 @@ Content-Type: application/json
 ```typescript
 {
   id: string
-  user: User
   postTitle: string
+  contributor: User | string
+  rejectedBy: User | string
   reason: string
-  rejectedBy: User
-  institution: string
+  originalPostId: string
+  isRead: boolean
   createdAt: Date
 }
 ```

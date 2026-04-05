@@ -44,27 +44,31 @@ Four primary roles with hierarchical permissions:
 ### Content Workflow
 
 ```
-Draft → Review → Feedback/Approve → Published
+Draft → Review → Feedback/Approve/Reject → Published/Deleted
   ↑        ↓           ↓
   └────────┴───────────┘
 ```
 
-1. **Draft**: Contributor creates content
-2. **Review**: Contributor submits for editor review
-3. **Feedback**: Editor requests changes (returns to draft)
-4. **Approve**: Editor approves content
-5. **Published**: Content is live on the site
+1. **Draft**: Contributor creates content with loading states preventing duplicate submissions
+2. **Review**: Contributor submits for editor review (button shows "Submitting..." during action)
+3. **Feedback**: Editor requests changes (returns to draft with editor feedback visible)
+4. **Approve**: Editor approves content (button shows "Approving..." during action)
+5. **Reject**: Editor rejects and deletes post (creates rejection notification)
+6. **Published**: Content is live on the site
 
 ### Rejection Workflow
 
 ```
-Review → Reject → Notification → Delete
+Review → Reject (with reason) → Notification Created → Post Deleted → Contributor Notified
 ```
 
-- Editor rejects post with reason
-- System creates rejection notification
-- Post is permanently deleted
-- Contributor sees rejection in drafts
+- Editor clicks "Reject" button (shows "Rejecting..." during action)
+- Editor provides rejection reason via prompt dialog
+- System creates RejectionNotification before deletion
+- Post is permanently deleted from database
+- Contributor sees rejection notification in drafts page
+- Contributor can dismiss notification (marks as read)
+- All action buttons use loading states to prevent duplicate submissions
 
 ## Folder Structure
 
@@ -108,9 +112,12 @@ gcet-blog/
 
 ### Posts
 - Content articles with rich text editor
-- Review status tracking
+- Review status tracking (draft, pending_review, approved, rejected)
 - Multi-tenant scoping
 - SEO metadata
+- Editor feedback field for requested changes
+- Loading states on all action buttons (Submit for Review, Save Draft, Publish)
+- Duplicate submission prevention through button disable logic
 
 ### Users
 - Role-based permissions
@@ -136,9 +143,12 @@ gcet-blog/
 - Review workflow support
 
 ### RejectionNotifications
-- Stores rejection reasons
-- Dismissible by contributors
-- Tracks deleted posts
+- Stores rejection reasons for deleted posts
+- Dismissible by contributors (marks as read)
+- Tracks deleted posts with originalPostId
+- Fields: postTitle, contributor, rejectedBy, reason, originalPostId, isRead, createdAt
+- Access control: contributors see their own, editors see all
+- Displayed in contributor drafts page with red/destructive styling
 
 ### Templates
 - Reusable content structures
@@ -255,6 +265,28 @@ Scheduled tasks using Payload's job system:
 - **Mobile App**: API-first design enables mobile clients
 - **Internationalization**: Multi-language support
 - **Advanced Workflows**: Custom approval chains
+
+## UI/UX Features
+
+### Loading States & Duplicate Prevention
+- All action buttons implement loading states to prevent duplicate submissions
+- Button text changes during actions ("Submitting...", "Saving...", "Approving...", etc.)
+- All buttons in a group disable when any action is in progress
+- Loading states clear on error to allow retry
+- Loading states persist on success until page refresh
+- Immediate visual feedback (within 50ms of button click)
+
+### Contributor Drafts Organization
+- **Rejected Posts Section**: Red/destructive styling, shows rejection notifications
+- **Requesting Changes Section**: Orange/warning styling, shows editor feedback
+- **Current Drafts Section**: Neutral styling, regular drafts
+- Each section has clear visual hierarchy and color coding
+
+### Editor Review Queue
+- Approve, Request Changes, and Reject buttons with loading states
+- Confirmation dialogs for destructive actions (reject)
+- All buttons disable during any action to prevent conflicts
+- Toast notifications for success and error feedback
 
 ---
 
