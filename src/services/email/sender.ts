@@ -374,7 +374,6 @@ export async function generateDigest(
   })
 
   if (recentPosts.docs.length === 0) {
-    console.log(`[Digest] No posts found for ${frequency} digest, skipping.`)
     return { created: false, postCount: 0 }
   }
 
@@ -391,7 +390,6 @@ export async function generateDigest(
   })
 
   if (subscriberCount.totalDocs === 0) {
-    console.log(`[Digest] No active ${frequency} subscribers, skipping.`)
     return { created: false, postCount: recentPosts.docs.length }
   }
 
@@ -415,10 +413,6 @@ export async function generateDigest(
       templateId: 'digest',
     },
   })
-
-  console.log(
-    `[Digest] Created ${frequency} digest "${newsletter.title}" with ${recentPosts.docs.length} posts`,
-  )
 
   return {
     created: true,
