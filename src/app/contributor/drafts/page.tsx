@@ -44,6 +44,7 @@ export default async function DraftsPage({ searchParams }: PageProps) {
       or: [
         { reviewStatus: { equals: 'draft' } },
         { reviewStatus: { equals: 'rejected' } },
+        { reviewStatus: { equals: 'pending_review' } },
       ]
     },
   ]

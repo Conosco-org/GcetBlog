@@ -11,6 +11,7 @@ import {
 
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { contributorOwn } from '../../access/contributorOwn'
+import { contributorOwnNotPublished } from '../../access/contributorOwnNotPublished'
 import { editorOrAdmin } from '../../access/editorOrAdmin'
 import { isAdmin } from '../../utilities/checkUserRole'
 import { Banner } from '../../blocks/Banner/config'
@@ -35,7 +36,7 @@ export const Posts: CollectionConfig<'posts'> = {
   slug: 'posts',
   access: {
     create: editorOrAdmin,
-    delete: editorOrAdmin,
+    delete: contributorOwnNotPublished, // Contributors can delete their own posts (except published)
     read: authenticatedOrPublished,
     update: contributorOwn, // Contributors can update their own posts, editors can update all
   },
