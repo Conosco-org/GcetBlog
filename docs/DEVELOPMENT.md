@@ -793,7 +793,31 @@ pnpm payload               # Payload CLI
 
 # Database
 pnpm seed:posts            # Seed sample posts
+pnpm test:contributor      # Create test contributor workflow data
 ```
+
+### Testing Contributor Workflow
+
+To test the contributor workflow with editor feedback and requesting changes:
+
+```bash
+pnpm run test:contributor
+```
+
+This script will:
+1. Create an editor user: `editor@gcet.edu.in` / `editor123`
+2. Create a contributor user: `contributor@gcet.edu.in` / `contributor123`
+3. Create a post with `requesting_changes` status (with editor feedback)
+4. Create a post with `pending_review` status
+
+After running the script:
+1. Login as contributor: `contributor@gcet.edu.in` / `contributor123`
+2. Go to `/contributor/drafts`
+3. Check "Requesting Changes" tab - should show 1 post with feedback
+4. Check "Pending Review" tab - should show 1 post
+5. Click Edit to modify the post
+6. Click Preview to view the post in draft mode
+7. Verify you can delete the post
 
 ## Getting Help
 
