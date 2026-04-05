@@ -55,15 +55,17 @@ export function EditorHeader({ user, isOpen, onToggle }: EditorHeaderProps) {
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex h-16 items-center px-4 gap-4">
-        {/* Hamburger Button */}
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={onToggle}
-          aria-label="Toggle menu"
-        >
-          {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </Button>
+        {/* Hamburger Button - Only show for editors */}
+        {user.role === 'editor' && (
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={onToggle}
+            aria-label="Toggle menu"
+          >
+            {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </Button>
+        )}
 
         {/* Left side - GCET Blog Logo */}
         <div className="flex items-center gap-2">

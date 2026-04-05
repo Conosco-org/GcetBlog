@@ -57,24 +57,29 @@ export function EditorLayoutClient({
         />
 
         <div className="flex flex-1">
-          {/* Mobile backdrop */}
-          {isOpen && (
-            <div
-              className="fixed inset-0 z-20 bg-black/50 md:hidden"
-              onClick={() => setIsOpen(false)}
-              aria-hidden="true"
-            />
+          {/* Only show sidebar for editors, not contributors */}
+          {user.role === 'editor' && (
+            <>
+              {/* Mobile backdrop */}
+              {isOpen && (
+                <div
+                  className="fixed inset-0 z-20 bg-black/50 md:hidden"
+                  onClick={() => setIsOpen(false)}
+                  aria-hidden="true"
+                />
+              )}
+              <EditorSidebar 
+                user={user}
+                pendingPostsCount={pendingPostsCount}
+                totalPostsCount={totalPostsCount}
+                activityLogsCount={activityLogsCount}
+                subscribersCount={subscribersCount}
+                isOpen={isOpen}
+                _onToggle={() => setIsOpen(false)}
+              />
+            </>
           )}
-          <EditorSidebar 
-            user={user}
-            pendingPostsCount={pendingPostsCount}
-            totalPostsCount={totalPostsCount}
-            activityLogsCount={activityLogsCount}
-            subscribersCount={subscribersCount}
-            isOpen={isOpen}
-            _onToggle={() => setIsOpen(false)}
-          />
-          <main className={`flex-1 overflow-y-auto transition-all duration-200 ${isOpen ? 'md:ml-64' : 'ml-0'}`}>
+          <main className={`flex-1 overflow-y-auto transition-all duration-200 ${user.role === 'editor' && isOpen ? 'md:ml-64' : 'ml-0'}`}>
             {children}
           </main>
         </div>

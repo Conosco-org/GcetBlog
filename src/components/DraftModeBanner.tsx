@@ -47,7 +47,7 @@ export function DraftModeBanner({ postStatus, reviewStatus, isAuthor }: DraftMod
         <div className="flex items-center gap-3">
           <Eye className="w-5 h-5" />
           <div>
-            <strong className="font-semibold">🔒 Editor Preview Mode</strong>
+            <strong className="font-semibold">🔒 Preview Mode</strong>
             <span className="ml-2 text-sm">
               {getPreviewMessage()}
             </span>
