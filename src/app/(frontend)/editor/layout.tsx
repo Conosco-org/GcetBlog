@@ -31,9 +31,10 @@ export default async function EditorLayout({
 
   const typedUser = user as User & { role: string }
 
-  // Only editors can access this page (admins are editors with isAdmin=true)
+  // Only editors can access the editor dashboard and its routes
+  // Contributors should use their own dashboard
   if (typedUser.role !== 'editor') {
-    redirect('/')
+    redirect('/contributor')
   }
 
   // Get real counts for sidebar badges - parallelized

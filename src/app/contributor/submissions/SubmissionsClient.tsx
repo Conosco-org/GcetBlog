@@ -87,7 +87,7 @@ const columns: Column<Post>[] = [
       <div className="flex gap-2">
         {post.reviewStatus === 'rejected' && (
           <Button variant="default" size="sm" asChild>
-            <Link href={`/editor/posts/${post.id}/edit`} prefetch={false}>
+            <Link href={`/contributor/edit/${post.id}`} prefetch={false}>
               <Edit className="h-3 w-3 mr-1" />
               Edit
             </Link>

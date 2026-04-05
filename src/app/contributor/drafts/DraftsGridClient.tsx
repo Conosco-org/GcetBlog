@@ -180,7 +180,7 @@ export function DraftsGridClient({
           {!isPending && (
             <>
               <Button variant="default" size="sm" className="flex-1" asChild>
-                <Link href={`/editor/posts/${post.id}/edit`} prefetch={false}>
+                <Link href={`/contributor/edit/${post.id}`} prefetch={false}>
                   <Edit className="h-4 w-4 mr-1" />
                   {showFeedback ? 'Edit & Resubmit' : 'Edit'}
                 </Link>
