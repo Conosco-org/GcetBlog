@@ -7,7 +7,7 @@ import { DataTable, type Column } from '@/components/base/DataTable'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { AlertCircle, Clock, CheckCircle2, XCircle, Eye, Edit } from 'lucide-react'
+import { AlertCircle, Clock, CheckCircle2, Eye, Edit } from 'lucide-react'
 import { formatDateTime } from '@/utilities/formatDateTime'
 
 interface SubmissionsClientProps {
