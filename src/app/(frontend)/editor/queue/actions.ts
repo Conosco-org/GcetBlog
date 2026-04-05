@@ -82,18 +82,35 @@ export async function approvePost(postId: string, editorNotes?: string) {
 }
 
 export async function requestChanges(postId: string, feedback: string) {
+  console.log('\n' + '='.repeat(80))
+  console.log('🔍 [SERVER] requestChanges called')
+  console.log('   postId:', postId)
+  console.log('   feedback:', feedback)
+  console.log('   timestamp:', new Date().toISOString())
+  console.log('='.repeat(80))
+  
   try {
     const payload = await getPayload({ config: configPromise })
     const requestHeaders = await headers()
+
+    console.log('✅ [SERVER] Payload instance obtained')
 
     // Authenticate the request
     const { user } = await payload.auth({ headers: requestHeaders })
 
     if (!user || (user as { role: string }).role !== 'editor') {
+      console.error('❌ [SERVER] Authentication failed')
+      console.error('   user:', user?.id || 'null')
+      console.error('   role:', (user as { role?: string })?.role || 'null')
       throw new Error('Editor access required')
     }
 
+    console.log('✅ [SERVER] User authenticated')
+    console.log('   userId:', user.id)
+    console.log('   role:', (user as { role: string }).role)
+
     // Get the post
+    console.log('🔍 [SERVER] Fetching post...')
     const post = await payload.findByID({
       collection: 'posts',
       id: postId,
@@ -101,10 +118,20 @@ export async function requestChanges(postId: string, feedback: string) {
     })
 
     if (!post) {
+      console.error('❌ [SERVER] Post not found:', postId)
       throw new Error('Post not found')
     }
 
+    console.log('✅ [SERVER] Post found')
+    console.log('   postId:', post.id)
+    console.log('   title:', post.title)
+    console.log('   BEFORE UPDATE:')
+    console.log('     _status:', post._status)
+    console.log('     reviewStatus:', post.reviewStatus)
+    console.log('     editorFeedback:', post.editorFeedback || 'null')
+
     // Add feedback and return to requesting_changes status so contributor can edit
+    console.log('🔄 [SERVER] Updating post...')
     const updatedPost = await payload.update({
       collection: 'posts',
       id: postId,
@@ -115,6 +142,12 @@ export async function requestChanges(postId: string, feedback: string) {
       },
       draft: true,
     })
+
+    console.log('✅ [SERVER] Post updated successfully')
+    console.log('   AFTER UPDATE:')
+    console.log('     _status:', updatedPost._status)
+    console.log('     reviewStatus:', updatedPost.reviewStatus)
+    console.log('     editorFeedback:', updatedPost.editorFeedback)
 
     // Create audit log entry
     try {
@@ -129,24 +162,30 @@ export async function requestChanges(postId: string, feedback: string) {
           timestamp: new Date().toISOString(),
         },
       })
+      console.log('✅ [SERVER] Audit log created')
     } catch (error) {
-      console.log('Could not create audit log:', error)
+      console.log('⚠️ [SERVER] Could not create audit log:', error)
     }
 
     // Revalidate multiple paths to ensure UI updates
+    console.log('🔄 [SERVER] Revalidating paths...')
     revalidatePath('/editor/queue')
     revalidatePath('/editor')
     revalidatePath('/contributor/drafts')
     revalidatePath('/contributor/submissions')
+    console.log('✅ [SERVER] Paths revalidated')
     
-    console.log('Changes requested successfully:', {
-      postId,
-      reviewStatus: updatedPost.reviewStatus,
-      editorFeedback: updatedPost.editorFeedback,
-    })
+    console.log('✅ [SERVER] requestChanges completed successfully!')
+    console.log('='.repeat(80) + '\n')
 
     return { success: true, message: 'Feedback sent to contributor. Post returned to their drafts.' }
   } catch (error) {
+    console.error('\n' + '='.repeat(80))
+    console.error('❌ [SERVER] requestChanges FAILED')
+    console.error('   Error:', error)
+    console.error('   Stack:', error instanceof Error ? error.stack : 'N/A')
+    console.error('='.repeat(80) + '\n')
+    
     return {
       success: false,
       message: error instanceof Error ? error.message : 'Failed to request changes',
