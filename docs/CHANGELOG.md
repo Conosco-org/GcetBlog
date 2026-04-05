@@ -4,6 +4,37 @@ All notable changes to the GCET Blog platform will be documented in this file.
 
 ## [Unreleased]
 
+### Added - 2026-04-05
+
+#### Separate Contributor Edit Route
+
+**New Features:**
+- **Contributor Edit Route**: Created `/contributor/edit/[id]` for contributors to edit their posts
+  - Contributors now edit posts in their own dashboard without accessing editor routes
+  - Clean separation between contributor and editor workflows
+  - Reuses PostForm component for consistency
+  - Automatic redirect: editors accessing contributor route → editor route
+  - Automatic redirect: contributors accessing editor route → contributor route
+
+**Technical Changes:**
+- Created `src/app/contributor/edit/[id]/page.tsx`
+- Updated `DraftsGridClient.tsx` to use `/contributor/edit/${id}` for edit links
+- Updated `SubmissionsClient.tsx` to use `/contributor/edit/${id}` for edit links
+- Restored `editor/layout.tsx` to only allow editors (no contributor access)
+- Contributors can only edit their own posts (ownership verification)
+
+**User Experience:**
+- Contributors see simplified edit interface in their dashboard
+- Editors continue using full-featured editor dashboard
+- No confusion between roles and permissions
+- Clear mental model for both user types
+
+**Files Modified:**
+- `src/app/contributor/edit/[id]/page.tsx` (new)
+- `src/app/contributor/drafts/DraftsGridClient.tsx`
+- `src/app/contributor/submissions/SubmissionsClient.tsx`
+- `src/app/(frontend)/editor/layout.tsx`
+
 ### Fixed - 2026-04-05
 
 #### Draft Preview Banner and Edit Button Fixes
