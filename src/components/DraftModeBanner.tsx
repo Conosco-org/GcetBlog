@@ -10,7 +10,7 @@ interface DraftModeBannerProps {
 export function DraftModeBanner({ postStatus, reviewStatus, isAuthor }: DraftModeBannerProps) {
   const getPreviewMessage = () => {
     if (postStatus === 'published') {
-      return 'You&apos;re previewing a published post'
+      return "You're previewing a published post"
     }
     
     if (reviewStatus === 'pending_review') {
@@ -29,7 +29,9 @@ export function DraftModeBanner({ postStatus, reviewStatus, isAuthor }: DraftMod
       return 'This post is approved and ready for publishing'
     }
     
-    return 'You&apos;re previewing an unpublished draft - only editors/admins can see this'
+    return isAuthor
+      ? "You're previewing your unpublished draft"
+      : "You're previewing an unpublished draft"
   }
 
   const getBannerColor = () => {

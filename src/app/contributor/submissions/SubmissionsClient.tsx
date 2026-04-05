@@ -87,17 +87,18 @@ const columns: Column<Post>[] = [
       <div className="flex gap-2">
         {post.reviewStatus === 'rejected' && (
           <Button variant="default" size="sm" asChild>
-            <Link href={`/editor/posts/${post.id}/edit`}>
+            <Link href={`/editor/posts/${post.id}/edit`} prefetch={false}>
               <Edit className="h-3 w-3 mr-1" />
               Edit
             </Link>
           </Button>
         )}
         <Button variant="outline" size="sm" asChild>
-          <Link href={`/posts/${post.slug}`} target="_blank">
+          <Link href={`/api/draft?slug=${post.slug}&collection=posts`} target="_blank" rel="noopener noreferrer">
             <Eye className="h-3 w-3 mr-1" />
-            View
+            Preview
           </Link>
+        </Button>
         </Button>
       </div>
     ),
