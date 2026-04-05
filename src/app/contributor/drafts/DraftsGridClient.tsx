@@ -111,6 +111,17 @@ export function DraftsGridClient({
   }
 
   // Categorize drafts into sections
+  console.log('🔵 [Contributor Drafts Client] Received drafts:', {
+    totalDrafts: drafts.length,
+    drafts: drafts.map(p => ({
+      id: p.id,
+      title: p.title,
+      reviewStatus: p.reviewStatus,
+      _status: p._status,
+      hasEditorFeedback: !!p.editorFeedback,
+    }))
+  })
+
   const currentDrafts = drafts.filter(post => 
     post.reviewStatus === 'draft'
   )
@@ -123,6 +134,13 @@ export function DraftsGridClient({
   const rejectedPosts = drafts.filter(post => 
     post.reviewStatus === 'rejected'
   )
+
+  console.log('🔵 [Contributor Drafts Client] Filtered results:', {
+    currentDrafts: currentDrafts.length,
+    requestingChanges: requestingChangesPosts.length,
+    pendingReview: pendingReviewPosts.length,
+    rejected: rejectedPosts.length,
+  })
 
   const renderPostCard = (post: Post, showFeedback: boolean = false, isPending: boolean = false) => (
     <Card key={post.id} className={`hover:border-primary transition-colors ${showFeedback ? 'border-orange-300 dark:border-orange-700 bg-orange-50/50 dark:bg-orange-950/20' : ''}`}>
