@@ -81,6 +81,7 @@ export interface Config {
     'newsletter-subscribers': NewsletterSubscriber;
     newsletters: Newsletter;
     'newsletter-events': NewsletterEvent;
+    'rejection-notifications': RejectionNotification;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -107,6 +108,7 @@ export interface Config {
     'newsletter-subscribers': NewsletterSubscribersSelect<false> | NewsletterSubscribersSelect<true>;
     newsletters: NewslettersSelect<false> | NewslettersSelect<true>;
     'newsletter-events': NewsletterEventsSelect<false> | NewsletterEventsSelect<true>;
+    'rejection-notifications': RejectionNotificationsSelect<false> | RejectionNotificationsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -1303,6 +1305,39 @@ export interface NewsletterEvent {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "rejection-notifications".
+ */
+export interface RejectionNotification {
+  id: string;
+  /**
+   * Title of the rejected post
+   */
+  postTitle: string;
+  /**
+   * The contributor whose post was rejected
+   */
+  contributor: string | User;
+  /**
+   * The editor who rejected the post
+   */
+  rejectedBy: string | User;
+  /**
+   * Reason for rejection
+   */
+  reason: string;
+  /**
+   * ID of the original post (for reference)
+   */
+  originalPostId?: string | null;
+  /**
+   * Whether the contributor has read this notification
+   */
+  isRead?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -1572,6 +1607,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'newsletter-events';
         value: string | NewsletterEvent;
+      } | null)
+    | ({
+        relationTo: 'rejection-notifications';
+        value: string | RejectionNotification;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -2135,6 +2174,20 @@ export interface NewsletterEventsSelect<T extends boolean = true> {
   userAgent?: T;
   ipAddress?: T;
   timestamp?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "rejection-notifications_select".
+ */
+export interface RejectionNotificationsSelect<T extends boolean = true> {
+  postTitle?: T;
+  contributor?: T;
+  rejectedBy?: T;
+  reason?: T;
+  originalPostId?: T;
+  isRead?: T;
   updatedAt?: T;
   createdAt?: T;
 }

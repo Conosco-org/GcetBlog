@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { CheckCircle, XCircle, Eye, Edit, Trash2, MessageSquare } from 'lucide-react'
+import { CheckCircle, XCircle, Eye, Edit, MessageSquare } from 'lucide-react'
 import { approvePost, requestChanges, deletePost } from './actions'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -19,7 +19,7 @@ export function ApprovalButtons({ postId, postTitle, postSlug }: ApprovalButtons
   const { toast } = useToast()
   const [isApproving, setIsApproving] = useState(false)
   const [isRequestingChanges, setIsRequestingChanges] = useState(false)
-  const [isDeleting, setIsDeleting] = useState(false)
+  const [isRejecting, setIsRejecting] = useState(false)
 
   const handleApprove = async () => {
     if (!confirm(`Are you sure you want to approve and publish "${postTitle}"?`)) {
@@ -101,15 +101,15 @@ export function ApprovalButtons({ postId, postTitle, postSlug }: ApprovalButtons
     }
   }
 
-  const handleDelete = async () => {
-    const confirmDelete = confirm(
-      `⚠️ WARNING: This will PERMANENTLY DELETE "${postTitle}" from the database.\n\nThis action cannot be undone. Are you sure?`
+  const handleReject = async () => {
+    const confirmReject = confirm(
+      `⚠️ WARNING: This will PERMANENTLY REJECT and DELETE "${postTitle}" from the database.\n\nThe contributor will be notified with your reason. This action cannot be undone. Are you sure?`
     )
-    if (!confirmDelete) {
+    if (!confirmReject) {
       return
     }
 
-    const reason = prompt(`Why are you deleting "${postTitle}"? (Required for audit log)`)
+    const reason = prompt(`Why are you rejecting "${postTitle}"? (This will be saved in the audit log and the contributor will know their post was rejected)`)
     if (reason === null) {
       return // User cancelled
     }
@@ -117,19 +117,19 @@ export function ApprovalButtons({ postId, postTitle, postSlug }: ApprovalButtons
     if (!reason.trim()) {
       toast({
         title: "Reason Required",
-        description: "Please provide a reason for deletion",
+        description: "Please provide a reason for rejection",
         variant: "destructive",
       })
       return
     }
 
-    setIsDeleting(true)
+    setIsRejecting(true)
     try {
       const result = await deletePost(postId, reason)
       if (result.success) {
         toast({
-          title: "Post Deleted",
-          description: "Post permanently removed from database",
+          title: "Post Rejected",
+          description: "Post permanently rejected and removed from database",
         })
         // Wait a moment for the database to update, then refresh
         setTimeout(() => {
@@ -138,22 +138,22 @@ export function ApprovalButtons({ postId, postTitle, postSlug }: ApprovalButtons
       } else {
         toast({
           title: "Error",
-          description: result.message || 'Failed to delete post',
+          description: result.message || 'Failed to reject post',
           variant: "destructive",
         })
-        setIsDeleting(false)
+        setIsRejecting(false)
       }
     } catch (_error) {
       toast({
         title: "Error",
-        description: "An error occurred while deleting the post",
+        description: "An error occurred while rejecting the post",
         variant: "destructive",
       })
-      setIsDeleting(false)
+      setIsRejecting(false)
     }
   }
 
-  const isProcessing = isApproving || isRequestingChanges || isDeleting
+  const isProcessing = isApproving || isRequestingChanges || isRejecting
 
   return (
     <div className="flex items-center gap-2">
@@ -207,15 +207,15 @@ export function ApprovalButtons({ postId, postTitle, postSlug }: ApprovalButtons
         <span className="hidden sm:inline">{isRequestingChanges ? 'Sending...' : 'Feedback'}</span>
       </Button>
       <Button
-        onClick={handleDelete}
+        onClick={handleReject}
         disabled={isProcessing}
         size="sm"
         variant="destructive"
-        title="Delete Post Permanently"
-        aria-label="Delete"
+        title="Reject and Delete Post Permanently"
+        aria-label="Reject"
       >
-        <Trash2 className="w-4 h-4 sm:mr-1" />
-        <span className="hidden sm:inline">{isDeleting ? 'Deleting...' : 'Delete'}</span>
+        <XCircle className="w-4 h-4 sm:mr-1" />
+        <span className="hidden sm:inline">{isRejecting ? 'Rejecting...' : 'Reject'}</span>
       </Button>
     </div>
   )

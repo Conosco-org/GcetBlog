@@ -55,6 +55,16 @@ export default async function DraftsPage({ searchParams }: PageProps) {
     page,
   })
 
+  // Fetch rejection notifications for this contributor
+  const rejections = await payload.find({
+    collection: 'rejection-notifications',
+    where: {
+      contributor: { equals: typedUser.id },
+    },
+    sort: '-createdAt',
+    limit: 50,
+  })
+
   return (
     <div className="container max-w-6xl mx-auto p-6">
       <PageHeader
@@ -73,6 +83,7 @@ export default async function DraftsPage({ searchParams }: PageProps) {
       <div className="mt-6">
         <DraftsGridClient
           drafts={drafts.docs}
+          rejections={rejections.docs}
           totalPages={drafts.totalPages}
           currentPage={drafts.page || page}
           totalItems={drafts.totalDocs}
