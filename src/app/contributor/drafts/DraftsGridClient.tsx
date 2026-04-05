@@ -91,6 +91,11 @@ export function DraftsGridClient({
 
   const visibleRejections = rejections.filter(r => !dismissedRejections.has(r.id))
 
+  // Categorize drafts into 3 sections
+  const rejectedPosts = drafts.filter(post => post.reviewStatus === 'rejected')
+  const requestingChangesPosts = drafts.filter(post => post.reviewStatus === 'draft' && post.editorFeedback)
+  const currentDrafts = drafts.filter(post => post.reviewStatus === 'draft' && !post.editorFeedback)
+
   return (
     <div className="space-y-4">
       <SearchInput
@@ -150,8 +155,124 @@ export function DraftsGridClient({
         </div>
       )}
 
-      {/* Drafts */}
-      {drafts.length === 0 ? (
+      {/* Rejected Posts Section */}
+      {rejectedPosts.length > 0 && (
+        <div className="space-y-3 mb-6">
+          <h3 className="text-lg font-semibold flex items-center gap-2">
+            <XCircle className="w-5 h-5 text-red-600" />
+            Rejected Posts ({rejectedPosts.length})
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {rejectedPosts.map((post) => (
+              <Card key={post.id} className="border-red-300 dark:border-red-700 bg-red-50/50 dark:bg-red-950/20">
+                <CardHeader>
+                  <div className="flex items-start justify-between gap-2">
+                    <CardTitle className="text-lg line-clamp-2">{post.title}</CardTitle>
+                    <Badge variant="outline" className="bg-red-100 text-red-800 border-red-300 dark:bg-red-950 dark:text-red-400 dark:border-red-700 flex-shrink-0">
+                      Rejected
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Last edited: {formatDateTime(post.updatedAt)}
+                  </p>
+                  {post.editorFeedback && (
+                    <div className="mt-2 p-3 bg-red-100 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-md">
+                      <p className="text-xs font-semibold text-red-900 dark:text-red-300 mb-1">Editor Feedback:</p>
+                      <p className="text-sm text-red-800 dark:text-red-400">{post.editorFeedback}</p>
+                    </div>
+                  )}
+                </CardHeader>
+                <CardContent>
+                  <Button variant="default" size="sm" asChild className="w-full" title="Edit post" aria-label="Edit post">
+                    <Link href={`/editor/posts/${post.id}/edit`}>
+                      <Edit className="h-4 w-4 mr-1" />
+                      Edit & Resubmit
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Requesting Changes Section */}
+      {requestingChangesPosts.length > 0 && (
+        <div className="space-y-3 mb-6">
+          <h3 className="text-lg font-semibold flex items-center gap-2">
+            <AlertCircle className="w-5 h-5 text-orange-600" />
+            Requesting Changes ({requestingChangesPosts.length})
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {requestingChangesPosts.map((post) => (
+              <Card key={post.id} className="border-orange-300 dark:border-orange-700 bg-orange-50/50 dark:bg-orange-950/20">
+                <CardHeader>
+                  <div className="flex items-start justify-between gap-2">
+                    <CardTitle className="text-lg line-clamp-2">{post.title}</CardTitle>
+                    <Badge variant="outline" className="bg-orange-100 text-orange-800 border-orange-300 dark:bg-orange-950 dark:text-orange-400 dark:border-orange-700 flex-shrink-0">
+                      <AlertCircle className="w-3 h-3 mr-1" />
+                      Feedback
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Last edited: {formatDateTime(post.updatedAt)}
+                  </p>
+                  {post.editorFeedback && (
+                    <div className="mt-2 p-3 bg-orange-100 dark:bg-orange-950 border border-orange-200 dark:border-orange-800 rounded-md">
+                      <p className="text-xs font-semibold text-orange-900 dark:text-orange-300 mb-1">Editor Feedback:</p>
+                      <p className="text-sm text-orange-800 dark:text-orange-400">{post.editorFeedback}</p>
+                    </div>
+                  )}
+                </CardHeader>
+                <CardContent>
+                  <Button variant="default" size="sm" asChild className="w-full" title="Continue editing" aria-label="Continue editing">
+                    <Link href={`/editor/posts/${post.id}/edit`}>
+                      <Edit className="h-4 w-4 mr-1" />
+                      Continue Editing
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Current Drafts Section */}
+      {currentDrafts.length > 0 && (
+        <div className="space-y-3 mb-6">
+          <h3 className="text-lg font-semibold flex items-center gap-2">
+            <FileText className="w-5 h-5" />
+            Current Drafts ({currentDrafts.length})
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {currentDrafts.map((post) => (
+              <Card key={post.id} className="hover:border-primary transition-colors">
+                <CardHeader>
+                  <div className="flex items-start justify-between gap-2">
+                    <CardTitle className="text-lg line-clamp-2">{post.title}</CardTitle>
+                    <Badge variant="outline">Draft</Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Last edited: {formatDateTime(post.updatedAt)}
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  <Button variant="default" size="sm" asChild className="w-full" title="Continue editing" aria-label="Continue editing">
+                    <Link href={`/editor/posts/${post.id}/edit`}>
+                      <Edit className="h-4 w-4 mr-1" />
+                      Continue
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Empty State */}
+      {drafts.length === 0 && (
         <EmptyState
           icon={FileText}
           title="No drafts found"
@@ -165,46 +286,6 @@ export function DraftsGridClient({
             </Button>
           }
         />
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {drafts.map((post) => (
-            <Card key={post.id} className={`hover:border-primary transition-colors ${post.editorFeedback ? 'border-orange-300 dark:border-orange-700' : ''}`}>
-              <CardHeader>
-                <div className="flex items-start justify-between gap-2">
-                  <CardTitle className="text-lg line-clamp-2">{post.title}</CardTitle>
-                  <div className="flex gap-1 flex-shrink-0">
-                    {post.editorFeedback && (
-                      <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-300 dark:bg-orange-950 dark:text-orange-400 dark:border-orange-700">
-                        <AlertCircle className="w-3 h-3 mr-1" />
-                        Feedback
-                      </Badge>
-                    )}
-                    <Badge variant="outline">Draft</Badge>
-                  </div>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Last edited: {formatDateTime(post.updatedAt)}
-                </p>
-                {post.editorFeedback && (
-                  <div className="mt-2 p-3 bg-orange-50 dark:bg-orange-950 border border-orange-200 dark:border-orange-800 rounded-md">
-                    <p className="text-xs font-semibold text-orange-900 dark:text-orange-300 mb-1">Editor Feedback:</p>
-                    <p className="text-sm text-orange-800 dark:text-orange-400">{post.editorFeedback}</p>
-                  </div>
-                )}
-              </CardHeader>
-              <CardContent>
-                <div className="flex gap-2">
-                  <Button variant="default" size="sm" asChild className="flex-1" title="Continue editing" aria-label="Continue editing">
-                    <Link href={`/editor/posts/${post.id}/edit`}>
-                      <Edit className="h-4 w-4 sm:mr-1" />
-                      <span className="hidden sm:inline">Continue</span>
-                    </Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
       )}
 
       {/* Pagination */}

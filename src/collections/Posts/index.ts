@@ -10,7 +10,8 @@ import {
 } from '@payloadcms/richtext-lexical'
 
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
-import { editorOnly } from '../../access/editorOnly'
+import { contributorOwn } from '../../access/contributorOwn'
+import { editorOrAdmin } from '../../access/editorOrAdmin'
 import { isAdmin } from '../../utilities/checkUserRole'
 import { Banner } from '../../blocks/Banner/config'
 import { Code } from '../../blocks/Code/config'
@@ -33,10 +34,10 @@ import { slugField } from '@/fields/slug'
 export const Posts: CollectionConfig<'posts'> = {
   slug: 'posts',
   access: {
-    create: editorOnly,
-    delete: editorOnly,
+    create: editorOrAdmin,
+    delete: editorOrAdmin,
     read: authenticatedOrPublished,
-    update: editorOnly,
+    update: contributorOwn, // Contributors can update their own posts, editors can update all
   },
   // This config controls what's populated by default when a post is referenced
   // https://payloadcms.com/docs/queries/select#defaultpopulate-collection-config-property

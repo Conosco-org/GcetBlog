@@ -189,9 +189,10 @@ export function CreateContentForm({ user: _user, categories: dbCategories, initi
         className: 'bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-800',
       })
       
-      // Redirect to submissions page
+      // Redirect to submissions page with refresh
       setTimeout(() => {
         router.push('/contributor/submissions')
+        router.refresh()
       }, 1500)
     } catch (error) {
       console.error('Error submitting content:', error)
@@ -262,7 +263,11 @@ export function CreateContentForm({ user: _user, categories: dbCategories, initi
         className: 'bg-blue-50 border-blue-200 dark:bg-blue-950 dark:border-blue-800',
       })
       
-      setTimeout(() => setSaveStatus('idle'), 2000)
+      // Redirect to drafts page after successful save
+      setTimeout(() => {
+        router.push('/contributor/drafts')
+        router.refresh()
+      }, 1500)
     } catch (error) {
       console.error('Error saving draft:', error)
       toast({
