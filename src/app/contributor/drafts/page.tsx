@@ -60,6 +60,19 @@ export default async function DraftsPage({ searchParams }: PageProps) {
     sort: '-updatedAt',
     limit: PAGE_SIZE,
     page,
+    draft: true, // Fetch draft versions to see unpublished posts
+  })
+
+  console.log('📊 [Contributor Drafts] Query results:', {
+    contributorId: typedUser.id,
+    totalDocs: drafts.totalDocs,
+    posts: drafts.docs.map(p => ({
+      id: p.id,
+      title: p.title,
+      reviewStatus: p.reviewStatus,
+      _status: p._status,
+      hasEditorFeedback: !!p.editorFeedback,
+    }))
   })
 
   // Fetch unread rejection notifications for this contributor

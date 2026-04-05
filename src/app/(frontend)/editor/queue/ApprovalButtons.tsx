@@ -57,12 +57,19 @@ export function ApprovalButtons({ postId, postTitle, postSlug }: ApprovalButtons
   }
 
   const handleRequestChanges = async () => {
+    console.log('🔵 [CLIENT] handleRequestChanges called', { postId, postTitle })
+    
     const feedback = prompt(`What changes are needed for "${postTitle}"? (This feedback will be sent to the contributor)`)
+    
+    console.log('🔵 [CLIENT] User feedback input:', { feedback, cancelled: feedback === null })
+    
     if (feedback === null) {
+      console.log('🔵 [CLIENT] User cancelled feedback dialog')
       return // User cancelled
     }
 
     if (!feedback.trim()) {
+      console.log('🔵 [CLIENT] Empty feedback provided')
       toast({
         title: "Feedback Required",
         description: "Please provide feedback for the contributor",
@@ -71,19 +78,28 @@ export function ApprovalButtons({ postId, postTitle, postSlug }: ApprovalButtons
       return
     }
 
+    console.log('🔵 [CLIENT] Starting requestChanges action...', { postId, feedbackLength: feedback.length })
     setIsRequestingChanges(true)
+    
     try {
+      console.log('🔵 [CLIENT] Calling requestChanges server action...')
       const result = await requestChanges(postId, feedback)
+      
+      console.log('🔵 [CLIENT] Server action returned:', result)
+      
       if (result.success) {
+        console.log('✅ [CLIENT] Success! Showing toast and refreshing...')
         toast({
           title: "Changes Requested",
           description: "Feedback sent to contributor. Post removed from queue.",
         })
         // Wait a moment for the database to update, then refresh
         setTimeout(() => {
+          console.log('🔵 [CLIENT] Refreshing page...')
           router.refresh()
         }, 500)
       } else {
+        console.error('❌ [CLIENT] Server action failed:', result.message)
         toast({
           title: "Error",
           description: result.message || 'Failed to request changes',
@@ -91,7 +107,8 @@ export function ApprovalButtons({ postId, postTitle, postSlug }: ApprovalButtons
         })
         setIsRequestingChanges(false)
       }
-    } catch (_error) {
+    } catch (error) {
+      console.error('❌ [CLIENT] Exception caught:', error)
       toast({
         title: "Error",
         description: "An error occurred while requesting changes",
