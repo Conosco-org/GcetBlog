@@ -179,14 +179,14 @@ export function DraftsGridClient({
         <div className="flex gap-2">
           {!isPending && (
             <>
-              <Button variant="default" size="sm" asChild className="flex-1">
-                <Link href={`/editor/posts/${post.id}/edit`}>
+              <Button variant="default" size="sm" className="flex-1" asChild>
+                <Link href={`/editor/posts/${post.id}/edit`} prefetch={false}>
                   <Edit className="h-4 w-4 mr-1" />
                   {showFeedback ? 'Edit & Resubmit' : 'Edit'}
                 </Link>
               </Button>
               <Button variant="outline" size="sm" asChild>
-                <Link href={`/api/draft?slug=${post.slug}&collection=posts`} target="_blank">
+                <Link href={`/api/draft?slug=${post.slug}&collection=posts`} target="_blank" rel="noopener noreferrer">
                   <FileText className="h-4 w-4" />
                 </Link>
               </Button>
@@ -194,8 +194,8 @@ export function DraftsGridClient({
           )}
           {isPending && (
             <>
-              <Button variant="outline" size="sm" asChild className="flex-1">
-                <Link href={`/api/draft?slug=${post.slug}&collection=posts`} target="_blank">
+              <Button variant="outline" size="sm" className="flex-1" asChild>
+                <Link href={`/api/draft?slug=${post.slug}&collection=posts`} target="_blank" rel="noopener noreferrer">
                   <FileText className="h-4 w-4 mr-1" />
                   Preview
                 </Link>
