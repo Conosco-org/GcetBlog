@@ -49,9 +49,16 @@ export default async function ContributorLayout({
   const authorWhere = { authors: { equals: typedUser.id } }
 
   const [draftCount, submittedCount, publishedCount, feedbackCount] = await Promise.all([
+    // Count only drafts without editor feedback (current drafts)
     payload.count({
       collection: 'posts',
-      where: { ...authorWhere, _status: { equals: 'draft' } },
+      where: { 
+        and: [
+          authorWhere, 
+          { reviewStatus: { equals: 'draft' } },
+          { editorFeedback: { exists: false } }
+        ]
+      },
     }),
     payload.count({
       collection: 'posts',

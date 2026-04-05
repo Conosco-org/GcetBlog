@@ -157,7 +157,7 @@ export function DraftsGridClient({
                 </CardHeader>
                 <CardContent>
                   <Button variant="default" size="sm" asChild className="w-full">
-                    <Link href={`/editor/posts/${post.id}/edit`}>
+                    <Link href={`/editor/posts/${post.id}/edit`} prefetch={false}>
                       <Edit className="h-4 w-4 mr-2" />
                       Edit & Resubmit
                     </Link>
@@ -204,7 +204,7 @@ export function DraftsGridClient({
                 </CardHeader>
                 <CardContent>
                   <Button variant="default" size="sm" asChild className="w-full">
-                    <Link href={`/editor/posts/${post.id}/edit`}>
+                    <Link href={`/editor/posts/${post.id}/edit`} prefetch={false}>
                       <Edit className="h-4 w-4 mr-2" />
                       Continue
                     </Link>
