@@ -4,6 +4,48 @@ All notable changes to the GCET Blog platform will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed - 2026-04-05
+
+#### Contributors Can Now Edit and Delete Their Own Drafts
+
+**Issues Resolved:**
+1. **DELETE API Endpoint Missing**: Added DELETE method to `/api/posts/[id]/route.ts`
+   - Contributors can delete their own unpublished posts (any reviewStatus except published)
+   - Editors and admins can delete any post
+   - Proper permission checks: author verification + published status check
+   - Returns 403 if user is not the author or post is published
+   - Revalidates contributor/drafts and editor/queue paths after deletion
+
+2. **Edit Access Already Working**: Contributors can edit their own posts
+   - `/editor/posts/[id]/edit` route checks author ownership for contributors
+   - Editors have full access to all posts
+   - Access control properly implemented in route
+
+3. **Delete Button Now Functional**: UI delete button calls working API endpoint
+   - Confirmation dialog with loading states
+   - Toast notifications for success/error
+   - Proper error handling and recovery
+   - Page refreshes after successful deletion
+
+**Technical Changes:**
+- Added `DELETE` method to `src/app/api/posts/[id]/route.ts`
+- Permission logic: 
+  - Editors/admins: can delete any post
+  - Contributors: can delete own posts only if `_status !== 'published'`
+  - Includes all reviewStatus values: draft, pending_review, requesting_changes, rejected
+- Regenerated Payload types to include `requesting_changes` status
+- Added revalidation for `/contributor/drafts` and `/editor/queue` paths
+
+**Files Modified:**
+- `src/app/api/posts/[id]/route.ts` (added DELETE method)
+- `src/payload-types.ts` (regenerated with requesting_changes status)
+
+**Build Status:**
+- ✅ Production build successful (61 pages)
+- ✅ No TypeScript errors
+- ✅ No linting issues
+- ✅ All diagnostics passed
+
 ### Added - 2026-04-05
 
 #### Contributor Drafts Management with Tabs
