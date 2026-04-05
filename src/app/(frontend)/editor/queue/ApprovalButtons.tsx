@@ -46,7 +46,7 @@ export function ApprovalButtons({ postId, postTitle, postSlug }: ApprovalButtons
         })
         setIsApproving(false)
       }
-    } catch (_error) {
+    } catch {
       toast({
         title: "Error",
         description: "An error occurred while approving the post",
@@ -160,7 +160,7 @@ export function ApprovalButtons({ postId, postTitle, postSlug }: ApprovalButtons
         })
         setIsRejecting(false)
       }
-    } catch (_error) {
+    } catch {
       toast({
         title: "Error",
         description: "An error occurred while rejecting the post",

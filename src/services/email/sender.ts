@@ -230,7 +230,7 @@ export async function sendNewsletter(
 
       baseHtml = await render(
         React.createElement(NewsletterManual, {
-          subject: newsletter.subject,
+          subject: String(newsletter.subject ?? ''),
           contentHtml,
           unsubscribeUrl: '__UNSUB_URL__',
           preferencesUrl: '__PREF_URL__',
@@ -260,14 +260,14 @@ export async function sendNewsletter(
 
       return {
         to: { email: sub.email, name: sub.name ?? undefined },
-        subject: newsletter.subject,
+        subject: String(newsletter.subject ?? ''),
         html: personalizedHtml,
         headers: complianceHeaders,
         listUnsubscribe: complianceHeaders['List-Unsubscribe'],
         listUnsubscribePost: complianceHeaders['List-Unsubscribe-Post'],
         tags: [
           { name: 'campaign', value: newsletterId },
-          { name: 'type', value: newsletter.type ?? 'manual' },
+          { name: 'type', value: String(newsletter.type ?? 'manual') },
         ],
         metadata: {
           newsletterId,

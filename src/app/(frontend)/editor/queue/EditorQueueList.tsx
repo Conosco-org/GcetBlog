@@ -33,7 +33,7 @@ export function EditorQueueList({ posts }: EditorQueueListProps) {
       } else {
         setMessages((prev) => ({ ...prev, [postId]: { type: 'error', text: result.message } }))
       }
-    } catch (_error) {
+    } catch {
       setMessages((prev) => ({ ...prev, [postId]: { type: 'error', text: 'An error occurred' } }))
     } finally {
       setProcessingIds((prev) => prev.filter((id) => id !== postId))
@@ -60,7 +60,7 @@ export function EditorQueueList({ posts }: EditorQueueListProps) {
       } else {
         setMessages((prev) => ({ ...prev, [postId]: { type: 'error', text: result.message } }))
       }
-    } catch (_error) {
+    } catch {
       setMessages((prev) => ({ ...prev, [postId]: { type: 'error', text: 'An error occurred' } }))
     } finally {
       setProcessingIds((prev) => prev.filter((id) => id !== postId))

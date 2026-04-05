@@ -48,7 +48,6 @@ export function MediaGridClient({
   totalItems,
   pageSize,
   query,
-  sortParam: _sortParam,
 }: MediaGridClientProps) {
   const router = useRouter()
   const pathname = usePathname()

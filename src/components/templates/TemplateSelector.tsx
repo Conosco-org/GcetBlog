@@ -13,7 +13,6 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Search, FileStack, FileText } from 'lucide-react'
-import { cn } from '@/utilities/ui'
 import { TemplateCard, type TemplateCardData } from './TemplateCard'
 import { TemplatePreview } from './TemplatePreview'
 

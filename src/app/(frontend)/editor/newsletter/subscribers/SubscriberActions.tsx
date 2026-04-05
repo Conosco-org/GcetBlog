@@ -1,9 +1,9 @@
 'use client'
 
 import { useRef, useTransition, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { Download, Upload, Loader2, CheckCircle, AlertCircle } from 'lucide-react'
+import { Download, Upload, Loader2 } from 'lucide-react'
 import { toast } from '@/hooks/use-toast'
 
 interface SubscriberActionsProps {

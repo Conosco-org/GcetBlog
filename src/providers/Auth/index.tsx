@@ -51,7 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         setUser(null)
       }
-    } catch (_error) {
+    } catch {
       // Silently fail - this is expected when not authenticated
       setUser(null)
     } finally {

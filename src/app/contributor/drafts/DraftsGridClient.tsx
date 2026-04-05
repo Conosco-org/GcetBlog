@@ -48,7 +48,6 @@ export function DraftsGridClient({
   totalPages,
   currentPage,
   totalItems,
-  pageSize: _pageSize,
   query,
 }: DraftsGridClientProps) {
   const router = useRouter()
@@ -99,7 +98,7 @@ export function DraftsGridClient({
           variant: 'destructive',
         })
       }
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to delete draft',

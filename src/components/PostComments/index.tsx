@@ -3,7 +3,7 @@ import { headers as nextHeaders } from 'next/headers'
 import configPromise from '@payload-config'
 import { CommentForm } from '@/components/CommentForm'
 import { CommentList } from '@/components/CommentList'
-import type { Post } from '@/payload-types'
+import type { Post, User } from '@/payload-types'
 
 interface PostCommentsProps {
   post: Post
@@ -13,17 +13,12 @@ export async function PostComments({ post }: PostCommentsProps) {
   const payload = await getPayload({ config: configPromise })
 
   // Check if the current request belongs to an authenticated user
-  let currentUser: { id: string; name: string; email: string; role: string } | null = null
+  let currentUser: User | null = null
   try {
     const headersList = await nextHeaders()
     const { user } = await payload.auth({ headers: headersList })
     if (user) {
-      currentUser = {
-        id: String(user.id),
-        name: user.name || '',
-        email: user.email || '',
-        role: user.role || 'contributor',
-      }
+      currentUser = user as User
     }
   } catch {
     // unauthenticated - fine
@@ -42,19 +37,28 @@ export async function PostComments({ post }: PostCommentsProps) {
 
   const postId = String(post.id)
 
+  // Create simplified user object for CommentForm
+  const simplifiedUser = currentUser
+    ? {
+        id: String(currentUser.id),
+        name: currentUser.name || '',
+        email: currentUser.email || '',
+      }
+    : null
+
   return (
     <section className="mt-12 pt-8 border-t border-border">
       <h2 className="text-xl font-bold mb-6">Discussion</h2>
 
       {/* New comment form */}
-      <CommentForm postId={postId} user={currentUser} />
+      <CommentForm postId={postId} user={simplifiedUser} />
 
       {/* Comments list */}
       <div className="mt-8">
         <CommentList
           comments={comments.docs}
           postId={postId}
-          currentUser={currentUser as any}
+          currentUser={currentUser}
         />
       </div>
     </section>

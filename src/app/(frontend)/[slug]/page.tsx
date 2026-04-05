@@ -71,7 +71,7 @@ export default async function Page({ params: paramsPromise }: Args) {
   if (slug === 'home') {
     const payload = await getPayload({ config: configPromise })
     const now = new Date().toISOString()
-    const publishVisibility = publishedVisibilityWhere(now)
+    const publishVisibility = publishedVisibilityWhere()
 
     const featuredResult = await payload.find({
       collection: 'posts',

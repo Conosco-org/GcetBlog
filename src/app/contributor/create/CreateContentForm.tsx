@@ -42,7 +42,7 @@ interface CreateContentFormProps {
   } | null
 }
 
-export function CreateContentForm({ user: _user, categories: dbCategories, initialTemplate }: CreateContentFormProps) {
+export function CreateContentForm({ categories: dbCategories, initialTemplate }: CreateContentFormProps) {
   const router = useRouter()
   const { toast } = useToast()
   const [selectedType, setSelectedType] = useState<string>(initialTemplate?.contentType || '')

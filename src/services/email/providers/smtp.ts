@@ -43,8 +43,7 @@ export class SmtpProvider implements EmailProvider {
       },
       pool: config.pool ?? true,
       maxConnections: config.maxConnections ?? 5,
-      // @ts-expect-error - nodemailer types are incomplete for all transport options
-    })
+    } as nodemailer.TransportOptions)
   }
 
   async send(message: EmailMessage): Promise<SendResult> {

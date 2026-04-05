@@ -25,10 +25,8 @@ export async function POST(request: NextRequest) {
       content,
       excerpt,
       categories,
-      tags: _tags,
       metaDescription,
       publishDate,
-      contentType: _contentType,
       featuredImage,
       isDraft,
     } = body

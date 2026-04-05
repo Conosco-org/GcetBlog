@@ -2,7 +2,6 @@
 
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { useAuth } from '@payloadcms/ui'
 import { cn } from '@/utilities/ui'
 import { 
   LayoutDashboard, 
@@ -36,10 +35,10 @@ const navItems: NavItem[] = [
 
 export default function CustomNav() {
   const pathname = usePathname()
-  const { user } = useAuth()
-  
-  // Type assertion for user role
-  const _userRole = (user as { role?: string })?.role
+  // Note: user is available from useAuth() but not currently used for filtering
+  // All nav items are visible to all authenticated users
+  // const { user } = useAuth()
+  // const userRole = (user as { role?: string })?.role
 
   // All nav items are visible now (no hideForAdmin logic needed)
   const filteredNavItems = navItems

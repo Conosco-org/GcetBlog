@@ -45,7 +45,6 @@ export function EditorSidebar({
   activityLogsCount = 0,
   subscribersCount = 0,
   isOpen,
-  _onToggle
 }: EditorSidebarProps) {
   const pathname = usePathname()
   const router = useRouter()

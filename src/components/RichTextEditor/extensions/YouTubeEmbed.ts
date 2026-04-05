@@ -1,5 +1,5 @@
 ﻿import { Node, mergeAttributes } from '@tiptap/core'
-import { ReactNodeViewRenderer, NodeViewWrapper } from '@tiptap/react'
+import { ReactNodeViewRenderer, NodeViewWrapper, type ReactNodeViewProps } from '@tiptap/react'
 import React from 'react'
 
 export interface YouTubeEmbedOptions {
@@ -33,8 +33,8 @@ function getYouTubeVideoId(url: string): string | null {
   return null
 }
 
-function YouTubeNodeView({ node }: { node: { attrs: { src: string } } }) {
-  const videoId = getYouTubeVideoId(node.attrs.src || '')
+function YouTubeNodeView({ node }: ReactNodeViewProps) {
+  const videoId = getYouTubeVideoId((node.attrs.src as string) || '')
 
   return React.createElement(
     NodeViewWrapper,
@@ -127,7 +127,7 @@ export const YouTubeEmbed = Node.create<YouTubeEmbedOptions>({
   },
 
   addNodeView() {
-    return ReactNodeViewRenderer(YouTubeNodeView as any)
+    return ReactNodeViewRenderer(YouTubeNodeView)
   },
 
   addCommands() {

@@ -50,7 +50,7 @@ export async function deletePost(postId: string) {
           timestamp: new Date().toISOString(),
         },
       })
-    } catch (_error) {
+    } catch {
       // Silently fail if audit log cannot be created
     }
 

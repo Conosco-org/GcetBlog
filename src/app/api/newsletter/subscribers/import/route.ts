@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     const reqHeaders = await headers()
     const { user } = await payload.auth({ headers: reqHeaders })
 
-    if (!user || (user as any).role !== 'editor') {
+    if (!user || !('role' in user) || user.role !== 'editor') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 

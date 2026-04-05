@@ -34,7 +34,7 @@ interface ComposeFormProps {
   mode: 'create' | 'edit'
 }
 
-export function ComposeForm({ newsletter, categories, recentPosts, mode: _mode }: ComposeFormProps) {
+export function ComposeForm({ newsletter, categories, recentPosts }: ComposeFormProps) {
   const router = useRouter()
   const { toast } = useToast()
   const [isPending, startTransition] = useTransition()

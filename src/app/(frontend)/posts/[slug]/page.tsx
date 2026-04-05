@@ -63,7 +63,7 @@ export default async function Post({ params: paramsPromise }: Args) {
   // Fetch recommended posts (same categories, excluding current post)
   const payload = await getPayload({ config: configPromise })
   const categoryIds = post.categories
-    ? post.categories.filter((c) => typeof c === 'object').map((c: any) => c.id)
+    ? post.categories.filter((c) => typeof c === 'object').map((c) => (typeof c === 'object' ? c.id : ''))
     : []
 
   const recommendedPosts = await payload.find({
@@ -85,7 +85,7 @@ export default async function Post({ params: paramsPromise }: Args) {
   })
 
   // Check the current user's vote server-side - no client GET needed
-  const initialLikes: number = (post as any).likesCount ?? 0
+  const initialLikes: number = 'likesCount' in post && typeof post.likesCount === 'number' ? post.likesCount : 0
   let initialUserVote: 1 | -1 | null = null
   try {
     const reqHeaders = await nextHeaders()
@@ -96,8 +96,9 @@ export default async function Post({ params: paramsPromise }: Args) {
         where: { and: [{ post: { equals: post.id } }, { user: { equals: user.id } }] },
         limit: 1,
       })
-      if (myVote.docs.length > 0) {
-        initialUserVote = (myVote.docs[0]!.value as 1 | -1) ?? null
+      if (myVote.docs.length > 0 && myVote.docs[0]) {
+        const voteValue = myVote.docs[0].value
+        initialUserVote = (voteValue === 1 || voteValue === -1) ? voteValue : null
       }
     }
   } catch {
