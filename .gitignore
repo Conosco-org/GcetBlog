@@ -67,10 +67,8 @@ public/sitemap*.xml
 *.tmp
 .cache/
 
-# Documentation (local only)
-docs/
-
-
+# Scripts (not needed for production)
+scripts/
 
 # shadcn/ui CLI config (not needed for production)
 components.json
