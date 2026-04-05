@@ -160,20 +160,29 @@ export function DraftsGridClient({
       <CardContent>
         <div className="flex gap-2">
           {!isPending && (
-            <Button variant="default" size="sm" asChild className="flex-1">
-              <Link href={`/editor/posts/${post.id}/edit`}>
-                <Edit className="h-4 w-4 mr-1" />
-                {showFeedback ? 'Edit & Resubmit' : 'Edit'}
-              </Link>
-            </Button>
+            <>
+              <Button variant="default" size="sm" asChild className="flex-1">
+                <Link href={`/editor/posts/${post.id}/edit`}>
+                  <Edit className="h-4 w-4 mr-1" />
+                  {showFeedback ? 'Edit & Resubmit' : 'Edit'}
+                </Link>
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <Link href={`/api/draft?slug=${post.slug}&collection=posts`} target="_blank">
+                  <FileText className="h-4 w-4" />
+                </Link>
+              </Button>
+            </>
           )}
           {isPending && (
-            <Button variant="outline" size="sm" asChild className="flex-1">
-              <Link href={`/posts/${post.slug}`} target="_blank">
-                <FileText className="h-4 w-4 mr-1" />
-                View
-              </Link>
-            </Button>
+            <>
+              <Button variant="outline" size="sm" asChild className="flex-1">
+                <Link href={`/api/draft?slug=${post.slug}&collection=posts`} target="_blank">
+                  <FileText className="h-4 w-4 mr-1" />
+                  Preview
+                </Link>
+              </Button>
+            </>
           )}
           <Button 
             variant="outline" 
@@ -300,9 +309,9 @@ export function DraftsGridClient({
                   <CardContent>
                     <div className="flex gap-2">
                       <Button variant="outline" size="sm" asChild className="flex-1">
-                        <Link href={`/posts/${post.slug}`} target="_blank">
+                        <Link href={`/api/draft?slug=${post.slug}&collection=posts`} target="_blank">
                           <FileText className="h-4 w-4 mr-1" />
-                          View
+                          Preview
                         </Link>
                       </Button>
                       <Button 

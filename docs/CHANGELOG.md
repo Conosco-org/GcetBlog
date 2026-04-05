@@ -6,6 +6,79 @@ All notable changes to the GCET Blog platform will be documented in this file.
 
 ### Fixed - 2026-04-05
 
+#### Contributor Preview and Edit URL Fixes
+
+**Issues Resolved:**
+1. **Preview Button Fixed**: Contributors can now preview their own unpublished posts
+   - Changed preview URL from `/posts/${slug}` to `/api/draft?slug=${slug}&collection=posts`
+   - Uses Payload's draft mode API for previewing unpublished content
+   - Works for all post statuses: draft, pending_review, requesting_changes, rejected
+   - Opens in new tab for better UX
+
+2. **Edit Button URL Correct**: Edit button properly uses `/editor/posts/[id]/edit`
+   - Route already has contributor ownership checks
+   - Contributors can only edit their own posts
+   - Editors have full access to all posts
+
+3. **Preview Button Added to All Tabs**: Preview functionality available everywhere
+   - Current Drafts tab: Edit + Preview buttons
+   - Requesting Changes tab: Edit + Preview buttons
+   - Pending Review tab: Preview button only (no edit during review)
+   - Rejected tab: Preview button for viewing rejected posts
+
+**Technical Changes:**
+- Updated `DraftsGridClient.tsx` to use draft preview API
+- Preview button uses `/api/draft?slug=${slug}&collection=posts` for all posts
+- Consistent preview experience across all tabs
+- All preview links open in new tab
+
+**Files Modified:**
+- `src/app/contributor/drafts/DraftsGridClient.tsx`
+
+**Testing:**
+- ✅ Created test script to set up contributor workflow
+- ✅ Script creates editor and contributor users
+- ✅ Script creates test posts with different statuses
+- ✅ Verified requesting_changes workflow works correctly
+
+### Added - 2026-04-05
+
+#### Test Script for Contributor Workflow
+
+**New Features:**
+- **Automated Test Setup**: Script to create test data for contributor workflow
+  - Creates editor user: `editor@gcet.edu.in` / `editor123`
+  - Creates contributor user: `contributor@gcet.edu.in` / `contributor123`
+  - Creates post with `requesting_changes` status (with editor feedback)
+  - Creates post with `pending_review` status
+  - Verifies posts appear in correct tabs
+
+**Usage:**
+```bash
+pnpm run test:contributor
+```
+
+**What It Tests:**
+1. User creation (editor and contributor)
+2. Draft post creation by contributor
+3. Post submission for review (draft → pending_review)
+4. Editor requesting changes (pending_review → requesting_changes)
+5. Post appears in contributor's "Requesting Changes" tab
+6. Editor feedback is displayed correctly
+
+**Files Added:**
+- `scripts/test-contributor-workflow.ts`
+
+**Files Modified:**
+- `package.json` (added test:contributor script)
+
+**Build Status:**
+- ✅ Script runs successfully
+- ✅ Creates all test data correctly
+- ✅ Verifies workflow functionality
+
+### Fixed - 2026-04-05
+
 #### Contributors Can Now Edit and Delete Their Own Drafts
 
 **Issues Resolved:**
