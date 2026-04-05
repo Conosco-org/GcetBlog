@@ -4,6 +4,60 @@ All notable changes to the GCET Blog platform will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed - 2026-04-05
+
+#### Critical Contributor Workflow Fixes
+
+**Issues Resolved:**
+1. **Save Draft Button Redirect**: Now properly redirects to `/contributor/drafts` after saving
+   - Added router.push() and router.refresh() calls
+   - Loading state persists until redirect completes
+   - Consistent with "Submit for Review" behavior
+
+2. **Send for Review Redirect**: Added router.refresh() to ensure submissions page updates
+   - Submissions page now shows correct status immediately after submission
+   - Proper revalidation of server-side data
+
+3. **Drafts Page Organization**: Implemented 3 distinct sections
+   - **Rejected Posts**: Posts with reviewStatus='rejected' (red styling)
+   - **Requesting Changes**: Draft posts with editor feedback (orange styling)
+   - **Current Drafts**: Regular drafts without feedback (neutral styling)
+   - Each section shows count and appropriate styling
+
+4. **Contributor Edit Access**: Contributors can now edit their own posts
+   - Updated Posts collection access control from `editorOnly` to `contributorOwn`
+   - Contributors can edit posts where they are listed as authors
+   - Editors and admins retain full access
+
+5. **Contributor Preview Access**: Contributors can preview their own posts
+   - Access control allows contributors to view their authored posts
+   - Preview functionality works for draft and submitted posts
+
+6. **Drafts Page Data Fetching**: Now fetches both draft and rejected posts
+   - Updated query to include `reviewStatus: 'rejected'` posts
+   - Rejected posts appear in appropriate section with feedback
+
+**Technical Changes:**
+- `CreateContentForm.tsx`: Added redirect logic to handleSaveDraft()
+- `CreateContentForm.tsx`: Added router.refresh() to handleSubmit()
+- `DraftsGridClient.tsx`: Categorized posts into 3 sections with proper filtering
+- `page.tsx` (drafts): Updated query to fetch draft AND rejected posts
+- `Posts/index.ts`: Changed update access from `editorOnly` to `contributorOwn`
+- `contributorOwn.ts`: Added admin role to access control
+
+**Files Modified:**
+- `src/app/contributor/create/CreateContentForm.tsx`
+- `src/app/contributor/drafts/DraftsGridClient.tsx`
+- `src/app/contributor/drafts/page.tsx`
+- `src/collections/Posts/index.ts`
+- `src/access/contributorOwn.ts`
+
+**Build Status:**
+- ✅ Production build successful (61 pages)
+- ✅ No TypeScript errors
+- ✅ No linting issues
+- ✅ All diagnostics passed
+
 ### Added - 2026-04-05
 
 #### Contributor & Editor Workflow with Loading States

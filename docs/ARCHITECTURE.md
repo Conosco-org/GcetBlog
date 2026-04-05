@@ -118,6 +118,11 @@ gcet-blog/
 - Editor feedback field for requested changes
 - Loading states on all action buttons (Submit for Review, Save Draft, Publish)
 - Duplicate submission prevention through button disable logic
+- **Access Control**:
+  - Create: Editors and admins only
+  - Read: Authenticated users or published posts
+  - Update: Contributors can edit their own posts, editors/admins can edit all
+  - Delete: Editors and admins only
 
 ### Users
 - Role-based permissions
