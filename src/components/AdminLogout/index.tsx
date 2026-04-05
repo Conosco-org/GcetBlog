@@ -7,16 +7,12 @@ export default function AdminLogout() {
   const handleLogout = React.useCallback(async () => {
     try {
       // Call our logout API endpoint to clear the payload-token cookie
-      const response = await fetch('/api/auth/logout', {
+      await fetch('/api/auth/logout', {
         method: 'POST',
         credentials: 'include',
       })
-
-      if (!response.ok) {
-        console.error('Logout failed:', await response.text())
-      }
-    } catch (error) {
-      console.error('Logout error:', error)
+    } catch {
+      // Silently fail - will redirect anyway
     } finally {
       // Always redirect to /login after logout attempt
       window.location.href = '/login'

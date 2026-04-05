@@ -40,8 +40,8 @@ export function NewsletterSignup({ className = '', variant = 'default' }: Newsle
           setEmail('')
           setName('')
         }
-      } catch (err) {
-        console.error('Subscription failed:', err)
+      } catch {
+        // Silently fail - non-critical
       }
     })
   }

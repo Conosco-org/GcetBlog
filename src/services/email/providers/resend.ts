@@ -79,7 +79,6 @@ export class ResendProvider implements EmailProvider {
       }
     } catch (err) {
       const error = err instanceof Error ? err.message : 'Unknown Resend error'
-      console.error(`[ResendProvider] Send failed:`, error)
       return {
         success: false,
         provider: this.name,

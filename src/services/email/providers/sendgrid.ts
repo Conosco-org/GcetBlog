@@ -66,7 +66,6 @@ export class SendGridProvider implements EmailProvider {
       }
     } catch (err) {
       const error = err instanceof Error ? err.message : 'Unknown SendGrid error'
-      console.error(`[SendGridProvider] Send failed:`, error)
       return {
         success: false,
         provider: this.name,

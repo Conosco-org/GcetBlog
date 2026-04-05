@@ -101,9 +101,6 @@ export function TemplateSelector({
       )
 
       setTemplates(docs)
-    } catch (err) {
-      console.error('Error loading templates:', err)
-      setTemplates([])
     } finally {
       setIsLoading(false)
     }

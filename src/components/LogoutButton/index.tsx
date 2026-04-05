@@ -23,8 +23,7 @@ export function LogoutButton({ className = '' }: { className?: string }) {
       // Redirect to login
       router.push('/login')
       router.refresh()
-    } catch (error) {
-      console.error('Logout error:', error)
+    } catch {
       // Still redirect even if API fails (cookie might be expired)
       router.push('/login')
       router.refresh()

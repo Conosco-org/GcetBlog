@@ -26,8 +26,6 @@ export async function GET(request: NextRequest) {
       },
     })
   } catch (error) {
-    console.error('Error in /api/users/me:', error)
-    
     // Check if error is related to token expiration
     if (error instanceof Error) {
       const errorMessage = error.message.toLowerCase()
