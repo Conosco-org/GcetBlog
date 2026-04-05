@@ -71,6 +71,7 @@ export default async function EditorQueuePage({ searchParams }: PageProps) {
       sort: '-submittedForReviewAt',
       limit: PAGE_SIZE,
       page,
+      draft: true, // Explicitly fetch draft versions to ensure real-time status
     }),
     payload.count({
       collection: 'comments',
@@ -81,6 +82,16 @@ export default async function EditorQueuePage({ searchParams }: PageProps) {
       where: { status: { equals: 'reported' } },
     }),
   ])
+
+  console.log('📊 [Editor Queue] Query results:', {
+    totalDocs: pendingPosts.totalDocs,
+    posts: pendingPosts.docs.map(p => ({
+      id: p.id,
+      title: p.title,
+      reviewStatus: p.reviewStatus,
+      _status: p._status,
+    }))
+  })
 
   return (
     <div className="p-8 min-h-screen">
