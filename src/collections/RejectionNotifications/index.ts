@@ -4,7 +4,7 @@ export const RejectionNotifications: CollectionConfig = {
   slug: 'rejection-notifications',
   admin: {
     useAsTitle: 'postTitle',
-    defaultColumns: ['postTitle', 'contributor', 'createdAt'],
+    defaultColumns: ['postTitle', 'contributor', 'rejectedBy', 'createdAt'],
     hidden: ({ user }) => {
       const userRole = (user as { role?: string })?.role
       return userRole === 'admin'
@@ -91,6 +91,7 @@ export const RejectionNotifications: CollectionConfig = {
     {
       name: 'originalPostId',
       type: 'text',
+      required: true,
       admin: {
         description: 'ID of the original post (for reference)',
       },

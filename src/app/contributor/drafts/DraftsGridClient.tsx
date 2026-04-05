@@ -11,6 +11,8 @@ import { formatDateTime } from '@/utilities/formatDateTime'
 import Link from 'next/link'
 import { Edit, FileText, ChevronLeft, ChevronRight, Plus, AlertCircle, XCircle } from 'lucide-react'
 import { useState } from 'react'
+import { markNotificationAsRead } from './actions'
+import { useToast } from '@/hooks/use-toast'
 
 interface RejectionNotification {
   id: string
@@ -42,7 +44,9 @@ export function DraftsGridClient({
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const { toast } = useToast()
   const [dismissedRejections, setDismissedRejections] = useState<Set<string>>(new Set())
+  const [dismissingId, setDismissingId] = useState<string | null>(null)
 
   const goToPage = (page: number) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -55,16 +59,33 @@ export function DraftsGridClient({
   }
 
   const handleDismissRejection = async (rejectionId: string) => {
-    try {
-      const response = await fetch(`/api/rejection-notifications/${rejectionId}`, {
-        method: 'DELETE',
-      })
+    setDismissingId(rejectionId)
 
-      if (response.ok) {
+    try {
+      const result = await markNotificationAsRead(rejectionId)
+
+      if (result.success) {
+        toast({
+          title: 'Success',
+          description: result.message,
+        })
         setDismissedRejections(prev => new Set(prev).add(rejectionId))
+        setTimeout(() => router.refresh(), 500)
+      } else {
+        toast({
+          title: 'Error',
+          description: result.message,
+          variant: 'destructive',
+        })
+        setDismissingId(null)
       }
     } catch (error) {
-      console.error('Failed to dismiss rejection:', error)
+      toast({
+        title: 'Error',
+        description: 'Failed to dismiss notification',
+        variant: 'destructive',
+      })
+      setDismissingId(null)
     }
   }
 
@@ -118,9 +139,10 @@ export function DraftsGridClient({
                   variant="outline"
                   size="sm"
                   onClick={() => handleDismissRejection(rejection.id)}
+                  disabled={dismissingId === rejection.id}
                   className="w-full"
                 >
-                  Dismiss Notification
+                  {dismissingId === rejection.id ? 'Dismissing...' : 'Mark as Read'}
                 </Button>
               </CardContent>
             </Card>
