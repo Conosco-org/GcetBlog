@@ -6,7 +6,6 @@
  * - Scheduled newsletter sending
  */
 
-import type { PayloadHandler } from 'payload'
 import { generateDigest } from '@/services/email/sender'
 import { sendNewsletter } from '@/services/email/sender'
 import { getPayload } from 'payload'

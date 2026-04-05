@@ -1,6 +1,6 @@
 ﻿'use client'
 
-import { useState, useRef, useTransition } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -16,11 +16,9 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
 import {
   ArrowLeft,
   Save,
-  Upload,
   X,
   ImageIcon,
   Loader2,
