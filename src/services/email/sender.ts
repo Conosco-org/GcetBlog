@@ -105,12 +105,12 @@ export async function sendNewsletter(
   const emailService = getEmailService()
 
   // 1. Fetch newsletter with populated posts
-  // @ts-ignore - Payload RichText Lexical type is too strict
-  const newsletter = (await payload.findByID({
+  // @ts-expect-error - Payload RichText Lexical type is too strict for deeply populated relations
+  const newsletter: Record<string, unknown> = await payload.findByID({
     collection: 'newsletters',
     id: newsletterId,
     depth: 2,
-  })) as any
+  })
 
   if (!newsletter) {
     return { success: false, totalRecipients: 0, sent: 0, failed: 0, errors: ['Newsletter not found'] }
@@ -157,7 +157,8 @@ export async function sendNewsletter(
     while (hasMore) {
       const result = await payload.find({
         collection: 'newsletter-subscribers',
-        where: subscriberWhere as any,
+        // @ts-expect-error - Payload where clause type is too strict for dynamic queries
+        where: subscriberWhere,
         limit: 100,
         page,
         depth: 0,
