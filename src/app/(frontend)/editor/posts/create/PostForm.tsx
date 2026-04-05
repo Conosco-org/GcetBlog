@@ -165,6 +165,11 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
   }
 
   const handleSendForReview = async () => {
+    // Prevent double-click submissions
+    if (isSubmitting) {
+      return
+    }
+
     if (!title.trim()) {
       toast({
         title: "Error",
@@ -243,7 +248,12 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
         })
 
         setTimeout(() => {
-          router.push('/editor/content')
+          // Redirect based on user role
+          if (user.role === 'contributor') {
+            router.push('/contributor/submissions')
+          } else {
+            router.push('/editor/content')
+          }
           router.refresh()
         }, 1000)
       } else {
@@ -266,6 +276,11 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
   }
 
   const handleSubmit = async (status: 'draft' | 'published') => {
+    // Prevent double-click submissions
+    if (isSubmitting) {
+      return
+    }
+
     if (!title.trim()) {
       toast({
         title: "Error",
@@ -346,7 +361,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
           description: data.message || (status === 'published' ? 'Post published successfully!' : 'Draft saved successfully!'),
         })
 
-        // Navigate based on status
+        // Navigate based on status and user role
         if (status === 'published') {
           // Navigate to main blog page to see the published post
           setTimeout(() => {
@@ -354,9 +369,13 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
             router.refresh()
           }, 1000)
         } else {
-          // Navigate to editor content page for drafts
+          // Navigate based on user role for drafts
           setTimeout(() => {
-            router.push('/editor/content')
+            if (user.role === 'contributor') {
+              router.push('/contributor/drafts')
+            } else {
+              router.push('/editor/content')
+            }
             router.refresh()
           }, 1000)
         }

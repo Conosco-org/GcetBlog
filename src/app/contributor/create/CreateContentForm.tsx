@@ -132,6 +132,11 @@ export function CreateContentForm({ user: _user, categories: dbCategories, initi
   }
 
   const handleSubmit = async () => {
+    // Prevent double-click submissions
+    if (isSaving) {
+      return
+    }
+
     if (!title || !content) {
       toast({
         title: 'Missing Information',
@@ -207,6 +212,11 @@ export function CreateContentForm({ user: _user, categories: dbCategories, initi
   }
 
   const handleSaveDraft = async () => {
+    // Prevent double-click submissions
+    if (isSaving) {
+      return
+    }
+
     if (!title || !content) {
       toast({
         title: 'Missing Information',
@@ -262,7 +272,11 @@ export function CreateContentForm({ user: _user, categories: dbCategories, initi
         className: 'bg-blue-50 border-blue-200 dark:bg-blue-950 dark:border-blue-800',
       })
       
-      setTimeout(() => setSaveStatus('idle'), 2000)
+      // Redirect to drafts page
+      setTimeout(() => {
+        router.push('/contributor/drafts')
+        router.refresh()
+      }, 1500)
     } catch (error) {
       console.error('Error saving draft:', error)
       toast({
