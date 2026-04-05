@@ -208,6 +208,78 @@ const handleSubmit = async () => {
 4. Keep loading state on success until page refresh
 5. Show loading text ("Submitting...", "Saving...", etc.)
 
+### Contributor Workflow Best Practices
+
+When implementing contributor features, follow these patterns:
+
+**1. Redirect After Actions**
+```typescript
+const handleSaveDraft = async () => {
+  setSaveStatus('saving')
+  try {
+    const response = await fetch('/api/posts/create', {
+      method: 'POST',
+      body: JSON.stringify({ ...data, isDraft: true }),
+    })
+    
+    if (response.ok) {
+      toast({ title: 'Draft Saved', description: 'Your draft has been saved' })
+      // Always redirect and refresh after successful save
+      setTimeout(() => {
+        router.push('/contributor/drafts')
+        router.refresh()
+      }, 1500)
+    }
+  } catch (error) {
+    setSaveStatus('idle')
+  }
+}
+```
+
+**2. Organize Drafts by Status**
+```typescript
+// Categorize posts into sections
+const rejectedPosts = drafts.filter(post => post.reviewStatus === 'rejected')
+const requestingChangesPosts = drafts.filter(post => 
+  post.reviewStatus === 'draft' && post.editorFeedback
+)
+const currentDrafts = drafts.filter(post => 
+  post.reviewStatus === 'draft' && !post.editorFeedback
+)
+```
+
+**3. Fetch All Relevant Posts**
+```typescript
+// Include both draft and rejected posts in query
+const conditions: Where[] = [
+  { authors: { equals: userId } },
+  { 
+    or: [
+      { reviewStatus: { equals: 'draft' } },
+      { reviewStatus: { equals: 'rejected' } },
+    ]
+  },
+]
+```
+
+**4. Access Control for Contributors**
+```typescript
+// Allow contributors to edit their own posts
+export const contributorOwn: Access = ({ req: { user } }) => {
+  if (!user) return false
+  
+  // Editors and admins have full access
+  if (user.role === 'editor' || user.role === 'admin') {
+    return true
+  }
+  
+  // Contributors can only access their own content
+  return {
+    'authors.id': { equals: user.id },
+  }
+}
+```
+
 ### Sending Emails
 
 ```typescript

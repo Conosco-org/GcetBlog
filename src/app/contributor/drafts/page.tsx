@@ -40,7 +40,12 @@ export default async function DraftsPage({ searchParams }: PageProps) {
 
   const conditions: Where[] = [
     { authors: { equals: typedUser.id } },
-    { reviewStatus: { equals: 'draft' } },
+    { 
+      or: [
+        { reviewStatus: { equals: 'draft' } },
+        { reviewStatus: { equals: 'rejected' } },
+      ]
+    },
   ]
 
   if (query) {
