@@ -6,7 +6,6 @@
  * - Scheduled newsletter sending
  */
 
-import type { PayloadHandler } from 'payload'
 import { generateDigest } from '@/services/email/sender'
 import { sendNewsletter } from '@/services/email/sender'
 import { getPayload } from 'payload'
@@ -16,34 +15,34 @@ import configPromise from '@payload-config'
  * Daily Digest Job
  * Generates and sends daily digest of recent posts
  */
-export const newsletterDailyDigest = (async () => {
+export const newsletterDailyDigest = async () => {
   const result = await generateDigest('daily')
   return result
-}) as any
+}
 
 /**
  * Weekly Digest Job
  * Generates and sends weekly digest of recent posts
  */
-export const newsletterWeeklyDigest = (async () => {
+export const newsletterWeeklyDigest = async () => {
   const result = await generateDigest('weekly')
   return result
-}) as any
+}
 
 /**
  * Monthly Digest Job
  * Generates and sends monthly digest of recent posts
  */
-export const newsletterMonthlyDigest = (async () => {
+export const newsletterMonthlyDigest = async () => {
   const result = await generateDigest('monthly')
   return result
-}) as any
+}
 
 /**
  * Scheduled Newsletters Job
  * Checks for newsletters scheduled to be sent now and processes them
  */
-export const newsletterScheduledSend = (async () => {
+export const newsletterScheduledSend = async () => {
   const payload = await getPayload({ config: configPromise })
   
   // Find newsletters scheduled for the past (should have been sent by now)
@@ -76,7 +75,7 @@ export const newsletterScheduledSend = (async () => {
       } else {
         failed++
       }
-    } catch (err) {
+    } catch {
       failed++
     }
   }
@@ -86,13 +85,13 @@ export const newsletterScheduledSend = (async () => {
     sent,
     failed,
   }
-}) as any
+}
 
 /**
  * Stats Rollup Job (Optional)
  * Aggregates newsletter stats periodically for performance
  */
-export const newsletterStatsRollup = (async () => {
+export const newsletterStatsRollup = async () => {
   const payload = await getPayload({ config: configPromise })
   
   // Find all sent newsletters
@@ -173,7 +172,7 @@ export const newsletterStatsRollup = (async () => {
       })
       
       updated++
-    } catch (err) {
+    } catch {
       // Silently continue on error
     }
   }
@@ -182,4 +181,4 @@ export const newsletterStatsRollup = (async () => {
     success: true,
     updated,
   }
-}) as any
+}

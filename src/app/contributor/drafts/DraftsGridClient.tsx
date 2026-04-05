@@ -417,7 +417,7 @@ export function DraftsGridClient({
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Draft</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete "{postToDelete?.title}"? This action cannot be undone.
+              Are you sure you want to delete &ldquo;{postToDelete?.title}&rdquo;? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

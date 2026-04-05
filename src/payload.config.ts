@@ -149,27 +149,27 @@ export default buildConfig({
     tasks: [
       {
         slug: 'newsletter-daily-digest',
-        handler: newsletterDailyDigest as any,
+        handler: newsletterDailyDigest,
         schedule: [{ cron: '0 6 * * *', queue: 'default' }], // Every day at 6:00 AM
       },
       {
         slug: 'newsletter-weekly-digest',
-        handler: newsletterWeeklyDigest as any,
+        handler: newsletterWeeklyDigest,
         schedule: [{ cron: '0 7 * * 1', queue: 'default' }], // Every Monday at 7:00 AM
       },
       {
         slug: 'newsletter-monthly-digest',
-        handler: newsletterMonthlyDigest as any,
+        handler: newsletterMonthlyDigest,
         schedule: [{ cron: '0 8 1 * *', queue: 'default' }], // 1st of every month at 8:00 AM
       },
       {
         slug: 'newsletter-scheduled-send',
-        handler: newsletterScheduledSend as any,
+        handler: newsletterScheduledSend,
         schedule: [{ cron: '*/15 * * * *', queue: 'default' }], // Every 15 minutes
       },
       {
         slug: 'newsletter-stats-rollup',
-        handler: newsletterStatsRollup as any,
+        handler: newsletterStatsRollup,
         schedule: [{ cron: '0 */6 * * *', queue: 'default' }], // Every 6 hours
       },
     ],
