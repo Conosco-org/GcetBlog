@@ -45,6 +45,7 @@ export function DraftsGridClient({
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [readRejections, setReadRejections] = useState<Set<string>>(new Set())
+  const [markingAsRead, setMarkingAsRead] = useState<Set<string>>(new Set())
 
   const goToPage = (page: number) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -57,6 +58,13 @@ export function DraftsGridClient({
   }
 
   const handleMarkAsRead = async (rejectionId: string) => {
+    // Prevent double-click
+    if (markingAsRead.has(rejectionId)) {
+      return
+    }
+
+    setMarkingAsRead(prev => new Set(prev).add(rejectionId))
+    
     try {
       const response = await fetch(`/api/rejection-notifications/${rejectionId}/mark-read`, {
         method: 'PATCH',
@@ -67,6 +75,12 @@ export function DraftsGridClient({
       }
     } catch (error) {
       console.error('Failed to mark rejection as read:', error)
+    } finally {
+      setMarkingAsRead(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(rejectionId)
+        return newSet
+      })
     }
   }
 
@@ -116,9 +130,10 @@ export function DraftsGridClient({
                     variant="outline"
                     size="sm"
                     onClick={() => handleMarkAsRead(rejection.id)}
+                    disabled={markingAsRead.has(rejection.id)}
                     className="w-full"
                   >
-                    Mark as Read
+                    {markingAsRead.has(rejection.id) ? 'Marking...' : 'Mark as Read'}
                   </Button>
                 </CardContent>
               </Card>

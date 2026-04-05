@@ -22,6 +22,11 @@ export function ApprovalButtons({ postId, postTitle, postSlug }: ApprovalButtons
   const [isRejecting, setIsRejecting] = useState(false)
 
   const handleApprove = async () => {
+    // Prevent double-click
+    if (isApproving || isRequestingChanges || isRejecting) {
+      return
+    }
+
     if (!confirm(`Are you sure you want to approve and publish "${postTitle}"?`)) {
       return
     }
@@ -57,6 +62,11 @@ export function ApprovalButtons({ postId, postTitle, postSlug }: ApprovalButtons
   }
 
   const handleRequestChanges = async () => {
+    // Prevent double-click
+    if (isApproving || isRequestingChanges || isRejecting) {
+      return
+    }
+
     const feedback = prompt(`What changes are needed for "${postTitle}"? (This feedback will be sent to the contributor)`)
     if (feedback === null) {
       return // User cancelled
@@ -102,6 +112,11 @@ export function ApprovalButtons({ postId, postTitle, postSlug }: ApprovalButtons
   }
 
   const handleReject = async () => {
+    // Prevent double-click
+    if (isApproving || isRequestingChanges || isRejecting) {
+      return
+    }
+
     const confirmReject = confirm(
       `⚠️ WARNING: This will PERMANENTLY REJECT and DELETE "${postTitle}" from the database.\n\nThe contributor will be notified with your reason. This action cannot be undone. Are you sure?`
     )
