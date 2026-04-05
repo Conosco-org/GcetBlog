@@ -314,7 +314,7 @@ export interface Post {
   /**
    * Current review status of the post
    */
-  reviewStatus?: ('draft' | 'pending_review' | 'approved' | 'rejected') | null;
+  reviewStatus?: ('draft' | 'pending_review' | 'requesting_changes' | 'approved' | 'rejected') | null;
   /**
    * When the post was submitted for review
    */
