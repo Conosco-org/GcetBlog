@@ -62,7 +62,9 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
   const [heroImageId, setHeroImageId] = useState<string | undefined>(initialData?.heroImage)
   const [heroImagePreview, setHeroImagePreview] = useState<string | undefined>(initialData?.heroImageUrl || undefined)
   const [isUploadingImage, setIsUploadingImage] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isPublishing, setIsPublishing] = useState(false)
+  const [isSavingDraft, setIsSavingDraft] = useState(false)
+  const [isSubmittingForReview, setIsSubmittingForReview] = useState(false)
   const [showTemplateSelector, setShowTemplateSelector] = useState(false)
   const [activeTemplateName, setActiveTemplateName] = useState<string | null>(initialTemplate?.name || null)
 
@@ -206,7 +208,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
       return
     }
 
-    setIsSubmitting(true)
+    setIsSubmittingForReview(true)
 
     try {
       const url = isEdit ? `/api/posts/${postId}` : '/api/posts'
@@ -252,6 +254,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
           description: data.message || 'Failed to submit post for review',
           variant: "destructive",
         })
+        setIsSubmittingForReview(false)
       }
     } catch (err) {
       toast({
@@ -260,8 +263,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
         variant: "destructive",
       })
       console.error('Submit for review error:', err)
-    } finally {
-      setIsSubmitting(false)
+      setIsSubmittingForReview(false)
     }
   }
 
@@ -307,7 +309,12 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
       return
     }
 
-    setIsSubmitting(true)
+    // Set appropriate loading state based on status
+    if (status === 'draft') {
+      setIsSavingDraft(true)
+    } else {
+      setIsPublishing(true)
+    }
 
     try {
       const url = isEdit ? `/api/posts/${postId}` : '/api/posts'
@@ -360,12 +367,19 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
             router.refresh()
           }, 1000)
         }
+        // Keep loading state on success until redirect
       } else {
         toast({
           title: "Error",
           description: data.message || `Failed to ${isEdit ? 'update' : 'create'} post`,
           variant: "destructive",
         })
+        // Clear loading state on error
+        if (status === 'draft') {
+          setIsSavingDraft(false)
+        } else {
+          setIsPublishing(false)
+        }
       }
     } catch (err) {
       toast({
@@ -374,8 +388,12 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
         variant: "destructive",
       })
       console.error('Post submission error:', err)
-    } finally {
-      setIsSubmitting(false)
+      // Clear loading state on error
+      if (status === 'draft') {
+        setIsSavingDraft(false)
+      } else {
+        setIsPublishing(false)
+      }
     }
   }
 
@@ -428,14 +446,14 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
           <Button
             type="button"
             onClick={() => handleSubmit('draft')}
-            disabled={isSubmitting}
+            disabled={isSavingDraft || isPublishing || isSubmittingForReview}
             variant="outline"
             size="sm"
             title="Save as Draft"
             aria-label="Save as Draft"
           >
             <Save className="w-4 h-4 sm:mr-1.5" />
-            <span className="hidden sm:inline">{isSubmitting ? 'Saving...' : 'Save Draft'}</span>
+            <span className="hidden sm:inline">{isSavingDraft ? 'Saving...' : 'Save Draft'}</span>
           </Button>
           
           {/* Show different buttons based on user role */}
@@ -443,26 +461,26 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
             <Button
               type="button"
               onClick={handleSendForReview}
-              disabled={isSubmitting}
+              disabled={isSubmittingForReview || isPublishing || isSavingDraft}
               className="bg-blue-600 hover:bg-blue-700"
               size="sm"
               title="Send for Review"
               aria-label="Send for Review"
             >
               <Send className="w-4 h-4 sm:mr-1.5" />
-              <span className="hidden sm:inline">{isSubmitting ? 'Submitting...' : 'Send for Review'}</span>
+              <span className="hidden sm:inline">{isSubmittingForReview ? 'Submitting...' : 'Send for Review'}</span>
             </Button>
           ) : (
             <Button
               type="button"
               onClick={() => handleSubmit('published')}
-              disabled={isSubmitting}
+              disabled={isPublishing || isSavingDraft || isSubmittingForReview}
               size="sm"
               title="Publish"
               aria-label="Publish"
             >
               <Eye className="w-4 h-4 sm:mr-1.5" />
-              <span className="hidden sm:inline">{isSubmitting ? 'Publishing...' : 'Publish'}</span>
+              <span className="hidden sm:inline">{isPublishing ? 'Publishing...' : 'Publish'}</span>
             </Button>
           )}
         </div>

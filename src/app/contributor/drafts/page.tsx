@@ -55,11 +55,14 @@ export default async function DraftsPage({ searchParams }: PageProps) {
     page,
   })
 
-  // Fetch rejection notifications for this contributor
+  // Fetch unread rejection notifications for this contributor
   const rejections = await payload.find({
     collection: 'rejection-notifications',
     where: {
-      contributor: { equals: typedUser.id },
+      and: [
+        { contributor: { equals: typedUser.id } },
+        { isRead: { equals: false } },
+      ],
     },
     sort: '-createdAt',
     limit: 50,

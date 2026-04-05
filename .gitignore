@@ -27,6 +27,7 @@ test.env
 *.swo
 *~
 .editorconfig
+.kiro
 
 # Code formatting (not needed for Vercel)
 .prettierignore

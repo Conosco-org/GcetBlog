@@ -1328,7 +1328,7 @@ export interface RejectionNotification {
   /**
    * ID of the original post (for reference)
    */
-  originalPostId?: string | null;
+  originalPostId: string;
   /**
    * Whether the contributor has read this notification
    */
