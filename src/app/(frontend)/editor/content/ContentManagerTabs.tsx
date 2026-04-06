@@ -1,13 +1,13 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import { Card } from '@/frontend/components/ui/card'
+import { Button } from '@frontend/components/ui/button'
 import { Plus } from 'lucide-react'
 import Link from 'next/link'
 import ContentManagerClient from './ContentManagerClient'
 import { ContentManagerComments } from './ContentManagerComments'
-import type { Comment, Post, Category } from '@/payload-types'
+import type { Comment, Post, Category } from '@/shared/types/payload-types'
 
 interface ContentManagerTabsProps {
   activeTab: string

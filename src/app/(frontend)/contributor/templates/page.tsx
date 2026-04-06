@@ -3,8 +3,8 @@ import type { Where } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import type { User } from '@/payload-types'
-import { ContributorTemplatesClient } from './ContributorTemplatesClient'
+import type { User } from '@shared/types/payload-types'
+import { ContributorTemplatesClient } from '@frontend/features/contributor/components/contributor-templates-client'
 
 export default async function ContributorTemplatesPage({
   searchParams,

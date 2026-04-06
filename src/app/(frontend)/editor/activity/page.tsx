@@ -1,6 +1,6 @@
 import { getPayload, type Where } from 'payload'
 import configPromise from '@payload-config'
-import { PageHeader } from '@/components/base/PageHeader'
+import { PageHeader } from '@frontend/components/base/PageHeader'
 import { ActivityClient } from './ActivityClient'
 
 export const dynamic = 'force-dynamic'

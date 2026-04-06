@@ -11,7 +11,7 @@ import {
   Trash2,
   Crown,
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@frontend/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,7 +19,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from '@/frontend/components/ui/dropdown-menu'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,9 +29,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
+} from '@/frontend/components/ui/alert-dialog'
 import { changeUserRole, deleteUser, toggleAdminStatus, toggleCanManageAdmins } from './actions'
-import type { User } from '@/payload-types'
+import type { User } from '@/shared/types/payload-types'
 
 interface UserActionsProps {
   user: User

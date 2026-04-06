@@ -1,0 +1,5 @@
+export { Banner } from './banner/config'
+export { Code } from './code/config'
+export { MediaBlock } from './media-block/config'
+export { YouTubeEmbed } from './youtube-embed/config'
+export { InstagramEmbed } from './instagram-embed/config'

@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 /**
  * Newsletters Table Component
@@ -7,9 +7,9 @@
  */
 
 import Link from 'next/link'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
+import { Badge } from '@/frontend/components/ui/badge'
+import { Button } from '@frontend/components/ui/button'
+import { Card } from '@/frontend/components/ui/card'
 import {
   Table,
   TableBody,
@@ -17,10 +17,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@/frontend/components/ui/table'
 import { Eye, Edit } from 'lucide-react'
-import { DataTablePagination } from '@/components/base/DataTablePagination'
-import type { Newsletter } from '@/payload-types'
+import { DataTablePagination } from '@frontend/components/base/DataTablePagination'
+import type { Newsletter } from '@/shared/types/payload-types'
 
 interface NewslettersTableProps {
   newsletters: Newsletter[]

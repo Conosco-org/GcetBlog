@@ -1,17 +1,17 @@
 'use client'
 
 import { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Card, CardContent, CardHeader, CardTitle } from '@/frontend/components/ui/card'
+import { Badge } from '@/frontend/components/ui/badge'
+import { Button } from '@frontend/components/ui/button'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/frontend/components/ui/tabs'
 import { Trash2, ExternalLink, AlertCircle, CheckCircle, XCircle, Clock } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
 import { deleteOwnComment } from './actions'
 import { useRouter } from 'next/navigation'
-import { useToast } from '@/components/ui/use-toast'
-import type { Comment } from '@/payload-types'
+import { useToast } from '@/frontend/components/ui/use-toast'
+import type { Comment } from '@/shared/types/payload-types'
 
 interface UserCommentDashboardProps {
   myComments: Comment[]

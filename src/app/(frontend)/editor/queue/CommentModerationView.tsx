@@ -2,13 +2,13 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Checkbox } from '@/components/ui/checkbox'
-import { useToast } from '@/hooks/use-toast'
-import { CommentCard } from '@/components/shared/comments/CommentCard'
-import { BulkActionBar } from '@/components/shared/comments/BulkActionBar'
-import { RejectDialog, SpamDialog, DeleteDialog } from '@/components/shared/comments/ModerationDialogs'
-import { approveComments, rejectComments, markAsSpam, deleteComments } from '@/lib/comments/actions'
-import type { Comment } from '@/payload-types'
+import { Checkbox } from '@/frontend/components/ui/checkbox'
+import { useToast } from '@frontend/components/ui/use-toast'
+import { CommentCard } from '@/frontend/features/comments/components/comment-card'
+import { BulkActionBar } from '@/frontend/features/comments/components/bulk-action-bar'
+import { RejectDialog, SpamDialog, DeleteDialog } from '@/frontend/features/comments/components/moderation-dialogs'
+import { approveComments, rejectComments, markAsSpam, deleteComments } from '@/frontend/features/comments/lib/comment-actions'
+import type { Comment } from '@/shared/types/payload-types'
 
 interface CommentModerationViewProps {
   pendingComments: Comment[]

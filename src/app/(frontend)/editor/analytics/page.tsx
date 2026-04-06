@@ -1,10 +1,10 @@
-﻿import { getPayload } from 'payload'
+import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { PageHeader } from '@/components/base/PageHeader'
-import { formatDateTimeIST } from '@/utilities/formatDateTime'
+import { Card, CardContent, CardHeader, CardTitle } from '@/frontend/components/ui/card'
+import { PageHeader } from '@frontend/components/base/PageHeader'
+import { formatDateTimeIST } from '@/frontend/lib/format-date-time'
 import {
   Eye,
   Users,

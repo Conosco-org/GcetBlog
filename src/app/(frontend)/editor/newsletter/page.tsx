@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Newsletter Dashboard - Editor View
  *
  * Shows campaign overview, stats, and recent newsletters.
@@ -8,12 +8,12 @@
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import Link from 'next/link'
-import { PageHeader } from '@/components/base/PageHeader'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { EmptyState } from '@/components/base/EmptyState'
-import { SearchInput } from '@/components/base/SearchInput'
-import { FilterBar } from '@/components/base/FilterBar'
+import { PageHeader } from '@frontend/components/base/PageHeader'
+import { Button } from '@frontend/components/ui/button'
+import { Card } from '@/frontend/components/ui/card'
+import { EmptyState } from '@frontend/components/base/EmptyState'
+import { SearchInput } from '@frontend/components/base/SearchInput'
+import { FilterBar } from '@frontend/components/base/FilterBar'
 import { Mail, Plus, Send, Users, TrendingUp, FileText } from 'lucide-react'
 import { NewslettersTable } from './NewslettersTable'
 

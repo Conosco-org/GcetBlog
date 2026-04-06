@@ -1,9 +1,9 @@
-﻿import { getPayload } from 'payload'
+import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import type { User } from '@/payload-types'
-import { EditorLayoutClient } from './components/EditorLayoutClient'
+import type { User } from '@/shared/types/payload-types'
+import { EditorLayoutClient } from '@/frontend/features/editor/components/editor-layout-client'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {

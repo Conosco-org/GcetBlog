@@ -6,7 +6,7 @@
  */
 
 import { getPayload } from 'payload'
-import config from '../src/payload.config'
+import config from '../src/backend/payload.config'
 
 async function migrateComments() {
   console.log('Starting comment migration...')

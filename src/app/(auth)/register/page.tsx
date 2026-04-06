@@ -1,7 +1,7 @@
 import { getCurrentUser } from '../login/actions'
 import { redirect } from 'next/navigation'
 import { SignInLink } from './SignInLink'
-import { RegistrationForm } from './RegistrationForm'
+import { RegistrationForm } from '../../../frontend/features/auth/components/register-form'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {

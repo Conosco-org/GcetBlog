@@ -1,6 +1,6 @@
 'use client'
 
-import { ContributorErrorFallback } from './components/ContributorErrorFallback'
+import { ContributorErrorFallback } from '@frontend/features/contributor/components/contributor-error-fallback'
 
 export default function ContributorError() {
   return <ContributorErrorFallback />

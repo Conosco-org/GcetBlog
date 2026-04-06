@@ -8,10 +8,10 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { PageHeader } from '@/components/base/PageHeader'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { PageHeader } from '@frontend/components/base'
+import { Button } from '@frontend/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@frontend/components/ui/card'
+import { Badge } from '@frontend/components/ui/badge'
 import {
   Eye,
   MousePointerClick,

@@ -1,20 +1,20 @@
-﻿'use client'
+'use client'
 
 import { useState, useTransition } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
-import { Card, CardContent } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
+import { Button } from '@frontend/components/ui/button'
+import { Badge } from '@/frontend/components/ui/badge'
+import { Input } from '@/frontend/components/ui/input'
+import { Card, CardContent } from '@/frontend/components/ui/card'
+import { Separator } from '@/frontend/components/ui/separator'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from '@/components/ui/dialog'
+} from '@/frontend/components/ui/dialog'
 import {
   Search,
   Plus,
@@ -32,15 +32,15 @@ import {
   ArrowRight,
   X,
 } from 'lucide-react'
-import { cn } from '@/utilities/ui'
+import { cn } from '@/frontend/lib/utils'
 import {
   getTemplateIcon,
   categoryColors,
   audienceLabels,
-} from '@/components/shared/templates/templateUtils'
-import { useToast } from '@/hooks/use-toast'
+} from '@frontend/components/shared/templates/templateUtils'
+import { useToast } from '@frontend/components/ui/use-toast'
 
-/* ── Types ─────────────────────────────────────────────────────── */
+/* -- Types ------------------------------------------------------- */
 
 interface TemplateData {
   id: string
@@ -68,7 +68,7 @@ interface Props {
   category: string
 }
 
-/* ── Constants ─────────────────────────────────────────────────── */
+/* -- Constants --------------------------------------------------- */
 
 const CATEGORIES = [
   { label: 'All Templates', value: '' },
@@ -78,7 +78,7 @@ const CATEGORIES = [
   { label: 'News', value: 'news' },
 ]
 
-/* ── Component ─────────────────────────────────────────────────── */
+/* -- Component --------------------------------------------------- */
 
 export function TemplatesPageClient({
   templates,
@@ -97,7 +97,7 @@ export function TemplatesPageClient({
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [, startDeleteTransition] = useTransition()
 
-  /* ── URL helpers ────────────────────────────────────────────── */
+  /* -- URL helpers ---------------------------------------------- */
   const updateParams = (updates: Record<string, string>) => {
     const params = new URLSearchParams(searchParams.toString())
     Object.entries(updates).forEach(([key, val]) => {
@@ -114,7 +114,7 @@ export function TemplatesPageClient({
     if (e.key === 'Enter') handleSearch()
   }
 
-  /* ── Delete ─────────────────────────────────────────────────── */
+  /* -- Delete --------------------------------------------------- */
   const handleDelete = (template: TemplateData) => {
     setDeletingId(template.id)
     startDeleteTransition(async () => {
@@ -131,10 +131,10 @@ export function TemplatesPageClient({
     })
   }
 
-  /* ── Render ─────────────────────────────────────────────────── */
+  /* -- Render --------------------------------------------------- */
   return (
     <div className="min-h-screen bg-muted/30">
-      {/* ── Preview Dialog ─────────────────────────────────────── */}
+      {/* -- Preview Dialog --------------------------------------- */}
       <Dialog open={!!previewTemplate} onOpenChange={(open) => !open && setPreviewTemplate(null)}>
         <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
           {previewTemplate && (() => {
@@ -231,9 +231,9 @@ export function TemplatesPageClient({
         </DialogContent>
       </Dialog>
 
-      {/* ── Page container ─────────────────────────────────────── */}
+      {/* -- Page container --------------------------------------- */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* ── Header ────────────────────────────────────────────── */}
+        {/* -- Header ---------------------------------------------- */}
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
           <div>
             <div className="flex items-center gap-2.5 mb-1">
@@ -254,7 +254,7 @@ export function TemplatesPageClient({
           </Link>
         </div>
 
-        {/* ── Search & Filters ──────────────────────────────────── */}
+        {/* -- Search & Filters ------------------------------------ */}
         <div className="bg-background rounded-xl border shadow-sm p-4 mb-6">
           <div className="flex flex-col sm:flex-row gap-3">
             {/* Search */}
@@ -291,7 +291,7 @@ export function TemplatesPageClient({
           </div>
         </div>
 
-        {/* ── Grid ──────────────────────────────────────────────── */}
+        {/* -- Grid ------------------------------------------------ */}
         {templates.length === 0 ? (
           <div className="bg-background rounded-xl border shadow-sm p-16 text-center">
             <div className="inline-flex w-16 h-16 rounded-2xl bg-muted items-center justify-center mb-4">
@@ -474,7 +474,7 @@ export function TemplatesPageClient({
           </div>
         )}
 
-        {/* ── Pagination ────────────────────────────────────────── */}
+        {/* -- Pagination ------------------------------------------ */}
         {totalPages > 1 && (
           <div className="flex items-center justify-center gap-2 mt-8">
             <Button

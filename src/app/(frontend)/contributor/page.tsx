@@ -1,11 +1,11 @@
-﻿import { getPayload } from 'payload'
+import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { PageHeader } from '@/components/base'
+import { Card, CardContent, CardHeader, CardTitle } from '@/frontend/components/ui/card'
+import { Badge } from '@/frontend/components/ui/badge'
+import { Button } from '@frontend/components/ui/button'
+import { PageHeader } from '@frontend/components/base'
 import type { Metadata } from 'next'
 import { 
   FileText, 
@@ -20,7 +20,7 @@ import {
   Send
 } from 'lucide-react'
 import Link from 'next/link'
-import type { User } from '@/payload-types'
+import type { User } from '@/shared/types/payload-types'
 
 export const metadata: Metadata = {
   title: 'Contributor Dashboard',

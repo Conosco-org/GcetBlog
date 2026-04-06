@@ -1,8 +1,8 @@
-﻿import type { Metadata } from 'next/types'
+import type { Metadata } from 'next/types'
 
-import { CollectionArchive } from '@/components/post/CollectionArchive'
-import { PageRange } from '@/components/shared/PageRange'
-import { Pagination } from '@/components/shared/Pagination'
+import { CollectionArchive } from '@frontend/features/posts/components/collection-archive'
+import { PageRange } from '@frontend/components/shared/page-range'
+import { Pagination } from '@frontend/components/shared/pagination'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React, { Suspense } from 'react'
@@ -10,9 +10,9 @@ import Link from 'next/link'
 import { unstable_cache } from 'next/cache'
 import PageClient from './page.client'
 import { PostsFilterBar } from './PostsFilterBar'
-import { NewsletterSignup } from '@/components/shared/NewsletterSignup'
+import { NewsletterSignup } from '@frontend/features/newsletter/components/newsletter-signup'
 import type { Where } from 'payload'
-import { publishedVisibilityWhere } from '@/utilities/postValidation'
+import { publishedVisibilityWhere } from '@frontend/features/posts/lib/post-validation'
 
 // Cache popular tags for 10 minutes - they rarely change
 const getCachedPopularTags = unstable_cache(

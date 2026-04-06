@@ -6,9 +6,9 @@
  * Displays newsletter subscribers in a table with status badges and actions.
  */
 
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@/frontend/components/ui/badge'
 
-import { Card } from '@/components/ui/card'
+import { Card } from '@/frontend/components/ui/card'
 import {
   Table,
   TableBody,
@@ -16,10 +16,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from '@/frontend/components/ui/table'
 import { Mail, Clock, CheckCircle, XCircle, AlertTriangle } from 'lucide-react'
-import { DataTablePagination } from '@/components/base/DataTablePagination'
-import type { NewsletterSubscriber } from '@/payload-types'
+import { DataTablePagination } from '@frontend/components/base/DataTablePagination'
+import type { NewsletterSubscriber } from '@/shared/types/payload-types'
 
 interface SubscribersTableProps {
   subscribers: NewsletterSubscriber[]

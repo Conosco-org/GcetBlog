@@ -1,0 +1,6 @@
+export { CTASection } from './cta-section'
+export { FeaturesSection } from './features-section'
+export { HeroSection } from './hero-section'
+export { ModernCTA } from './modern-cta'
+export { ModernFeatures } from './modern-features'
+export { StatsSection } from './stats-section'

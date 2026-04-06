@@ -2,8 +2,8 @@
 
 import { Settings as SettingsIcon, Bell, Workflow, FileText, Save, Download, Upload } from 'lucide-react'
 import { useState } from 'react'
-import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import { Card } from '@/frontend/components/ui/card'
+import { Button } from '@frontend/components/ui/button'
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState('general')

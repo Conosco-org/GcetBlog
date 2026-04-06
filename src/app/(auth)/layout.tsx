@@ -1,11 +1,13 @@
-import { cn } from '@/utilities/ui'
+import { cn } from '@/frontend/lib/utils'
 import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
 import { Sora } from 'next/font/google'
-import { Header } from '@/Header/Component'
-import { Providers } from '@/providers'
-import { InitTheme } from '@/providers/Theme/InitTheme'
+import { Header } from '@/frontend/components/layout/header/header'
+import { Providers } from '@/frontend/providers'
+import { InitTheme } from '@/frontend/providers/Theme/InitTheme'
 import type { Metadata } from 'next'
+
+import '@/frontend/styles/globals.css'
 
 export const metadata: Metadata = {
   title: 'GCET Blog',

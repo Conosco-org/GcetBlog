@@ -1,8 +1,8 @@
-﻿import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import { revalidatePath } from 'next/cache'
-import config from '@/payload.config'
-import { validateFeaturedRange, validateMetaDescription } from '@/utilities/postValidation'
+import config from '@payload-config'
+import { validateFeaturedRange, validateMetaDescription } from '@frontend/features/posts/lib/post-validation'
 
 // GET handler - list posts (proxies to Payload's built-in REST)
 export async function GET(request: NextRequest) {

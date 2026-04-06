@@ -1,12 +1,12 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { useToast } from '@/hooks/use-toast'
-import { CommentCard } from '@/components/shared/comments/CommentCard'
-import { deleteOwnComment } from '@/lib/comments/actions'
+import { Button } from '@frontend/components/ui/button'
+import { useToast } from '@frontend/components/ui/use-toast'
+import { CommentCard } from '@/frontend/features/comments/components/comment-card'
+import { deleteOwnComment } from '@/frontend/features/comments/lib/comment-actions'
 import { Trash2 } from 'lucide-react'
-import type { Comment } from '@/payload-types'
+import type { Comment } from '@/shared/types/payload-types'
 
 interface MyCommentsViewProps {
   myComments: Comment[]

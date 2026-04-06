@@ -3,8 +3,8 @@ import config from '@payload-config'
 import { UserCommentDashboard } from './UserCommentDashboard'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
-import type { User } from '@/payload-types'
-import { PageHeader } from '@/components/base/PageHeader'
+import type { User } from '@/shared/types/payload-types'
+import { PageHeader } from '@frontend/components/base/PageHeader'
 
 // Force dynamic rendering for real-time data
 export const dynamic = 'force-dynamic'

@@ -2,7 +2,7 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import type { User } from '@/payload-types'
+import type { User } from '@/shared/types/payload-types'
 import CategoryManager from './CategoryManager'
 
 // Force dynamic rendering for real-time data

@@ -2,8 +2,8 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import type { User } from '@/payload-types'
-import FeedbackCenter from './FeedbackCenter'
+import type { User } from '@shared/types/payload-types'
+import FeedbackCenter from '@frontend/features/contributor/components/feedback-center'
 
 // Force dynamic rendering for real-time data
 export const dynamic = 'force-dynamic'

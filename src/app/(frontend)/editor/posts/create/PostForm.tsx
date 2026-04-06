@@ -1,21 +1,21 @@
-﻿'use client'
+'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Save, ArrowLeft, Eye, Upload, X, Send, Clock, Tag, Star, Plus, FileStack, XCircle } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
-import { useToast } from '@/hooks/use-toast'
-import { RichTextEditor, htmlToLexical, htmlToPlainText } from '@/components/shared/RichTextEditor'
-import { TemplateSelector, type TemplateCardData } from '@/components/shared/templates'
-import type { Category, User } from '@/payload-types'
-import { uploadToCloudinaryDirect } from '@/utilities/uploadToCloudinaryDirect'
-import { fromISTInputToISOString } from '@/utilities/dateTimeIST'
-import { validateFeaturedRange, validateMetaDescription } from '@/utilities/postValidation'
+import { Button } from '@frontend/components/ui/button'
+import { Input } from '@/frontend/components/ui/input'
+import { Textarea } from '@/frontend/components/ui/textarea'
+import { Label } from '@/frontend/components/ui/label'
+import { useToast } from '@frontend/components/ui/use-toast'
+import { RichTextEditor, htmlToLexical, htmlToPlainText } from '@frontend/components/shared/rich-text-editor'
+import { TemplateSelector, type TemplateCardData } from '@frontend/components/shared/templates'
+import type { Category, User } from '@/shared/types/payload-types'
+import { uploadToCloudinaryDirect } from '@backend/lib/upload-to-cloudinary-direct'
+import { fromISTInputToISOString } from '@/shared/lib/date-time-ist'
+import { validateFeaturedRange, validateMetaDescription } from '@/frontend/features/posts/lib/post-validation'
 
 interface PostFormProps {
   categories: Category[]
@@ -550,10 +550,10 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
                   {isUploadingImage ? 'Uploading...' : 'Click to upload hero image'}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Recommended: 1920×1080 (16:9) • PNG, JPG, WebP • Optimize to &lt;500KB
+                  Recommended: 1920�1080 (16:9) � PNG, JPG, WebP � Optimize to &lt;500KB
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  💡 Tip: Keep faces in top 60% for better cropping
+                  ?? Tip: Keep faces in top 60% for better cropping
                 </p>
               </label>
             </div>

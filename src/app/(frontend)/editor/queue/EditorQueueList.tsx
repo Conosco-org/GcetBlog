@@ -3,12 +3,12 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { approvePost, requestChanges } from './actions'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Textarea } from '@/components/ui/textarea'
-import { Badge } from '@/components/ui/badge'
+import { Button } from '@frontend/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/frontend/components/ui/card'
+import { Textarea } from '@/frontend/components/ui/textarea'
+import { Badge } from '@/frontend/components/ui/badge'
 import { Eye } from 'lucide-react'
-import type { Post } from '@/payload-types'
+import type { Post } from '@/shared/types/payload-types'
 
 interface EditorQueueListProps {
   posts: Post[]

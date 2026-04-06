@@ -26,7 +26,16 @@
     ],
     "paths": {
       "@payload-config": [
-        "./src/payload.config.ts"
+        "./src/backend/payload.config.ts"
+      ],
+      "@backend/*": [
+        "./src/backend/*"
+      ],
+      "@frontend/*": [
+        "./src/frontend/*"
+      ],
+      "@shared/*": [
+        "./src/shared/*"
       ],
       "react": [
         "./node_modules/@types/react"

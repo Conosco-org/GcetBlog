@@ -1,4 +1,4 @@
-import { SetPasswordForm } from './SetPasswordForm'
+import { SetPasswordForm } from '../../../frontend/features/auth/components/set-password-form'
 
 export const dynamic = 'force-dynamic'
 

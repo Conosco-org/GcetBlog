@@ -2,12 +2,12 @@
 
 import { useState, useTransition, useRef } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
-import type { Media } from '@/payload-types'
-import { SearchInput } from '@/components/base/SearchInput'
-import { FilterBar } from '@/components/base/FilterBar'
-import { EmptyState } from '@/components/base/EmptyState'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import type { Media } from '@/shared/types/payload-types'
+import { SearchInput } from '@frontend/components/base/SearchInput'
+import { FilterBar } from '@frontend/components/base/FilterBar'
+import { EmptyState } from '@frontend/components/base/EmptyState'
+import { Button } from '@frontend/components/ui/button'
+import { Input } from '@/frontend/components/ui/input'
 import {
   Dialog,
   DialogContent,
@@ -15,9 +15,9 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from '@/components/ui/dialog'
-import { useToast } from '@/hooks/use-toast'
-import { uploadToCloudinaryDirect } from '@/utilities/uploadToCloudinaryDirect'
+} from '@/frontend/components/ui/dialog'
+import { useToast } from '@frontend/components/ui/use-toast'
+import { uploadToCloudinaryDirect } from '@backend/lib/upload-to-cloudinary-direct'
 import {
   Image as ImageIcon,
   ChevronLeft,

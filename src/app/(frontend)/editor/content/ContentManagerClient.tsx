@@ -1,12 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
-import { useToast } from '@/hooks/use-toast'
+import { Button } from '@frontend/components/ui/button'
+import { Badge } from '@/frontend/components/ui/badge'
+import { Input } from '@/frontend/components/ui/input'
+import { Textarea } from '@/frontend/components/ui/textarea'
+import { Label } from '@/frontend/components/ui/label'
+import { useToast } from '@frontend/components/ui/use-toast'
 import {
   Dialog,
   DialogContent,
@@ -14,7 +14,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from '@/frontend/components/ui/dialog'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,20 +24,20 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
+} from '@/frontend/components/ui/alert-dialog'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/frontend/components/ui/select"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/frontend/components/ui/dropdown-menu"
 import {
   Table,
   TableBody,
@@ -45,12 +45,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/frontend/components/ui/table"
 import { Search, MoreVertical, Pencil, MessageSquare, Loader2, Trash2, FileX, X, ChevronLeft, ChevronRight, Send } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { deletePost, unpublishPost } from './actions'
-import type { Post, Category } from '@/payload-types'
+import type { Post, Category } from '@/shared/types/payload-types'
 
 interface ContentManagerClientProps {
   posts: { docs: Post[]; totalDocs: number; totalPages: number; page?: number; hasPrevPage?: boolean; hasNextPage?: boolean }

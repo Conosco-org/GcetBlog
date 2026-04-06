@@ -1,4 +1,4 @@
-import { LoadingSpinner } from '@/components/base/LoadingSpinner'
+import { LoadingSpinner } from '@frontend/components/base/LoadingSpinner'
 
 export default function Loading() {
   return (

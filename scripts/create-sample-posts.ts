@@ -1,5 +1,5 @@
 import { getPayload } from 'payload'
-import config from '../src/payload.config'
+import config from '../src/backend/payload.config'
 
 async function createSamplePosts() {
   const payload = await getPayload({ config })

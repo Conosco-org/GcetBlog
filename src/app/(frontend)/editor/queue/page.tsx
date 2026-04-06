@@ -1,8 +1,8 @@
 import { getPayload, type Where } from 'payload'
 import configPromise from '@payload-config'
 import { Clock, MessageSquare, Calendar } from 'lucide-react'
-import { Card, CardContent } from '@/components/ui/card'
-import { PageHeader } from '@/components/base/PageHeader'
+import { Card, CardContent } from '@/frontend/components/ui/card'
+import { PageHeader } from '@frontend/components/base/PageHeader'
 import { QueueTabs } from './QueueTabs'
 
 // Force dynamic rendering - no caching

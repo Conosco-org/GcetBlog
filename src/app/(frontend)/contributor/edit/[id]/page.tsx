@@ -2,10 +2,10 @@ import { redirect, notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
-import { lexicalToHtml } from '@/components/shared/RichTextEditor/lexicalToHtml'
+import { lexicalToHtml } from '@frontend/components/shared/rich-text-editor/lexicalToHtml'
 import { PostForm } from '@/app/(frontend)/editor/posts/[id]/edit/PostForm'
-import type { Post } from '@/payload-types'
-import { toISTDateTimeInput } from '@/utilities/dateTimeIST'
+import type { Post } from '@shared/types/payload-types'
+import { toISTDateTimeInput } from '@shared/lib/date-time-ist'
 
 interface PageProps {
   params: Promise<{ id: string }>

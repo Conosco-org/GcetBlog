@@ -1,9 +1,10 @@
 import { getPayload, type Where } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
-import type { User } from '@/payload-types'
-import { PageHeader } from '@/components/base/PageHeader'
-import { UsersTableClient } from './UsersTableClient'
+import type { User } from '@shared/types/payload-types'
+import { PageHeader } from '@frontend/components/base/PageHeader'
+import { UsersTableClient } from '@frontend/features/admin/components/users-table-client'
+import { changeUserRole, deleteUser, toggleAdminStatus, toggleCanManageAdmins } from './actions'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -86,7 +87,7 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
       </div>
 
       {/* Users Table with search/filter/pagination */}
-      <UsersTableClient
+      <UsersTableClientWrapper
         users={usersResult.docs as User[]}
         totalPages={usersResult.totalPages}
         currentPage={usersResult.page || page}
@@ -97,6 +98,10 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
         query={query}
         roleFilter={roleFilter}
         adminFilter={adminFilter}
+        changeUserRole={changeUserRole}
+        deleteUser={deleteUser}
+        toggleAdminStatus={toggleAdminStatus}
+        toggleCanManageAdmins={toggleCanManageAdmins}
       />
     </div>
   )
@@ -114,5 +119,19 @@ function StatCard({ label, value, color }: { label: string; value: number; color
       <p className="text-sm font-medium text-muted-foreground">{label}</p>
       <p className="text-3xl font-bold mt-1">{value}</p>
     </div>
+  )
+}
+
+
+// Wrapper to pass server actions to client component
+function UsersTableClientWrapper(props: Parameters<typeof UsersTableClient>[0]) {
+  return (
+    <UsersTableClient
+      {...props}
+      changeUserRole={changeUserRole}
+      deleteUser={deleteUser}
+      toggleAdminStatus={toggleAdminStatus}
+      toggleCanManageAdmins={toggleCanManageAdmins}
+    />
   )
 }

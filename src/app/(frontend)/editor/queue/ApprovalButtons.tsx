@@ -4,8 +4,8 @@ import { useState } from 'react'
 import { CheckCircle, XCircle, Eye, Edit, MessageSquare } from 'lucide-react'
 import { approvePost, requestChanges, deletePost } from './actions'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { useToast } from '@/hooks/use-toast'
+import { Button } from '@frontend/components/ui/button'
+import { useToast } from '@frontend/components/ui/use-toast'
 import Link from 'next/link'
 
 interface ApprovalButtonsProps {

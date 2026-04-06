@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getUserFromRequest } from '@/utilities/getUserFromRequest'
-import { getPayloadClient } from '@/utilities/getPayloadClient'
+import { getUserFromRequest } from '@backend/lib/get-user-from-request'
+import { getPayloadClient } from '@backend/lib/payload-client'
 
 export async function POST(request: NextRequest) {
   const user = await getUserFromRequest(request)

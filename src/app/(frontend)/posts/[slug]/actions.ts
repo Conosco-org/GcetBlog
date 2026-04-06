@@ -3,7 +3,7 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { revalidatePath } from 'next/cache'
-import { getMeUser } from '@/utilities/getMeUser'
+import { getMeUser } from '@backend/lib/get-me-user'
 
 export async function submitComment(formData: FormData) {
   const payload = await getPayload({ config })

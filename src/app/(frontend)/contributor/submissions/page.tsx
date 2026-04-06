@@ -2,9 +2,9 @@ import { getPayload, type Where } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import type { User } from '@/payload-types'
-import { PageHeader } from '@/components/base/PageHeader'
-import { SubmissionsClient } from './SubmissionsClient'
+import type { User } from '@shared/types/payload-types'
+import { PageHeader } from '@frontend/components/base/PageHeader'
+import { SubmissionsClient } from '@frontend/features/contributor/components/submissions-client'
 
 const PAGE_SIZE = 10
 

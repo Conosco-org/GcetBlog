@@ -1,7 +1,7 @@
-﻿import { getPayload, type Where } from 'payload'
+import { getPayload, type Where } from 'payload'
 import configPromise from '@payload-config'
-import { Card, CardContent } from '@/components/ui/card'
-import { PageHeader } from '@/components/base/PageHeader'
+import { Card, CardContent } from '@/frontend/components/ui/card'
+import { PageHeader } from '@frontend/components/base/PageHeader'
 import { MediaGridClient } from './MediaGridClient'
 
 export const dynamic = 'force-dynamic'

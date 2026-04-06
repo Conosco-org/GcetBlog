@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Newsletter Open Tracking Pixel Endpoint
  *
  * GET /api/newsletter/track/open?nid={newsletterId}&sid={subscriberId}

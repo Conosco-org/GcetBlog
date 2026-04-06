@@ -2,11 +2,10 @@ import React from 'react'
 import type { Metadata } from 'next'
 import {
   HeroSection,
-  HomePosts,
-  FeaturedPosts,
   FeaturesSection,
   CTASection,
-} from '@/components/LandingPage'
+} from '@frontend/components/landing'
+import { HomePosts, FeaturedPosts } from '@frontend/features/posts/components'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 

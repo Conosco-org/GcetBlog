@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -49,13 +49,13 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const token = request.cookies.get('payload-token')?.value
 
-  // ── Payload admin panel is disabled for everyone ──────────────────────
+  // -- Payload admin panel is disabled for everyone ----------------------
   // Block /admin/login and redirect /admin to appropriate dashboard
   if (pathname === '/admin/login') {
     return new NextResponse(null, { status: 404 })
   }
 
-  // ── /admin-dashboard - requires isAdmin flag ─────────────────────────
+  // -- /admin-dashboard - requires isAdmin flag -------------------------
   // (Must come BEFORE the /admin check since /admin-dashboard starts with /admin)
   if (pathname.startsWith('/admin-dashboard')) {
     if (!token) return loginRedirect(request)
@@ -71,7 +71,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // ── /admin (Payload panel) - redirect to appropriate dashboard ───────
+  // -- /admin (Payload panel) - redirect to appropriate dashboard -------
   if (pathname.startsWith('/admin')) {
     if (!token) return loginRedirect(request)
 
@@ -88,7 +88,7 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // ── /editor - requires role === 'editor' ─────────────────────────────
+  // -- /editor - requires role === 'editor' -----------------------------
   // Contributors are allowed on /editor/posts/*/edit (own-post editing).
   if (pathname.startsWith('/editor')) {
     if (!token) return loginRedirect(request, { redirect: pathname })
@@ -113,7 +113,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // ── /contributor - requires role === 'contributor' ────────────────────
+  // -- /contributor - requires role === 'contributor' --------------------
   if (pathname.startsWith('/contributor')) {
     if (!token) return loginRedirect(request, { redirect: pathname })
 
@@ -130,7 +130,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // ── Legacy /dashboard routes ──────────────────────────────────────────
+  // -- Legacy /dashboard routes ------------------------------------------
   if (pathname.startsWith('/dashboard/contributor')) {
     const newPath = pathname.replace('/dashboard/contributor', '/contributor')
     return NextResponse.redirect(new URL(newPath, request.url))

@@ -3,10 +3,10 @@ import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import type { User } from '@/payload-types'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import type { User } from '@/shared/types/payload-types'
+import { Card, CardContent, CardHeader, CardTitle } from '@/frontend/components/ui/card'
+import { Button } from '@frontend/components/ui/button'
+import { Badge } from '@/frontend/components/ui/badge'
 
 export default async function UserDashboardPage() {
   const payload = await getPayload({ config: configPromise })

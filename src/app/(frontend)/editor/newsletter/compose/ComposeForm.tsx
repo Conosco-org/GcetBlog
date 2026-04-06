@@ -9,23 +9,23 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { RichTextEditor } from '@/components/shared/RichTextEditor/RichTextEditor'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@frontend/components/ui/button'
+import { Input } from '@/frontend/components/ui/input'
+import { Label } from '@/frontend/components/ui/label'
+import { RichTextEditor } from '@frontend/components/shared/rich-text-editor/RichTextEditor'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/frontend/components/ui/card'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Badge } from '@/components/ui/badge'
+} from '@/frontend/components/ui/select'
+import { Checkbox } from '@/frontend/components/ui/checkbox'
+import { Badge } from '@/frontend/components/ui/badge'
 import { Save, Send, Loader2, X } from 'lucide-react'
-import { useToast } from '@/hooks/use-toast'
-import type { Newsletter, Category, Post } from '@/payload-types'
+import { useToast } from '@frontend/components/ui/use-toast'
+import type { Newsletter, Category, Post } from '@/shared/types/payload-types'
 
 interface ComposeFormProps {
   newsletter: Newsletter | null

@@ -1,8 +1,8 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { VoteButtons } from '@/components/post/VoteButtons'
-import { ShareButtons } from '@/components/post/ShareButtons'
+import { VoteButtons } from '@frontend/features/posts/components/vote-buttons'
+import { ShareButtons } from '@frontend/features/posts/components/share-buttons'
 
 interface PostEngagementProps {
   postId: string

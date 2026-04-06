@@ -1,6 +1,6 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
-import { getMeUser } from '@/utilities/getMeUser'
+import { getMeUser } from '@backend/lib/get-me-user'
 import { redirect } from 'next/navigation'
 import { MyCommentsView } from './MyCommentsView'
 

@@ -1,10 +1,10 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Card } from '@/components/ui/card'
+import { Card } from '@/frontend/components/ui/card'
 import { QueueTableClient } from './QueueTableClient'
 import { CommentModerationView } from './CommentModerationView'
-import type { Post, Comment } from '@/payload-types'
+import type { Post, Comment } from '@/shared/types/payload-types'
 
 interface QueueTabsProps {
   activeTab: string

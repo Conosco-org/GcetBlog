@@ -3,11 +3,11 @@ import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import type { User } from '@/payload-types'
-import { Button } from '@/components/ui/button'
+import type { User } from '@shared/types/payload-types'
+import { Button } from '@frontend/components/ui/button'
 import { FileText } from 'lucide-react'
-import { PageHeader } from '@/components/base/PageHeader'
-import { DraftsGridClient } from './DraftsGridClient'
+import { PageHeader } from '@frontend/components/base/PageHeader'
+import { DraftsGridClient } from '@frontend/features/contributor/components/drafts-grid-client'
 
 const PAGE_SIZE = 12
 
