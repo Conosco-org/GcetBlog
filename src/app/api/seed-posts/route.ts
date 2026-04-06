@@ -3,6 +3,14 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 
 export async function GET(request: NextRequest) {
+  // Disable in production
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json(
+      { error: 'Seed endpoint is disabled in production' },
+      { status: 403 }
+    )
+  }
+
   try {
     const payload = await getPayload({ config: configPromise })
 

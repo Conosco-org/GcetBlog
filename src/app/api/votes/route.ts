@@ -2,6 +2,7 @@
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
+import { checkRateLimit, createRateLimitResponse } from '@/utilities/rateLimit'
 
 /**
  * POST /api/votes - Create or update a vote
@@ -15,6 +16,17 @@ export async function POST(request: NextRequest) {
 
     if (!user) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
+    }
+
+    // Rate limiting: max 50 requests per hour per user
+    const rateLimitResult = await checkRateLimit(request, {
+      maxRequests: 50,
+      windowMs: 60 * 60 * 1000, // 1 hour
+      identifier: user.id, // Use user ID instead of IP
+    })
+
+    if (!rateLimitResult.success) {
+      return createRateLimitResponse(rateLimitResult)
     }
 
     const body = await request.json()

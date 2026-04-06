@@ -1,5 +1,5 @@
 ﻿import type { CollectionConfig } from 'payload'
-import { editorOnly } from '../../access/editorOnly'
+import { isAdminOrEditor } from '../../access/isAdminOrEditor'
 
 export const NewsletterEvents: CollectionConfig = {
   slug: 'newsletter-events',
@@ -14,7 +14,7 @@ export const NewsletterEvents: CollectionConfig = {
   },
   access: {
     // Editors can view analytics
-    read: editorOnly,
+    read: isAdminOrEditor,
     // System-only creation (via server actions / tracking endpoints)
     create: () => true,
     // Immutable - no updates or deletes

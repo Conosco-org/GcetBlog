@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 import type { Post } from '@/payload-types'
 
-import { Media } from '@/components/Media'
+import { Media } from '@/components/shared/Media'
 
 export const PostHero: React.FC<{
   post: Post

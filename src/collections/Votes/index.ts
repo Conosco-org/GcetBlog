@@ -1,5 +1,5 @@
 import type { CollectionConfig, Where } from 'payload'
-import { authenticated } from '../../access/authenticated'
+import { isAuthenticated } from '../../access/isAuthenticated'
 
 export const Votes: CollectionConfig = {
   slug: 'votes',
@@ -7,7 +7,7 @@ export const Votes: CollectionConfig = {
     // Anyone can see vote counts (public)
     read: () => true,
     // Only authenticated users can vote
-    create: authenticated,
+    create: isAuthenticated,
     // Users can only update their own votes
     update: ({ req }) => {
       const user = req.user as { id?: string } | undefined
@@ -53,8 +53,72 @@ export const Votes: CollectionConfig = {
         return 'Vote value must be 1 (upvote) or -1 (downvote)'
       },
     },
+    {
+      name: 'previousVoteType',
+      type: 'select',
+      options: [
+        { label: 'Upvote', value: 'upvote' },
+        { label: 'Downvote', value: 'downvote' },
+      ],
+      admin: {
+        readOnly: true,
+        description: 'Previous vote type before change (for tracking)',
+      },
+    },
+  ],
+  indexes: [
+    {
+      fields: ['post', 'user'],
+      unique: true,
+    },
   ],
   hooks: {
+    afterChange: [
+      async ({ req, doc, previousDoc, operation }) => {
+        const payload = req.payload
+        const post = typeof doc.post === 'string' ? doc.post : doc.post?.id
+        if (!post) return
+
+        if (operation === 'create') {
+          const delta = doc.value === 1 ? 1 : -1
+          const currentPost = await payload.findByID({ collection: 'posts', id: post, overrideAccess: true })
+          await payload.update({
+            collection: 'posts',
+            id: post,
+            data: { voteCount: (currentPost.voteCount || 0) + delta },
+            overrideAccess: true,
+          })
+        }
+
+        if (operation === 'update' && previousDoc?.value !== doc.value) {
+          const delta = doc.value === 1 ? 2 : -2
+          const currentPost = await payload.findByID({ collection: 'posts', id: post, overrideAccess: true })
+          await payload.update({
+            collection: 'posts',
+            id: post,
+            data: {
+              voteCount: (currentPost.voteCount || 0) + delta,
+            },
+            overrideAccess: true,
+          })
+        }
+      },
+    ],
+    afterDelete: [
+      async ({ req, doc }) => {
+        const payload = req.payload
+        const post = typeof doc.post === 'string' ? doc.post : doc.post?.id
+        if (!post) return
+        const delta = doc.value === 1 ? -1 : 1
+        const currentPost = await payload.findByID({ collection: 'posts', id: post, overrideAccess: true })
+        await payload.update({
+          collection: 'posts',
+          id: post,
+          data: { voteCount: (currentPost.voteCount || 0) + delta },
+          overrideAccess: true,
+        })
+      },
+    ],
     beforeChange: [
       // Auto-set the user to the current authenticated user
       ({ req, data, operation }) => {

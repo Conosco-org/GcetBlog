@@ -5,9 +5,9 @@ import React from 'react'
 import type { Footer } from '@/payload-types'
 
 import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
-import { CMSLink } from '@/components/Link'
-import { Logo } from '@/components/Logo/Logo'
-import { NewsletterSignup } from '@/components/NewsletterSignup'
+import { CMSLink } from '@/components/shared/Link'
+import { Logo } from '@/components/layout/Logo/Logo'
+import { NewsletterSignup } from '@/components/shared/NewsletterSignup'
 
 export async function Footer() {
   const footerData: Footer = await getCachedGlobal('footer', 1)()

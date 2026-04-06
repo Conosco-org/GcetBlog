@@ -1,11 +1,11 @@
 import type { CollectionConfig } from 'payload'
-import { editorOnly } from '../../access/editorOnly'
+import { isAdminOrEditor } from '../../access/isAdminOrEditor'
 
 export const AdminLogs: CollectionConfig = {
   slug: 'admin-logs',
   access: {
-    read: editorOnly,
-    create: editorOnly,
+    read: isAdminOrEditor,
+    create: isAdminOrEditor,
     update: () => false, // Logs should be immutable
     delete: () => false, // Logs should not be deleted
   },

@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Logo } from '@/components/Logo/Logo'
+import { Logo } from '@/components/layout/Logo/Logo'
 
 export default function CustomLogo() {
   return (

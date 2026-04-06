@@ -1,10 +1,10 @@
 import type { CollectionConfig, Where } from 'payload'
-import { editorOnly } from '../../access/editorOnly'
+import { isAdminOrEditor } from '../../access/isAdminOrEditor'
 
-/** Field-level access helper: checks if the requesting user is an editor */
+/** Field-level access helper: checks if the requesting user is an editor or admin */
 const isEditorFieldAccess = ({ req }: { req: { user: unknown } }): boolean => {
   const user = req.user as { role?: string } | undefined
-  return user?.role === 'editor'
+  return user?.role === 'editor' || user?.role === 'admin'
 }
 
 export const Comments: CollectionConfig = {
@@ -13,14 +13,15 @@ export const Comments: CollectionConfig = {
     read: ({ req }) => {
       const user = req.user as { role?: string; id?: string } | undefined
       // Editors can see all comments
-      if (user?.role === 'editor') return true
+      if (user?.role === 'editor' || user?.role === 'admin') return true
 
-      // Users can see their own comments + approved ones
+      // Users can see their own comments + approved ones + comments they reported
       if (user && user.id) {
         return {
           or: [
             { author: { equals: user.id } },
             { status: { equals: 'approved' } },
+            { reportedBy: { equals: user.id } },
           ],
         } as Where
       }
@@ -31,13 +32,25 @@ export const Comments: CollectionConfig = {
       }
     },
     create: () => true, // Anyone can create comments (we'll validate in hooks)
-    update: editorOnly,
-    delete: editorOnly,
+    update: isAdminOrEditor,
+    delete: isAdminOrEditor,
   },
   admin: {
     defaultColumns: ['post', 'author', 'content', 'status', 'createdAt'],
     useAsTitle: 'content',
   },
+  // Database indexes for performance optimization
+  indexes: [
+    {
+      fields: ['status'],
+    },
+    {
+      fields: ['post'],
+    },
+    {
+      fields: ['post', 'status'],
+    },
+  ],
   fields: [
     {
       name: 'post',
@@ -140,38 +153,94 @@ export const Comments: CollectionConfig = {
       },
     },
     {
-      name: 'reportedBy',
-      type: 'relationship',
-      relationTo: 'users',
+      name: 'spamType',
+      type: 'select',
+      options: [
+        { label: 'Commercial', value: 'commercial' },
+        { label: 'Malicious', value: 'malicious' },
+        { label: 'Off-topic', value: 'off-topic' },
+        { label: 'Abusive', value: 'abusive' },
+        { label: 'Bot-generated', value: 'bot-generated' },
+      ],
       admin: {
-        description: 'User who reported this comment',
-        readOnly: true,
+        description: 'Type of spam (when marked as spam)',
+        condition: (data) => data.status === 'spam',
       },
       access: {
         read: isEditorFieldAccess,
       },
     },
     {
-      name: 'reportReason',
-      type: 'text',
+      name: 'rejectionReason',
+      type: 'select',
+      options: [
+        { label: 'Violates Guidelines', value: 'violates guidelines' },
+        { label: 'Spam', value: 'spam' },
+        { label: 'Off-topic', value: 'off-topic' },
+        { label: 'Inappropriate Language', value: 'inappropriate language' },
+        { label: 'Duplicate', value: 'duplicate' },
+        { label: 'Other', value: 'other' },
+      ],
       admin: {
-        description: 'Reason for reporting this comment',
-        readOnly: true,
+        description: 'Reason for rejecting this comment',
+        condition: (data) => data.status === 'rejected',
       },
       access: {
         read: isEditorFieldAccess,
       },
     },
     {
-      name: 'reportedAt',
-      type: 'date',
+      name: 'rejectionReasonCustom',
+      type: 'textarea',
       admin: {
-        description: 'When this comment was reported',
-        readOnly: true,
+        description: 'Custom rejection reason (when "other" is selected)',
+        condition: (data) => data.rejectionReason === 'other',
       },
       access: {
         read: isEditorFieldAccess,
       },
+    },
+    {
+      name: 'contentModified',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        description: 'Indicates if comment content was modified by an editor',
+        readOnly: true,
+      },
+    },
+    {
+      name: 'revisionHistory',
+      type: 'array',
+      admin: {
+        description: 'History of content modifications',
+      },
+      access: {
+        read: isEditorFieldAccess,
+      },
+      fields: [
+        {
+          name: 'originalContent',
+          type: 'textarea',
+          required: true,
+        },
+        {
+          name: 'modifiedBy',
+          type: 'relationship',
+          relationTo: 'users',
+          required: true,
+        },
+        {
+          name: 'modifiedAt',
+          type: 'date',
+          required: true,
+        },
+        {
+          name: 'reason',
+          type: 'text',
+          required: true,
+        },
+      ],
     },
     {
       name: 'ipAddress',
@@ -193,6 +262,61 @@ export const Comments: CollectionConfig = {
       },
       access: {
         read: isEditorFieldAccess,
+      },
+    },
+    {
+      name: 'reportedBy',
+      type: 'relationship',
+      relationTo: 'users',
+      admin: {
+        description: 'User who reported this comment',
+      },
+    },
+    {
+      name: 'reportReason',
+      type: 'textarea',
+      admin: {
+        description: 'Reason for reporting this comment',
+        condition: (data) => !!data.reportedBy,
+      },
+    },
+    {
+      name: 'reportedAt',
+      type: 'date',
+      admin: {
+        description: 'When this comment was reported',
+        readOnly: true,
+        condition: (data) => !!data.reportedBy,
+      },
+    },
+    {
+      name: 'reportResolvedAt',
+      type: 'date',
+      admin: {
+        description: 'When the report was resolved',
+        readOnly: true,
+        condition: (data) => !!data.reportedBy,
+      },
+      access: {
+        read: isEditorFieldAccess,
+      },
+    },
+    {
+      name: 'reportResolutionAction',
+      type: 'select',
+      options: [
+        { label: 'No Action', value: 'no-action' },
+        { label: 'Approved', value: 'approved' },
+        { label: 'Rejected', value: 'rejected' },
+        { label: 'Marked as Spam', value: 'spam' },
+      ],
+      admin: {
+        description: 'Action taken to resolve the report',
+        condition: (data) => !!data.reportResolvedAt,
+      },
+      access: {
+        read: isEditorFieldAccess,
+        update: isEditorFieldAccess,
       },
     },
   ],

@@ -1,21 +1,24 @@
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
-import Link from 'next/link'
-import { Plus } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import ContentManagerClient from './ContentManagerClient'
+import { ContentManagerTabs } from './ContentManagerTabs'
 
 // Force dynamic rendering for real-time data
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-export default async function ContentManagerPage() {
+interface PageProps {
+  searchParams: Promise<{ tab?: string }>
+}
+
+export default async function ContentManagerPage({ searchParams }: PageProps) {
+  const params = await searchParams
   const payload = await getPayload({ config: configPromise })
+  const activeTab = params.tab || 'posts'
 
   // Get all posts with proper pagination
   const posts = await payload.find({
     collection: 'posts',
-    depth: 2, // Populate relationships
+    depth: 2,
     limit: 20,
     sort: '-updatedAt',
   })
@@ -27,6 +30,14 @@ export default async function ContentManagerPage() {
     sort: 'title',
   })
 
+  // Get all comments
+  const comments = await payload.find({
+    collection: 'comments',
+    depth: 2,
+    limit: 100,
+    sort: '-createdAt',
+  })
+
   return (
     <div className="p-8 min-h-screen">
       {/* Header */}
@@ -36,16 +47,15 @@ export default async function ContentManagerPage() {
             <h1 className="text-3xl font-bold">Content Manager</h1>
             <p className="text-muted-foreground">Manage and organize all blog content</p>
           </div>
-          <Link href="/editor/posts/create">
-            <Button>
-              <Plus className="w-4 h-4 mr-2" />
-              New Post
-            </Button>
-          </Link>
         </div>
       </div>
 
-      <ContentManagerClient posts={posts} categories={categories} />
+      <ContentManagerTabs
+        activeTab={activeTab}
+        posts={posts}
+        categories={categories}
+        comments={comments.docs}
+      />
     </div>
   )
 }

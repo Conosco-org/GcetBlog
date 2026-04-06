@@ -2,7 +2,7 @@
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
-import { lexicalToHtml } from '@/components/RichTextEditor/lexicalToHtml'
+import { lexicalToHtml } from '@/components/shared/RichTextEditor/lexicalToHtml'
 import { PostForm } from './PostForm'
 import type { Post } from '@/payload-types'
 import { toISTDateTimeInput } from '@/utilities/dateTimeIST'

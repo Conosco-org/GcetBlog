@@ -27,8 +27,8 @@ import {
   FileEdit,
 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
-import { RichTextEditor } from '@/components/RichTextEditor'
-import { getTemplateIcon } from '@/components/templates/templateUtils'
+import { RichTextEditor } from '@/components/shared/RichTextEditor'
+import { getTemplateIcon } from '@/components/shared/templates/templateUtils'
 import { uploadToCloudinaryDirect } from '@/utilities/uploadToCloudinaryDirect'
 
 // ── Constants ────────────────────────────────────────────────────

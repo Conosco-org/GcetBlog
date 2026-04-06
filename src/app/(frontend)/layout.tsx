@@ -11,7 +11,7 @@ import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
 import { ConditionalLayout } from './ConditionalLayout'
-import { PageViewTracker } from '@/components/PageViewTracker'
+import { PageViewTracker } from '@/components/shared/PageViewTracker'
 
 const sora = Sora({
   subsets: ['latin'],

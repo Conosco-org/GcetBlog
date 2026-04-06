@@ -1,5 +1,5 @@
 ﻿import type { CollectionConfig } from 'payload'
-import { editorOnly } from '../../access/editorOnly'
+import { isAdminOrEditor } from '../../access/isAdminOrEditor'
 import {
   BlocksFeature,
   FixedToolbarFeature,
@@ -24,10 +24,10 @@ export const Newsletters: CollectionConfig = {
     description: 'Newsletter campaigns - manual compose or auto-generated digests',
   },
   access: {
-    read: editorOnly,
-    create: editorOnly,
-    update: editorOnly,
-    delete: editorOnly,
+    read: isAdminOrEditor,
+    create: isAdminOrEditor,
+    update: isAdminOrEditor,
+    delete: isAdminOrEditor,
   },
   versions: {
     drafts: {

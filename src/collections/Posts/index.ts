@@ -9,10 +9,10 @@ import {
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
 
-import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
+import { publicOrAuthenticated } from '../../access/publicOrAuthenticated'
 import { contributorOwn } from '../../access/contributorOwn'
 import { contributorOwnNotPublished } from '../../access/contributorOwnNotPublished'
-import { editorOnly } from '../../access/editorOnly'
+import { isAdminOrEditor } from '../../access/isAdminOrEditor'
 import { isAdmin } from '../../utilities/checkUserRole'
 import { Banner } from '../../blocks/Banner/config'
 import { Code } from '../../blocks/Code/config'
@@ -35,9 +35,9 @@ import { slugField } from '@/fields/slug'
 export const Posts: CollectionConfig<'posts'> = {
   slug: 'posts',
   access: {
-    create: editorOnly,
+    create: isAdminOrEditor,
     delete: contributorOwnNotPublished, // Contributors can delete their own unpublished posts, editors/admins can delete all
-    read: authenticatedOrPublished,
+    read: publicOrAuthenticated,
     update: contributorOwn, // Contributors can update their own posts, editors/admins can update all
   },
   // This config controls what's populated by default when a post is referenced
@@ -79,6 +79,14 @@ export const Posts: CollectionConfig<'posts'> = {
       name: 'title',
       type: 'text',
       required: true,
+    },
+    {
+      name: 'excerpt',
+      type: 'textarea',
+      maxLength: 300,
+      admin: {
+        description: 'Short summary for cards/previews (max 300 characters)',
+      },
     },
     {
       type: 'tabs',
@@ -243,6 +251,57 @@ export const Posts: CollectionConfig<'posts'> = {
       },
     },
     {
+      name: 'readTime',
+      type: 'number',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description: 'Estimated read time in minutes, auto-calculated',
+      },
+      access: {
+        update: () => false, // Only updated programmatically
+      },
+    },
+    {
+      name: 'viewCount',
+      type: 'number',
+      defaultValue: 0,
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description: 'Total page views (denormalized from PageViews)',
+      },
+      access: {
+        update: () => false, // Only updated programmatically
+      },
+    },
+    {
+      name: 'commentCount',
+      type: 'number',
+      defaultValue: 0,
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description: 'Total approved comments (denormalized from Comments)',
+      },
+      access: {
+        update: () => false, // Only updated programmatically
+      },
+    },
+    {
+      name: 'voteCount',
+      type: 'number',
+      defaultValue: 0,
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description: 'Net votes (upvotes minus downvotes)',
+      },
+      access: {
+        update: () => false, // Only updated programmatically
+      },
+    },
+    {
       name: 'publishedAt',
       type: 'date',
       admin: {
@@ -270,6 +329,99 @@ export const Posts: CollectionConfig<'posts'> = {
       },
       hasMany: true,
       relationTo: 'users',
+    },
+    // Editorial tracking fields
+    {
+      name: 'editorFeedbackAt',
+      type: 'date',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description: 'When editor last gave feedback',
+      },
+    },
+    {
+      name: 'feedbackGivenBy',
+      type: 'relationship',
+      relationTo: 'users',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description: 'Which editor gave the feedback',
+      },
+    },
+    {
+      name: 'submittedForReviewCount',
+      type: 'number',
+      defaultValue: 0,
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description: 'How many times resubmitted — tracks revision cycles',
+      },
+    },
+    {
+      name: 'approvedAt',
+      type: 'date',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+      },
+    },
+    {
+      name: 'approvedBy',
+      type: 'relationship',
+      relationTo: 'users',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+      },
+    },
+    {
+      name: 'lastEditedAt',
+      type: 'date',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+      },
+    },
+    {
+      name: 'lastEditedBy',
+      type: 'relationship',
+      relationTo: 'users',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+      },
+    },
+    // Soft delete fields
+    {
+      name: 'isDeleted',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        position: 'sidebar',
+        description: 'Soft delete — never hard delete published posts',
+      },
+    },
+    {
+      name: 'deletedAt',
+      type: 'date',
+      admin: {
+        position: 'sidebar',
+        condition: (data) => data.isDeleted,
+        readOnly: true,
+      },
+    },
+    {
+      name: 'deletedBy',
+      type: 'relationship',
+      relationTo: 'users',
+      admin: {
+        position: 'sidebar',
+        condition: (data) => data.isDeleted,
+        readOnly: true,
+      },
     },
     // This field is only used to populate the user data via the `populateAuthors` hook
     // This is because the `user` collection has access control locked to protect user privacy
@@ -371,6 +523,58 @@ export const Posts: CollectionConfig<'posts'> = {
     afterChange: [revalidatePost],
     afterRead: [populateAuthors],
     afterDelete: [revalidateDelete],
+    beforeChange: [
+      // Hook 1: Auto-calculate readTime from content
+      async ({ data, operation }) => {
+        if (operation === 'create' || operation === 'update') {
+          if (data.content) {
+            // Strip HTML/Lexical JSON, count words, divide by 200 wpm
+            const text = typeof data.content === 'string' 
+              ? data.content 
+              : JSON.stringify(data.content)
+            const wordCount = text.replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean).length
+            data.readTime = Math.max(1, Math.ceil(wordCount / 200))
+          }
+        }
+        return data
+      },
+      // Hook 2: Track review status transitions
+      async ({ data, originalDoc, operation, req }) => {
+        if (operation === 'update' && originalDoc) {
+          const prevStatus = originalDoc.reviewStatus
+          const newStatus = data.reviewStatus
+
+          if (prevStatus !== 'pending_review' && newStatus === 'pending_review') {
+            data.submittedForReviewAt = new Date()
+            data.submittedForReviewCount = (originalDoc.submittedForReviewCount || 0) + 1
+          }
+
+          if (prevStatus !== 'approved' && newStatus === 'approved') {
+            data.approvedAt = new Date()
+            data.approvedBy = req.user?.id
+          }
+
+          if (newStatus === 'draft' && data.editorFeedback) {
+            data.editorFeedbackAt = new Date()
+            data.feedbackGivenBy = req.user?.id
+          }
+        }
+        return data
+      },
+      // Hook 3: Track last edit
+      async ({ data, req }) => {
+        data.lastEditedAt = new Date()
+        data.lastEditedBy = req.user?.id
+        return data
+      },
+      // Hook 4: Set publishedAt once on first publish
+      async ({ data, originalDoc }) => {
+        if (data._status === 'published' && !originalDoc?.publishedAt) {
+          data.publishedAt = new Date()
+        }
+        return data
+      },
+    ],
     beforeValidate: [
       ({ data }) => {
         // Validate meta description length

@@ -104,6 +104,38 @@ export const RejectionNotifications: CollectionConfig = {
         description: 'Whether the contributor has read this notification',
       },
     },
+    {
+      name: 'readAt',
+      type: 'date',
+      admin: {
+        readOnly: true,
+        description: 'When the notification was read',
+      },
+    },
+    {
+      name: 'postSlug',
+      type: 'text',
+      admin: {
+        readOnly: true,
+        description: 'Stored because post is deleted',
+      },
+    },
+    {
+      name: 'postExcerpt',
+      type: 'textarea',
+      admin: {
+        readOnly: true,
+        description: 'First 200 chars stored for context',
+      },
+    },
+    {
+      name: 'submittedForReviewCount',
+      type: 'number',
+      admin: {
+        readOnly: true,
+        description: 'How many revision cycles before rejection',
+      },
+    },
   ],
   timestamps: true,
 }

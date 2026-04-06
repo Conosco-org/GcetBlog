@@ -16,24 +16,10 @@ export async function submitComment(formData: FormData) {
     return { error: 'Content is required' }
   }
 
-  // Check if user is authenticated
-  let authenticatedUser = null
-  try {
-    const result = await getMeUser()
-    authenticatedUser = result.user || null
-  } catch {
-    // not logged in
-  }
-
-  // For anonymous users, require name + email from form
-  let authorName: string | undefined
-  let authorEmail: string | undefined
-  if (!authenticatedUser) {
-    authorName = (formData.get('authorName') as string) || ''
-    authorEmail = (formData.get('authorEmail') as string) || ''
-    if (!authorName || !authorEmail) {
-      return { error: 'Name and email are required' }
-    }
+  // Check user authentication - REQUIRED for comment submission
+  const { user } = await getMeUser()
+  if (!user) {
+    return { error: 'You must be logged in to comment' }
   }
 
   try {
@@ -47,25 +33,16 @@ export async function submitComment(formData: FormData) {
       return { error: 'Post not found or not published' }
     }
 
-    // Create the comment
+    // Create the comment with authenticated user
     await payload.create({
       collection: 'comments',
-      data: authenticatedUser
-        ? {
-            post: postId,
-            content,
-            author: authenticatedUser.id,
-            status: 'pending',
-            ...(parentId ? { parent: parentId } : {}),
-          }
-        : {
-            post: postId,
-            content,
-            authorName,
-            authorEmail,
-            status: 'pending',
-            ...(parentId ? { parent: parentId } : {}),
-          },
+      data: {
+        post: postId,
+        content,
+        author: user.id,
+        status: 'pending',
+        ...(parentId ? { parent: parentId } : {}),
+      },
     })
 
     revalidatePath(`/posts/${post.slug}`)
@@ -164,18 +141,8 @@ export async function reportComment(formData: FormData) {
       return { error: 'You must be logged in to report comments' }
     }
 
-    // Update comment with report
-    await payload.update({
-      collection: 'comments',
-      id: commentId,
-      data: {
-        reportedBy: mockUser.id,
-        reportReason: reason,
-        reportedAt: new Date().toISOString(),
-      },
-    })
-
-    // Log the report
+    // Reporting functionality has been removed
+    return { error: 'Comment reporting is no longer available' }
     await payload.create({
       collection: 'admin-logs',
       data: {

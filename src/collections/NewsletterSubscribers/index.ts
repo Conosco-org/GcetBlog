@@ -1,6 +1,6 @@
 ﻿import type { CollectionConfig } from 'payload'
 import { v4 as uuidv4 } from 'uuid'
-import { editorOnly } from '../../access/editorOnly'
+import { isAdminOrEditor } from '../../access/isAdminOrEditor'
 import { anyone } from '../../access/anyone'
 
 export const NewsletterSubscribers: CollectionConfig = {
@@ -16,9 +16,9 @@ export const NewsletterSubscribers: CollectionConfig = {
   },
   access: {
     // Editors manage subscribers
-    read: editorOnly,
-    update: editorOnly,
-    delete: editorOnly,
+    read: isAdminOrEditor,
+    update: isAdminOrEditor,
+    delete: isAdminOrEditor,
     // Public can subscribe (create) via the subscribe endpoint
     create: anyone,
   },

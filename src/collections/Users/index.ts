@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
-import { authenticated } from '../../access/authenticated'
+import { isAuthenticated } from '../../access/isAuthenticated'
 import { isAdminAccess } from '../../access/isAdminAccess'
 import { adminOrSelf } from '../../access/adminOrSelf'
 
@@ -11,7 +11,7 @@ export const Users: CollectionConfig = {
       if (!user || typeof user !== 'object') return false
       return Boolean((user as unknown as Record<string, unknown>).isAdmin === true)
     },
-    create: authenticated,
+    create: isAuthenticated,
     delete: isAdminAccess,
     read: adminOrSelf,
     update: adminOrSelf,
@@ -22,6 +22,21 @@ export const Users: CollectionConfig = {
   },
   auth: true,
   hooks: {
+    afterLogin: [
+      async ({ req, user }) => {
+        const payload = req.payload
+        await payload.update({
+          collection: 'users',
+          id: user.id,
+          data: {
+            lastLoginAt: new Date().toISOString(),
+            lastActiveAt: new Date().toISOString(),
+            loginCount: (user.loginCount || 0) + 1,
+          },
+          overrideAccess: true,
+        })
+      },
+    ],
     beforeChange: [
       // When a Google-only user sets a password via the profile page,
       // upgrade their authProvider to 'both' so email login works too.
@@ -38,6 +53,14 @@ export const Users: CollectionConfig = {
       name: 'name',
       type: 'text',
       required: true,
+    },
+    {
+      name: 'username',
+      type: 'text',
+      unique: true,
+      admin: {
+        description: 'Unique username for @mentions',
+      },
     },
     {
       name: 'role',
@@ -89,8 +112,9 @@ export const Users: CollectionConfig = {
       name: 'bio',
       type: 'textarea',
       admin: {
-        description: 'Short bio for author pages',
+        description: 'Short bio for author pages (max 500 characters)',
       },
+      maxLength: 500,
     },
     {
       name: 'avatar',
@@ -109,6 +133,79 @@ export const Users: CollectionConfig = {
       type: 'text',
       admin: {
         description: 'Year of study or designation',
+      },
+    },
+    // Activity tracking fields
+    {
+      name: 'lastLoginAt',
+      type: 'date',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+      },
+    },
+    {
+      name: 'loginCount',
+      type: 'number',
+      defaultValue: 0,
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+      },
+    },
+    {
+      name: 'lastActiveAt',
+      type: 'date',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+      },
+    },
+    {
+      name: 'postCount',
+      type: 'number',
+      defaultValue: 0,
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description: 'Number of published posts',
+      },
+    },
+    {
+      name: 'commentCount',
+      type: 'number',
+      defaultValue: 0,
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+      },
+    },
+    {
+      name: 'isActive',
+      type: 'checkbox',
+      defaultValue: true,
+      admin: {
+        position: 'sidebar',
+        description: 'Deactivate instead of deleting accounts',
+      },
+    },
+    {
+      name: 'deactivatedAt',
+      type: 'date',
+      admin: {
+        position: 'sidebar',
+        condition: (data) => !data.isActive,
+        readOnly: true,
+      },
+    },
+    {
+      name: 'deactivatedBy',
+      type: 'relationship',
+      relationTo: 'users',
+      admin: {
+        position: 'sidebar',
+        condition: (data) => !data.isActive,
+        readOnly: true,
       },
     },
     {
@@ -206,6 +303,50 @@ export const Users: CollectionConfig = {
         position: 'sidebar',
         condition: (data) => data?.newsletterOptIn === true,
       },
+    },
+    {
+      name: 'emailNotifications',
+      type: 'group',
+      admin: {
+        description: 'Email notification preferences',
+      },
+      fields: [
+        {
+          name: 'onPostApproved',
+          type: 'checkbox',
+          defaultValue: true,
+          label: 'Post Approved',
+          admin: { description: 'Notify when your post is approved' },
+        },
+        {
+          name: 'onPostRejected',
+          type: 'checkbox',
+          defaultValue: true,
+          label: 'Post Rejected',
+          admin: { description: 'Notify when your post is rejected' },
+        },
+        {
+          name: 'onEditorFeedback',
+          type: 'checkbox',
+          defaultValue: true,
+          label: 'Editor Feedback',
+          admin: { description: 'Notify when editor provides feedback' },
+        },
+        {
+          name: 'onCommentReply',
+          type: 'checkbox',
+          defaultValue: true,
+          label: 'Comment Reply',
+          admin: { description: 'Notify when someone replies to your comment' },
+        },
+        {
+          name: 'newsletter',
+          type: 'checkbox',
+          defaultValue: false,
+          label: 'Newsletter',
+          admin: { description: 'Receive newsletter emails' },
+        },
+      ],
     },
   ],
   timestamps: true,

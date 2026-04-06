@@ -21,6 +21,7 @@ import { NewsletterSubscribers } from './collections/NewsletterSubscribers'
 import { Newsletters } from './collections/Newsletters'
 import { NewsletterEvents } from './collections/NewsletterEvents'
 import { RejectionNotifications } from './collections/RejectionNotifications/index'
+import { Notifications } from './collections/Notifications/index'
 import {
   newsletterDailyDigest,
   newsletterWeeklyDigest,
@@ -121,6 +122,7 @@ export default buildConfig({
     Newsletters,
     NewsletterEvents,
     RejectionNotifications,
+    Notifications,
   ],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],

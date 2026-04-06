@@ -1,16 +1,16 @@
 ﻿import type { CollectionConfig } from 'payload'
 import type { AdminLog } from '../payload-types'
 
-import { authenticated } from '../access/authenticated'
-import { editorOnly } from '../access/editorOnly'
+import { isAuthenticated } from '../access/isAuthenticated'
+import { isAdminOrEditor } from '../access/isAdminOrEditor'
 
 export const Templates: CollectionConfig = {
   slug: 'templates',
   access: {
-    create: editorOnly,
-    delete: editorOnly,
-    read: authenticated,
-    update: editorOnly,
+    create: isAdminOrEditor,
+    delete: isAdminOrEditor,
+    read: isAuthenticated,
+    update: isAdminOrEditor,
   },
   admin: {
     useAsTitle: 'name',

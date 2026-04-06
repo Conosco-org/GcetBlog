@@ -8,8 +8,8 @@ import { Menu, X, Search, BookOpen } from 'lucide-react'
 
 import type { Header } from '@/payload-types'
 
-import { AuthButton } from '@/components/Header/AuthButton'
-import { GlobalSearchBar } from '@/components/GlobalSearchBar'
+import { AuthButton } from '@/components/layout/Header/AuthButton'
+import { GlobalSearchBar } from '@/components/layout/GlobalSearchBar'
 
 interface HeaderClientProps {
   data: Header

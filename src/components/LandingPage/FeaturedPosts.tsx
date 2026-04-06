@@ -1,6 +1,6 @@
 ﻿import React from 'react'
 import Link from 'next/link'
-import { Media } from '@/components/Media'
+import { Media } from '@/components/shared/Media'
 import type { Post, Media as MediaType } from '@/payload-types'
 import { Star } from 'lucide-react'
 import { formatDateTimeIST } from '@/utilities/formatDateTime'

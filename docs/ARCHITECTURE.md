@@ -4,7 +4,7 @@ This document describes the system architecture, design decisions, and folder st
 
 ## Overview
 
-GCET Blog is a multi-tenant content management platform built with Next.js 15 and Payload CMS 3.x. It supports multiple institutions with isolated data, custom branding, and role-based access control.
+GCET Blog is a single-institution content management platform built with Next.js 15 and Payload CMS 3.x. It serves one college (GCET) with role-based access control and a comprehensive editorial workflow.
 
 ## Tech Stack
 
@@ -25,12 +25,12 @@ GCET Blog is a multi-tenant content management platform built with Next.js 15 an
 
 ## System Architecture
 
-### Multi-Tenant Design
+### Single Institution Design
 
-The platform supports multiple institutions through:
-- **Institution-scoped data**: All content is associated with an institution
-- **Custom branding**: Each institution has its own header/footer configuration
-- **Isolated access**: Users can only access their institution's content
+The platform serves GCET (Goa College of Engineering and Technology):
+- **Single data scope**: All content belongs to one institution
+- **Unified branding**: Consistent header/footer across the platform
+- **Centralized access**: All users access the same content pool
 
 ### Role-Based Access Control (RBAC)
 
@@ -102,22 +102,32 @@ Review → Reject (with reason) → Notification Created → Post Deleted → Co
 ```
 gcet-blog/
 ├── src/
-│   ├── access/              # Access control policies
-│   │   ├── adminOnly.ts
-│   │   ├── authenticated.ts
-│   │   └── ...
+│   ├── access/              # Access control policies (consolidated)
+│   │   ├── isAdmin.ts
+│   │   ├── isAdminOrEditor.ts
+│   │   ├── isAuthenticated.ts
+│   │   ├── publicOrAuthenticated.ts
+│   │   ├── contributorOwn.ts
+│   │   ├── contributorOwnNotPublished.ts
+│   │   ├── adminOrSelf.ts
+│   │   ├── anyone.ts
+│   │   └── canManageAdminsAccess.ts
 │   ├── app/                 # Next.js App Router
 │   │   ├── (auth)/         # Authentication pages
 │   │   ├── (frontend)/     # Public-facing pages
+│   │   ├── contributor/    # Contributor dashboard
 │   │   └── api/            # API routes
 │   ├── collections/         # Payload collections
 │   │   ├── Posts/
 │   │   ├── Users/
 │   │   ├── Media/
+│   │   ├── Comments/
 │   │   └── ...
 │   ├── components/          # React components
 │   │   ├── AdminUI/        # Admin panel components
-│   │   ├── BeforeLogin/    # Login page components
+│   │   ├── base/           # Reusable base components
+│   │   ├── comments/       # Comment moderation components
+│   │   ├── ui/             # shadcn/ui components
 │   │   └── ...
 │   ├── fields/              # Reusable Payload fields
 │   ├── Footer/              # Footer global config
@@ -125,7 +135,12 @@ gcet-blog/
 │   ├── hooks/               # Payload hooks
 │   ├── jobs/                # Background jobs (newsletters)
 │   ├── plugins/             # Payload plugins
-│   ├── utilities/           # Helper functions
+│   ├── utilities/           # Helper functions (including new shared utilities)
+│   │   ├── getPayloadClient.ts
+│   │   ├── getUserFromRequest.ts
+│   │   ├── revalidatePaths.ts
+│   │   ├── formatPostStatus.ts
+│   │   └── ...
 │   └── payload.config.ts    # Payload configuration
 ├── public/                  # Static assets
 ├── docs/                    # Documentation
@@ -155,9 +170,9 @@ gcet-blog/
   - `reviewStatus`: Editorial workflow state (draft → pending_review → approved/rejected)
 
 ### Users
-- Role-based permissions
-- Institution association
+- Role-based permissions (admin, editor, contributor, user)
 - Profile management
+- No institution association (single-institution platform)
 
 ### Media
 - Cloudinary integration
@@ -166,7 +181,7 @@ gcet-blog/
 
 ### Categories
 - Hierarchical organization
-- Institution-scoped
+- Platform-wide (no institution scoping)
 
 ### Comments
 - Nested threading
@@ -188,7 +203,7 @@ gcet-blog/
 ### Templates
 - Reusable content structures
 - Editor-created
-- Institution-scoped
+- Platform-wide (no institution scoping)
 
 ### Newsletter System
 - **NewsletterSubscribers**: Email list management
@@ -240,9 +255,10 @@ Scheduled tasks using Payload's job system:
 - Operation-specific rules
 
 ### Data Isolation
-- Institution-scoped queries
+- Role-based access control
 - User-owned content checks
 - Admin-only operations
+- No institution scoping (single-institution platform)
 
 ## Performance
 
@@ -284,9 +300,10 @@ Scheduled tasks using Payload's job system:
 - Self-hosted control
 
 ### Why MongoDB?
-- Flexible schema for multi-tenant data
-- Good performance for content-heavy apps
+- Flexible schema for content-heavy apps
+- Good performance for blog platforms
 - Easy scaling with Atlas
+- No multi-tenant complexity needed
 
 ### Why Cloudinary?
 - Automatic image optimization
@@ -325,5 +342,6 @@ Scheduled tasks using Payload's job system:
 
 ---
 
-**Last Updated**: 2026-04-05  
-**Maintained By**: GCET Development Team
+**Last Updated**: 2026-04-06  
+**Maintained By**: GCET Development Team  
+**Optimization**: Completed single-institution consolidation

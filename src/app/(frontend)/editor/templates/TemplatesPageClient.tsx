@@ -37,7 +37,7 @@ import {
   getTemplateIcon,
   categoryColors,
   audienceLabels,
-} from '@/components/templates/templateUtils'
+} from '@/components/shared/templates/templateUtils'
 import { useToast } from '@/hooks/use-toast'
 
 /* ── Types ─────────────────────────────────────────────────────── */

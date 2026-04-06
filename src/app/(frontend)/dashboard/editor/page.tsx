@@ -3,7 +3,7 @@ import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { LogoutButton } from '@/components/LogoutButton'
+import { LogoutButton } from '@/components/shared/LogoutButton'
 import type { User } from '@/payload-types'
 
 export default async function EditorDashboardPage() {

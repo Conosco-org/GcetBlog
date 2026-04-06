@@ -7,31 +7,42 @@ import {
 } from '@payloadcms/richtext-lexical'
 
 import { anyone } from '../access/anyone'
-import { editorOnly } from '../access/editorOnly'
-import { authenticated } from '../access/authenticated'
+import { isAdminOrEditor } from '../access/isAdminOrEditor'
+import { isAuthenticated } from '../access/isAuthenticated'
 import { useCloudinaryFallback } from './Media/hooks/useCloudinaryFallback'
 import { uploadToCloudinary } from './Media/hooks/uploadToCloudinary'
 
 export const Media: CollectionConfig = {
   slug: 'media',
   access: {
-    create: authenticated, // contributors need to upload featured images
-    delete: editorOnly,
+    create: isAuthenticated, // contributors need to upload featured images
+    delete: isAdminOrEditor,
     read: anyone,
-    update: editorOnly,
+    update: isAdminOrEditor,
   },
   admin: {
     description: '📸 Recommended sizes: Hero 1920×1080 (16:9), Cards 900×600 (3:2), OG 1200×630. Optimize images to <500KB. See IMAGE_GUIDELINES.md for details.',
   },
   hooks: {
-    beforeChange: [uploadToCloudinary],
+    beforeChange: [
+      ({ req, operation, data }) => {
+        if (operation === 'create' && req.user) {
+          data.uploadedBy = req.user.id
+        }
+        return data
+      },
+      uploadToCloudinary,
+    ],
     afterRead: [useCloudinaryFallback],
   },
   fields: [
     {
       name: 'alt',
       type: 'text',
-      //required: true,
+      required: true,
+      admin: {
+        description: 'Required for accessibility and SEO',
+      },
     },
     {
       name: 'caption',
@@ -41,6 +52,19 @@ export const Media: CollectionConfig = {
           return [...rootFeatures, FixedToolbarFeature(), InlineToolbarFeature()]
         },
       }),
+      admin: {
+        description: 'Optional caption displayed below image in posts',
+      },
+    },
+    {
+      name: 'uploadedBy',
+      type: 'relationship',
+      relationTo: 'users',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description: 'User who uploaded this media',
+      },
     },
     {
       name: 'cloudinaryUrl',

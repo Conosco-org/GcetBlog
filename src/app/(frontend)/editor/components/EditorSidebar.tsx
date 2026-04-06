@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useTransition, useCallback, useState, useEffect } from 'react'
-import { LogoutButton } from '@/components/LogoutButton'
+import { LogoutButton } from '@/components/shared/LogoutButton'
 import type { User } from '@/payload-types'
 import { Badge } from '@/components/ui/badge'
 import { Loader2 } from 'lucide-react'
@@ -19,6 +19,7 @@ import {
   Users,
   Mail,
   PenSquare,
+  MessageSquare,
 } from 'lucide-react'
 
 interface NavItem {
@@ -93,6 +94,11 @@ export function EditorSidebar({
       label: 'Categories',
       href: '/editor/categories',
       icon: <Tag className="w-5 h-5" />,
+    },
+    {
+      label: 'Comments',
+      href: '/editor/content/comments',
+      icon: <MessageSquare className="w-5 h-5" />,
     },
     {
       label: 'Templates',

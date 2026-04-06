@@ -7,7 +7,7 @@ import { Copy, Check, Loader2 } from 'lucide-react'
 
 import type { Post, Media as MediaType } from '@/payload-types'
 
-import { Media } from '@/components/Media'
+import { Media } from '@/components/shared/Media'
 
 export type CardPostData = Pick<Post, 'slug' | 'categories' | 'meta' | 'title' | 'heroImage'>
 

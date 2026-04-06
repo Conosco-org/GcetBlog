@@ -1,5 +1,5 @@
 import React from 'react'
-import { CMSLink } from '@/components/Link'
+import { CMSLink } from '@/components/shared/Link'
 
 export const ModernCTA: React.FC = () => {
   return (

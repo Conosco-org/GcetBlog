@@ -1,14 +1,14 @@
 import type { CollectionConfig } from 'payload'
 
-import { authenticated } from '../access/authenticated'
+import { isAuthenticated } from '../access/isAuthenticated'
 
 export const Feedback: CollectionConfig = {
   slug: 'feedback',
   access: {
-    create: authenticated,
-    delete: authenticated,
-    read: authenticated,
-    update: authenticated,
+    create: isAuthenticated,
+    delete: isAuthenticated,
+    read: isAuthenticated,
+    update: isAuthenticated,
   },
   admin: {
     useAsTitle: 'title',

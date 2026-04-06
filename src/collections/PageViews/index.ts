@@ -90,6 +90,37 @@ export const PageViews: CollectionConfig = {
       type: 'text',
     },
     {
+      name: 'ipHash',
+      type: 'text',
+      index: true,
+      admin: {
+        description: 'Hashed IP for privacy-compliant tracking',
+      },
+    },
+    {
+      name: 'readDuration',
+      type: 'number',
+      admin: {
+        description: 'Seconds the user spent on the page',
+      },
+    },
+    {
+      name: 'readPercentage',
+      type: 'number',
+      admin: {
+        description: 'How far the user scrolled (0-100)',
+      },
+    },
+    {
+      name: 'isAuthenticated',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        readOnly: true,
+        description: 'Whether the viewer was logged in',
+      },
+    },
+    {
       name: 'viewedAt',
       type: 'date',
       required: true,

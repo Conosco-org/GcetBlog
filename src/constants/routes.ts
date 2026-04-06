@@ -1,0 +1,33 @@
+export const ROUTES = {
+  HOME: '/',
+  POSTS: '/posts',
+  POST: (slug: string) => `/posts/${slug}`,
+  SEARCH: '/search',
+  LOGIN: '/login',
+  REGISTER: '/register',
+  CONTRIBUTOR: {
+    ROOT: '/contributor',
+    DRAFTS: '/contributor/drafts',
+    CREATE: '/contributor/create',
+    EDIT: (id: string) => `/contributor/edit/${id}`,
+    SUBMISSIONS: '/contributor/submissions',
+    FEEDBACK: '/contributor/feedback',
+    TEMPLATES: '/contributor/templates',
+    PROFILE: '/contributor/profile',
+  },
+  EDITOR: {
+    ROOT: '/editor',
+    QUEUE: '/editor/queue',
+    CONTENT: '/editor/content',
+    CREATE: '/editor/posts/create',
+    EDIT: (id: string) => `/editor/posts/${id}/edit`,
+    ANALYTICS: '/editor/analytics',
+    NEWSLETTER: '/editor/newsletter',
+    CATEGORIES: '/editor/categories',
+  },
+  ADMIN: {
+    ROOT: '/admin-dashboard',
+    USERS: '/admin-dashboard/users',
+    LOGS: '/admin-dashboard/logs',
+  },
+} as const

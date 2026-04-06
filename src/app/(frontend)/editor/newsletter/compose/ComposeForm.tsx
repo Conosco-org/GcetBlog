@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { RichTextEditor } from '@/components/RichTextEditor/RichTextEditor'
+import { RichTextEditor } from '@/components/shared/RichTextEditor/RichTextEditor'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Select,
@@ -78,7 +78,6 @@ export function ComposeForm({ newsletter, categories, recentPosts }: ComposeForm
   const handleSave = (status: 'draft' | 'scheduled' | 'send') => {
     startTransition(() => {
       // TODO: Call server action
-      console.log('Save:', { title, subject, previewText, type, frequency, content, selectedPosts, selectedCategories, status })
       toast({
         title: status === 'draft' ? 'Saved as draft' : status === 'scheduled' ? 'Scheduled' : 'Sending...',
         description: 'Newsletter campaign updated.',

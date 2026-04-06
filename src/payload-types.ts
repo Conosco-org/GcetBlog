@@ -82,6 +82,7 @@ export interface Config {
     newsletters: Newsletter;
     'newsletter-events': NewsletterEvent;
     'rejection-notifications': RejectionNotification;
+    notifications: Notification;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -109,6 +110,7 @@ export interface Config {
     newsletters: NewslettersSelect<false> | NewslettersSelect<true>;
     'newsletter-events': NewsletterEventsSelect<false> | NewsletterEventsSelect<true>;
     'rejection-notifications': RejectionNotificationsSelect<false> | RejectionNotificationsSelect<true>;
+    notifications: NotificationsSelect<false> | NotificationsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -243,6 +245,10 @@ export interface Post {
   id: string;
   title: string;
   /**
+   * Short summary for cards/previews (max 300 characters)
+   */
+  excerpt?: string | null;
+  /**
    * Recommended: 1920×1080 (16:9). For portraits, keep faces in top 60% of frame. Compress to <500KB.
    */
   heroImage?: (string | null) | Media;
@@ -299,8 +305,46 @@ export interface Post {
    * Total number of upvotes (likes)
    */
   likesCount?: number | null;
+  /**
+   * Estimated read time in minutes, auto-calculated
+   */
+  readTime?: number | null;
+  /**
+   * Total page views (denormalized from PageViews)
+   */
+  viewCount?: number | null;
+  /**
+   * Total approved comments (denormalized from Comments)
+   */
+  commentCount?: number | null;
+  /**
+   * Net votes (upvotes minus downvotes)
+   */
+  voteCount?: number | null;
   publishedAt?: string | null;
   authors?: (string | User)[] | null;
+  /**
+   * When editor last gave feedback
+   */
+  editorFeedbackAt?: string | null;
+  /**
+   * Which editor gave the feedback
+   */
+  feedbackGivenBy?: (string | null) | User;
+  /**
+   * How many times resubmitted — tracks revision cycles
+   */
+  submittedForReviewCount?: number | null;
+  approvedAt?: string | null;
+  approvedBy?: (string | null) | User;
+  lastEditedAt?: string | null;
+  lastEditedBy?: (string | null) | User;
+  /**
+   * Soft delete — never hard delete published posts
+   */
+  isDeleted?: boolean | null;
+  deletedAt?: string | null;
+  deletedBy?: (string | null) | User;
   populatedAuthors?:
     | {
         id?: string | null;
@@ -333,7 +377,13 @@ export interface Post {
  */
 export interface Media {
   id: string;
-  alt?: string | null;
+  /**
+   * Required for accessibility and SEO
+   */
+  alt: string;
+  /**
+   * Optional caption displayed below image in posts
+   */
   caption?: {
     root: {
       type: string;
@@ -349,6 +399,10 @@ export interface Media {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * User who uploaded this media
+   */
+  uploadedBy?: (string | null) | User;
   /**
    * Cloudinary CDN URL for the uploaded image
    */
@@ -425,32 +479,15 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "categories".
- */
-export interface Category {
-  id: string;
-  title: string;
-  slug?: string | null;
-  slugLock?: boolean | null;
-  parent?: (string | null) | Category;
-  breadcrumbs?:
-    | {
-        doc?: (string | null) | Category;
-        url?: string | null;
-        label?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
   id: string;
   name: string;
+  /**
+   * Unique username for @mentions
+   */
+  username?: string | null;
   role?: ('contributor' | 'editor' | 'admin') | null;
   /**
    * Grant admin privileges for user management, logs, and system oversight
@@ -461,7 +498,7 @@ export interface User {
    */
   canManageAdmins?: boolean | null;
   /**
-   * Short bio for author pages
+   * Short bio for author pages (max 500 characters)
    */
   bio?: string | null;
   avatar?: (string | null) | Media;
@@ -473,6 +510,20 @@ export interface User {
    * Year of study or designation
    */
   year?: string | null;
+  lastLoginAt?: string | null;
+  loginCount?: number | null;
+  lastActiveAt?: string | null;
+  /**
+   * Number of published posts
+   */
+  postCount?: number | null;
+  commentCount?: number | null;
+  /**
+   * Deactivate instead of deleting accounts
+   */
+  isActive?: boolean | null;
+  deactivatedAt?: string | null;
+  deactivatedBy?: (string | null) | User;
   /**
    * How the user authenticates (managed automatically)
    */
@@ -514,6 +565,31 @@ export interface User {
    * Only receive newsletters about these categories (leave empty for all)
    */
   newsletterCategories?: (string | Category)[] | null;
+  /**
+   * Email notification preferences
+   */
+  emailNotifications?: {
+    /**
+     * Notify when your post is approved
+     */
+    onPostApproved?: boolean | null;
+    /**
+     * Notify when your post is rejected
+     */
+    onPostRejected?: boolean | null;
+    /**
+     * Notify when editor provides feedback
+     */
+    onEditorFeedback?: boolean | null;
+    /**
+     * Notify when someone replies to your comment
+     */
+    onCommentReply?: boolean | null;
+    /**
+     * Receive newsletter emails
+     */
+    newsletter?: boolean | null;
+  };
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -532,6 +608,47 @@ export interface User {
     | null;
   password?: string | null;
   collection: 'users';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories".
+ */
+export interface Category {
+  id: string;
+  title: string;
+  /**
+   * Category description for SEO and category pages
+   */
+  description?: string | null;
+  /**
+   * Number of posts in this category (denormalized)
+   */
+  postCount?: number | null;
+  /**
+   * Hex color for category badge, e.g. #3B82F6
+   */
+  color?: string | null;
+  /**
+   * Inactive categories are hidden from public view
+   */
+  isActive?: boolean | null;
+  /**
+   * Manual sort order for navigation display (lower numbers first)
+   */
+  order?: number | null;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  parent?: (string | null) | Category;
+  breadcrumbs?:
+    | {
+        doc?: (string | null) | Category;
+        url?: string | null;
+        label?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -884,6 +1001,10 @@ export interface Vote {
   post: string | Post;
   user: string | User;
   value: number;
+  /**
+   * Previous vote type before change (for tracking)
+   */
+  previousVoteType?: ('upvote' | 'downvote') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -920,6 +1041,22 @@ export interface PageView {
   country?: string | null;
   device?: ('desktop' | 'mobile' | 'tablet' | 'unknown') | null;
   browser?: string | null;
+  /**
+   * Hashed IP for privacy-compliant tracking
+   */
+  ipHash?: string | null;
+  /**
+   * Seconds the user spent on the page
+   */
+  readDuration?: number | null;
+  /**
+   * How far the user scrolled (0-100)
+   */
+  readPercentage?: number | null;
+  /**
+   * Whether the viewer was logged in
+   */
+  isAuthenticated?: boolean | null;
   viewedAt: string;
   updatedAt: string;
   createdAt: string;
@@ -1013,6 +1150,44 @@ export interface Comment {
    */
   moderatedAt?: string | null;
   /**
+   * Type of spam (when marked as spam)
+   */
+  spamType?: ('commercial' | 'malicious' | 'off-topic' | 'abusive' | 'bot-generated') | null;
+  /**
+   * Reason for rejecting this comment
+   */
+  rejectionReason?:
+    | ('violates guidelines' | 'spam' | 'off-topic' | 'inappropriate language' | 'duplicate' | 'other')
+    | null;
+  /**
+   * Custom rejection reason (when "other" is selected)
+   */
+  rejectionReasonCustom?: string | null;
+  /**
+   * Indicates if comment content was modified by an editor
+   */
+  contentModified?: boolean | null;
+  /**
+   * History of content modifications
+   */
+  revisionHistory?:
+    | {
+        originalContent: string;
+        modifiedBy: string | User;
+        modifiedAt: string;
+        reason: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * IP address of the commenter
+   */
+  ipAddress?: string | null;
+  /**
+   * User agent of the commenter
+   */
+  userAgent?: string | null;
+  /**
    * User who reported this comment
    */
   reportedBy?: (string | null) | User;
@@ -1025,13 +1200,13 @@ export interface Comment {
    */
   reportedAt?: string | null;
   /**
-   * IP address of the commenter
+   * When the report was resolved
    */
-  ipAddress?: string | null;
+  reportResolvedAt?: string | null;
   /**
-   * User agent of the commenter
+   * Action taken to resolve the report
    */
-  userAgent?: string | null;
+  reportResolutionAction?: ('no-action' | 'approved' | 'rejected' | 'spam') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1333,6 +1508,54 @@ export interface RejectionNotification {
    * Whether the contributor has read this notification
    */
   isRead?: boolean | null;
+  /**
+   * When the notification was read
+   */
+  readAt?: string | null;
+  /**
+   * Stored because post is deleted
+   */
+  postSlug?: string | null;
+  /**
+   * First 200 chars stored for context
+   */
+  postExcerpt?: string | null;
+  /**
+   * How many revision cycles before rejection
+   */
+  submittedForReviewCount?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "notifications".
+ */
+export interface Notification {
+  id: string;
+  recipient: string | User;
+  type:
+    | 'post_approved'
+    | 'post_rejected'
+    | 'feedback_received'
+    | 'comment_replied'
+    | 'post_commented'
+    | 'comment_flagged'
+    | 'role_changed';
+  title: string;
+  message?: string | null;
+  /**
+   * URL to navigate to when notification is clicked
+   */
+  link?: string | null;
+  relatedPost?: (string | null) | Post;
+  relatedComment?: (string | null) | Comment;
+  /**
+   * The person whose action caused this notification
+   */
+  triggeredBy?: (string | null) | User;
+  isRead?: boolean | null;
+  readAt?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1613,6 +1836,10 @@ export interface PayloadLockedDocument {
         value: string | RejectionNotification;
       } | null)
     | ({
+        relationTo: 'notifications';
+        value: string | Notification;
+      } | null)
+    | ({
         relationTo: 'redirects';
         value: string | Redirect;
       } | null)
@@ -1811,6 +2038,7 @@ export interface FormBlockSelect<T extends boolean = true> {
  */
 export interface PostsSelect<T extends boolean = true> {
   title?: T;
+  excerpt?: T;
   heroImage?: T;
   content?: T;
   relatedPosts?: T;
@@ -1827,8 +2055,22 @@ export interface PostsSelect<T extends boolean = true> {
   featuredUntil?: T;
   voteScore?: T;
   likesCount?: T;
+  readTime?: T;
+  viewCount?: T;
+  commentCount?: T;
+  voteCount?: T;
   publishedAt?: T;
   authors?: T;
+  editorFeedbackAt?: T;
+  feedbackGivenBy?: T;
+  submittedForReviewCount?: T;
+  approvedAt?: T;
+  approvedBy?: T;
+  lastEditedAt?: T;
+  lastEditedBy?: T;
+  isDeleted?: T;
+  deletedAt?: T;
+  deletedBy?: T;
   populatedAuthors?:
     | T
     | {
@@ -1851,6 +2093,7 @@ export interface PostsSelect<T extends boolean = true> {
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   caption?: T;
+  uploadedBy?: T;
   cloudinaryUrl?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1944,6 +2187,11 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface CategoriesSelect<T extends boolean = true> {
   title?: T;
+  description?: T;
+  postCount?: T;
+  color?: T;
+  isActive?: T;
+  order?: T;
   slug?: T;
   slugLock?: T;
   parent?: T;
@@ -1964,6 +2212,7 @@ export interface CategoriesSelect<T extends boolean = true> {
  */
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
+  username?: T;
   role?: T;
   isAdmin?: T;
   canManageAdmins?: T;
@@ -1971,6 +2220,14 @@ export interface UsersSelect<T extends boolean = true> {
   avatar?: T;
   department?: T;
   year?: T;
+  lastLoginAt?: T;
+  loginCount?: T;
+  lastActiveAt?: T;
+  postCount?: T;
+  commentCount?: T;
+  isActive?: T;
+  deactivatedAt?: T;
+  deactivatedBy?: T;
   authProvider?: T;
   googleSubId?: T;
   socialLinks?:
@@ -1984,6 +2241,15 @@ export interface UsersSelect<T extends boolean = true> {
   newsletterOptIn?: T;
   newsletterFrequency?: T;
   newsletterCategories?: T;
+  emailNotifications?:
+    | T
+    | {
+        onPostApproved?: T;
+        onPostRejected?: T;
+        onEditorFeedback?: T;
+        onCommentReply?: T;
+        newsletter?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -2009,6 +2275,7 @@ export interface VotesSelect<T extends boolean = true> {
   post?: T;
   user?: T;
   value?: T;
+  previousVoteType?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2026,6 +2293,10 @@ export interface PageViewsSelect<T extends boolean = true> {
   country?: T;
   device?: T;
   browser?: T;
+  ipHash?: T;
+  readDuration?: T;
+  readPercentage?: T;
+  isAuthenticated?: T;
   viewedAt?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -2060,11 +2331,26 @@ export interface CommentsSelect<T extends boolean = true> {
   moderatorNotes?: T;
   moderatedBy?: T;
   moderatedAt?: T;
+  spamType?: T;
+  rejectionReason?: T;
+  rejectionReasonCustom?: T;
+  contentModified?: T;
+  revisionHistory?:
+    | T
+    | {
+        originalContent?: T;
+        modifiedBy?: T;
+        modifiedAt?: T;
+        reason?: T;
+        id?: T;
+      };
+  ipAddress?: T;
+  userAgent?: T;
   reportedBy?: T;
   reportReason?: T;
   reportedAt?: T;
-  ipAddress?: T;
-  userAgent?: T;
+  reportResolvedAt?: T;
+  reportResolutionAction?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2188,6 +2474,28 @@ export interface RejectionNotificationsSelect<T extends boolean = true> {
   reason?: T;
   originalPostId?: T;
   isRead?: T;
+  readAt?: T;
+  postSlug?: T;
+  postExcerpt?: T;
+  submittedForReviewCount?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "notifications_select".
+ */
+export interface NotificationsSelect<T extends boolean = true> {
+  recipient?: T;
+  type?: T;
+  title?: T;
+  message?: T;
+  link?: T;
+  relatedPost?: T;
+  relatedComment?: T;
+  triggeredBy?: T;
+  isRead?: T;
+  readAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }
