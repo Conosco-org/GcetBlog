@@ -34,6 +34,15 @@ const nextConfig = {
     return webpackConfig
   },
   reactStrictMode: true,
+  // Performance optimizations
+  swcMinify: true, // Use SWC for faster minification
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production', // Remove console.logs in production
+  },
+  // Experimental features for better performance
+  experimental: {
+    optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'], // Tree-shake icon libraries
+  },
 }
 
 export default withPayload(nextConfig, { devBundleServerPackages: false })
