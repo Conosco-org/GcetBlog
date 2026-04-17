@@ -5,10 +5,8 @@ import { ActivityClient } from './ActivityClient'
 
 export const dynamic = 'force-dynamic'
 
-const PAGE_SIZE = 20
-
 interface PageProps {
-  searchParams: Promise<{ q?: string; page?: string; action?: string }>
+  searchParams: Promise<{ q?: string; page?: string; limit?: string; action?: string }>
 }
 
 export default async function ActivityLogsPage({ searchParams }: PageProps) {
@@ -17,6 +15,7 @@ export default async function ActivityLogsPage({ searchParams }: PageProps) {
 
   const query = params.q || ''
   const page = Math.max(1, Number(params.page) || 1)
+  const limit = Math.max(10, Math.min(100, Number(params.limit) || 20))
   const actionFilter = params.action || ''
 
   // Build where clause
@@ -39,7 +38,7 @@ export default async function ActivityLogsPage({ searchParams }: PageProps) {
 
   const logs = await payload.find({
     collection: 'admin-logs',
-    limit: PAGE_SIZE,
+    limit,
     page,
     sort: '-createdAt',
     depth: 1,
@@ -55,11 +54,7 @@ export default async function ActivityLogsPage({ searchParams }: PageProps) {
 
       <div className="mt-6">
         <ActivityClient
-          logs={logs.docs}
-          totalPages={logs.totalPages}
-          currentPage={logs.page || page}
-          totalItems={logs.totalDocs}
-          pageSize={PAGE_SIZE}
+          logs={logs}
           query={query}
           actionFilter={actionFilter}
         />

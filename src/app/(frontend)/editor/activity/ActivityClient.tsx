@@ -1,18 +1,24 @@
 'use client'
 
 import { Badge } from '@/frontend/components/ui/badge'
+import { Card, CardContent } from '@/frontend/components/ui/card'
 import { SearchInput } from '@frontend/components/base/SearchInput'
 import { FilterBar } from '@frontend/components/base/FilterBar'
 import { DataTable, type Column } from '@frontend/components/base/DataTable'
+import { PaginationControls } from '@/frontend/components/base'
 import { Activity, CheckCircle, XCircle, Edit, Upload, MessageSquare, User, LayoutTemplate } from 'lucide-react'
 import type { AdminLog } from '@/shared/types/payload-types'
 
 interface ActivityClientProps {
-  logs: AdminLog[]
-  totalPages: number
-  currentPage: number
-  totalItems: number
-  pageSize: number
+  logs: {
+    docs: AdminLog[]
+    totalDocs: number
+    totalPages: number
+    page?: number
+    limit?: number
+    hasPrevPage?: boolean
+    hasNextPage?: boolean
+  }
   query: string
   actionFilter: string
 }
@@ -93,10 +99,6 @@ const columns: Column<AdminLog>[] = [
 
 export function ActivityClient({
   logs,
-  totalPages,
-  currentPage,
-  totalItems,
-  pageSize,
   query,
   actionFilter,
 }: ActivityClientProps) {
@@ -128,50 +130,65 @@ export function ActivityClient({
         />
       </div>
 
-      <DataTable
-        columns={columns}
-        data={logs}
-        totalPages={totalPages}
-        currentPage={currentPage}
-        totalItems={totalItems}
-        pageSize={pageSize}
-        getRowKey={(log) => log.id}
-        emptyState={{
-          icon: Activity,
-          title: 'No activity logs found',
-          description: query || actionFilter
-            ? 'Try adjusting your search or filters'
-            : 'Activity will appear here as actions are performed',
-        }}
-        mobileRender={(log) => {
-          const logUser = typeof log.user === 'object' && log.user ? log.user : null
-          const resourceType = log.resourceType
-            ? log.resourceType.charAt(0).toUpperCase() + log.resourceType.slice(1)
-            : 'Unknown'
-          return (
-            <div className="rounded-lg border bg-card p-4 space-y-2">
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2 min-w-0">
-                  <div className="w-7 h-7 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white text-[10px] font-semibold flex-shrink-0">
-                    {(logUser?.name || 'U').charAt(0).toUpperCase()}
+      <Card>
+        <CardContent className="p-0">
+          <DataTable
+            columns={columns}
+            data={logs.docs}
+            totalPages={logs.totalPages}
+            currentPage={logs.page || 1}
+            totalItems={logs.totalDocs}
+            pageSize={logs.limit || 20}
+            getRowKey={(log) => log.id}
+            emptyState={{
+              icon: Activity,
+              title: 'No activity logs found',
+              description: query || actionFilter
+                ? 'Try adjusting your search or filters'
+                : 'Activity will appear here as actions are performed',
+            }}
+            mobileRender={(log) => {
+              const logUser = typeof log.user === 'object' && log.user ? log.user : null
+              const resourceType = log.resourceType
+                ? log.resourceType.charAt(0).toUpperCase() + log.resourceType.slice(1)
+                : 'Unknown'
+              return (
+                <div className="rounded-lg border bg-card p-4 space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div className="w-7 h-7 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white text-[10px] font-semibold flex-shrink-0">
+                        {(logUser?.name || 'U').charAt(0).toUpperCase()}
+                      </div>
+                      <span className="font-medium text-sm truncate">{logUser?.name || 'Unknown'}</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground flex-shrink-0">
+                      {new Date(log.createdAt).toLocaleDateString()}
+                    </span>
                   </div>
-                  <span className="font-medium text-sm truncate">{logUser?.name || 'Unknown'}</span>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {getActivityIcon(log.action)}
+                    <Badge variant="outline" className="text-xs">
+                      {log.action}
+                    </Badge>
+                    <span className="text-xs text-muted-foreground">{resourceType}</span>
+                  </div>
                 </div>
-                <span className="text-xs text-muted-foreground flex-shrink-0">
-                  {new Date(log.createdAt).toLocaleDateString()}
-                </span>
-              </div>
-              <div className="flex flex-wrap items-center gap-2">
-                {getActivityIcon(log.action)}
-                <Badge variant="outline" className="text-xs">
-                  {log.action}
-                </Badge>
-                <span className="text-xs text-muted-foreground">{resourceType}</span>
-              </div>
-            </div>
-          )
-        }}
-      />
+              )
+            }}
+          />
+          
+          {/* Pagination */}
+          <PaginationControls
+            currentPage={logs.page || 1}
+            totalPages={logs.totalPages}
+            totalDocs={logs.totalDocs}
+            limit={logs.limit || 20}
+            hasPrevPage={logs.hasPrevPage || false}
+            hasNextPage={logs.hasNextPage || false}
+            showingCount={logs.docs.length}
+          />
+        </CardContent>
+      </Card>
     </div>
   )
 }
