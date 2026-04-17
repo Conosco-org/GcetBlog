@@ -2,7 +2,7 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import type { User } from '@/payload-types'
+import type { User } from '@/shared/types/payload-types'
 import CategoryManager from './CategoryManager'
 
 // Force dynamic rendering for real-time data
@@ -19,8 +19,9 @@ export default async function CategoriesPage() {
   }
 
   const typedUser = user as User & { role: string }
+  const isAdmin = Boolean((typedUser as unknown as Record<string, unknown>).isAdmin)
 
-  if (typedUser.role !== 'editor') {
+  if (typedUser.role !== 'editor' && !isAdmin) {
     redirect('/dashboard')
   }
 

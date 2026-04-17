@@ -584,7 +584,7 @@ const templates = [
 
 async function seed() {
   const { getPayload } = await import('payload')
-  const configPromise = (await import('../src/payload.config')).default
+  const configPromise = (await import('../src/backend/payload.config')).default
 
   const payload = await getPayload({ config: configPromise })
 

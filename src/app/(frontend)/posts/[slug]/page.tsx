@@ -1,26 +1,26 @@
 ﻿import type { Metadata } from 'next'
 
-import { RelatedPosts } from '@/blocks/RelatedPosts/Component'
-import { PayloadRedirects } from '@/components/PayloadRedirects'
+import { RelatedPosts } from '@frontend/features/posts/components/related-posts'
+import { PayloadRedirects } from '@frontend/components/shared/payload-redirects'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { draftMode, headers as nextHeaders } from 'next/headers'
 import React, { cache } from 'react'
 import Link from 'next/link'
-import RichText from '@/components/RichText'
+import RichText from '@frontend/components/shared/rich-text'
 
-import type { Post } from '@/payload-types'
+import type { Post } from '@shared/types/payload-types'
 
-import { PostHero } from '@/heros/PostHero'
-import { generateMeta } from '@/utilities/generateMeta'
+import { PostHero } from '@frontend/features/posts/components/post-hero'
+import { generateMeta } from '@frontend/lib/generate-meta'
 import PageClient from './page.client'
-import { LivePreviewListener } from '@/components/LivePreviewListener'
-import { PostComments } from '@/components/PostComments'
-import { DraftModeBanner } from '@/components/DraftModeBanner'
+import { LivePreviewListener } from '@frontend/components/shared/live-preview-listener'
+import { PostComments } from '@frontend/features/posts/components/post-comments'
+import { DraftModeBanner } from '@frontend/components/layout/draft-mode-banner'
 import { PostEngagement } from './PostEngagement'
-import { NewsletterSignup } from '@/components/NewsletterSignup'
-import { InstagramEmbedLoader } from '@/components/InstagramEmbedLoader'
-import { publishedVisibilityWhere } from '@/utilities/postValidation'
+import { NewsletterSignup } from '@frontend/features/newsletter/components/newsletter-signup'
+import { InstagramEmbedLoader } from '@frontend/components/instagram-embed-loader'
+import { publishedVisibilityWhere } from '@frontend/features/posts/lib/post-validation'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -211,8 +211,8 @@ export default async function Post({ params: paramsPromise }: Args) {
               <NewsletterSignup variant="inline" className="max-w-md" />
             </div>
 
-            {/* Comments */}
-            <PostComments post={post} />
+            {/* Comments - only show for published posts */}
+            {post._status === 'published' && <PostComments post={post} />}
           </div>
 
           {/* Right: Recommended posts on desktop */}

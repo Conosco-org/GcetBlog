@@ -1,21 +1,21 @@
-﻿'use client'
+'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Save, ArrowLeft, Eye, Upload, X, Send, Clock, Tag, Star, Plus, FileStack, XCircle } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
-import { useToast } from '@/hooks/use-toast'
-import { RichTextEditor, htmlToLexical, htmlToPlainText } from '@/components/RichTextEditor'
-import { TemplateSelector, type TemplateCardData } from '@/components/templates'
-import type { Category, User } from '@/payload-types'
-import { uploadToCloudinaryDirect } from '@/utilities/uploadToCloudinaryDirect'
-import { fromISTInputToISOString } from '@/utilities/dateTimeIST'
-import { validateFeaturedRange, validateMetaDescription } from '@/utilities/postValidation'
+import { Button } from '@frontend/components/ui/button'
+import { Input } from '@/frontend/components/ui/input'
+import { Textarea } from '@/frontend/components/ui/textarea'
+import { Label } from '@/frontend/components/ui/label'
+import { useToast } from '@frontend/components/ui/use-toast'
+import { RichTextEditor, htmlToLexical, htmlToPlainText } from '@frontend/components/shared/rich-text-editor'
+import { TemplateSelector, type TemplateCardData } from '@frontend/components/shared/templates'
+import type { Category, User } from '@/shared/types/payload-types'
+import { uploadToCloudinaryDirect } from '@backend/lib/upload-to-cloudinary-direct'
+import { fromISTInputToISOString } from '@/shared/lib/date-time-ist'
+import { validateFeaturedRange, validateMetaDescription } from '@/frontend/features/posts/lib/post-validation'
 
 interface PostFormProps {
   categories: Category[]
@@ -65,10 +65,12 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
   const [isPublishing, setIsPublishing] = useState(false)
   const [isSavingDraft, setIsSavingDraft] = useState(false)
   const [isSubmittingForReview, setIsSubmittingForReview] = useState(false)
+  const [isPreviewingDraft, setIsPreviewingDraft] = useState(false)
   const [showTemplateSelector, setShowTemplateSelector] = useState(false)
   const [activeTemplateName, setActiveTemplateName] = useState<string | null>(initialTemplate?.name || null)
 
-  const isEditor = user.role === 'editor'
+  const isAdmin = Boolean((user as unknown as Record<string, unknown>).isAdmin)
+  const isEditor = user.role === 'editor' || isAdmin
 
   const handleTemplateSelect = (template: TemplateCardData) => {
     setTitle(template.suggestedTitle || '')
@@ -164,6 +166,81 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
   const handleRemoveImage = () => {
     setHeroImageId(undefined)
     setHeroImagePreview(undefined)
+  }
+
+  const handlePreview = async () => {
+    // Validate required fields
+    if (!title.trim()) {
+      toast({
+        title: "Error",
+        description: "Title is required to preview",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (!content || content === '<p></p>') {
+      toast({
+        title: "Error",
+        description: "Content is required to preview",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setIsPreviewingDraft(true)
+
+    try {
+      const plainText = htmlToPlainText(content)
+
+      // Save as draft first
+      const response = await fetch('/api/posts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: title.trim(),
+          content: htmlToLexical(content),
+          categories: selectedCategories,
+          tags,
+          authors: [user.id],
+          _status: 'draft',
+          heroImage: heroImageId,
+          meta: {
+            title: metaTitle.trim() || title.trim(),
+            description: metaDescription.trim() || plainText.substring(0, 160).trim(),
+          },
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.doc?.slug) {
+        // Open preview in new tab
+        window.open(`/api/draft?slug=${data.doc.slug}&collection=posts`, '_blank')
+        
+        toast({
+          title: "Preview opened",
+          description: "Draft saved and preview opened in new tab",
+        })
+      } else {
+        toast({
+          title: "Error",
+          description: data.message || 'Failed to save draft for preview',
+          variant: "destructive",
+        })
+      }
+    } catch (err) {
+      toast({
+        title: "Error",
+        description: "An error occurred while preparing preview",
+        variant: "destructive",
+      })
+      console.error('Preview error:', err)
+    } finally {
+      setIsPreviewingDraft(false)
+    }
   }
 
   const handleSendForReview = async () => {
@@ -445,8 +522,20 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
         <div className="flex items-center gap-1.5 sm:gap-3">
           <Button
             type="button"
+            onClick={handlePreview}
+            disabled={isPreviewingDraft || isSavingDraft || isPublishing || isSubmittingForReview}
+            variant="outline"
+            size="sm"
+            title="Preview"
+            aria-label="Preview"
+          >
+            <Eye className="w-4 h-4 sm:mr-1.5" />
+            <span className="hidden sm:inline">{isPreviewingDraft ? 'Loading...' : 'Preview'}</span>
+          </Button>
+          <Button
+            type="button"
             onClick={() => handleSubmit('draft')}
-            disabled={isSavingDraft || isPublishing || isSubmittingForReview}
+            disabled={isSavingDraft || isPublishing || isSubmittingForReview || isPreviewingDraft}
             variant="outline"
             size="sm"
             title="Save as Draft"
@@ -461,7 +550,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
             <Button
               type="button"
               onClick={handleSendForReview}
-              disabled={isSubmittingForReview || isPublishing || isSavingDraft}
+              disabled={isSubmittingForReview || isPublishing || isSavingDraft || isPreviewingDraft}
               className="bg-blue-600 hover:bg-blue-700"
               size="sm"
               title="Send for Review"
@@ -474,12 +563,12 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
             <Button
               type="button"
               onClick={() => handleSubmit('published')}
-              disabled={isPublishing || isSavingDraft || isSubmittingForReview}
+              disabled={isPublishing || isSavingDraft || isSubmittingForReview || isPreviewingDraft}
               size="sm"
               title="Publish"
               aria-label="Publish"
             >
-              <Eye className="w-4 h-4 sm:mr-1.5" />
+              <Send className="w-4 h-4 sm:mr-1.5" />
               <span className="hidden sm:inline">{isPublishing ? 'Publishing...' : 'Publish'}</span>
             </Button>
           )}
@@ -550,10 +639,10 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
                   {isUploadingImage ? 'Uploading...' : 'Click to upload hero image'}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Recommended: 1920×1080 (16:9) • PNG, JPG, WebP • Optimize to &lt;500KB
+                  Recommended: 1920�1080 (16:9) � PNG, JPG, WebP � Optimize to &lt;500KB
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  💡 Tip: Keep faces in top 60% for better cropping
+                  ?? Tip: Keep faces in top 60% for better cropping
                 </p>
               </label>
             </div>

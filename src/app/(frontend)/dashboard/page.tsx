@@ -1,8 +1,8 @@
-﻿import { getPayload } from 'payload'
+import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import type { User } from '@/payload-types'
+import type { User } from '@/shared/types/payload-types'
 
 export default async function DashboardPage() {
   const payload = await getPayload({ config: configPromise })

@@ -1,17 +1,17 @@
-﻿import { getPayload } from 'payload'
+import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { EditorLayoutClient } from '../(frontend)/editor/components/EditorLayoutClient'
-import { PayloadBlocker } from '../contributor/components/PayloadBlocker'
-import type { User } from '@/payload-types'
+import { EditorLayoutClient } from '@/frontend/features/editor/components/editor-layout-client'
+import { PayloadBlocker } from '@/frontend/features/contributor/components/payload-blocker'
+import type { User } from '@/shared/types/payload-types'
 import React from 'react'
-import { cn } from '@/utilities/ui'
+import { cn } from '@/frontend/lib/utils'
 import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
-import { Providers } from '@/providers'
-import { InitTheme } from '@/providers/Theme/InitTheme'
-import '@/app/(frontend)/globals.css'
+import { Providers } from '@/frontend/providers'
+import { InitTheme } from '@/frontend/providers/Theme/InitTheme'
+import '@/frontend/styles/globals.css'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -80,7 +80,6 @@ export default async function AdminDashboardLayout({
             pendingPostsCount={pendingPosts.totalDocs}
             totalPostsCount={totalPosts.totalDocs}
             activityLogsCount={recentLogs.totalDocs}
-            subscribersCount={0}
           >
             {children}
           </EditorLayoutClient>

@@ -1,12 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { useToast } from '@/hooks/use-toast'
+import { Card, CardContent, CardHeader, CardTitle } from '@/frontend/components/ui/card'
+import { Badge } from '@/frontend/components/ui/badge'
+import { Button } from '@frontend/components/ui/button'
+import { Input } from '@/frontend/components/ui/input'
+import { Label } from '@/frontend/components/ui/label'
+import { useToast } from '@frontend/components/ui/use-toast'
 import {
   Dialog,
   DialogContent,
@@ -15,7 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
+} from '@/frontend/components/ui/dialog'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,10 +26,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
-import { formatDateTime } from '@/utilities/formatDateTime'
+} from '@/frontend/components/ui/alert-dialog'
+import { formatDateTime } from '@/frontend/lib/format-date-time'
 import { Plus, Edit, Trash2, Tag, FileText, Loader2 } from 'lucide-react'
-import type { Category } from '@/payload-types'
+import type { Category } from '@/shared/types/payload-types'
 import { useRouter } from 'next/navigation'
 
 interface CategoryWithStats extends Category {

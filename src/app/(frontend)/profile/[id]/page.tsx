@@ -3,8 +3,8 @@ import configPromise from '@payload-config'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '@frontend/components/ui/card'
+import { Badge } from '@frontend/components/ui/badge'
 import {
   FileText,
   ThumbsUp,
@@ -17,7 +17,7 @@ import {
   GraduationCap,
   MessageCircle,
 } from 'lucide-react'
-import type { Media as MediaType, User, Post } from '@/payload-types'
+import type { Media as MediaType, User, Post } from '@shared/types/payload-types'
 
 export const dynamic = 'force-dynamic'
 

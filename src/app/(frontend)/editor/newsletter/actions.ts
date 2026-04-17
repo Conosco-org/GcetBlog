@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Newsletter Server Actions
  *
  * All newsletter-related server actions for editors.
@@ -11,8 +11,8 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { revalidatePath } from 'next/cache'
 
-import { sendNewsletter, generateDigest } from '@/services/email/sender'
-import { getEmailService } from '@/services/email'
+import { sendNewsletter, generateDigest } from '@backend/lib/email/sender'
+import { getEmailService } from '@backend/lib/email'
 
 export type ActionResult = {
   success: boolean

@@ -1,21 +1,22 @@
 import type { Metadata } from 'next'
 
-import { PayloadRedirects } from '@/components/PayloadRedirects'
+import { PayloadRedirects } from '@frontend/components/shared/payload-redirects'
 import configPromise from '@payload-config'
 import { getPayload, type RequiredDataFromCollectionSlug } from 'payload'
 import { draftMode } from 'next/headers'
 import React, { cache } from 'react'
-import { homeStatic } from '@/endpoints/seed/home-static'
+import { homeStatic } from '@backend/endpoints/seed/home-static'
 
 export const dynamic = 'force-dynamic'
 
-import { RenderBlocks } from '@/blocks/RenderBlocks'
-import { RenderHero } from '@/heros/RenderHero'
-import { generateMeta } from '@/utilities/generateMeta'
+import { RenderBlocks } from '@frontend/components/blocks/render-blocks'
+import { RenderHero } from '@frontend/components/heros/render-hero'
+import { generateMeta } from '@frontend/lib/generate-meta'
 import PageClient from './page.client'
-import { LivePreviewListener } from '@/components/LivePreviewListener'
-import { HeroSection, HomePosts, FeaturedPosts, FeaturesSection, CTASection } from '@/components/LandingPage'
-import { publishedVisibilityWhere } from '@/utilities/postValidation'
+import { LivePreviewListener } from '@frontend/components/shared/live-preview-listener'
+import { HeroSection, FeaturesSection, CTASection } from '@frontend/components/landing'
+import { HomePosts, FeaturedPosts } from '@frontend/features/posts/components'
+import { publishedVisibilityWhere } from '@frontend/features/posts/lib/post-validation'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })

@@ -118,7 +118,7 @@ export async function unpublishPost(postId: string) {
         },
       })
     } catch (error) {
-      console.log('Could not create audit log:', error)
+      console.error('Could not create audit log:', error)
     }
 
     revalidatePath('/editor/content')

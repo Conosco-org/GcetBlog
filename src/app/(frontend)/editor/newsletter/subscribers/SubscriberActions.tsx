@@ -2,9 +2,9 @@
 
 import { useRef, useTransition, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
+import { Button } from '@frontend/components/ui/button'
 import { Download, Upload, Loader2 } from 'lucide-react'
-import { toast } from '@/hooks/use-toast'
+import { toast } from '@frontend/components/ui/use-toast'
 
 interface SubscriberActionsProps {
   statusFilter?: string

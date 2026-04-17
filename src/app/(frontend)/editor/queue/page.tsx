@@ -1,10 +1,9 @@
 import { getPayload, type Where } from 'payload'
 import configPromise from '@payload-config'
 import { Clock, MessageSquare, Calendar } from 'lucide-react'
-import Link from 'next/link'
-import { Card, CardContent } from '@/components/ui/card'
-import { PageHeader } from '@/components/base/PageHeader'
-import { QueueTableClient } from './QueueTableClient'
+import { Card, CardContent } from '@/frontend/components/ui/card'
+import { PageHeader } from '@frontend/components/base/PageHeader'
+import { QueueTabs } from './QueueTabs'
 
 // Force dynamic rendering - no caching
 export const dynamic = 'force-dynamic'
@@ -13,7 +12,7 @@ export const revalidate = 0
 const PAGE_SIZE = 15
 
 interface PageProps {
-  searchParams: Promise<{ q?: string; page?: string }>
+  searchParams: Promise<{ q?: string; page?: string; tab?: string }>
 }
 
 export default async function EditorQueuePage({ searchParams }: PageProps) {
@@ -22,6 +21,7 @@ export default async function EditorQueuePage({ searchParams }: PageProps) {
 
   const query = params.q || ''
   const page = Math.max(1, Number(params.page) || 1)
+  const activeTab = params.tab || 'posts'
 
   // First, get all contributor user IDs using pagination to avoid hard limits
   const contributorIds: string[] = []
@@ -38,18 +38,18 @@ export default async function EditorQueuePage({ searchParams }: PageProps) {
 
     contributorIds.push(...contributors.docs.map(user => user.id))
 
-    // Continue until there are no more contributor pages
     if (!contributors.hasNextPage || !contributors.nextPage) {
       hasMoreContributors = false
     } else {
       contributorsPage = contributors.nextPage
     }
   }
+
   // Build where clause - only posts from contributors
   const baseConditions: Where[] = [
     { _status: { equals: 'draft' } },
     { reviewStatus: { equals: 'pending_review' } },
-    { authors: { in: contributorIds } }, // Only posts authored by contributors
+    { authors: { in: contributorIds } },
   ]
 
   if (query) {
@@ -63,7 +63,7 @@ export default async function EditorQueuePage({ searchParams }: PageProps) {
   const baseWhere: Where = { and: baseConditions }
 
   // Parallel queries
-  const [pendingPosts, pendingComments, flaggedComments] = await Promise.all([
+  const [pendingPosts, pendingComments] = await Promise.all([
     payload.find({
       collection: 'posts',
       where: baseWhere,
@@ -71,27 +71,16 @@ export default async function EditorQueuePage({ searchParams }: PageProps) {
       sort: '-submittedForReviewAt',
       limit: PAGE_SIZE,
       page,
-      draft: true, // Explicitly fetch draft versions to ensure real-time status
+      draft: true,
     }),
-    payload.count({
+    payload.find({
       collection: 'comments',
       where: { status: { equals: 'pending' } },
-    }),
-    payload.count({
-      collection: 'comments',
-      where: { status: { equals: 'reported' } },
+      depth: 2,
+      limit: 100,
+      sort: '-createdAt',
     }),
   ])
-
-  console.log('📊 [Editor Queue] Query results:', {
-    totalDocs: pendingPosts.totalDocs,
-    posts: pendingPosts.docs.map(p => ({
-      id: p.id,
-      title: p.title,
-      reviewStatus: p.reviewStatus,
-      _status: p._status,
-    }))
-  })
 
   return (
     <div className="p-8 min-h-screen">
@@ -122,7 +111,6 @@ export default async function EditorQueuePage({ searchParams }: PageProps) {
               <div>
                 <p className="text-muted-foreground text-sm font-medium mb-1">Pending Comments</p>
                 <p className="text-4xl font-bold">{pendingComments.totalDocs}</p>
-                <p className="text-sm text-orange-600 mt-2">{flaggedComments.totalDocs} flagged</p>
               </div>
               <div className="w-12 h-12 bg-blue-500/10 rounded-full flex items-center justify-center">
                 <MessageSquare className="w-6 h-6 text-blue-500" />
@@ -146,36 +134,13 @@ export default async function EditorQueuePage({ searchParams }: PageProps) {
         </Card>
       </div>
 
-      {/* Tabs */}
-      <Card className="mb-6">
-        <div className="border-b">
-          <nav className="flex">
-            <Link
-              href="/editor/queue"
-              className="px-6 py-4 text-sm font-medium text-primary border-b-2 border-primary"
-            >
-              Post Approvals ({pendingPosts.totalDocs})
-            </Link>
-            <Link
-              href="/editor/comments"
-              className="px-6 py-4 text-sm font-medium text-muted-foreground hover:text-foreground hover:border-b-2 hover:border-muted-foreground transition-colors"
-            >
-              Comment Moderation ({pendingComments.totalDocs})
-            </Link>
-            <button
-              className="px-6 py-4 text-sm font-medium text-muted-foreground/50 cursor-not-allowed"
-              disabled
-              title="Coming soon"
-            >
-              Publishing Schedule (0)
-            </button>
-          </nav>
-        </div>
-      </Card>
-
-      {/* Posts Awaiting Review */}
-      <QueueTableClient
+      {/* Tabs Component */}
+      <QueueTabs
+        activeTab={activeTab}
+        pendingPostsCount={pendingPosts.totalDocs}
+        pendingCommentsCount={pendingComments.totalDocs}
         posts={pendingPosts.docs}
+        pendingComments={pendingComments.docs}
         totalPages={pendingPosts.totalPages}
         currentPage={pendingPosts.page || page}
         totalItems={pendingPosts.totalDocs}

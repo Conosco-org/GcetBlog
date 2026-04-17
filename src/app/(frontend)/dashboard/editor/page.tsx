@@ -3,8 +3,8 @@ import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { LogoutButton } from '@/components/LogoutButton'
-import type { User } from '@/payload-types'
+import { LogoutButton } from '@frontend/components/shared/logout-button'
+import type { User } from '@/shared/types/payload-types'
 
 export default async function EditorDashboardPage() {
   const payload = await getPayload({ config: configPromise })

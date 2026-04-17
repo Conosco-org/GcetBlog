@@ -1,0 +1,84 @@
+import { getPayload, type Where } from 'payload'
+import configPromise from '@payload-config'
+import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
+import type { User } from '@shared/types/payload-types'
+import { PageHeader } from '@frontend/components/base/PageHeader'
+import { SubmissionsClient } from '@frontend/features/contributor/components/submissions-client'
+
+const PAGE_SIZE = 10
+
+// Force dynamic rendering for real-time data
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
+interface PageProps {
+  searchParams: Promise<{ q?: string; page?: string; status?: string }>
+}
+
+export default async function SubmissionsPage({ searchParams }: PageProps) {
+  const params = await searchParams
+  const payload = await getPayload({ config: configPromise })
+  const requestHeaders = await headers()
+  const { user } = await payload.auth({ headers: requestHeaders })
+
+  if (!user) {
+    redirect('/login')
+  }
+
+  const typedUser = user as User
+
+  if (typedUser.role !== 'contributor') {
+    redirect('/dashboard')
+  }
+
+  const query = params.q || ''
+  const page = Math.max(1, Number(params.page) || 1)
+  const statusFilter = params.status || ''
+
+  // Build where
+  const conditions: Where[] = [
+    { authors: { equals: typedUser.id } },
+  ]
+
+  if (statusFilter) {
+    conditions.push({ reviewStatus: { equals: statusFilter } })
+  } else {
+    conditions.push({
+      reviewStatus: { in: ['pending_review', 'approved', 'rejected'] },
+    })
+  }
+
+  if (query) {
+    conditions.push({ title: { like: query } })
+  }
+
+  const submissions = await payload.find({
+    collection: 'posts',
+    where: { and: conditions },
+    sort: '-submittedForReviewAt',
+    limit: PAGE_SIZE,
+    page,
+  })
+
+  return (
+    <div className="container max-w-6xl mx-auto p-6">
+      <PageHeader
+        title="My Submissions"
+        description="Track the review status of your submitted posts"
+      />
+
+      <div className="mt-6">
+        <SubmissionsClient
+          submissions={submissions.docs}
+          totalPages={submissions.totalPages}
+          currentPage={submissions.page || page}
+          totalItems={submissions.totalDocs}
+          pageSize={PAGE_SIZE}
+          query={query}
+          statusFilter={statusFilter}
+        />
+      </div>
+    </div>
+  )
+}

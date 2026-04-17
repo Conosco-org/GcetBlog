@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 
-import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
-import { getServerSideURL } from '@/utilities/getURL'
+import { mergeOpenGraph } from '@/frontend/lib/merge-open-graph'
+import { getServerSideURL } from '@/shared/lib/get-url'
 
-import './(frontend)/globals.css'
+import '@/frontend/styles/globals.css'
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return children

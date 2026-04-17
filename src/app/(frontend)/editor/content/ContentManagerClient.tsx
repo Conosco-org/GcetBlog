@@ -1,20 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
-import { useToast } from '@/hooks/use-toast'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+import { Button } from '@frontend/components/ui/button'
+import { Badge } from '@/frontend/components/ui/badge'
+import { Input } from '@/frontend/components/ui/input'
+import { useToast } from '@frontend/components/ui/use-toast'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,20 +14,20 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
+} from '@/frontend/components/ui/alert-dialog'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/frontend/components/ui/select"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/frontend/components/ui/dropdown-menu"
 import {
   Table,
   TableBody,
@@ -45,12 +35,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { Search, MoreVertical, Pencil, MessageSquare, Loader2, Trash2, FileX, X, ChevronLeft, ChevronRight, Send } from 'lucide-react'
+} from "@/frontend/components/ui/table"
+import { Search, MoreVertical, Pencil, MessageSquare, Loader2, Trash2, FileX, X, ChevronLeft, ChevronRight, Eye } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { deletePost, unpublishPost } from './actions'
-import type { Post, Category } from '@/payload-types'
+import type { Post, Category } from '@/shared/types/payload-types'
 
 interface ContentManagerClientProps {
   posts: { docs: Post[]; totalDocs: number; totalPages: number; page?: number; hasPrevPage?: boolean; hasNextPage?: boolean }
@@ -61,10 +51,6 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [categoryFilter, setCategoryFilter] = useState('all')
-  const [feedbackDialog, setFeedbackDialog] = useState<{ open: boolean; post: Post | null }>({
-    open: false,
-    post: null,
-  })
   const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; post: Post | null }>({
     open: false,
     post: null,
@@ -74,20 +60,21 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
     post: null,
   })
   const [isLoading, setIsLoading] = useState(false)
-  const [feedbackForm, setFeedbackForm] = useState({
-    title: '',
-    type: 'suggestions' as 'critical' | 'suggestions' | 'praise' | 'questions',
-    message: '',
-  })
   const { toast } = useToast()
   const router = useRouter()
 
-  const handleSendFeedback = async () => {
-    if (!feedbackDialog.post || !feedbackForm.title.trim() || !feedbackForm.message.trim()) {
+  const handleSendFeedback = async (post: Post) => {
+    const feedback = prompt(`What changes are needed for "${post.title}"? (This feedback will be sent to the contributor)`)
+    
+    if (feedback === null) {
+      return // User cancelled
+    }
+
+    if (!feedback.trim()) {
       toast({
-        title: 'Error',
-        description: 'Please fill in all fields',
-        variant: 'destructive',
+        title: "Feedback Required",
+        description: "Please provide feedback for the contributor",
+        variant: "destructive",
       })
       return
     }
@@ -95,7 +82,6 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
     setIsLoading(true)
     try {
       // Get the post author (contributor)
-      const post = feedbackDialog.post
       const authors = post?.authors as Array<{ id: string; name?: string }> | null | undefined
       const contributorId = Array.isArray(authors) && authors.length > 0 
         ? (typeof authors[0] === 'object' ? authors[0].id : authors[0])
@@ -111,11 +97,11 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          title: feedbackForm.title,
+          title: `Feedback for: ${post.title}`,
           postId: post.id,
           contributorId,
-          type: feedbackForm.type,
-          initialMessage: feedbackForm.message,
+          type: 'suggestions',
+          initialMessage: feedback,
         }),
       })
 
@@ -127,9 +113,6 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
         title: 'Success',
         description: 'Feedback sent successfully',
       })
-
-      setFeedbackDialog({ open: false, post: null })
-      setFeedbackForm({ title: '', type: 'suggestions', message: '' })
     } catch (error) {
       console.error('Error sending feedback:', error)
       toast({
@@ -142,13 +125,25 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
     }
   }
 
-  const openFeedbackDialog = (post: Post) => {
-    setFeedbackDialog({ open: true, post })
-    setFeedbackForm({
-      title: `Feedback for: ${post.title}`,
-      type: 'suggestions',
-      message: '',
-    })
+  const handleViewPost = (post: Post) => {
+    const status = post._status || 'draft'
+    const slug = post.slug
+
+    if (!slug) {
+      toast({
+        title: 'Error',
+        description: 'Post slug is missing',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    // Open in new tab based on status
+    if (status === 'published') {
+      window.open(`/posts/${slug}`, '_blank')
+    } else {
+      window.open(`/api/draft?slug=${slug}&collection=posts`, '_blank')
+    }
   }
 
   const handleDeletePost = async () => {
@@ -370,10 +365,17 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
                             Edit
                           </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem>View Post</DropdownMenuItem>
                         <DropdownMenuItem 
-                          onClick={() => openFeedbackDialog(post)}
+                          onClick={() => handleViewPost(post)}
                           className="flex items-center gap-2"
+                        >
+                          <Eye className="w-4 h-4" />
+                          View Post
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          onClick={() => handleSendFeedback(post)}
+                          className="flex items-center gap-2"
+                          disabled={isLoading}
                         >
                           <MessageSquare className="w-4 h-4" />
                           Send Feedback
@@ -392,7 +394,7 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
                           className="text-destructive flex items-center gap-2"
                         >
                           <Trash2 className="w-4 h-4" />
-                          Delete
+                          Reject
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -490,10 +492,17 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem>View Post</DropdownMenuItem>
                             <DropdownMenuItem 
-                              onClick={() => openFeedbackDialog(post)}
+                              onClick={() => handleViewPost(post)}
                               className="flex items-center gap-2"
+                            >
+                              <Eye className="w-4 h-4" />
+                              View Post
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => handleSendFeedback(post)}
+                              className="flex items-center gap-2"
+                              disabled={isLoading}
                             >
                               <MessageSquare className="w-4 h-4" />
                               Send Feedback
@@ -507,13 +516,12 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
                                 Unpublish
                               </DropdownMenuItem>
                             )}
-                            <DropdownMenuItem>Duplicate</DropdownMenuItem>
                             <DropdownMenuItem 
                               onClick={() => setDeleteDialog({ open: true, post })}
                               className="text-destructive flex items-center gap-2"
                             >
                               <Trash2 className="w-4 h-4" />
-                              Delete
+                              Reject
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -556,79 +564,6 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
         </div>
       </div>
 
-      {/* Feedback Dialog */}
-      <Dialog 
-        open={feedbackDialog.open} 
-        onOpenChange={(open) => setFeedbackDialog({ ...feedbackDialog, open })}
-      >
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Send Feedback</DialogTitle>
-            <DialogDescription>
-              Send feedback to the contributor about their post: {feedbackDialog.post?.title}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="feedback-title">Title *</Label>
-              <Input
-                id="feedback-title"
-                value={feedbackForm.title}
-                onChange={(e) => setFeedbackForm({ ...feedbackForm, title: e.target.value })}
-                placeholder="Enter feedback title"
-                disabled={isLoading}
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="feedback-type">Type *</Label>
-              <Select 
-                value={feedbackForm.type} 
-                onValueChange={(value: 'critical' | 'suggestions' | 'praise' | 'questions') => setFeedbackForm({ ...feedbackForm, type: value })}
-                disabled={isLoading}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="critical">Critical Issues</SelectItem>
-                  <SelectItem value="suggestions">Suggestions</SelectItem>
-                  <SelectItem value="praise">Praise</SelectItem>
-                  <SelectItem value="questions">Questions</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="feedback-message">Message *</Label>
-              <Textarea
-                id="feedback-message"
-                value={feedbackForm.message}
-                onChange={(e) => setFeedbackForm({ ...feedbackForm, message: e.target.value })}
-                placeholder="Enter your feedback message..."
-                className="min-h-[120px]"
-                disabled={isLoading}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setFeedbackDialog({ open: false, post: null })}
-              disabled={isLoading}
-              title="Cancel"
-              aria-label="Cancel"
-            >
-              <X className="w-4 h-4 sm:mr-1.5" />
-              <span className="hidden sm:inline">Cancel</span>
-            </Button>
-            <Button onClick={handleSendFeedback} disabled={isLoading} title="Send Feedback" aria-label="Send Feedback">
-              {isLoading ? <Loader2 className="w-4 h-4 sm:mr-2 animate-spin" /> : <Send className="w-4 h-4 sm:mr-2" />}
-              <span className="hidden sm:inline">Send Feedback</span>
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
       {/* Delete Confirmation Dialog */}
       <AlertDialog 
         open={deleteDialog.open} 
@@ -638,7 +573,7 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the post &ldquo;{deleteDialog.post?.title}&rdquo;.
+              This action cannot be undone. This will permanently reject the post &ldquo;{deleteDialog.post?.title}&rdquo;.
               {deleteDialog.post?._status === 'published' && (
                 <span className="block mt-2 text-orange-600 font-medium">
                   Note: This post is currently published. It will be unpublished before deletion.
@@ -660,7 +595,7 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
               className="bg-destructive hover:bg-destructive/90"
             >
               {isLoading ? <Loader2 className="w-4 h-4 sm:mr-2 animate-spin" /> : <Trash2 className="w-4 h-4 sm:mr-2" />}
-              <span className="hidden sm:inline">{isLoading ? 'Deleting...' : 'Delete Post'}</span>
+              <span className="hidden sm:inline">{isLoading ? 'Rejecting...' : 'Reject Post'}</span>
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

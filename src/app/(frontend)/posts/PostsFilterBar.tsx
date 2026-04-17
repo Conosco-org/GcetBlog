@@ -2,7 +2,7 @@
 
 import React, { useCallback, useTransition } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { cn } from '@/utilities/ui'
+import { cn } from '@frontend/lib/utils'
 import { X } from 'lucide-react'
 
 interface PostsFilterBarProps {

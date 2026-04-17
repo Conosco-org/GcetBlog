@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Newsletter Subscribe API
  *
  * POST /api/newsletter/subscribe
@@ -13,9 +13,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
-import { sendWelcomeEmail } from '@/services/email/sender'
+import { sendWelcomeEmail } from '@backend/lib/email/sender'
+import { checkRateLimit, createRateLimitResponse } from '@shared/lib/rate-limit'
 
 export async function POST(request: NextRequest) {
+  // Rate limiting: max 5 requests per hour per IP
+  const rateLimitResult = await checkRateLimit(request, {
+    maxRequests: 5,
+    windowMs: 60 * 60 * 1000, // 1 hour
+  })
+
+  if (!rateLimitResult.success) {
+    return createRateLimitResponse(rateLimitResult)
+  }
+
   try {
     const body = await request.json()
     const { email, name, categories, frequency } = body as {

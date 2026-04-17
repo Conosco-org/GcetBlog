@@ -2,10 +2,10 @@
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
-import { lexicalToHtml } from '@/components/RichTextEditor/lexicalToHtml'
+import { lexicalToHtml } from '@frontend/components/shared/rich-text-editor/lexicalToHtml'
 import { PostForm } from './PostForm'
-import type { Post } from '@/payload-types'
-import { toISTDateTimeInput } from '@/utilities/dateTimeIST'
+import type { Post } from '@shared/types/payload-types'
+import { toISTDateTimeInput } from '@shared/lib/date-time-ist'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -22,7 +22,8 @@ export default async function EditPostPage({ params }: PageProps) {
     redirect('/login')
   }
 
-  if (!user.role || !['contributor', 'editor'].includes(user.role)) {
+  const isAdmin = Boolean((user as unknown as Record<string, unknown>).isAdmin)
+  if (!user.role || (!['contributor', 'editor'].includes(user.role) && !isAdmin)) {
     redirect('/editor')
   }
 
@@ -94,6 +95,8 @@ export default async function EditPostPage({ params }: PageProps) {
     },
     heroImage: heroImage?.id,
     heroImageUrl: heroImage?.url,
+    slug: post.slug || '',
+    status: post._status || 'draft',
   }
 
   return (

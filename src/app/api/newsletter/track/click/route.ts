@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Newsletter Click Tracking Endpoint
  *
  * GET /api/newsletter/track/click?nid={newsletterId}&sid={subscriberId}&url={encodedUrl}

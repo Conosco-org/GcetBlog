@@ -2,7 +2,7 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
-import type { User } from '@/payload-types'
+import type { User } from '@shared/types/payload-types'
 
 export async function POST(request: NextRequest) {
   try {

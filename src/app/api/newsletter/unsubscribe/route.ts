@@ -10,7 +10,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
-import { sendUnsubscribeConfirmation } from '@/services/email/sender'
+import { sendUnsubscribeConfirmation } from '@backend/lib/email/sender'
 
 export async function POST(request: NextRequest) {
   try {

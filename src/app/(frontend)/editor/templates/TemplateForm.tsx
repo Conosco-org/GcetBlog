@@ -1,21 +1,21 @@
-﻿'use client'
+'use client'
 
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
+import { Button } from '@frontend/components/ui/button'
+import { Input } from '@/frontend/components/ui/input'
+import { Card, CardContent, CardHeader, CardTitle } from '@/frontend/components/ui/card'
+import { Label } from '@/frontend/components/ui/label'
+import { Textarea } from '@/frontend/components/ui/textarea'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Badge } from '@/components/ui/badge'
+} from '@/frontend/components/ui/select'
+import { Badge } from '@/frontend/components/ui/badge'
 import {
   ArrowLeft,
   Save,
@@ -26,12 +26,12 @@ import {
   Send,
   FileEdit,
 } from 'lucide-react'
-import { useToast } from '@/hooks/use-toast'
-import { RichTextEditor } from '@/components/RichTextEditor'
-import { getTemplateIcon } from '@/components/templates/templateUtils'
-import { uploadToCloudinaryDirect } from '@/utilities/uploadToCloudinaryDirect'
+import { useToast } from '@frontend/components/ui/use-toast'
+import { RichTextEditor } from '@frontend/components/shared/rich-text-editor'
+import { getTemplateIcon } from '@frontend/components/shared/templates/templateUtils'
+import { uploadToCloudinaryDirect } from '@backend/lib/upload-to-cloudinary-direct'
 
-// ── Constants ────────────────────────────────────────────────────
+// -- Constants ----------------------------------------------------
 
 const CATEGORIES = [
   { label: 'Academic', value: 'academic' },
@@ -70,7 +70,7 @@ const ICONS = [
   { label: 'List (Listicle)', value: 'list' },
 ]
 
-// ── Types ────────────────────────────────────────────────────────
+// -- Types --------------------------------------------------------
 
 export interface TemplateFormData {
   id?: string
@@ -91,7 +91,7 @@ interface TemplateFormProps {
   initialData?: TemplateFormData
 }
 
-// ── Component ────────────────────────────────────────────────────
+// -- Component ----------------------------------------------------
 
 export function TemplateForm({ initialData }: TemplateFormProps) {
   const router = useRouter()
@@ -104,7 +104,7 @@ export function TemplateForm({ initialData }: TemplateFormProps) {
 
   const isEditing = !!initialData?.id
 
-  // ── Form state ────────────────────────────────────────────────
+  // -- Form state ------------------------------------------------
   const [name, setName] = useState(initialData?.name || '')
   const [description, setDescription] = useState(initialData?.description || '')
   const [category, setCategory] = useState(initialData?.category || 'general')
@@ -117,7 +117,7 @@ export function TemplateForm({ initialData }: TemplateFormProps) {
   const [tags, setTags] = useState<string[]>(initialData?.suggestedTags || [])
   const [status, setStatus] = useState<'draft' | 'published'>(initialData?.status || 'draft')
 
-  // ── Tag handling ──────────────────────────────────────────────
+  // -- Tag handling ----------------------------------------------
   const handleAddTag = () => {
     const tag = tagInput.trim().toLowerCase()
     if (tag && !tags.includes(tag)) {
@@ -140,7 +140,7 @@ export function TemplateForm({ initialData }: TemplateFormProps) {
     setTags((prev) => prev.filter((t) => t !== tag))
   }
 
-  // ── Image upload (inserts into editor content) ────────────────
+  // -- Image upload (inserts into editor content) ----------------
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -170,7 +170,7 @@ export function TemplateForm({ initialData }: TemplateFormProps) {
     }
   }
 
-  // ── Save / Publish ────────────────────────────────────────────
+  // -- Save / Publish --------------------------------------------
   const handleSave = async (targetStatus?: 'draft' | 'published') => {
     if (!name.trim()) {
       toast({ title: 'Error', description: 'Template name is required', variant: 'destructive' })
@@ -242,7 +242,7 @@ export function TemplateForm({ initialData }: TemplateFormProps) {
     }
   }
 
-  // ── Helpers ───────────────────────────────────────────────────
+  // -- Helpers ---------------------------------------------------
   const SelectedIcon = getTemplateIcon(icon)
 
   const getWordCount = (html: string) => {
@@ -251,10 +251,10 @@ export function TemplateForm({ initialData }: TemplateFormProps) {
     return text.split(/\s+/).filter(Boolean).length
   }
 
-  // ── Render ────────────────────────────────────────────────────
+  // -- Render ----------------------------------------------------
   return (
     <div className="min-h-screen bg-muted/30">
-      {/* ── Sticky top bar ─────────────────────────────────────── */}
+      {/* -- Sticky top bar --------------------------------------- */}
       <div className="sticky top-0 z-30 bg-background/95 backdrop-blur-md border-b">
         <div className="flex items-center justify-between px-4 sm:px-6 py-3 max-w-[1400px] mx-auto">
           <div className="flex items-center gap-2">
@@ -351,7 +351,7 @@ export function TemplateForm({ initialData }: TemplateFormProps) {
 
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-6">
         {showPreview ? (
-          /* ── Preview mode ──────────────────────────────────── */
+          /* -- Preview mode ------------------------------------ */
           <div className="max-w-3xl mx-auto">
             <Card className="overflow-hidden">
               {/* Preview header */}
@@ -408,7 +408,7 @@ export function TemplateForm({ initialData }: TemplateFormProps) {
             </Card>
           </div>
         ) : (
-          /* ── Edit mode ─────────────────────────────────────── */
+          /* -- Edit mode --------------------------------------- */
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
             {/* Main column - editor */}
             <div className="space-y-4">
@@ -471,7 +471,7 @@ export function TemplateForm({ initialData }: TemplateFormProps) {
               </Card>
             </div>
 
-            {/* ── Sidebar ─────────────────────────────────────── */}
+            {/* -- Sidebar --------------------------------------- */}
             <div className="space-y-4">
               {/* Settings */}
               <Card>

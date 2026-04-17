@@ -1,13 +1,13 @@
-﻿import { getPayload } from 'payload'
+import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import Link from 'next/link'
 import { Clock, CheckCircle2, MessageSquare, Image as ImageIcon, ChevronRight, LayoutTemplate } from 'lucide-react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { PageHeader } from '@/components/base'
-import { DashboardErrorFallback } from './components/DashboardErrorFallback'
-import { formatDateTimeIST } from '@/utilities/formatDateTime'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/frontend/components/ui/card'
+import { Button } from '@frontend/components/ui/button'
+import { Badge } from '@/frontend/components/ui/badge'
+import { PageHeader } from '@frontend/components/base'
+import { DashboardErrorFallback } from '@/frontend/features/editor/components/dashboard-error-fallback'
+import { formatDateTimeIST } from '@/frontend/lib/format-date-time'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -483,7 +483,7 @@ export default async function EditorDashboardPage() {
                           </div>
                           <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
                             <span>{author?.name || 'Unknown'}</span>
-                            <span>•</span>
+                            <span>�</span>
                             <span>{formatDateTimeIST(post.publishedAt || post.updatedAt)}</span>
                           </div>
                         </div>

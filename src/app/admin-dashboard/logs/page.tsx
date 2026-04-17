@@ -1,7 +1,7 @@
 import { getPayload, type Where } from 'payload'
 import configPromise from '@payload-config'
-import { PageHeader } from '@/components/base/PageHeader'
-import { LogsClient } from './LogsClient'
+import { PageHeader } from '@frontend/components/base/PageHeader'
+import { LogsClient } from '@frontend/features/admin/components/logs-client'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0

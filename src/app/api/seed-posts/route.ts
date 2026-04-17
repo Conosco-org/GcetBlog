@@ -1,8 +1,16 @@
-﻿import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 
 export async function GET(request: NextRequest) {
+  // Disable in production
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json(
+      { error: 'Seed endpoint is disabled in production' },
+      { status: 403 }
+    )
+  }
+
   try {
     const payload = await getPayload({ config: configPromise })
 
@@ -13,7 +21,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    console.log('📝 Creating 5 sample published posts...\n')
+    console.log('?? Creating 5 sample published posts...\n')
 
     // Sample post data
     const posts = [
@@ -64,7 +72,7 @@ export async function GET(request: NextRequest) {
       })
 
       if (category.docs.length === 0) {
-        console.log(`📁 Creating category: ${post.category}`)
+        console.log(`?? Creating category: ${post.category}`)
         const newCategory = await payload.create({
           collection: 'categories',
           data: {
@@ -96,7 +104,7 @@ export async function GET(request: NextRequest) {
     }
 
     const authorId = users.docs[0].id
-    console.log(`👤 Using author: ${users.docs[0].name || users.docs[0].email}\n`)
+    console.log(`?? Using author: ${users.docs[0].name || users.docs[0].email}\n`)
 
     // Create posts
     const created = []
@@ -110,7 +118,7 @@ export async function GET(request: NextRequest) {
         .replace(/-+/g, '-')
         .trim()
 
-      console.log(`📄 Creating post: ${postData.title}`)
+      console.log(`?? Creating post: ${postData.title}`)
 
       try {
         const post = await payload.create({
@@ -174,10 +182,10 @@ export async function GET(request: NextRequest) {
             },
           },
         })
-        console.log(`   ✅ Created successfully`)
+        console.log(`   ? Created successfully`)
         created.push(post)
       } catch (error) {
-        console.error(`   ❌ Failed to create:`, error)
+        console.error(`   ? Failed to create:`, error)
         errors.push({ title: postData.title, error: (error as Error).message })
       }
     }
@@ -191,7 +199,7 @@ export async function GET(request: NextRequest) {
       posts: created.map((p) => ({ id: p.id, title: p.title, slug: p.slug })),
     })
   } catch (error) {
-    console.error('❌ Error creating sample posts:', error)
+    console.error('? Error creating sample posts:', error)
     return NextResponse.json(
       {
         error: 'Failed to create sample posts',

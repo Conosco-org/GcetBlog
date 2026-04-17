@@ -1,7 +1,7 @@
-﻿import { getPayload, type Where } from 'payload'
+import { getPayload, type Where } from 'payload'
 import configPromise from '@payload-config'
-import { Card, CardContent } from '@/components/ui/card'
-import { PageHeader } from '@/components/base/PageHeader'
+import { Card, CardContent } from '@/frontend/components/ui/card'
+import { PageHeader } from '@frontend/components/base/PageHeader'
 import { MediaGridClient } from './MediaGridClient'
 
 export const dynamic = 'force-dynamic'
@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic'
 const PAGE_SIZE = 24
 
 interface PageProps {
-  searchParams: Promise<{ q?: string; page?: string; sort?: string }>
+  searchParams: Promise<{ q?: string; page?: string; sort?: string; user?: string }>
 }
 
 export default async function MediaManagerPage({ searchParams }: PageProps) {
@@ -19,12 +19,21 @@ export default async function MediaManagerPage({ searchParams }: PageProps) {
   const query = params.q || ''
   const page = Math.max(1, Number(params.page) || 1)
   const sortParam = params.sort || '-createdAt'
+  const userFilter = params.user || ''
 
-  const where: Where | undefined = query
-    ? { or: [{ filename: { like: query } }, { alt: { like: query } }] as Where[] }
-    : undefined
+  const conditions: Where[] = []
+  
+  if (query) {
+    conditions.push({ or: [{ filename: { like: query } }, { alt: { like: query } }] as Where[] })
+  }
+  
+  if (userFilter) {
+    conditions.push({ uploadedBy: { equals: userFilter } })
+  }
 
-  const [allMedia, storageCount, storageSample] = await Promise.all([
+  const where: Where | undefined = conditions.length > 0 ? { and: conditions } : undefined
+
+  const [allMedia, storageCount, storageSample, allUsers] = await Promise.all([
     payload.find({
       collection: 'media',
       limit: PAGE_SIZE,
@@ -40,6 +49,13 @@ export default async function MediaManagerPage({ searchParams }: PageProps) {
       limit: 500,
       select: { filesize: true },
       depth: 0,
+    }),
+    // Get all users for filter dropdown
+    payload.find({
+      collection: 'users',
+      limit: 1000,
+      sort: 'name',
+      select: { name: true, email: true },
     }),
   ])
 
@@ -81,6 +97,8 @@ export default async function MediaManagerPage({ searchParams }: PageProps) {
         pageSize={PAGE_SIZE}
         query={query}
         sortParam={sortParam}
+        users={allUsers.docs}
+        userFilter={userFilter}
       />
     </div>
   )

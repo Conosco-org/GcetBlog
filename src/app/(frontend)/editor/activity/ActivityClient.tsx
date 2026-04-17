@@ -1,11 +1,11 @@
 'use client'
 
-import { Badge } from '@/components/ui/badge'
-import { SearchInput } from '@/components/base/SearchInput'
-import { FilterBar } from '@/components/base/FilterBar'
-import { DataTable, type Column } from '@/components/base/DataTable'
+import { Badge } from '@/frontend/components/ui/badge'
+import { SearchInput } from '@frontend/components/base/SearchInput'
+import { FilterBar } from '@frontend/components/base/FilterBar'
+import { DataTable, type Column } from '@frontend/components/base/DataTable'
 import { Activity, CheckCircle, XCircle, Edit, Upload, MessageSquare, User, LayoutTemplate } from 'lucide-react'
-import type { AdminLog } from '@/payload-types'
+import type { AdminLog } from '@/shared/types/payload-types'
 
 interface ActivityClientProps {
   logs: AdminLog[]

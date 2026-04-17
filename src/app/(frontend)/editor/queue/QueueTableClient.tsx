@@ -1,9 +1,9 @@
 'use client'
 
-import type { Post } from '@/payload-types'
-import { SearchInput } from '@/components/base/SearchInput'
-import { DataTable, type Column } from '@/components/base/DataTable'
-import { Badge } from '@/components/ui/badge'
+import type { Post } from '@/shared/types/payload-types'
+import { SearchInput } from '@frontend/components/base/SearchInput'
+import { DataTable, type Column } from '@frontend/components/base/DataTable'
+import { Badge } from '@/frontend/components/ui/badge'
 import { Clock } from 'lucide-react'
 import { ApprovalButtons } from './ApprovalButtons'
 

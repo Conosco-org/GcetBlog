@@ -1,12 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
+import { checkRateLimit, createRateLimitResponse } from '@shared/lib/rate-limit'
 
 /**
  * POST /api/track - Record a page view
  * Called by the client-side tracker component
  */
 export async function POST(req: NextRequest) {
+  // Rate limiting: max 100 requests per hour per IP
+  const rateLimitResult = await checkRateLimit(req, {
+    maxRequests: 100,
+    windowMs: 60 * 60 * 1000, // 1 hour
+  })
+
+  if (!rateLimitResult.success) {
+    return createRateLimitResponse(rateLimitResult)
+  }
+
   try {
     const body = await req.json()
     const { path, postSlug } = body

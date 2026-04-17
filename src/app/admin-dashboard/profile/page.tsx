@@ -2,15 +2,15 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { useToast } from '@/hooks/use-toast'
-import { uploadToCloudinaryDirect } from '@/utilities/uploadToCloudinaryDirect'
+import { Card, CardContent, CardHeader, CardTitle } from '@/frontend/components/ui/card'
+import { Button } from '@frontend/components/ui/button'
+import { Input } from '@/frontend/components/ui/input'
+import { Label } from '@/frontend/components/ui/label'
+import { Textarea } from '@/frontend/components/ui/textarea'
+import { Badge } from '@/frontend/components/ui/badge'
+import { Avatar, AvatarFallback, AvatarImage } from '@/frontend/components/ui/avatar'
+import { useToast } from '@frontend/components/ui/use-toast'
+import { uploadToCloudinaryDirect } from '@backend/lib/upload-to-cloudinary-direct'
 import {
   User as UserIcon,
   Mail,

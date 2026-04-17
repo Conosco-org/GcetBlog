@@ -1,4 +1,4 @@
-﻿import { redirect } from 'next/navigation'
+import { redirect } from 'next/navigation'
 
 /**
  * Legacy admin dashboard route - redirects to the new /admin-dashboard.

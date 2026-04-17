@@ -1,9 +1,9 @@
-﻿import { getPayload } from 'payload'
+import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import type { User } from '@/payload-types'
-import { EditorLayoutClient } from './components/EditorLayoutClient'
+import type { User } from '@/shared/types/payload-types'
+import { EditorLayoutClient } from '@/frontend/features/editor/components/editor-layout-client'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -30,15 +30,16 @@ export default async function EditorLayout({
   }
 
   const typedUser = user as User & { role: string }
+  const isAdmin = Boolean((typedUser as unknown as Record<string, unknown>).isAdmin)
 
-  // Only editors can access the editor dashboard and its routes
+  // Only editors and admins can access the editor dashboard and its routes
   // Contributors should use their own dashboard
-  if (typedUser.role !== 'editor') {
+  if (typedUser.role !== 'editor' && !isAdmin) {
     redirect('/contributor')
   }
 
   // Get real counts for sidebar badges - parallelized
-  const [pendingPosts, totalPosts, recentLogs, activeSubscribers] = await Promise.all([
+  const [pendingPosts, totalPosts, recentLogs] = await Promise.all([
     payload.count({
       collection: 'posts',
       where: { _status: { equals: 'draft' } },
@@ -52,10 +53,6 @@ export default async function EditorLayout({
         },
       },
     }),
-    payload.count({
-      collection: 'newsletter-subscribers',
-      where: { status: { equals: 'active' } },
-    }),
   ])
 
   return (
@@ -64,7 +61,6 @@ export default async function EditorLayout({
       pendingPostsCount={pendingPosts.totalDocs}
       totalPostsCount={totalPosts.totalDocs}
       activityLogsCount={recentLogs.totalDocs}
-      subscribersCount={activeSubscribers.totalDocs}
     >
       {children}
     </EditorLayoutClient>

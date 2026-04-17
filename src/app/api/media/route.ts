@@ -1,6 +1,6 @@
-﻿import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
-import config from '@/payload.config'
+import config from '@payload-config'
 import { v2 as cloudinary } from 'cloudinary'
 
 // Configure Cloudinary (only if env vars are present)
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // ── JSON mode: file already uploaded to Cloudinary by the browser ────────
+    // -- JSON mode: file already uploaded to Cloudinary by the browser --------
     // The browser POSTs { cloudinaryUrl, alt, filename, mimeType, filesize, width, height }
     // so no file body passes through this serverless function (avoids Vercel 4.5 MB limit).
     const contentType = request.headers.get('content-type') ?? ''
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Payload requires a file for upload collections even with disableLocalStorage.
-      // Pass a 1×1 transparent PNG placeholder - our beforeChange hook skips
+      // Pass a 1x1 transparent PNG placeholder - our beforeChange hook skips
       // re-uploading because cloudinaryUrl is already set in data.
       const PLACEHOLDER_PNG = Buffer.from(
         'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
         message: 'Media record created',
       })
     }
-    // ── FormData mode (legacy / local dev without Vercel limits) ─────────────
+    // -- FormData mode (legacy / local dev without Vercel limits) -------------
 
     const formData = await request.formData()
     const file = formData.get('file') as File

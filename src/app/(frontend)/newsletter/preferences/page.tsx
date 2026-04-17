@@ -11,7 +11,7 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { XCircle } from 'lucide-react'
 import Link from 'next/link'
-import { PreferencesForm } from './PreferencesForm'
+import { PreferencesForm } from '@/frontend/features/newsletter/components/newsletter-preferences'
 
 export const dynamic = 'force-dynamic'
 

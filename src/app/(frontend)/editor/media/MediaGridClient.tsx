@@ -2,12 +2,12 @@
 
 import { useState, useTransition, useRef } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
-import type { Media } from '@/payload-types'
-import { SearchInput } from '@/components/base/SearchInput'
-import { FilterBar } from '@/components/base/FilterBar'
-import { EmptyState } from '@/components/base/EmptyState'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import type { Media } from '@/shared/types/payload-types'
+import { SearchInput } from '@frontend/components/base/SearchInput'
+import { FilterBar } from '@frontend/components/base/FilterBar'
+import { EmptyState } from '@frontend/components/base/EmptyState'
+import { Button } from '@frontend/components/ui/button'
+import { Input } from '@/frontend/components/ui/input'
 import {
   Dialog,
   DialogContent,
@@ -15,9 +15,16 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from '@/components/ui/dialog'
-import { useToast } from '@/hooks/use-toast'
-import { uploadToCloudinaryDirect } from '@/utilities/uploadToCloudinaryDirect'
+} from '@/frontend/components/ui/dialog'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/frontend/components/ui/select'
+import { useToast } from '@frontend/components/ui/use-toast'
+import { uploadToCloudinaryDirect } from '@backend/lib/upload-to-cloudinary-direct'
 import {
   Image as ImageIcon,
   ChevronLeft,
@@ -39,6 +46,8 @@ interface MediaGridClientProps {
   pageSize: number
   query: string
   sortParam: string
+  users: Array<{ id: string; name: string; email: string }>
+  userFilter: string
 }
 
 export function MediaGridClient({
@@ -48,6 +57,8 @@ export function MediaGridClient({
   totalItems,
   pageSize,
   query,
+  users,
+  userFilter,
 }: MediaGridClientProps) {
   const router = useRouter()
   const pathname = usePathname()
@@ -69,6 +80,17 @@ export function MediaGridClient({
     } else {
       params.delete('page')
     }
+    router.push(`${pathname}?${params.toString()}`)
+  }
+
+  const handleUserFilterChange = (value: string) => {
+    const params = new URLSearchParams(searchParams.toString())
+    if (value && value !== 'all') {
+      params.set('user', value)
+    } else {
+      params.delete('user')
+    }
+    params.delete('page') // Reset to page 1 when filtering
     router.push(`${pathname}?${params.toString()}`)
   }
 
@@ -177,6 +199,19 @@ export function MediaGridClient({
           paramName="q"
           className="flex-1 max-w-md"
         />
+        <Select value={userFilter || 'all'} onValueChange={handleUserFilterChange}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="All Users" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Users</SelectItem>
+            {users.map((user) => (
+              <SelectItem key={user.id} value={user.id}>
+                {user.name || user.email}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <FilterBar
           filters={[
             {

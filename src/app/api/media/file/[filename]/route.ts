@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
-import config from '@/payload.config'
-import type { Media } from '@/payload-types'
+import config from '@payload-config'
+import type { Media } from '@shared/types/payload-types'
 
 /**
  * Intercepts Payload's /api/media/file/:filename requests.

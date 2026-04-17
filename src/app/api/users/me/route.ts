@@ -1,7 +1,7 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { NextRequest } from 'next/server'
-import { User } from '@/payload-types'
+import { User } from '@shared/types/payload-types'
 
 export async function GET(request: NextRequest) {
   try {
