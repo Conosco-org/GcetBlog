@@ -23,7 +23,7 @@ export const Users: CollectionConfig = {
   auth: true,
   hooks: {
     beforeLogin: [
-      async ({ req, user }) => {
+      async ({ user }) => {
         // Check if the account is active
         if (user && 'isActive' in user && user.isActive === false) {
           throw new Error('Your account has been disabled. Please contact support.')

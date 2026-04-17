@@ -1,8 +1,6 @@
 import React from 'react'
 
-import { AuthProvider } from './Auth'
 import { HeaderThemeProvider } from './HeaderTheme'
-import { NavigationProgressProvider } from './NavigationProgress'
 import { ThemeProvider } from './Theme'
 import { UserProvider } from './User'
 

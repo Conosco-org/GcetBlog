@@ -1,4 +1,4 @@
-import { getPayload } from 'payload'
+import { getPayload, type Where } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
@@ -34,7 +34,7 @@ export default async function EditorDraftsPage({ searchParams }: PageProps) {
   const pageSize = 12
 
   // Build where clause for drafts authored by this editor
-  const where: Record<string, unknown> = {
+  const where: Where = {
     and: [
       { _status: { equals: 'draft' } },
       { authors: { contains: typedUser.id } },
@@ -44,13 +44,13 @@ export default async function EditorDraftsPage({ searchParams }: PageProps) {
   // Add search query if provided
   if (query) {
     where.and = [
-      ...(where.and as unknown[]),
+      ...(where.and as Where[]),
       {
         or: [
           { title: { contains: query } },
           { content: { contains: query } },
         ],
-      },
+      } as Where,
     ]
   }
 

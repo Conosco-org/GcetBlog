@@ -10,7 +10,7 @@ export default function RootNotFound() {
             <h1 className="text-6xl font-bold text-foreground">404</h1>
             <p className="text-xl text-muted-foreground">Page not found</p>
             <p className="text-sm text-muted-foreground max-w-md">
-              The page you're looking for doesn't exist or you don't have permission to access it.
+              The page you&apos;re looking for doesn&apos;t exist or you don&apos;t have permission to access it.
             </p>
             <div className="flex gap-4 justify-center">
               <Button asChild variant="default">

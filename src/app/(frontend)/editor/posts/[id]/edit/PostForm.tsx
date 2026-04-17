@@ -70,7 +70,6 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
   const [isPreviewingDraft, setIsPreviewingDraft] = useState(false)
   const [showTemplateSelector, setShowTemplateSelector] = useState(false)
   const [activeTemplateName, setActiveTemplateName] = useState<string | null>(initialTemplate?.name || null)
-  const postSlug = initialData?.slug || ''
   const postStatus = initialData?.status || 'draft'
   const isPublished = postStatus === 'published'
 

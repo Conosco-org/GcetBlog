@@ -21,12 +21,17 @@ export default async function MediaManagerPage({ searchParams }: PageProps) {
   const sortParam = params.sort || '-createdAt'
   const userFilter = params.user || ''
 
-  const where: Where = {
-    and: [
-      query ? { or: [{ filename: { like: query } }, { alt: { like: query } }] as Where[] } : {},
-      userFilter ? { uploadedBy: { equals: userFilter } } : {},
-    ].filter((condition) => Object.keys(condition).length > 0),
+  const conditions: Where[] = []
+  
+  if (query) {
+    conditions.push({ or: [{ filename: { like: query } }, { alt: { like: query } }] as Where[] })
   }
+  
+  if (userFilter) {
+    conditions.push({ uploadedBy: { equals: userFilter } })
+  }
+
+  const where: Where | undefined = conditions.length > 0 ? { and: conditions } : undefined
 
   const [allMedia, storageCount, storageSample, allUsers] = await Promise.all([
     payload.find({
@@ -34,7 +39,7 @@ export default async function MediaManagerPage({ searchParams }: PageProps) {
       limit: PAGE_SIZE,
       page,
       sort: sortParam,
-      where: Object.keys(where).length > 0 ? where : undefined,
+      where,
     }),
     // count() is a single DB aggregation - no docs loaded
     payload.count({ collection: 'media' }),

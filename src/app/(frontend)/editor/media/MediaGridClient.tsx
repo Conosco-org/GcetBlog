@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useRef } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
-import type { Media, User } from '@/shared/types/payload-types'
+import type { Media } from '@/shared/types/payload-types'
 import { SearchInput } from '@frontend/components/base/SearchInput'
 import { FilterBar } from '@frontend/components/base/FilterBar'
 import { EmptyState } from '@frontend/components/base/EmptyState'
@@ -46,7 +46,7 @@ interface MediaGridClientProps {
   pageSize: number
   query: string
   sortParam: string
-  users: User[]
+  users: Array<{ id: string; name: string; email: string }>
   userFilter: string
 }
 

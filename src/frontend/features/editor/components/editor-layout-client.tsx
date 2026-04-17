@@ -13,7 +13,6 @@ interface EditorLayoutClientProps {
   pendingPostsCount: number
   totalPostsCount: number
   activityLogsCount: number
-  subscribersCount: number
   children: React.ReactNode
 }
 
@@ -22,7 +21,6 @@ export function EditorLayoutClient({
   pendingPostsCount,
   totalPostsCount,
   activityLogsCount,
-  subscribersCount,
   children
 }: EditorLayoutClientProps) {
   const [isOpen, setIsOpen] = useState(true)
@@ -73,7 +71,6 @@ export function EditorLayoutClient({
                 pendingPostsCount={pendingPostsCount}
                 totalPostsCount={totalPostsCount}
                 activityLogsCount={activityLogsCount}
-                subscribersCount={subscribersCount}
                 isOpen={isOpen}
                 _onToggle={() => setIsOpen(false)}
               />

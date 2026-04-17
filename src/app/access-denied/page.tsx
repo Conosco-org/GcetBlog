@@ -11,7 +11,7 @@ export default function AccessDeniedPage() {
         </div>
         <h1 className="text-4xl font-bold text-foreground">Access Denied</h1>
         <p className="text-lg text-muted-foreground">
-          You don't have permission to access this page.
+          You don&apos;t have permission to access this page.
         </p>
         <p className="text-sm text-muted-foreground">
           If you believe this is an error, please contact your administrator.

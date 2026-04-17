@@ -19,7 +19,6 @@ import {
   Users,
   Mail,
   PenSquare,
-  MessageSquare,
   FilePlus,
 } from 'lucide-react'
 
@@ -35,7 +34,6 @@ interface EditorSidebarProps {
   pendingPostsCount?: number
   totalPostsCount?: number
   activityLogsCount?: number
-  subscribersCount?: number
   isOpen: boolean
   _onToggle?: () => void
 }
@@ -45,7 +43,6 @@ export function EditorSidebar({
   pendingPostsCount = 0,
   totalPostsCount = 0,
   activityLogsCount = 0,
-  subscribersCount = 0,
   isOpen,
 }: EditorSidebarProps) {
   const pathname = usePathname()
@@ -67,12 +64,6 @@ export function EditorSidebar({
         label: 'User Management',
         href: '/admin-dashboard/users',
         icon: <Users className="w-5 h-5" />,
-      },
-      {
-        label: 'Activity Logs',
-        href: '/admin-dashboard/logs',
-        icon: <Activity className="w-5 h-5" />,
-        badge: activityLogsCount,
       },
     ] : []),
     {
@@ -122,10 +113,12 @@ export function EditorSidebar({
       href: '/editor/analytics',
       icon: <BarChart3 className="w-5 h-5" />,
     },
+    // Activity Logs at the end for both editors and admins
     {
       label: 'Activity Logs',
-      href: '/editor/activity',
+      href: isAdmin ? '/admin-dashboard/logs' : '/editor/activity',
       icon: <Activity className="w-5 h-5" />,
+      badge: isAdmin ? activityLogsCount : undefined,
     },
   ]
 
