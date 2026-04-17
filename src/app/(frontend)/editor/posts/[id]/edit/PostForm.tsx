@@ -68,7 +68,8 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
   const [showTemplateSelector, setShowTemplateSelector] = useState(false)
   const [activeTemplateName, setActiveTemplateName] = useState<string | null>(initialTemplate?.name || null)
 
-  const isEditor = user.role === 'editor'
+  const isAdmin = Boolean((user as unknown as Record<string, unknown>).isAdmin)
+  const isEditor = user.role === 'editor' || isAdmin
 
   const handleTemplateSelect = (template: TemplateCardData) => {
     setTitle(template.suggestedTitle || '')

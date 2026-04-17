@@ -30,10 +30,11 @@ export default async function EditorLayout({
   }
 
   const typedUser = user as User & { role: string }
+  const isAdmin = Boolean((typedUser as unknown as Record<string, unknown>).isAdmin)
 
-  // Only editors can access the editor dashboard and its routes
+  // Only editors and admins can access the editor dashboard and its routes
   // Contributors should use their own dashboard
-  if (typedUser.role !== 'editor') {
+  if (typedUser.role !== 'editor' && !isAdmin) {
     redirect('/contributor')
   }
 

@@ -67,6 +67,12 @@ export function EditorSidebar({
         href: '/admin-dashboard/users',
         icon: <Users className="w-5 h-5" />,
       },
+      {
+        label: 'Activity Logs',
+        href: '/admin-dashboard/activity',
+        icon: <Activity className="w-5 h-5" />,
+        badge: activityLogsCount,
+      },
     ] : []),
     {
       label: 'Create Post',
@@ -96,11 +102,6 @@ export function EditorSidebar({
       icon: <Tag className="w-5 h-5" />,
     },
     {
-      label: 'Comments',
-      href: '/editor/content/comments',
-      icon: <MessageSquare className="w-5 h-5" />,
-    },
-    {
       label: 'Templates',
       href: '/editor/templates',
       icon: <FileStack className="w-5 h-5" />,
@@ -111,21 +112,9 @@ export function EditorSidebar({
       icon: <Mail className="w-5 h-5" />,
     },
     {
-      label: 'Subscribers',
-      href: '/editor/newsletter/subscribers',
-      icon: <Users className="w-5 h-5" />,
-      badge: subscribersCount,
-    },
-    {
       label: 'Analytics',
       href: '/editor/analytics',
       icon: <BarChart3 className="w-5 h-5" />,
-    },
-    {
-      label: 'Activity Logs',
-      href: '/editor/activity',
-      icon: <Activity className="w-5 h-5" />,
-      badge: activityLogsCount,
     },
   ]
 

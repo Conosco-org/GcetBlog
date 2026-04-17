@@ -22,7 +22,8 @@ export default async function EditPostPage({ params }: PageProps) {
     redirect('/login')
   }
 
-  if (!user.role || !['contributor', 'editor'].includes(user.role)) {
+  const isAdmin = Boolean((user as unknown as Record<string, unknown>).isAdmin)
+  if (!user.role || (!['contributor', 'editor'].includes(user.role) && !isAdmin)) {
     redirect('/editor')
   }
 
