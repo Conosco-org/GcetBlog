@@ -68,7 +68,8 @@ export async function moderateComment(formData: FormData) {
     // Get the current user
     const { user } = await getMeUser()
 
-    if (!user || user.role !== 'editor') {
+    // Allow both editors and admins
+    if (!user || (user.role !== 'editor' && user.role !== 'admin')) {
       return { error: 'Unauthorized' }
     }
 

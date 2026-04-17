@@ -13,8 +13,10 @@ export async function approvePost(postId: string, editorNotes?: string) {
     // Authenticate the request
     const { user } = await payload.auth({ headers: requestHeaders })
 
-    if (!user || (user as { role: string }).role !== 'editor') {
-      throw new Error('Editor access required')
+    // Allow both editors and admins
+    const userRole = (user as { role: string })?.role
+    if (!user || (userRole !== 'editor' && userRole !== 'admin')) {
+      throw new Error('Editor or admin access required')
     }
 
     // Get the post draft
@@ -82,8 +84,10 @@ export async function requestChanges(postId: string, feedback: string) {
     // Authenticate the request
     const { user } = await payload.auth({ headers: requestHeaders })
 
-    if (!user || (user as { role: string }).role !== 'editor') {
-      throw new Error('Editor access required')
+    // Allow both editors and admins
+    const userRole = (user as { role: string })?.role
+    if (!user || (userRole !== 'editor' && userRole !== 'admin')) {
+      throw new Error('Editor or admin access required')
     }
 
     // Get the post
@@ -151,8 +155,10 @@ export async function deletePost(postId: string, reason: string) {
     // Authenticate the request
     const { user } = await payload.auth({ headers: requestHeaders })
 
-    if (!user || (user as { role: string }).role !== 'editor') {
-      throw new Error('Editor access required')
+    // Allow both editors and admins
+    const userRole = (user as { role: string })?.role
+    if (!user || (userRole !== 'editor' && userRole !== 'admin')) {
+      throw new Error('Editor or admin access required')
     }
 
     // Get the post before deletion for logging and notification
