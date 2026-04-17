@@ -7,6 +7,7 @@ import { Button } from '@frontend/components/ui/button'
 import { Input } from '@/frontend/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/frontend/components/ui/select'
 import { Checkbox } from '@/frontend/components/ui/checkbox'
+import { PaginationControls } from '@/frontend/components/base'
 import { CheckCircle, XCircle, AlertCircle } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
@@ -17,7 +18,15 @@ import { DeleteDialog } from '@/frontend/features/comments/components/moderation
 import type { Comment, Category } from '@/shared/types/payload-types'
 
 interface ContentManagerCommentsProps {
-  comments: Comment[]
+  comments: {
+    docs: Comment[]
+    totalDocs: number
+    totalPages: number
+    page?: number
+    limit?: number
+    hasPrevPage?: boolean
+    hasNextPage?: boolean
+  }
   categories: Category[]
 }
 
@@ -30,7 +39,7 @@ export function ContentManagerComments({ comments, categories }: ContentManagerC
   const [categoryFilter, setCategoryFilter] = useState('all')
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
-  const filteredComments = comments.filter((comment) => {
+  const filteredComments = comments.docs.filter((comment) => {
     // Enhanced search: check comment content, post title, and author name
     const searchLower = searchQuery.toLowerCase()
     
@@ -250,6 +259,17 @@ export function ContentManagerComments({ comments, categories }: ContentManagerC
               </tbody>
             </table>
           </div>
+          
+          {/* Pagination */}
+          <PaginationControls
+            currentPage={comments.page || 1}
+            totalPages={comments.totalPages}
+            totalDocs={comments.totalDocs}
+            limit={comments.limit || 20}
+            hasPrevPage={comments.hasPrevPage || false}
+            hasNextPage={comments.hasNextPage || false}
+            showingCount={filteredComments.length}
+          />
         </CardContent>
       </Card>
 
