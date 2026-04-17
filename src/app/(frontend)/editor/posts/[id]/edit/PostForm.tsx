@@ -67,6 +67,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
   const [isPublishing, setIsPublishing] = useState(false)
   const [isSavingDraft, setIsSavingDraft] = useState(false)
   const [isSubmittingForReview, setIsSubmittingForReview] = useState(false)
+  const [isPreviewingDraft, setIsPreviewingDraft] = useState(false)
   const [showTemplateSelector, setShowTemplateSelector] = useState(false)
   const [activeTemplateName, setActiveTemplateName] = useState<string | null>(initialTemplate?.name || null)
   const postSlug = initialData?.slug || ''
@@ -170,6 +171,81 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
   const handleRemoveImage = () => {
     setHeroImageId(undefined)
     setHeroImagePreview(undefined)
+  }
+
+  const handlePreview = async () => {
+    // Validate required fields
+    if (!title.trim()) {
+      toast({
+        title: "Error",
+        description: "Title is required to preview",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (!content || content === '<p></p>') {
+      toast({
+        title: "Error",
+        description: "Content is required to preview",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setIsPreviewingDraft(true)
+
+    try {
+      const plainText = htmlToPlainText(content)
+
+      // Update draft first
+      const response = await fetch(`/api/posts/${postId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: title.trim(),
+          content: htmlToLexical(content),
+          categories: selectedCategories,
+          tags,
+          authors: [user.id],
+          _status: 'draft',
+          heroImage: heroImageId,
+          meta: {
+            title: metaTitle.trim() || title.trim(),
+            description: metaDescription.trim() || plainText.substring(0, 160).trim(),
+          },
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.doc?.slug) {
+        // Open preview in new tab
+        window.open(`/api/draft?slug=${data.doc.slug}&collection=posts`, '_blank')
+        
+        toast({
+          title: "Preview opened",
+          description: "Draft updated and preview opened in new tab",
+        })
+      } else {
+        toast({
+          title: "Error",
+          description: data.message || 'Failed to update draft for preview',
+          variant: "destructive",
+        })
+      }
+    } catch (err) {
+      toast({
+        title: "Error",
+        description: "An error occurred while preparing preview",
+        variant: "destructive",
+      })
+      console.error('Preview error:', err)
+    } finally {
+      setIsPreviewingDraft(false)
+    }
   }
 
   const handleSendForReview = async () => {
@@ -460,28 +536,25 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
           )}
         </div>
         <div className="flex items-center gap-1.5 sm:gap-3">
-          {/* Preview/View button - only for saved posts with slug */}
-          {postSlug && (
-            isPublished ? (
-              <Button variant="outline" size="sm" asChild>
-                <Link href={`/posts/${postSlug}`} target="_blank" rel="noopener noreferrer">
-                  <Eye className="w-4 h-4 sm:mr-1.5" />
-                  <span className="hidden sm:inline">View Post</span>
-                </Link>
-              </Button>
-            ) : (
-              <Button variant="outline" size="sm" asChild>
-                <Link href={`/api/draft?slug=${postSlug}&collection=posts`} target="_blank" rel="noopener noreferrer">
-                  <Eye className="w-4 h-4 sm:mr-1.5" />
-                  <span className="hidden sm:inline">Preview</span>
-                </Link>
-              </Button>
-            )
-          )}
+          {/* Preview button - always available, auto-saves before preview */}
+          <Button
+            type="button"
+            onClick={handlePreview}
+            disabled={isPreviewingDraft || isSavingDraft || isPublishing || isSubmittingForReview}
+            variant="outline"
+            size="sm"
+            title={isPublished ? "View Post" : "Preview"}
+            aria-label={isPublished ? "View Post" : "Preview"}
+          >
+            <Eye className="w-4 h-4 sm:mr-1.5" />
+            <span className="hidden sm:inline">
+              {isPreviewingDraft ? 'Loading...' : (isPublished ? 'View Post' : 'Preview')}
+            </span>
+          </Button>
           <Button
             type="button"
             onClick={() => handleSubmit('draft')}
-            disabled={isSavingDraft || isPublishing || isSubmittingForReview}
+            disabled={isSavingDraft || isPublishing || isSubmittingForReview || isPreviewingDraft}
             variant="outline"
             size="sm"
             title="Save as Draft"
@@ -496,7 +569,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
             <Button
               type="button"
               onClick={handleSendForReview}
-              disabled={isSubmittingForReview || isPublishing || isSavingDraft}
+              disabled={isSubmittingForReview || isPublishing || isSavingDraft || isPreviewingDraft}
               className="bg-blue-600 hover:bg-blue-700"
               size="sm"
               title="Send for Review"
@@ -509,7 +582,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
             <Button
               type="button"
               onClick={() => handleSubmit('published')}
-              disabled={isPublishing || isSavingDraft || isSubmittingForReview}
+              disabled={isPublishing || isSavingDraft || isSubmittingForReview || isPreviewingDraft}
               size="sm"
               title="Publish"
               aria-label="Publish"

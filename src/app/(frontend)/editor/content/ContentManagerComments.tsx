@@ -14,24 +14,53 @@ import { useRouter } from 'next/navigation'
 import { useToast } from '@frontend/components/ui/use-toast'
 import { approveComments, deleteComments } from '@/frontend/features/comments/lib/comment-actions'
 import { DeleteDialog } from '@/frontend/features/comments/components/moderation-dialogs'
-import type { Comment } from '@/shared/types/payload-types'
+import type { Comment, Category } from '@/shared/types/payload-types'
 
 interface ContentManagerCommentsProps {
   comments: Comment[]
+  categories: Category[]
 }
 
-export function ContentManagerComments({ comments }: ContentManagerCommentsProps) {
+export function ContentManagerComments({ comments, categories }: ContentManagerCommentsProps) {
   const router = useRouter()
   const { toast } = useToast()
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
+  const [categoryFilter, setCategoryFilter] = useState('all')
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
   const filteredComments = comments.filter((comment) => {
-    const matchesSearch = comment.content.toLowerCase().includes(searchQuery.toLowerCase())
+    // Enhanced search: check comment content, post title, and author name
+    const searchLower = searchQuery.toLowerCase()
+    
+    const matchesContent = comment.content?.toLowerCase().includes(searchLower) || false
+    
+    const postTitle = comment.post && typeof comment.post === 'object' 
+      ? comment.post.title?.toLowerCase() || ''
+      : ''
+    const matchesPostTitle = postTitle.includes(searchLower)
+    
+    const authorName = comment.author && typeof comment.author === 'object'
+      ? comment.author.name?.toLowerCase() || ''
+      : ''
+    const matchesAuthorName = authorName.includes(searchLower)
+    
+    const matchesSearch = searchQuery.trim() === '' || matchesContent || matchesPostTitle || matchesAuthorName
     const matchesStatus = statusFilter === 'all' || comment.status === statusFilter
-    return matchesSearch && matchesStatus
+    
+    // Category filter
+    const matchesCategory = categoryFilter === 'all' || (() => {
+      if (!comment.post || typeof comment.post !== 'object') return false
+      const postCategories = comment.post.categories
+      if (!Array.isArray(postCategories)) return false
+      return postCategories.some((cat) => {
+        const catId = typeof cat === 'object' ? cat.id : cat
+        return catId === categoryFilter
+      })
+    })()
+    
+    return matchesSearch && matchesStatus && matchesCategory
   })
 
   function toggleSelection(id: string) {
@@ -104,10 +133,10 @@ export function ContentManagerComments({ comments }: ContentManagerCommentsProps
       {/* Search and Filters */}
       <Card>
         <CardContent className="p-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="md:col-span-2">
               <Input
-                placeholder="Search comments..."
+                placeholder="Search by post, author, or comment content..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -122,6 +151,19 @@ export function ContentManagerComments({ comments }: ContentManagerCommentsProps
                 <SelectItem value="approved">Approved</SelectItem>
                 <SelectItem value="rejected">Rejected</SelectItem>
                 <SelectItem value="spam">Spam</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+              <SelectTrigger>
+                <SelectValue placeholder="All Categories" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                {categories.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    {category.title}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>

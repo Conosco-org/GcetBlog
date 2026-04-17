@@ -46,7 +46,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/frontend/components/ui/table"
-import { Search, MoreVertical, Pencil, MessageSquare, Loader2, Trash2, FileX, X, ChevronLeft, ChevronRight, Send } from 'lucide-react'
+import { Search, MoreVertical, Pencil, MessageSquare, Loader2, Trash2, FileX, X, ChevronLeft, ChevronRight, Send, Eye } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { deletePost, unpublishPost } from './actions'
@@ -149,6 +149,27 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
       type: 'suggestions',
       message: '',
     })
+  }
+
+  const handleViewPost = (post: Post) => {
+    const status = post._status || 'draft'
+    const slug = post.slug
+
+    if (!slug) {
+      toast({
+        title: 'Error',
+        description: 'Post slug is missing',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    // Open in new tab based on status
+    if (status === 'published') {
+      window.open(`/posts/${slug}`, '_blank')
+    } else {
+      window.open(`/api/draft?slug=${slug}&collection=posts`, '_blank')
+    }
   }
 
   const handleDeletePost = async () => {
@@ -370,7 +391,13 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
                             Edit
                           </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem>View Post</DropdownMenuItem>
+                        <DropdownMenuItem 
+                          onClick={() => handleViewPost(post)}
+                          className="flex items-center gap-2"
+                        >
+                          <Eye className="w-4 h-4" />
+                          View Post
+                        </DropdownMenuItem>
                         <DropdownMenuItem 
                           onClick={() => openFeedbackDialog(post)}
                           className="flex items-center gap-2"
@@ -490,7 +517,13 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem>View Post</DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => handleViewPost(post)}
+                              className="flex items-center gap-2"
+                            >
+                              <Eye className="w-4 h-4" />
+                              View Post
+                            </DropdownMenuItem>
                             <DropdownMenuItem 
                               onClick={() => openFeedbackDialog(post)}
                               className="flex items-center gap-2"

@@ -93,7 +93,7 @@ export function ContentManagerTabs({
       )}
 
       {activeTab === 'comments' && (
-        <ContentManagerComments comments={comments} />
+        <ContentManagerComments comments={comments} categories={categories.docs} />
       )}
     </>
   )
