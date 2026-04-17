@@ -355,3 +355,125 @@ The GCET Blog is now a production-ready application with a complete data model, 
 ✅ **Environment**: Validation utility created
 
 The GCET Blog application is production-ready with enhanced error handling, loading states, and code quality improvements.
+
+
+---
+
+## Comment Moderation and UI Improvements Session
+
+### Date: Current Session
+
+### Overview
+This session focused on improving comment moderation, removing non-working features, and enhancing the editor/admin UI experience.
+
+### Tasks Completed
+
+#### 1. Remove Actions Column from Comments Table ✅
+**Files Modified:**
+- `src/app/(frontend)/editor/content/ContentManagerComments.tsx`
+
+**Changes:**
+- Removed non-working "Actions" column header from comments table
+- Removed "Actions" cell with Edit button from each table row
+- Removed unused `Edit` icon import from lucide-react
+
+#### 2. Add User Filter to Media Manager ✅
+**Files Modified:**
+- `src/app/(frontend)/editor/media/page.tsx`
+- `src/app/(frontend)/editor/media/MediaGridClient.tsx`
+
+**Changes:**
+- Added user filter dropdown to filter media by uploader
+- Updated Where clause to support user filtering
+- Fetches all users for filter dropdown
+- Properly typed user filter props
+
+#### 3. Activity Logs Sidebar Navigation ✅
+**Files Modified:**
+- `src/frontend/features/editor/components/editor-sidebar.tsx`
+
+**Changes:**
+- Added "Activity Logs" link to editor sidebar navigation
+- Positioned at the end of the navigation list
+- For **Admins**: Links to `/admin-dashboard/logs` with badge count
+- For **Editors**: Links to `/editor/activity` without badge
+- Removed duplicate admin-only Activity Logs entry from top of sidebar
+
+#### 4. Code Quality Improvements ✅
+**Files Modified:**
+- `src/frontend/features/editor/components/editor-sidebar.tsx`
+- `src/frontend/features/editor/components/editor-layout-client.tsx`
+- `src/app/(frontend)/editor/layout.tsx`
+- `src/app/admin-dashboard/layout.tsx`
+- `src/app/(frontend)/editor/posts/[id]/edit/PostForm.tsx`
+- `src/backend/collections/users/users/index.ts`
+- `src/frontend/providers/index.tsx`
+- `src/app/access-denied/page.tsx`
+- `src/app/not-found.tsx`
+- `src/app/(frontend)/editor/drafts/page.tsx`
+- `src/app/(frontend)/editor/media/page.tsx`
+- `src/app/(frontend)/editor/media/MediaGridClient.tsx`
+
+**Changes:**
+- Removed unused imports: `MessageSquare`, `User`, `AuthProvider`, `NavigationProgressProvider`
+- Removed unused parameters: `req`, `subscribersCount`, `postSlug`
+- Fixed apostrophe escaping in error pages (`don't` → `don&apos;t`)
+- Fixed TypeScript type errors with `Where` type in drafts and media pages
+- Removed `subscribersCount` prop from all components (unused feature)
+
+### Build & Lint Status
+
+#### ESLint ✅
+- **Status**: PASSING
+- **Errors**: 0
+- **Warnings**: 0
+
+#### TypeScript ✅
+- **Status**: PASSING
+- **Errors**: 0
+- All type errors resolved
+
+#### Build ✅
+- **Status**: PASSING
+- **Compilation Time**: 68 seconds
+- **Routes Generated**: 98
+- **Sitemap**: Generated successfully
+
+### Access Control Verification
+
+#### Current Access Control Flow:
+1. **Middleware Protection** (`src/middleware.ts`):
+   - `/admin-dashboard/*` - Only admins (isAdmin flag)
+   - `/editor/*` - Editors and admins
+   - `/contributor/*` - Contributors only
+   - Redirects users to appropriate dashboard based on role
+
+2. **Layout Protection**:
+   - `src/app/(frontend)/editor/layout.tsx` - Checks for editor role or isAdmin flag
+   - `src/app/admin-dashboard/layout.tsx` - Checks for isAdmin flag only
+
+3. **Activity Logs Access**:
+   - **Editors**: Can access `/editor/activity` (their own activity)
+   - **Admins**: Can access both `/editor/activity` AND `/admin-dashboard/logs`
+   - **Contributors**: Redirected to `/contributor` if they try to access editor routes
+
+### Database Changes
+**No database migrations required** - All changes were UI/frontend only:
+- No schema changes
+- No new collections
+- No new fields
+- No data migrations needed
+
+### Git Commits
+1. `f58c847` - refactor: remove actions column from comments table and add user filter to media manager
+2. `8de541f` - feat: add activity logs to editor sidebar navigation
+3. `bb8840f` - fix: move activity logs to end of sidebar, fix all linting and build errors
+
+### Branch Status
+**Current Branch**: `feature/enhanced-comment-moderation`
+**Status**: Ready for merge
+**Conflicts**: None expected
+
+### Summary
+Successfully improved comment moderation UI, added media filtering, enhanced sidebar navigation, and resolved all code quality issues. The application builds cleanly with zero errors or warnings.
+
