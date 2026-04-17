@@ -41,6 +41,7 @@ import { Search, MoreVertical, Pencil, MessageSquare, Loader2, Trash2, FileX, X,
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { deletePost, unpublishPost } from './actions'
+import { FeedbackDialog } from '@/frontend/components/shared/FeedbackDialog'
 import type { Post, Category } from '@/shared/types/payload-types'
 
 interface ContentManagerClientProps {
@@ -68,30 +69,21 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
     open: false,
     post: null,
   })
+  const [feedbackDialog, setFeedbackDialog] = useState<{ open: boolean; post: Post | null }>({
+    open: false,
+    post: null,
+  })
   const [isLoading, setIsLoading] = useState(false)
   const { toast } = useToast()
   const router = useRouter()
 
-  const handleSendFeedback = async (post: Post) => {
-    const feedback = prompt(`What changes are needed for "${post.title}"? (This feedback will be sent to the contributor)`)
-    
-    if (feedback === null) {
-      return // User cancelled
-    }
-
-    if (!feedback.trim()) {
-      toast({
-        title: "Feedback Required",
-        description: "Please provide feedback for the contributor",
-        variant: "destructive",
-      })
-      return
-    }
+  const handleSendFeedback = async (feedback: string) => {
+    if (!feedbackDialog.post) return
 
     setIsLoading(true)
     try {
       // Get the post author (contributor)
-      const authors = post?.authors as Array<{ id: string; name?: string }> | null | undefined
+      const authors = feedbackDialog.post?.authors as Array<{ id: string; name?: string }> | null | undefined
       const contributorId = Array.isArray(authors) && authors.length > 0 
         ? (typeof authors[0] === 'object' ? authors[0].id : authors[0])
         : null
@@ -106,8 +98,8 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          title: `Feedback for: ${post.title}`,
-          postId: post.id,
+          title: `Feedback for: ${feedbackDialog.post.title}`,
+          postId: feedbackDialog.post.id,
           contributorId,
           type: 'suggestions',
           initialMessage: feedback,
@@ -122,6 +114,7 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
         title: 'Success',
         description: 'Feedback sent successfully',
       })
+      setFeedbackDialog({ open: false, post: null })
     } catch (error) {
       console.error('Error sending feedback:', error)
       toast({
@@ -382,7 +375,7 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
                           View Post
                         </DropdownMenuItem>
                         <DropdownMenuItem 
-                          onClick={() => handleSendFeedback(post)}
+                          onClick={() => setFeedbackDialog({ open: true, post })}
                           className="flex items-center gap-2"
                           disabled={isLoading}
                         >
@@ -509,7 +502,7 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
                               View Post
                             </DropdownMenuItem>
                             <DropdownMenuItem 
-                              onClick={() => handleSendFeedback(post)}
+                              onClick={() => setFeedbackDialog({ open: true, post })}
                               className="flex items-center gap-2"
                               disabled={isLoading}
                             >
@@ -623,6 +616,16 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Feedback Dialog */}
+      {feedbackDialog.post && (
+        <FeedbackDialog
+          open={feedbackDialog.open}
+          onOpenChange={(open) => setFeedbackDialog({ ...feedbackDialog, open })}
+          onConfirm={handleSendFeedback}
+          postTitle={feedbackDialog.post.title}
+        />
+      )}
     </>
   )
 }

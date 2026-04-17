@@ -6,6 +6,8 @@ import { approvePost, requestChanges, deletePost } from './actions'
 import { useRouter } from 'next/navigation'
 import { Button } from '@frontend/components/ui/button'
 import { useToast } from '@frontend/components/ui/use-toast'
+import { FeedbackDialog } from '@/frontend/components/shared/FeedbackDialog'
+import { RejectDialog } from '@/frontend/components/shared/RejectDialog'
 import Link from 'next/link'
 
 interface ApprovalButtonsProps {
@@ -20,6 +22,8 @@ export function ApprovalButtons({ postId, postTitle, postSlug }: ApprovalButtons
   const [isApproving, setIsApproving] = useState(false)
   const [isRequestingChanges, setIsRequestingChanges] = useState(false)
   const [isRejecting, setIsRejecting] = useState(false)
+  const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(false)
+  const [rejectDialogOpen, setRejectDialogOpen] = useState(false)
 
   const handleApprove = async () => {
     if (!confirm(`Are you sure you want to approve and publish "${postTitle}"?`)) {
@@ -56,22 +60,7 @@ export function ApprovalButtons({ postId, postTitle, postSlug }: ApprovalButtons
     }
   }
 
-  const handleRequestChanges = async () => {
-    const feedback = prompt(`What changes are needed for "${postTitle}"? (This feedback will be sent to the contributor)`)
-    
-    if (feedback === null) {
-      return // User cancelled
-    }
-
-    if (!feedback.trim()) {
-      toast({
-        title: "Feedback Required",
-        description: "Please provide feedback for the contributor",
-        variant: "destructive",
-      })
-      return
-    }
-
+  const handleRequestChanges = async (feedback: string) => {
     setIsRequestingChanges(true)
     
     try {
@@ -105,28 +94,7 @@ export function ApprovalButtons({ postId, postTitle, postSlug }: ApprovalButtons
     }
   }
 
-  const handleReject = async () => {
-    const confirmReject = confirm(
-      `⚠️ WARNING: This will PERMANENTLY REJECT and DELETE "${postTitle}" from the database.\n\nThe contributor will be notified with your reason. This action cannot be undone. Are you sure?`
-    )
-    if (!confirmReject) {
-      return
-    }
-
-    const reason = prompt(`Why are you rejecting "${postTitle}"? (This will be saved in the audit log and the contributor will know their post was rejected)`)
-    if (reason === null) {
-      return // User cancelled
-    }
-
-    if (!reason.trim()) {
-      toast({
-        title: "Reason Required",
-        description: "Please provide a reason for rejection",
-        variant: "destructive",
-      })
-      return
-    }
-
+  const handleReject = async (reason: string) => {
     setIsRejecting(true)
     try {
       const result = await deletePost(postId, reason)
@@ -160,67 +128,86 @@ export function ApprovalButtons({ postId, postTitle, postSlug }: ApprovalButtons
   const isProcessing = isApproving || isRequestingChanges || isRejecting
 
   return (
-    <div className="flex items-center gap-2">
-      <Button
-        asChild
-        size="sm"
-        variant="outline"
-        title="Preview"
-        aria-label="Preview"
-        disabled={isProcessing}
-      >
-        <Link href={`/api/draft?slug=${postSlug}`} target="_blank">
-          <Eye className="w-4 h-4 sm:mr-1" />
-          <span className="hidden sm:inline">Preview</span>
-        </Link>
-      </Button>
-      <Button
-        asChild
-        size="sm"
-        variant="outline"
-        title="Edit"
-        aria-label="Edit"
-        disabled={isProcessing}
-      >
-        <Link href={`/editor/posts/${postId}/edit`}>
-          <Edit className="w-4 h-4 sm:mr-1" />
-          <span className="hidden sm:inline">Edit</span>
-        </Link>
-      </Button>
-      <Button
-        onClick={handleApprove}
-        disabled={isProcessing}
-        size="sm"
-        className="bg-green-600 hover:bg-green-700"
-        title="Approve and Publish"
-        aria-label="Approve"
-      >
-        <CheckCircle className="w-4 h-4 sm:mr-1" />
-        <span className="hidden sm:inline">{isApproving ? 'Approving...' : 'Approve'}</span>
-      </Button>
-      <Button
-        onClick={handleRequestChanges}
-        disabled={isProcessing}
-        size="sm"
-        variant="outline"
-        className="border-orange-300 text-orange-700 hover:bg-orange-50 dark:border-orange-700 dark:text-orange-400 dark:hover:bg-orange-950"
-        title="Request Changes"
-        aria-label="Request Changes"
-      >
-        <MessageSquare className="w-4 h-4 sm:mr-1" />
-        <span className="hidden sm:inline">{isRequestingChanges ? 'Sending...' : 'Feedback'}</span>
-      </Button>
-      <Button
-        onClick={handleReject}
-        disabled={isProcessing}
-        size="sm"
-        variant="destructive"
-        title="Reject and Delete Post Permanently"
-        aria-label="Reject"
-      >
-        <XCircle className="w-4 h-4 sm:mr-1" />
-        <span className="hidden sm:inline">{isRejecting ? 'Rejecting...' : 'Reject'}</span>
-      </Button>
-    </div>
+    <>
+      <div className="flex items-center gap-2">
+        <Button
+          asChild
+          size="sm"
+          variant="outline"
+          title="Preview"
+          aria-label="Preview"
+          disabled={isProcessing}
+        >
+          <Link href={`/api/draft?slug=${postSlug}`} target="_blank">
+            <Eye className="w-4 h-4 sm:mr-1" />
+            <span className="hidden sm:inline">Preview</span>
+          </Link>
+        </Button>
+        <Button
+          asChild
+          size="sm"
+          variant="outline"
+          title="Edit"
+          aria-label="Edit"
+          disabled={isProcessing}
+        >
+          <Link href={`/editor/posts/${postId}/edit`}>
+            <Edit className="w-4 h-4 sm:mr-1" />
+            <span className="hidden sm:inline">Edit</span>
+          </Link>
+        </Button>
+        <Button
+          onClick={handleApprove}
+          disabled={isProcessing}
+          size="sm"
+          className="bg-green-600 hover:bg-green-700"
+          title="Approve and Publish"
+          aria-label="Approve"
+        >
+          <CheckCircle className="w-4 h-4 sm:mr-1" />
+          <span className="hidden sm:inline">{isApproving ? 'Approving...' : 'Approve'}</span>
+        </Button>
+        <Button
+          onClick={() => setFeedbackDialogOpen(true)}
+          disabled={isProcessing}
+          size="sm"
+          variant="outline"
+          className="border-orange-300 text-orange-700 hover:bg-orange-50 dark:border-orange-700 dark:text-orange-400 dark:hover:bg-orange-950"
+          title="Request Changes"
+          aria-label="Request Changes"
+        >
+          <MessageSquare className="w-4 h-4 sm:mr-1" />
+          <span className="hidden sm:inline">{isRequestingChanges ? 'Sending...' : 'Feedback'}</span>
+        </Button>
+        <Button
+          onClick={() => setRejectDialogOpen(true)}
+          disabled={isProcessing}
+          size="sm"
+          variant="destructive"
+          title="Reject and Delete Post Permanently"
+          aria-label="Reject"
+        >
+          <XCircle className="w-4 h-4 sm:mr-1" />
+          <span className="hidden sm:inline">{isRejecting ? 'Rejecting...' : 'Reject'}</span>
+        </Button>
+      </div>
+
+      {/* Feedback Dialog */}
+      <FeedbackDialog
+        open={feedbackDialogOpen}
+        onOpenChange={setFeedbackDialogOpen}
+        onConfirm={handleRequestChanges}
+        postTitle={postTitle}
+      />
+
+      {/* Reject Dialog */}
+      <RejectDialog
+        open={rejectDialogOpen}
+        onOpenChange={setRejectDialogOpen}
+        onConfirm={handleReject}
+        postTitle={postTitle}
+        isPermanent={true}
+      />
+    </>
   )
 }
