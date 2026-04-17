@@ -69,7 +69,7 @@ export function EditorSidebar({
       },
       {
         label: 'Activity Logs',
-        href: '/admin-dashboard/activity',
+        href: '/admin-dashboard/logs',
         icon: <Activity className="w-5 h-5" />,
         badge: activityLogsCount,
       },
