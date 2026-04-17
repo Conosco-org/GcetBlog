@@ -57,8 +57,8 @@ export function EditorLayoutClient({
         />
 
         <div className="flex flex-1">
-          {/* Only show sidebar for editors, not contributors */}
-          {user.role === 'editor' && (
+          {/* Show sidebar for editors and admins */}
+          {(user.role === 'editor' || user.role === 'admin' || (user as unknown as { isAdmin?: boolean }).isAdmin) && (
             <>
               {/* Mobile backdrop */}
               {isOpen && (
@@ -79,7 +79,7 @@ export function EditorLayoutClient({
               />
             </>
           )}
-          <main className={`flex-1 overflow-y-auto transition-all duration-200 ${user.role === 'editor' && isOpen ? 'md:ml-64' : 'ml-0'}`}>
+          <main className={`flex-1 overflow-y-auto transition-all duration-200 ${((user.role === 'editor' || user.role === 'admin' || (user as unknown as { isAdmin?: boolean }).isAdmin) && isOpen) ? 'md:ml-64' : 'ml-0'}`}>
             {children}
           </main>
         </div>

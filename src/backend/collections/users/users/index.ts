@@ -22,19 +22,37 @@ export const Users: CollectionConfig = {
   },
   auth: true,
   hooks: {
+    beforeLogin: [
+      async ({ req, user }) => {
+        // Check if the account is active
+        if (user && 'isActive' in user && user.isActive === false) {
+          throw new Error('Your account has been disabled. Please contact support.')
+        }
+        return user
+      },
+    ],
     afterLogin: [
       async ({ req, user }) => {
         const payload = req.payload
-        await payload.update({
-          collection: 'users',
-          id: user.id,
-          data: {
-            lastLoginAt: new Date().toISOString(),
-            lastActiveAt: new Date().toISOString(),
-            loginCount: (user.loginCount || 0) + 1,
-          },
-          overrideAccess: true,
-        })
+        // Use setTimeout to avoid write conflicts during login
+        // This makes the update non-blocking and happens after the login completes
+        setTimeout(async () => {
+          try {
+            await payload.update({
+              collection: 'users',
+              id: user.id,
+              data: {
+                lastLoginAt: new Date().toISOString(),
+                lastActiveAt: new Date().toISOString(),
+                loginCount: (user.loginCount || 0) + 1,
+              },
+              overrideAccess: true,
+            })
+          } catch (error) {
+            // Silently fail - login tracking is not critical
+            console.error('Failed to update login tracking:', error)
+          }
+        }, 0)
       },
     ],
     beforeChange: [
