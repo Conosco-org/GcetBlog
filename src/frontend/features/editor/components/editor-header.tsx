@@ -15,7 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@frontend/components/ui/dropdown-menu'
-import { Menu, X, Moon, Sun, Settings, LogOut, User as UserIcon, Shield, Eye } from 'lucide-react'
+import { Menu, X, Moon, Sun, LogOut, User as UserIcon, Shield, Eye } from 'lucide-react'
 import type { User } from '@shared/types/payload-types'
 import { useTheme } from '@frontend/providers'
 
@@ -125,12 +125,6 @@ export function EditorHeader({ user, isOpen, onToggle }: EditorHeaderProps) {
                 <Link href="/editor/profile" className="cursor-pointer">
                   <UserIcon className="mr-2 h-4 w-4" />
                   Profile & Account
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/editor/settings" className="cursor-pointer">
-                  <Settings className="mr-2 h-4 w-4" />
-                  Workspace Settings
                 </Link>
               </DropdownMenuItem>
               {(user as unknown as { isAdmin?: boolean }).isAdmin && (

@@ -20,6 +20,7 @@ import {
   Mail,
   PenSquare,
   MessageSquare,
+  FilePlus,
 } from 'lucide-react'
 
 interface NavItem {
@@ -78,6 +79,11 @@ export function EditorSidebar({
       label: 'Create Post',
       href: '/editor/posts/create',
       icon: <PenSquare className="w-5 h-5" />,
+    },
+    {
+      label: 'My Drafts',
+      href: '/editor/drafts',
+      icon: <FilePlus className="w-5 h-5" />,
     },
     {
       label: 'Content Manager',
