@@ -41,6 +41,7 @@ import { Search, MoreVertical, Pencil, MessageSquare, Loader2, Trash2, FileX, X,
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { deletePost, unpublishPost } from './actions'
+import { requestChanges } from '../queue/actions'
 import { FeedbackDialog } from '@/frontend/components/shared/FeedbackDialog'
 import type { Post, Category } from '@/shared/types/payload-types'
 
@@ -82,39 +83,22 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
 
     setIsLoading(true)
     try {
-      // Get the post author (contributor)
-      const authors = feedbackDialog.post?.authors as Array<{ id: string; name?: string }> | null | undefined
-      const contributorId = Array.isArray(authors) && authors.length > 0 
-        ? (typeof authors[0] === 'object' ? authors[0].id : authors[0])
-        : null
-
-      if (!contributorId) {
-        throw new Error('Cannot find post contributor')
+      const result = await requestChanges(feedbackDialog.post.id, feedback)
+      
+      if (result.success) {
+        toast({
+          title: 'Success',
+          description: result.message,
+        })
+        setFeedbackDialog({ open: false, post: null })
+        router.refresh()
+      } else {
+        toast({
+          title: 'Error',
+          description: result.message,
+          variant: 'destructive',
+        })
       }
-
-      const response = await fetch('/api/feedback/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title: `Feedback for: ${feedbackDialog.post.title}`,
-          postId: feedbackDialog.post.id,
-          contributorId,
-          type: 'suggestions',
-          initialMessage: feedback,
-        }),
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to send feedback')
-      }
-
-      toast({
-        title: 'Success',
-        description: 'Feedback sent successfully',
-      })
-      setFeedbackDialog({ open: false, post: null })
     } catch (error) {
       console.error('Error sending feedback:', error)
       toast({
