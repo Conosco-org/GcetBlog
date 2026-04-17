@@ -482,7 +482,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
               title="Publish"
               aria-label="Publish"
             >
-              <Eye className="w-4 h-4 sm:mr-1.5" />
+              <Send className="w-4 h-4 sm:mr-1.5" />
               <span className="hidden sm:inline">{isPublishing ? 'Publishing...' : 'Publish'}</span>
             </Button>
           )}

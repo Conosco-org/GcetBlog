@@ -10,7 +10,7 @@ import { Badge } from '@frontend/components/ui/badge'
 import { Button } from '@frontend/components/ui/button'
 import { formatDateTime } from '@frontend/lib/format-date-time'
 import Link from 'next/link'
-import { Edit, FileText, ChevronLeft, ChevronRight, Plus, Trash2, Eye } from 'lucide-react'
+import { Edit, FileText, ChevronLeft, ChevronRight, Plus, Trash2, Eye, Send } from 'lucide-react'
 import { useToast } from '@frontend/components/ui/use-toast'
 import {
   AlertDialog,
@@ -189,39 +189,40 @@ export function EditorDraftsClient({
                 </p>
               </CardHeader>
               <CardContent>
-                <div className="flex flex-col gap-2">
-                  <div className="flex gap-2">
-                    <Button variant="default" size="sm" className="flex-1" asChild>
-                      <Link href={`/editor/posts/${post.id}/edit`} prefetch={false}>
-                        <Edit className="h-4 w-4 mr-1" />
-                        Edit
-                      </Link>
-                    </Button>
-                    <Button variant="outline" size="sm" asChild>
-                      <Link href={`/api/draft?slug=${post.slug}&collection=posts`} target="_blank" rel="noopener noreferrer">
-                        <FileText className="h-4 w-4" />
-                      </Link>
-                    </Button>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button 
-                      variant="default" 
-                      size="sm"
-                      className="flex-1"
-                      onClick={() => handlePublishClick(post)}
-                    >
+                <div className="flex gap-2">
+                  {/* Main actions - Edit and Preview */}
+                  <Button variant="default" size="sm" className="flex-1" asChild>
+                    <Link href={`/editor/posts/${post.id}/edit`} prefetch={false}>
+                      <Edit className="h-4 w-4 mr-1" />
+                      Edit
+                    </Link>
+                  </Button>
+                  <Button variant="outline" size="sm" className="flex-1" asChild>
+                    <Link href={`/api/draft?slug=${post.slug}&collection=posts`} target="_blank" rel="noopener noreferrer">
                       <Eye className="h-4 w-4 mr-1" />
-                      Publish
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handleDeleteClick(post)}
-                      className="text-destructive hover:text-destructive"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
+                      Preview
+                    </Link>
+                  </Button>
+                  {/* Side actions - Publish and Delete (icon only) */}
+                  <Button 
+                    variant="default" 
+                    size="sm"
+                    onClick={() => handlePublishClick(post)}
+                    title="Publish"
+                    aria-label="Publish"
+                  >
+                    <Send className="h-4 w-4" />
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => handleDeleteClick(post)}
+                    className="text-destructive hover:text-destructive"
+                    title="Delete"
+                    aria-label="Delete"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </div>
               </CardContent>
             </Card>
