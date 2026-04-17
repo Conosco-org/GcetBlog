@@ -15,7 +15,8 @@ export async function POST(request: NextRequest) {
     const reqHeaders = await headers()
     const { user } = await payload.auth({ headers: reqHeaders })
 
-    if (!user || !('role' in user) || user.role !== 'editor') {
+    // Allow both editors and admins to import subscribers
+    if (!user || !('role' in user) || (user.role !== 'editor' && user.role !== 'admin')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 

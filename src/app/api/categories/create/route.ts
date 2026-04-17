@@ -19,9 +19,10 @@ export async function POST(request: NextRequest) {
 
     const typedUser = user as User & { role: string }
 
-    if (typedUser.role !== 'editor') {
+    // Allow both editors and admins to create categories
+    if (typedUser.role !== 'editor' && typedUser.role !== 'admin') {
       return NextResponse.json(
-        { error: 'Forbidden: Only editors can create categories' },
+        { error: 'Forbidden: Only editors and admins can create categories' },
         { status: 403 }
       )
     }
