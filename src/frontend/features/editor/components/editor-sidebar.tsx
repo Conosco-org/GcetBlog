@@ -122,6 +122,11 @@ export function EditorSidebar({
       href: '/editor/analytics',
       icon: <BarChart3 className="w-5 h-5" />,
     },
+    {
+      label: 'Activity Logs',
+      href: '/editor/activity',
+      icon: <Activity className="w-5 h-5" />,
+    },
   ]
 
   const isActive = useCallback((href: string) => {
