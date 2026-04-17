@@ -69,7 +69,6 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
   const [isSubmittingForReview, setIsSubmittingForReview] = useState(false)
   const [showTemplateSelector, setShowTemplateSelector] = useState(false)
   const [activeTemplateName, setActiveTemplateName] = useState<string | null>(initialTemplate?.name || null)
-  const [showPreview, setShowPreview] = useState(false)
 
   const isAdmin = Boolean((user as unknown as Record<string, unknown>).isAdmin)
   const isEditor = user.role === 'editor' || isAdmin
@@ -409,52 +408,8 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
     )
   }
 
-  const handlePreview = () => {
-    if (!title && !content) {
-      toast({ title: 'Nothing to preview', description: 'Add a title or content first.', variant: 'destructive' })
-      return
-    }
-    setShowPreview(true)
-  }
-
   return (
     <div className="bg-card rounded-xl shadow-sm border">
-      {/* Preview Dialog */}
-      <Dialog open={showPreview} onOpenChange={setShowPreview}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Preview</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            {heroImagePreview && (
-              <Image src={heroImagePreview} alt="Featured" width={800} height={400} className="w-full rounded-lg object-cover max-h-64" />
-            )}
-            <div>
-              {selectedCategories.length > 0 && (
-                <div className="flex flex-wrap gap-1 mb-2">
-                  {selectedCategories.map((c) => {
-                    const cat = categories.find(cat => cat.id === c)
-                    return cat ? <Badge key={c} variant="secondary" className="text-xs">{cat.title}</Badge> : null
-                  })}
-                </div>
-              )}
-              <h1 className="text-2xl font-bold leading-tight">{title || <span className="text-muted-foreground italic">No title yet</span>}</h1>
-            </div>
-            <div
-              className="prose dark:prose-invert max-w-none text-sm"
-              dangerouslySetInnerHTML={{ __html: content || '<p class="text-muted-foreground italic">No content yet</p>' }}
-            />
-            {tags.length > 0 && (
-              <div className="flex flex-wrap gap-1 pt-2 border-t">
-                {tags.map((tag) => (
-                  <Badge key={tag} variant="outline" className="text-xs">#{tag}</Badge>
-                ))}
-              </div>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
-
       {/* Template Selector Modal */}
       <TemplateSelector
         open={showTemplateSelector}
@@ -491,17 +446,6 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
           )}
         </div>
         <div className="flex items-center gap-1.5 sm:gap-3">
-          <Button
-            type="button"
-            onClick={handlePreview}
-            variant="outline"
-            size="sm"
-            title="Preview"
-            aria-label="Preview"
-          >
-            <Eye className="w-4 h-4 sm:mr-1.5" />
-            <span className="hidden sm:inline">Preview</span>
-          </Button>
           <Button
             type="button"
             onClick={() => handleSubmit('draft')}

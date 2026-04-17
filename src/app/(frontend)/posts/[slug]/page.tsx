@@ -211,8 +211,8 @@ export default async function Post({ params: paramsPromise }: Args) {
               <NewsletterSignup variant="inline" className="max-w-md" />
             </div>
 
-            {/* Comments */}
-            <PostComments post={post} />
+            {/* Comments - only show for published posts */}
+            {post._status === 'published' && <PostComments post={post} />}
           </div>
 
           {/* Right: Recommended posts on desktop */}

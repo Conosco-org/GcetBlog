@@ -95,6 +95,8 @@ export default async function EditPostPage({ params }: PageProps) {
     },
     heroImage: heroImage?.id,
     heroImageUrl: heroImage?.url,
+    slug: post.slug || '',
+    status: post._status || 'draft',
   }
 
   return (
