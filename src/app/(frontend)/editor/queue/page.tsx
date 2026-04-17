@@ -19,7 +19,7 @@ export default async function EditorQueuePage({ searchParams }: PageProps) {
 
   const query = params.q || ''
   const page = Math.max(1, Number(params.page) || 1)
-  const limit = Math.max(10, Math.min(100, Number(params.limit) || 20))
+  const limit = Math.max(10, Math.min(100, Number(params.limit) || 10))
   const activeTab = params.tab || 'posts'
 
   // First, get all contributor user IDs using pagination to avoid hard limits

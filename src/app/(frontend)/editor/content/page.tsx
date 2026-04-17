@@ -15,7 +15,7 @@ export default async function ContentManagerPage({ searchParams }: PageProps) {
   const payload = await getPayload({ config: configPromise })
   const activeTab = params.tab || 'posts'
   const page = parseInt(params.page || '1', 10)
-  const limit = parseInt(params.limit || '20', 10)
+  const limit = parseInt(params.limit || '10', 10)
 
   // Get only published posts
   const posts = await payload.find({

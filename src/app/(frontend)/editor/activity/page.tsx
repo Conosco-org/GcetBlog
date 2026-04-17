@@ -15,7 +15,7 @@ export default async function ActivityLogsPage({ searchParams }: PageProps) {
 
   const query = params.q || ''
   const page = Math.max(1, Number(params.page) || 1)
-  const limit = Math.max(10, Math.min(100, Number(params.limit) || 20))
+  const limit = Math.max(10, Math.min(100, Number(params.limit) || 10))
   const actionFilter = params.action || ''
 
   // Build where clause
