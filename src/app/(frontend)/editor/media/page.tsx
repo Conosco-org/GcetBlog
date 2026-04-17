@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic'
 const PAGE_SIZE = 24
 
 interface PageProps {
-  searchParams: Promise<{ q?: string; page?: string; sort?: string }>
+  searchParams: Promise<{ q?: string; page?: string; sort?: string; post?: string; status?: string }>
 }
 
 export default async function MediaManagerPage({ searchParams }: PageProps) {

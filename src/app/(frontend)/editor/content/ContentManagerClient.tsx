@@ -394,7 +394,7 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
                           className="text-destructive flex items-center gap-2"
                         >
                           <Trash2 className="w-4 h-4" />
-                          Delete
+                          Reject
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -516,13 +516,12 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
                                 Unpublish
                               </DropdownMenuItem>
                             )}
-                            <DropdownMenuItem>Duplicate</DropdownMenuItem>
                             <DropdownMenuItem 
                               onClick={() => setDeleteDialog({ open: true, post })}
                               className="text-destructive flex items-center gap-2"
                             >
                               <Trash2 className="w-4 h-4" />
-                              Delete
+                              Reject
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -574,7 +573,7 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the post &ldquo;{deleteDialog.post?.title}&rdquo;.
+              This action cannot be undone. This will permanently reject the post &ldquo;{deleteDialog.post?.title}&rdquo;.
               {deleteDialog.post?._status === 'published' && (
                 <span className="block mt-2 text-orange-600 font-medium">
                   Note: This post is currently published. It will be unpublished before deletion.
@@ -596,7 +595,7 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
               className="bg-destructive hover:bg-destructive/90"
             >
               {isLoading ? <Loader2 className="w-4 h-4 sm:mr-2 animate-spin" /> : <Trash2 className="w-4 h-4 sm:mr-2" />}
-              <span className="hidden sm:inline">{isLoading ? 'Deleting...' : 'Delete Post'}</span>
+              <span className="hidden sm:inline">{isLoading ? 'Rejecting...' : 'Reject Post'}</span>
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
