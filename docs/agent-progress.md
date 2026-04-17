@@ -458,11 +458,39 @@ This session focused on improving comment moderation, removing non-working featu
    - **Contributors**: Redirected to `/contributor` if they try to access editor routes
 
 ### Database Changes
-**No database migrations required** - All changes were UI/frontend only:
-- No schema changes
-- No new collections
-- No new fields
-- No data migrations needed
+**⚠️ DATABASE MIGRATION REQUIRED**
+
+This branch includes significant database schema changes from the main branch:
+
+#### New Collections:
+1. **Notifications** - In-app notification system
+
+#### Modified Collections with New Fields:
+1. **Posts** - Added excerpt, readTime, viewCount, commentCount, voteCount, editorial tracking fields
+2. **Users** - Added username, activity tracking, email preferences
+3. **Categories** - Added description, postCount, color, isActive, order
+4. **Media** - Added uploadedBy field
+5. **Votes** - Added previousVoteType, compound unique index
+6. **PageViews** - Added ipHash, readDuration, readPercentage, isAuthenticated
+7. **Comments** - Enhanced moderation fields
+8. **RejectionNotifications** - Added tracking fields
+
+#### Migration Steps Required:
+```bash
+# 1. Regenerate Payload types
+pnpm run generate:types
+
+# 2. Restart the dev server to apply schema changes
+# Payload will automatically create new collections and fields
+
+# 3. Verify database schema
+# Check that all new fields are present in MongoDB
+```
+
+#### Type Generation:
+- ✅ Types regenerated with `pnpm run generate:types`
+- ✅ `src/shared/types/payload-types.ts` updated (366 lines changed)
+- ✅ All TypeScript errors resolved
 
 ### Git Commits
 1. `f58c847` - refactor: remove actions column from comments table and add user filter to media manager
