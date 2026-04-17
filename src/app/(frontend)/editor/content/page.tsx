@@ -17,15 +17,11 @@ export default async function ContentManagerPage({ searchParams }: PageProps) {
   const page = parseInt(params.page || '1', 10)
   const limit = parseInt(params.limit || '20', 10)
 
-  // Get all posts with proper pagination
-  // Exclude posts that are requesting changes (back with contributor)
+  // Get only published posts
   const posts = await payload.find({
     collection: 'posts',
     where: {
-      or: [
-        { reviewStatus: { exists: false } },
-        { reviewStatus: { not_equals: 'requesting_changes' } },
-      ],
+      _status: { equals: 'published' },
     },
     depth: 2,
     page,
@@ -40,9 +36,12 @@ export default async function ContentManagerPage({ searchParams }: PageProps) {
     sort: 'title',
   })
 
-  // Get all comments with pagination
+  // Get only approved comments
   const comments = await payload.find({
     collection: 'comments',
+    where: {
+      status: { equals: 'approved' },
+    },
     depth: 2,
     page,
     limit,

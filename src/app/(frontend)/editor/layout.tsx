@@ -38,13 +38,37 @@ export default async function EditorLayout({
     redirect('/contributor')
   }
 
+  // Get contributor IDs for filtering
+  const contributors = await payload.find({
+    collection: 'users',
+    where: { role: { equals: 'contributor' } },
+    limit: 1000,
+  })
+  const contributorIds = contributors.docs.map(u => u.id)
+
   // Get real counts for sidebar badges - parallelized
-  const [pendingPosts, totalPosts, recentLogs] = await Promise.all([
+  const [pendingPostsFromContributors, publishedPosts, pendingCommentsFromContributors, recentLogs] = await Promise.all([
+    // Review Queue: Only posts from contributors with pending_review status
     payload.count({
       collection: 'posts',
-      where: { _status: { equals: 'draft' } },
+      where: {
+        and: [
+          { _status: { equals: 'draft' } },
+          { reviewStatus: { equals: 'pending_review' } },
+          { authors: { in: contributorIds } },
+        ],
+      },
     }),
-    payload.count({ collection: 'posts' }),
+    // Content Manager: Only published posts
+    payload.count({
+      collection: 'posts',
+      where: { _status: { equals: 'published' } },
+    }),
+    // Review Queue Comments: Only pending comments
+    payload.count({
+      collection: 'comments',
+      where: { status: { equals: 'pending' } },
+    }),
     payload.count({
       collection: 'admin-logs',
       where: {
@@ -58,8 +82,9 @@ export default async function EditorLayout({
   return (
     <EditorLayoutClient
       user={typedUser}
-      pendingPostsCount={pendingPosts.totalDocs}
-      totalPostsCount={totalPosts.totalDocs}
+      pendingPostsCount={pendingPostsFromContributors.totalDocs}
+      pendingCommentsCount={pendingCommentsFromContributors.totalDocs}
+      totalPostsCount={publishedPosts.totalDocs}
       activityLogsCount={recentLogs.totalDocs}
     >
       {children}
