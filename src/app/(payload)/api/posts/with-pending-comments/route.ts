@@ -16,7 +16,9 @@ export async function GET(request: NextRequest) {
     // Authenticate user
     const { user } = await payload.auth({ headers: requestHeaders })
 
-    if (!user || (user as { role?: string }).role !== 'editor') {
+    // Allow both editors and admins to access this endpoint
+    const userRole = (user as { role?: string })?.role
+    if (!user || (userRole !== 'editor' && userRole !== 'admin')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 

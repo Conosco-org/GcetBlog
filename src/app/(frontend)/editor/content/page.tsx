@@ -15,11 +15,14 @@ export default async function ContentManagerPage({ searchParams }: PageProps) {
   const payload = await getPayload({ config: configPromise })
   const activeTab = params.tab || 'posts'
   const page = parseInt(params.page || '1', 10)
-  const limit = parseInt(params.limit || '20', 10)
+  const limit = parseInt(params.limit || '10', 10)
 
-  // Get all posts with proper pagination
+  // Get only published posts
   const posts = await payload.find({
     collection: 'posts',
+    where: {
+      _status: { equals: 'published' },
+    },
     depth: 2,
     page,
     limit,
@@ -33,9 +36,12 @@ export default async function ContentManagerPage({ searchParams }: PageProps) {
     sort: 'title',
   })
 
-  // Get all comments with pagination
+  // Get only approved comments
   const comments = await payload.find({
     collection: 'comments',
+    where: {
+      status: { equals: 'approved' },
+    },
     depth: 2,
     page,
     limit,

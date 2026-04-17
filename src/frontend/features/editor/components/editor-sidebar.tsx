@@ -32,6 +32,7 @@ interface NavItem {
 interface EditorSidebarProps {
   user: User & { role: string }
   pendingPostsCount?: number
+  pendingCommentsCount?: number
   totalPostsCount?: number
   activityLogsCount?: number
   isOpen: boolean
@@ -41,6 +42,7 @@ interface EditorSidebarProps {
 export function EditorSidebar({ 
   user: _user, 
   pendingPostsCount = 0,
+  pendingCommentsCount = 0,
   totalPostsCount = 0,
   activityLogsCount = 0,
   isOpen,
@@ -86,7 +88,7 @@ export function EditorSidebar({
       label: 'Review Queue',
       href: '/editor/queue',
       icon: <Clock className="w-5 h-5" />,
-      badge: pendingPostsCount,
+      badge: pendingPostsCount, // Only pending posts count
     },
     {
       label: 'Media Manager',

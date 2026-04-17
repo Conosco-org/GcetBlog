@@ -23,9 +23,10 @@ export async function PATCH(
 
     const typedUser = user as User & { role: string }
 
-    if (typedUser.role !== 'editor') {
+    // Allow both editors and admins to update categories
+    if (typedUser.role !== 'editor' && typedUser.role !== 'admin') {
       return NextResponse.json(
-        { error: 'Forbidden: Only editors can update categories' },
+        { error: 'Forbidden: Only editors and admins can update categories' },
         { status: 403 }
       )
     }
@@ -99,9 +100,10 @@ export async function DELETE(
 
     const typedUser = user as User & { role: string }
 
-    if (typedUser.role !== 'editor') {
+    // Allow both editors and admins to delete categories
+    if (typedUser.role !== 'editor' && typedUser.role !== 'admin') {
       return NextResponse.json(
-        { error: 'Forbidden: Only editors can delete categories' },
+        { error: 'Forbidden: Only editors and admins can delete categories' },
         { status: 403 }
       )
     }

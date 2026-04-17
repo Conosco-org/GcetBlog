@@ -9,7 +9,17 @@ import { Card, CardContent } from '@/frontend/components/ui/card'
 import { Badge } from '@/frontend/components/ui/badge'
 import { PaginationControls } from '@/frontend/components/base'
 import { useToast } from '@frontend/components/ui/use-toast'
-import { CheckCircle, XCircle, User, FileText, Clock } from 'lucide-react'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/frontend/components/ui/alert-dialog'
+import { CheckCircle, XCircle, User, FileText, Clock, Loader2 } from 'lucide-react'
 import { approveComments, deleteComments } from '@/frontend/features/comments/lib/comment-actions'
 import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
@@ -34,6 +44,11 @@ export function CommentModerationView({
   const { toast } = useToast()
   const [selectedComments, setSelectedComments] = useState<string[]>([])
   const [searchQuery, setSearchQuery] = useState('')
+  const [rejectDialog, setRejectDialog] = useState<{ open: boolean; commentIds: string[] }>({
+    open: false,
+    commentIds: [],
+  })
+  const [isRejecting, setIsRejecting] = useState(false)
 
   // Filter comments based on search
   const filteredComments = pendingComments.docs.filter((comment) => {
@@ -79,20 +94,22 @@ export function CommentModerationView({
 
   const handleReject = async (commentId?: string) => {
     const ids = commentId ? [commentId] : selectedComments
-    
-    if (!confirm(`Are you sure you want to reject ${ids.length} comment(s)? This will permanently delete them.`)) {
-      return
-    }
+    setRejectDialog({ open: true, commentIds: ids })
+  }
 
-    const result = await deleteComments(ids)
+  const confirmReject = async () => {
+    setIsRejecting(true)
+    const result = await deleteComments(rejectDialog.commentIds)
 
     if (result.success) {
       toast({ title: 'Success', description: result.message })
       setSelectedComments([])
+      setRejectDialog({ open: false, commentIds: [] })
       router.refresh()
     } else {
       toast({ title: 'Error', description: result.error, variant: 'destructive' })
     }
+    setIsRejecting(false)
   }
 
   const allSelected = filteredComments.length > 0 && selectedComments.length === filteredComments.length
@@ -238,6 +255,47 @@ export function CommentModerationView({
           </CardContent>
         </Card>
       )}
+      
+      {/* Reject Confirmation Dialog */}
+      <AlertDialog 
+        open={rejectDialog.open} 
+        onOpenChange={(open) => setRejectDialog({ ...rejectDialog, open })}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Reject Comments?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to reject {rejectDialog.commentIds.length} comment(s)? 
+              This will permanently delete them from the database. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isRejecting}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault()
+                confirmReject()
+              }}
+              disabled={isRejecting}
+              className="bg-destructive hover:bg-destructive/90"
+            >
+              {isRejecting ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Rejecting...
+                </>
+              ) : (
+                <>
+                  <XCircle className="w-4 h-4 mr-2" />
+                  Reject Comments
+                </>
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

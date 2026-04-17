@@ -13,8 +13,10 @@ export async function deletePost(postId: string) {
     // Authenticate the request
     const { user } = await payload.auth({ headers: requestHeaders })
 
-    if (!user || (user as { role: string }).role !== 'editor') {
-      throw new Error('Editor access required')
+    // Allow both editors and admins
+    const userRole = (user as { role: string })?.role
+    if (!user || (userRole !== 'editor' && userRole !== 'admin')) {
+      throw new Error('Editor or admin access required')
     }
 
     // Get the post first to check status and get slug (use depth 0 to avoid relation issues)
@@ -76,8 +78,10 @@ export async function unpublishPost(postId: string) {
     // Authenticate the request
     const { user } = await payload.auth({ headers: requestHeaders })
 
-    if (!user || (user as { role: string }).role !== 'editor') {
-      throw new Error('Editor access required')
+    // Allow both editors and admins
+    const userRole = (user as { role: string })?.role
+    if (!user || (userRole !== 'editor' && userRole !== 'admin')) {
+      throw new Error('Editor or admin access required')
     }
 
     // Get the post
