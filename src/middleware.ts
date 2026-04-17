@@ -88,7 +88,7 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // -- /editor - requires role === 'editor' -----------------------------
+  // -- /editor - requires role === 'editor' OR isAdmin flag -------------
   // Contributors are allowed on /editor/posts/*/edit (own-post editing).
   if (pathname.startsWith('/editor')) {
     if (!token) return loginRedirect(request, { redirect: pathname })
@@ -104,9 +104,8 @@ export async function middleware(request: NextRequest) {
       return NextResponse.next()
     }
 
-    // Only editors (which includes admins, since admins are editors) can
-    // access the rest of /editor.
-    if (user.role !== 'editor') {
+    // Allow editors and admins to access /editor routes
+    if (user.role !== 'editor' && !user.isAdmin) {
       return NextResponse.redirect(new URL('/contributor', request.url))
     }
 
