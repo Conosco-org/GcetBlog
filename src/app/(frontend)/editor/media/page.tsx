@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic'
 const PAGE_SIZE = 24
 
 interface PageProps {
-  searchParams: Promise<{ q?: string; page?: string; sort?: string; post?: string; status?: string }>
+  searchParams: Promise<{ q?: string; page?: string; sort?: string; user?: string }>
 }
 
 export default async function MediaManagerPage({ searchParams }: PageProps) {
@@ -19,18 +19,22 @@ export default async function MediaManagerPage({ searchParams }: PageProps) {
   const query = params.q || ''
   const page = Math.max(1, Number(params.page) || 1)
   const sortParam = params.sort || '-createdAt'
+  const userFilter = params.user || ''
 
-  const where: Where | undefined = query
-    ? { or: [{ filename: { like: query } }, { alt: { like: query } }] as Where[] }
-    : undefined
+  const where: Where = {
+    and: [
+      query ? { or: [{ filename: { like: query } }, { alt: { like: query } }] as Where[] } : {},
+      userFilter ? { uploadedBy: { equals: userFilter } } : {},
+    ].filter((condition) => Object.keys(condition).length > 0),
+  }
 
-  const [allMedia, storageCount, storageSample] = await Promise.all([
+  const [allMedia, storageCount, storageSample, allUsers] = await Promise.all([
     payload.find({
       collection: 'media',
       limit: PAGE_SIZE,
       page,
       sort: sortParam,
-      where,
+      where: Object.keys(where).length > 0 ? where : undefined,
     }),
     // count() is a single DB aggregation - no docs loaded
     payload.count({ collection: 'media' }),
@@ -40,6 +44,13 @@ export default async function MediaManagerPage({ searchParams }: PageProps) {
       limit: 500,
       select: { filesize: true },
       depth: 0,
+    }),
+    // Get all users for filter dropdown
+    payload.find({
+      collection: 'users',
+      limit: 1000,
+      sort: 'name',
+      select: { name: true, email: true },
     }),
   ])
 
@@ -81,6 +92,8 @@ export default async function MediaManagerPage({ searchParams }: PageProps) {
         pageSize={PAGE_SIZE}
         query={query}
         sortParam={sortParam}
+        users={allUsers.docs}
+        userFilter={userFilter}
       />
     </div>
   )

@@ -7,7 +7,7 @@ import { Button } from '@frontend/components/ui/button'
 import { Input } from '@/frontend/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/frontend/components/ui/select'
 import { Checkbox } from '@/frontend/components/ui/checkbox'
-import { Edit, CheckCircle, XCircle, AlertCircle } from 'lucide-react'
+import { CheckCircle, XCircle, AlertCircle } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -210,7 +210,6 @@ export function ContentManagerComments({ comments, categories }: ContentManagerC
                   <th className="p-4 text-left text-sm font-medium">Author</th>
                   <th className="p-4 text-left text-sm font-medium">Status</th>
                   <th className="p-4 text-left text-sm font-medium">Date</th>
-                  <th className="p-4 text-left text-sm font-medium">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -245,11 +244,6 @@ export function ContentManagerComments({ comments, categories }: ContentManagerC
                     <td className="p-4">{comment.status && getStatusBadge(comment.status)}</td>
                     <td className="p-4 text-sm text-muted-foreground">
                       {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
-                    </td>
-                    <td className="p-4">
-                      <Button size="sm" variant="ghost">
-                        <Edit className="h-3 w-3" />
-                      </Button>
                     </td>
                   </tr>
                 ))}
