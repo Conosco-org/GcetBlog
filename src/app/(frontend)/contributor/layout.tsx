@@ -6,12 +6,6 @@ import { ContributorLayoutClient } from '@frontend/features/contributor/componen
 import { PayloadBlocker } from '@frontend/features/contributor/components/payload-blocker'
 import type { User } from '@shared/types/payload-types'
 import React from 'react'
-import { cn } from '@frontend/lib/utils'
-import { GeistMono } from 'geist/font/mono'
-import { GeistSans } from 'geist/font/sans'
-import { Providers } from '@/frontend/providers'
-import { InitTheme } from '@/frontend/providers/Theme/InitTheme'
-import '@/frontend/styles/globals.css'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -75,14 +69,9 @@ export default async function ContributorLayout({
   }
 
   return (
-    <html className={cn(GeistSans.variable, GeistMono.variable)} lang="en" suppressHydrationWarning>
-      <body className="bg-background text-foreground antialiased" suppressHydrationWarning>
-        <InitTheme />
-        <PayloadBlocker />
-        <Providers>
-          <ContributorLayoutClient user={typedUser} stats={stats}>{children}</ContributorLayoutClient>
-        </Providers>
-      </body>
-    </html>
+    <>
+      <PayloadBlocker />
+      <ContributorLayoutClient user={typedUser} stats={stats}>{children}</ContributorLayoutClient>
+    </>
   )
 }

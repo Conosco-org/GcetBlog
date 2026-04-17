@@ -12,8 +12,8 @@ import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useToast } from '@frontend/components/ui/use-toast'
-import { approveComments, rejectComments, markAsSpam, deleteComments } from '@/frontend/features/comments/lib/comment-actions'
-import { RejectDialog, SpamDialog, DeleteDialog } from '@/frontend/features/comments/components/moderation-dialogs'
+import { approveComments, deleteComments } from '@/frontend/features/comments/lib/comment-actions'
+import { DeleteDialog } from '@/frontend/features/comments/components/moderation-dialogs'
 import type { Comment } from '@/shared/types/payload-types'
 
 interface ContentManagerCommentsProps {
@@ -26,8 +26,6 @@ export function ContentManagerComments({ comments }: ContentManagerCommentsProps
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
-  const [showRejectDialog, setShowRejectDialog] = useState(false)
-  const [showSpamDialog, setShowSpamDialog] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
   const filteredComments = comments.filter((comment) => {
@@ -56,28 +54,6 @@ export function ContentManagerComments({ comments }: ContentManagerCommentsProps
 
   async function handleApprove() {
     const result = await approveComments(Array.from(selectedIds))
-    if (result.success) {
-      toast({ title: 'Success', description: result.message })
-      setSelectedIds(new Set())
-      router.refresh()
-    } else {
-      toast({ title: 'Error', description: result.error, variant: 'destructive' })
-    }
-  }
-
-  async function handleReject(reason: string, customReason?: string) {
-    const result = await rejectComments(Array.from(selectedIds), reason, customReason)
-    if (result.success) {
-      toast({ title: 'Success', description: result.message })
-      setSelectedIds(new Set())
-      router.refresh()
-    } else {
-      toast({ title: 'Error', description: result.error, variant: 'destructive' })
-    }
-  }
-
-  async function handleSpam(spamType: string) {
-    const result = await markAsSpam(Array.from(selectedIds), spamType)
     if (result.success) {
       toast({ title: 'Success', description: result.message })
       setSelectedIds(new Set())
@@ -162,12 +138,6 @@ export function ContentManagerComments({ comments }: ContentManagerCommentsProps
                 <Button size="sm" variant="outline" onClick={handleApprove}>
                   Approve
                 </Button>
-                <Button size="sm" variant="outline" onClick={() => setShowRejectDialog(true)}>
-                  Reject
-                </Button>
-                <Button size="sm" variant="outline" onClick={() => setShowSpamDialog(true)}>
-                  Mark as Spam
-                </Button>
                 <Button size="sm" variant="destructive" onClick={() => setShowDeleteDialog(true)}>
                   Delete
                 </Button>
@@ -246,20 +216,6 @@ export function ContentManagerComments({ comments }: ContentManagerCommentsProps
           </div>
         </CardContent>
       </Card>
-
-      <RejectDialog
-        open={showRejectDialog}
-        onOpenChange={setShowRejectDialog}
-        onConfirm={handleReject}
-        commentCount={selectedIds.size}
-      />
-
-      <SpamDialog
-        open={showSpamDialog}
-        onOpenChange={setShowSpamDialog}
-        onConfirm={handleSpam}
-        commentCount={selectedIds.size}
-      />
 
       <DeleteDialog
         open={showDeleteDialog}
