@@ -7,6 +7,7 @@ import { Button } from '@/frontend/components/ui/button'
 import { Input } from '@/frontend/components/ui/input'
 import { Card, CardContent } from '@/frontend/components/ui/card'
 import { Badge } from '@/frontend/components/ui/badge'
+import { PaginationControls } from '@/frontend/components/base'
 import { useToast } from '@frontend/components/ui/use-toast'
 import { CheckCircle, XCircle, User, FileText, Clock } from 'lucide-react'
 import { approveComments, deleteComments } from '@/frontend/features/comments/lib/comment-actions'
@@ -15,7 +16,15 @@ import Link from 'next/link'
 import type { Comment } from '@/shared/types/payload-types'
 
 interface CommentModerationViewProps {
-  pendingComments: Comment[]
+  pendingComments: {
+    docs: Comment[]
+    totalDocs: number
+    totalPages: number
+    page?: number
+    limit?: number
+    hasPrevPage?: boolean
+    hasNextPage?: boolean
+  }
 }
 
 export function CommentModerationView({
@@ -27,7 +36,7 @@ export function CommentModerationView({
   const [searchQuery, setSearchQuery] = useState('')
 
   // Filter comments based on search
-  const filteredComments = pendingComments.filter((comment) => {
+  const filteredComments = pendingComments.docs.filter((comment) => {
     const searchLower = searchQuery.toLowerCase()
     
     const matchesContent = comment.content?.toLowerCase().includes(searchLower) || false
@@ -211,6 +220,23 @@ export function CommentModerationView({
             )
           })}
         </div>
+      )}
+      
+      {/* Pagination */}
+      {filteredComments.length > 0 && (
+        <Card>
+          <CardContent className="p-0">
+            <PaginationControls
+              currentPage={pendingComments.page || 1}
+              totalPages={pendingComments.totalPages}
+              totalDocs={pendingComments.totalDocs}
+              limit={pendingComments.limit || 20}
+              hasPrevPage={pendingComments.hasPrevPage || false}
+              hasNextPage={pendingComments.hasNextPage || false}
+              showingCount={filteredComments.length}
+            />
+          </CardContent>
+        </Card>
       )}
     </div>
   )

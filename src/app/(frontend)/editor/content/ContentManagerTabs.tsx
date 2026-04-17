@@ -16,6 +16,7 @@ interface ContentManagerTabsProps {
     totalDocs: number
     totalPages: number
     page?: number
+    limit?: number
     hasPrevPage?: boolean
     hasNextPage?: boolean
   }
@@ -27,7 +28,15 @@ interface ContentManagerTabsProps {
     hasPrevPage?: boolean
     hasNextPage?: boolean
   }
-  comments: Comment[]
+  comments: {
+    docs: Comment[]
+    totalDocs: number
+    totalPages: number
+    page?: number
+    limit?: number
+    hasPrevPage?: boolean
+    hasNextPage?: boolean
+  }
 }
 
 export function ContentManagerTabs({
@@ -42,6 +51,8 @@ export function ContentManagerTabs({
   const handleTabChange = (tab: string) => {
     const params = new URLSearchParams(searchParams.toString())
     params.set('tab', tab)
+    // Reset to page 1 when switching tabs
+    params.set('page', '1')
     router.push(`/editor/content?${params.toString()}`)
   }
 
@@ -70,7 +81,7 @@ export function ContentManagerTabs({
                     : 'text-muted-foreground hover:text-foreground hover:border-b-2 hover:border-muted-foreground'
                 }`}
               >
-                Comments ({comments.length})
+                Comments ({comments.totalDocs})
               </button>
             </div>
             {activeTab === 'posts' && (

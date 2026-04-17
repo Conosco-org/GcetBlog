@@ -3,16 +3,22 @@
 import type { Post } from '@/shared/types/payload-types'
 import { SearchInput } from '@frontend/components/base/SearchInput'
 import { DataTable, type Column } from '@frontend/components/base/DataTable'
+import { PaginationControls } from '@/frontend/components/base'
 import { Badge } from '@/frontend/components/ui/badge'
+import { Card, CardContent } from '@/frontend/components/ui/card'
 import { Clock } from 'lucide-react'
 import { ApprovalButtons } from './ApprovalButtons'
 
 interface QueueTableClientProps {
-  posts: Post[]
-  totalPages: number
-  currentPage: number
-  totalItems: number
-  pageSize: number
+  posts: {
+    docs: Post[]
+    totalDocs: number
+    totalPages: number
+    page?: number
+    limit?: number
+    hasPrevPage?: boolean
+    hasNextPage?: boolean
+  }
   query: string
 }
 
@@ -82,10 +88,6 @@ const columns: Column<Post>[] = [
 
 export function QueueTableClient({
   posts,
-  totalPages,
-  currentPage,
-  totalItems,
-  pageSize,
   query,
 }: QueueTableClientProps) {
   return (
@@ -97,22 +99,37 @@ export function QueueTableClient({
         className="max-w-md"
       />
 
-      <DataTable
-        columns={columns}
-        data={posts}
-        totalPages={totalPages}
-        currentPage={currentPage}
-        totalItems={totalItems}
-        pageSize={pageSize}
-        getRowKey={(post) => post.id}
-        emptyState={{
-          icon: Clock,
-          title: 'No posts awaiting review',
-          description: query
-            ? 'Try adjusting your search'
-            : 'All caught up! No pending submissions right now.',
-        }}
-      />
+      <Card>
+        <CardContent className="p-0">
+          <DataTable
+            columns={columns}
+            data={posts.docs}
+            totalPages={posts.totalPages}
+            currentPage={posts.page || 1}
+            totalItems={posts.totalDocs}
+            pageSize={posts.limit || 20}
+            getRowKey={(post) => post.id}
+            emptyState={{
+              icon: Clock,
+              title: 'No posts awaiting review',
+              description: query
+                ? 'Try adjusting your search'
+                : 'All caught up! No pending submissions right now.',
+            }}
+          />
+          
+          {/* Pagination */}
+          <PaginationControls
+            currentPage={posts.page || 1}
+            totalPages={posts.totalPages}
+            totalDocs={posts.totalDocs}
+            limit={posts.limit || 20}
+            hasPrevPage={posts.hasPrevPage || false}
+            hasNextPage={posts.hasNextPage || false}
+            showingCount={posts.docs.length}
+          />
+        </CardContent>
+      </Card>
     </div>
   )
 }

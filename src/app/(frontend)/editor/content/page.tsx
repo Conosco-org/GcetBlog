@@ -7,19 +7,22 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 interface PageProps {
-  searchParams: Promise<{ tab?: string }>
+  searchParams: Promise<{ tab?: string; page?: string; limit?: string }>
 }
 
 export default async function ContentManagerPage({ searchParams }: PageProps) {
   const params = await searchParams
   const payload = await getPayload({ config: configPromise })
   const activeTab = params.tab || 'posts'
+  const page = parseInt(params.page || '1', 10)
+  const limit = parseInt(params.limit || '20', 10)
 
   // Get all posts with proper pagination
   const posts = await payload.find({
     collection: 'posts',
     depth: 2,
-    limit: 20,
+    page,
+    limit,
     sort: '-updatedAt',
   })
 
@@ -30,11 +33,12 @@ export default async function ContentManagerPage({ searchParams }: PageProps) {
     sort: 'title',
   })
 
-  // Get all comments
+  // Get all comments with pagination
   const comments = await payload.find({
     collection: 'comments',
     depth: 2,
-    limit: 100,
+    page,
+    limit,
     sort: '-createdAt',
   })
 
@@ -54,7 +58,7 @@ export default async function ContentManagerPage({ searchParams }: PageProps) {
         activeTab={activeTab}
         posts={posts}
         categories={categories}
-        comments={comments.docs}
+        comments={comments}
       />
     </div>
   )

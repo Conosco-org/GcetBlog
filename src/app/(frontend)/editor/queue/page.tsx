@@ -9,10 +9,8 @@ import { QueueTabs } from './QueueTabs'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-const PAGE_SIZE = 15
-
 interface PageProps {
-  searchParams: Promise<{ q?: string; page?: string; tab?: string }>
+  searchParams: Promise<{ q?: string; page?: string; limit?: string; tab?: string }>
 }
 
 export default async function EditorQueuePage({ searchParams }: PageProps) {
@@ -21,6 +19,7 @@ export default async function EditorQueuePage({ searchParams }: PageProps) {
 
   const query = params.q || ''
   const page = Math.max(1, Number(params.page) || 1)
+  const limit = Math.max(10, Math.min(100, Number(params.limit) || 20))
   const activeTab = params.tab || 'posts'
 
   // First, get all contributor user IDs using pagination to avoid hard limits
@@ -69,7 +68,7 @@ export default async function EditorQueuePage({ searchParams }: PageProps) {
       where: baseWhere,
       depth: 2,
       sort: '-submittedForReviewAt',
-      limit: PAGE_SIZE,
+      limit,
       page,
       draft: true,
     }),
@@ -77,7 +76,8 @@ export default async function EditorQueuePage({ searchParams }: PageProps) {
       collection: 'comments',
       where: { status: { equals: 'pending' } },
       depth: 2,
-      limit: 100,
+      limit,
+      page,
       sort: '-createdAt',
     }),
   ])
@@ -139,12 +139,8 @@ export default async function EditorQueuePage({ searchParams }: PageProps) {
         activeTab={activeTab}
         pendingPostsCount={pendingPosts.totalDocs}
         pendingCommentsCount={pendingComments.totalDocs}
-        posts={pendingPosts.docs}
-        pendingComments={pendingComments.docs}
-        totalPages={pendingPosts.totalPages}
-        currentPage={pendingPosts.page || page}
-        totalItems={pendingPosts.totalDocs}
-        pageSize={PAGE_SIZE}
+        posts={pendingPosts}
+        pendingComments={pendingComments}
         query={query}
       />
     </div>

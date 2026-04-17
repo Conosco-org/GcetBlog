@@ -5,6 +5,7 @@ import { Button } from '@frontend/components/ui/button'
 import { Badge } from '@/frontend/components/ui/badge'
 import { Input } from '@/frontend/components/ui/input'
 import { useToast } from '@frontend/components/ui/use-toast'
+import { PaginationControls } from '@/frontend/components/base'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -36,14 +37,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/frontend/components/ui/table"
-import { Search, MoreVertical, Pencil, MessageSquare, Loader2, Trash2, FileX, X, ChevronLeft, ChevronRight, Eye } from 'lucide-react'
+import { Search, MoreVertical, Pencil, MessageSquare, Loader2, Trash2, FileX, X, Eye } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { deletePost, unpublishPost } from './actions'
 import type { Post, Category } from '@/shared/types/payload-types'
 
 interface ContentManagerClientProps {
-  posts: { docs: Post[]; totalDocs: number; totalPages: number; page?: number; hasPrevPage?: boolean; hasNextPage?: boolean }
+  posts: { 
+    docs: Post[]
+    totalDocs: number
+    totalPages: number
+    page?: number
+    limit?: number
+    hasPrevPage?: boolean
+    hasNextPage?: boolean
+  }
   categories: { docs: Category[] }
 }
 
@@ -535,33 +544,15 @@ export default function ContentManagerClient({ posts, categories }: ContentManag
         </div>
 
         {/* Pagination */}
-        <div className="px-4 sm:px-6 py-4 border-t flex items-center justify-between">
-          <p className="text-xs sm:text-sm text-muted-foreground">
-            Showing {filteredPosts.length} of {posts.totalDocs} posts
-          </p>
-          <div className="flex gap-2">
-            <Button 
-              variant="outline"
-              size="sm"
-              disabled={!posts.hasPrevPage}
-              title="Previous"
-              aria-label="Previous"
-            >
-              <ChevronLeft className="w-4 h-4 sm:mr-1" />
-              <span className="hidden sm:inline">Previous</span>
-            </Button>
-            <Button 
-              variant="outline"
-              size="sm"
-              disabled={!posts.hasNextPage}
-              title="Next"
-              aria-label="Next"
-            >
-              <span className="hidden sm:inline">Next</span>
-              <ChevronRight className="w-4 h-4 sm:ml-1" />
-            </Button>
-          </div>
-        </div>
+        <PaginationControls
+          currentPage={posts.page || 1}
+          totalPages={posts.totalPages}
+          totalDocs={posts.totalDocs}
+          limit={posts.limit || 20}
+          hasPrevPage={posts.hasPrevPage || false}
+          hasNextPage={posts.hasNextPage || false}
+          showingCount={filteredPosts.length}
+        />
       </div>
 
       {/* Delete Confirmation Dialog */}
