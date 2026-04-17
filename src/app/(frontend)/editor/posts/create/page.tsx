@@ -19,8 +19,9 @@ export default async function CreatePostPage({
     redirect('/login')
   }
 
-  // Editors and contributors can create posts
-  if (!user.role || !['contributor', 'editor'].includes(user.role)) {
+  // Editors, contributors, and admins can create posts
+  const isAdmin = Boolean((user as unknown as Record<string, unknown>).isAdmin)
+  if (!user.role || (!['contributor', 'editor'].includes(user.role) && !isAdmin)) {
     redirect('/dashboard')
   }
 

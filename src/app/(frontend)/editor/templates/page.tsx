@@ -14,7 +14,12 @@ export default async function TemplatesPage({
   const requestHeaders = await headers()
   const { user } = await payload.auth({ headers: requestHeaders })
 
-  if (!user || user.role !== 'editor') {
+  if (!user) {
+    redirect('/login')
+  }
+
+  const isAdmin = Boolean((user as unknown as Record<string, unknown>).isAdmin)
+  if (user.role !== 'editor' && !isAdmin) {
     redirect('/login')
   }
 

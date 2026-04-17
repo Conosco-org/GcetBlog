@@ -19,8 +19,9 @@ export default async function CategoriesPage() {
   }
 
   const typedUser = user as User & { role: string }
+  const isAdmin = Boolean((typedUser as unknown as Record<string, unknown>).isAdmin)
 
-  if (typedUser.role !== 'editor') {
+  if (typedUser.role !== 'editor' && !isAdmin) {
     redirect('/dashboard')
   }
 
