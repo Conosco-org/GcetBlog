@@ -18,8 +18,15 @@ export default async function ContentManagerPage({ searchParams }: PageProps) {
   const limit = parseInt(params.limit || '20', 10)
 
   // Get all posts with proper pagination
+  // Exclude posts that are requesting changes (back with contributor)
   const posts = await payload.find({
     collection: 'posts',
+    where: {
+      or: [
+        { reviewStatus: { exists: false } },
+        { reviewStatus: { not_equals: 'requesting_changes' } },
+      ],
+    },
     depth: 2,
     page,
     limit,
