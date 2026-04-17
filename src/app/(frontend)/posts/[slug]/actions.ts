@@ -33,6 +33,11 @@ export async function submitComment(formData: FormData) {
       return { error: 'Post not found or not published' }
     }
 
+    // Auto-approve comments from admin, editor, or superadmin
+    const userRole = user.role
+    const isAdmin = (user as unknown as { isAdmin?: boolean }).isAdmin === true
+    const commentStatus = (userRole === 'admin' || userRole === 'editor' || isAdmin) ? 'approved' : 'pending'
+
     // Create the comment with authenticated user
     await payload.create({
       collection: 'comments',
@@ -40,13 +45,19 @@ export async function submitComment(formData: FormData) {
         post: postId,
         content,
         author: user.id,
-        status: 'pending',
+        status: commentStatus,
         ...(parentId ? { parent: parentId } : {}),
       },
     })
 
     revalidatePath(`/posts/${post.slug}`)
-    return { success: parentId ? 'Reply submitted for review' : 'Comment submitted for review' }
+    
+    // Different success message based on auto-approval
+    if (commentStatus === 'approved') {
+      return { success: parentId ? 'Reply posted successfully' : 'Comment posted successfully' }
+    } else {
+      return { success: parentId ? 'Reply submitted for review' : 'Comment submitted for review' }
+    }
   } catch (error) {
     console.error('Error submitting comment:', error)
     return { error: 'Failed to submit comment' }

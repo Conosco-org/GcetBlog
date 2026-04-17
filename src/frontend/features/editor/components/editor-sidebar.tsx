@@ -88,7 +88,7 @@ export function EditorSidebar({
       label: 'Review Queue',
       href: '/editor/queue',
       icon: <Clock className="w-5 h-5" />,
-      badge: pendingPostsCount + pendingCommentsCount, // Combined count of pending posts and comments
+      badge: pendingPostsCount, // Only pending posts count
     },
     {
       label: 'Media Manager',
