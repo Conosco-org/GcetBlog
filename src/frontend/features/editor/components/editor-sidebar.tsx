@@ -32,7 +32,6 @@ interface NavItem {
 interface EditorSidebarProps {
   user: User & { role: string }
   pendingPostsCount?: number
-  pendingCommentsCount?: number
   totalPostsCount?: number
   activityLogsCount?: number
   isOpen: boolean
@@ -42,7 +41,6 @@ interface EditorSidebarProps {
 export function EditorSidebar({ 
   user: _user, 
   pendingPostsCount = 0,
-  pendingCommentsCount = 0,
   totalPostsCount = 0,
   activityLogsCount = 0,
   isOpen,

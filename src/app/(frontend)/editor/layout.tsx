@@ -47,7 +47,7 @@ export default async function EditorLayout({
   const contributorIds = contributors.docs.map(u => u.id)
 
   // Get real counts for sidebar badges - parallelized
-  const [pendingPostsFromContributors, publishedPosts, pendingCommentsFromContributors, recentLogs] = await Promise.all([
+  const [pendingPostsFromContributors, publishedPosts, recentLogs] = await Promise.all([
     // Review Queue: Only posts from contributors with pending_review status
     payload.count({
       collection: 'posts',
@@ -64,11 +64,6 @@ export default async function EditorLayout({
       collection: 'posts',
       where: { _status: { equals: 'published' } },
     }),
-    // Review Queue Comments: Only pending comments
-    payload.count({
-      collection: 'comments',
-      where: { status: { equals: 'pending' } },
-    }),
     payload.count({
       collection: 'admin-logs',
       where: {
@@ -83,7 +78,6 @@ export default async function EditorLayout({
     <EditorLayoutClient
       user={typedUser}
       pendingPostsCount={pendingPostsFromContributors.totalDocs}
-      pendingCommentsCount={pendingCommentsFromContributors.totalDocs}
       totalPostsCount={publishedPosts.totalDocs}
       activityLogsCount={recentLogs.totalDocs}
     >

@@ -11,7 +11,6 @@ import type { User } from '@shared/types/payload-types'
 interface EditorLayoutClientProps {
   user: User & { role: string }
   pendingPostsCount: number
-  pendingCommentsCount: number
   totalPostsCount: number
   activityLogsCount: number
   children: React.ReactNode
@@ -20,7 +19,6 @@ interface EditorLayoutClientProps {
 export function EditorLayoutClient({
   user,
   pendingPostsCount,
-  pendingCommentsCount,
   totalPostsCount,
   activityLogsCount,
   children
@@ -71,7 +69,6 @@ export function EditorLayoutClient({
               <EditorSidebar 
                 user={user}
                 pendingPostsCount={pendingPostsCount}
-                pendingCommentsCount={pendingCommentsCount}
                 totalPostsCount={totalPostsCount}
                 activityLogsCount={activityLogsCount}
                 isOpen={isOpen}
