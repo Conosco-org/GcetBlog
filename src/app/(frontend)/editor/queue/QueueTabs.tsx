@@ -10,12 +10,24 @@ interface QueueTabsProps {
   activeTab: string
   pendingPostsCount: number
   pendingCommentsCount: number
-  posts: Post[]
-  pendingComments: Comment[]
-  totalPages: number
-  currentPage: number
-  totalItems: number
-  pageSize: number
+  posts: {
+    docs: Post[]
+    totalDocs: number
+    totalPages: number
+    page?: number
+    limit?: number
+    hasPrevPage?: boolean
+    hasNextPage?: boolean
+  }
+  pendingComments: {
+    docs: Comment[]
+    totalDocs: number
+    totalPages: number
+    page?: number
+    limit?: number
+    hasPrevPage?: boolean
+    hasNextPage?: boolean
+  }
   query: string
 }
 
@@ -25,10 +37,6 @@ export function QueueTabs({
   pendingCommentsCount,
   posts,
   pendingComments,
-  totalPages,
-  currentPage,
-  totalItems,
-  pageSize,
   query,
 }: QueueTabsProps) {
   const router = useRouter()
@@ -37,6 +45,8 @@ export function QueueTabs({
   const handleTabChange = (tab: string) => {
     const params = new URLSearchParams(searchParams.toString())
     params.set('tab', tab)
+    // Reset to page 1 when switching tabs
+    params.set('page', '1')
     router.push(`/editor/queue?${params.toString()}`)
   }
 
@@ -81,10 +91,6 @@ export function QueueTabs({
       {activeTab === 'posts' && (
         <QueueTableClient
           posts={posts}
-          totalPages={totalPages}
-          currentPage={currentPage}
-          totalItems={totalItems}
-          pageSize={pageSize}
           query={query}
         />
       )}
