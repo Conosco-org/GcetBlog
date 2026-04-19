@@ -22,6 +22,7 @@ import {
   Calendar,
   Users2,
   Server,
+  GraduationCap,
 } from 'lucide-react'
 
 interface NavItem {
@@ -112,6 +113,11 @@ export function EditorSidebar({
       label: 'Clubs',
       href: '/editor/clubs',
       icon: <Users2 className="w-5 h-5" />,
+    },
+    {
+      label: 'Departments',
+      href: '/user/departments',
+      icon: <GraduationCap className="w-5 h-5" />,
     },
     {
       label: 'Newsletter',

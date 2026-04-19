@@ -154,5 +154,9 @@ export function getNavItemsForScope(scope: DomainScope): ScopedNavItem[] {
     items.push({ label: 'Events', href: '/events', icon: 'calendar' })
   }
 
+  if (scope.showPages && !scope.isClubScoped && !scope.isDepartmentScoped) {
+    items.push({ label: 'Departments', href: '/departments', icon: 'graduation-cap' })
+  }
+
   return items
 }
