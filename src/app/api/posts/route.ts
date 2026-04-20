@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
     }
 
     const incomingMetaDescription =
-      typeof body?.meta?.description === 'string' ? body.meta.description : undefined
+      typeof body?.meta?.description === 'string' ? body.meta.description : body.metaDescription
     const metaError = validateMetaDescription(incomingMetaDescription)
     if (metaError) {
       return NextResponse.json({ message: metaError }, { status: 400 })
@@ -96,23 +96,42 @@ export async function POST(request: NextRequest) {
       ? textToLexical(body.content)
       : body.content
 
+    // Determine if this is a draft or submission for review
+    const isDraft = body.isDraft === true
     const isPublishing = body._status === 'published'
+
+    // Set review status based on whether it's a draft or submission
+    let reviewStatus = 'draft'
+    let submittedForReviewAt = null
+    
+    if (!isDraft && !isPublishing) {
+      // Contributor submitting for review
+      reviewStatus = 'pending_review'
+      submittedForReviewAt = new Date().toISOString()
+    } else if (body.reviewStatus) {
+      // Use provided reviewStatus if available
+      reviewStatus = body.reviewStatus
+      submittedForReviewAt = body.submittedForReviewAt
+    }
 
     const postData: Record<string, unknown> = {
       title: body.title,
       content: lexicalContent,
+      excerpt: body.excerpt || undefined,
       categories: body.categories || [],
       authors: body.authors || [user.id],
       _status: 'draft', // Always create as draft first
-      reviewStatus: body.reviewStatus || 'draft',
-      submittedForReviewAt: body.submittedForReviewAt,
-      heroImage: body.heroImage || undefined,
+      reviewStatus,
+      submittedForReviewAt,
+      heroImage: body.featuredImage || body.heroImage || undefined,
       tags: body.tags || undefined,
       featuredFrom: body.featuredFrom || undefined,
       featuredUntil: body.featuredUntil || undefined,
-      meta: body.meta || {
-        title: body.title,
-        description: typeof body.content === 'string' ? body.content.substring(0, 160) : '',
+      publishedAt: body.publishDate || body.publishedAt || undefined,
+      contentType: body.contentType || undefined,
+      meta: {
+        title: body.meta?.title || body.title,
+        description: incomingMetaDescription || (typeof body.content === 'string' ? body.content.substring(0, 160) : ''),
       },
     }
 
@@ -146,7 +165,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       post,
-      message: isPublishing ? 'Post published successfully!' : 'Draft saved successfully!',
+      message: isPublishing ? 'Post published successfully!' : (isDraft ? 'Draft saved successfully!' : 'Post submitted for review!'),
     })
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Failed to create post'
