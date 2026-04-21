@@ -153,6 +153,11 @@ export async function PATCH(
       return NextResponse.json({ message: featuredError }, { status: 400 })
     }
 
+    // Validate excerpt length (max 300 characters)
+    if (body.excerpt !== undefined && typeof body.excerpt === 'string' && body.excerpt.length > 300) {
+      return NextResponse.json({ message: 'Excerpt must be 300 characters or less' }, { status: 400 })
+    }
+
     // Convert plain text content to Lexical format if needed
     const lexicalContent = typeof body.content === 'string' 
       ? textToLexical(body.content)
@@ -167,6 +172,7 @@ export async function PATCH(
       data: {
         title: body.title,
         content: lexicalContent,
+        excerpt: body.excerpt,
         categories: body.categories,
         _status: body._status,
         reviewStatus: body.reviewStatus,

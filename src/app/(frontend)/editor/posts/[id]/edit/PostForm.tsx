@@ -22,6 +22,7 @@ interface PostFormProps {
   user: User
   initialData?: {
     title?: string
+    excerpt?: string
     content?: string
     categories?: string[]
     tags?: string[]
@@ -52,6 +53,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
   const router = useRouter()
   const { toast } = useToast()
   const [title, setTitle] = useState(initialData?.title || initialTemplate?.suggestedTitle || '')
+  const [excerpt, setExcerpt] = useState(initialData?.excerpt || '')
   const [content, setContent] = useState(initialData?.content || initialTemplate?.content || '')
   const [selectedCategories, setSelectedCategories] = useState<string[]>(initialData?.categories || [])
   const [metaTitle, setMetaTitle] = useState(initialData?.meta?.title || '')
@@ -192,6 +194,16 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
       return
     }
 
+    // Validate excerpt length
+    if (excerpt && excerpt.length > 300) {
+      toast({
+        title: "Error",
+        description: "Excerpt must not exceed 300 characters",
+        variant: "destructive",
+      })
+      return
+    }
+
     setIsPreviewingDraft(true)
 
     try {
@@ -205,6 +217,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
         },
         body: JSON.stringify({
           title: title.trim(),
+          excerpt: excerpt.trim() || undefined,
           content: htmlToLexical(content),
           categories: selectedCategories,
           tags,
@@ -266,6 +279,16 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
       return
     }
 
+    // Validate excerpt length
+    if (excerpt && excerpt.length > 300) {
+      toast({
+        title: "Error",
+        description: "Excerpt must not exceed 300 characters",
+        variant: "destructive",
+      })
+      return
+    }
+
     const metaError = validateMetaDescription(metaDescription.trim())
     if (metaError) {
       toast({
@@ -303,6 +326,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
         },
         body: JSON.stringify({
           title: title.trim(),
+          excerpt: excerpt.trim() || undefined,
           content: htmlToLexical(content),
           categories: selectedCategories,
           tags,
@@ -373,6 +397,16 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
       return
     }
 
+    // Validate excerpt length
+    if (excerpt && excerpt.length > 300) {
+      toast({
+        title: "Error",
+        description: "Excerpt must not exceed 300 characters",
+        variant: "destructive",
+      })
+      return
+    }
+
     const metaError = validateMetaDescription(metaDescription.trim())
     if (metaError) {
       toast({
@@ -415,6 +449,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
         },
         body: JSON.stringify({
           title: title.trim(),
+          excerpt: excerpt.trim() || undefined,
           content: htmlToLexical(content),
           categories: selectedCategories,
           tags,
@@ -630,6 +665,24 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
             className="text-lg"
             required
           />
+        </div>
+
+        {/* Excerpt */}
+        <div>
+          <label htmlFor="excerpt" className="block text-sm font-semibold mb-2">
+            Excerpt
+          </label>
+          <Textarea
+            id="excerpt"
+            value={excerpt}
+            onChange={(e) => setExcerpt(e.target.value)}
+            placeholder="Short summary for cards/previews..."
+            rows={3}
+            maxLength={300}
+          />
+          <p className="text-xs text-muted-foreground mt-1">
+            {excerpt.length}/300 characters • Short summary for cards/previews (max 300 characters)
+          </p>
         </div>
 
         {/* Hero Image */}

@@ -83,6 +83,7 @@ export default async function EditPostPage({ params }: PageProps) {
 
   const initialData = {
     title: post.title || '',
+    excerpt: post.excerpt || '',
     content: contentHtml,
     categories: categoryIds,
     tags: (post.tags as string[] | null) || [],
