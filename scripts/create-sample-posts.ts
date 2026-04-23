@@ -150,7 +150,6 @@ async function createSamplePosts() {
           _status: 'published',
           meta: {
             description: postData.content.substring(0, 160),
-            title: postData.title,
           },
         },
       })

@@ -83,7 +83,6 @@ export default async function EditPostPage({ params }: PageProps) {
 
   const initialData = {
     title: post.title || '',
-    excerpt: post.excerpt || '',
     content: contentHtml,
     categories: categoryIds,
     tags: (post.tags as string[] | null) || [],
@@ -91,7 +90,6 @@ export default async function EditPostPage({ params }: PageProps) {
     featuredFrom: toISTDateTimeInput(post.featuredFrom as string | undefined),
     featuredUntil: toISTDateTimeInput(post.featuredUntil as string | undefined),
     meta: {
-      title: post.meta?.title || '',
       description: post.meta?.description || '',
     },
     heroImage: heroImage?.id,

@@ -245,10 +245,6 @@ export interface Post {
   id: string;
   title: string;
   /**
-   * Short summary for cards/previews (max 300 characters)
-   */
-  excerpt?: string | null;
-  /**
    * Recommended: 1920×1080 (16:9). For portraits, keep faces in top 60% of frame. Compress to <500KB.
    */
   heroImage?: (string | null) | Media;
@@ -270,7 +266,6 @@ export interface Post {
   relatedPosts?: (string | Post)[] | null;
   categories?: (string | Category)[] | null;
   meta?: {
-    title?: string | null;
     /**
      * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
      */
@@ -2038,7 +2033,6 @@ export interface FormBlockSelect<T extends boolean = true> {
  */
 export interface PostsSelect<T extends boolean = true> {
   title?: T;
-  excerpt?: T;
   heroImage?: T;
   content?: T;
   relatedPosts?: T;
@@ -2046,7 +2040,6 @@ export interface PostsSelect<T extends boolean = true> {
   meta?:
     | T
     | {
-        title?: T;
         image?: T;
         description?: T;
       };

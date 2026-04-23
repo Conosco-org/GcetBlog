@@ -88,7 +88,6 @@ export default async function ContributorEditPostPage({ params }: PageProps) {
     featuredFrom: toISTDateTimeInput(post.featuredFrom as string | undefined),
     featuredUntil: toISTDateTimeInput(post.featuredUntil as string | undefined),
     meta: {
-      title: post.meta?.title || '',
       description: post.meta?.description || '',
     },
     heroImage: heroImage?.id,

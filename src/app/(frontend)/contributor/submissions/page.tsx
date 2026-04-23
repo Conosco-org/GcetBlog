@@ -42,10 +42,19 @@ export default async function SubmissionsPage({ searchParams }: PageProps) {
   ]
 
   if (statusFilter) {
-    conditions.push({ reviewStatus: { equals: statusFilter } })
+    // Handle 'published' filter separately since it uses _status field
+    if (statusFilter === 'published') {
+      conditions.push({ _status: { equals: 'published' } })
+    } else {
+      conditions.push({ reviewStatus: { equals: statusFilter } })
+    }
   } else {
+    // Include posts in review workflow OR published posts
     conditions.push({
-      reviewStatus: { in: ['pending_review', 'approved', 'rejected'] },
+      or: [
+        { reviewStatus: { in: ['pending_review', 'approved', 'rejected'] } },
+        { _status: { equals: 'published' } },
+      ],
     })
   }
 

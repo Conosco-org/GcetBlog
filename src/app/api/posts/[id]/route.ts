@@ -153,9 +153,9 @@ export async function PATCH(
       return NextResponse.json({ message: featuredError }, { status: 400 })
     }
 
-    // Validate excerpt length (max 300 characters)
-    if (body.excerpt !== undefined && typeof body.excerpt === 'string' && body.excerpt.length > 300) {
-      return NextResponse.json({ message: 'Excerpt must be 300 characters or less' }, { status: 400 })
+    // Validate meta description length (max 300 characters)
+    if (body.meta?.description !== undefined && typeof body.meta.description === 'string' && body.meta.description.length > 300) {
+      return NextResponse.json({ message: 'Meta description must be 300 characters or less' }, { status: 400 })
     }
 
     // Convert plain text content to Lexical format if needed
@@ -172,7 +172,6 @@ export async function PATCH(
       data: {
         title: body.title,
         content: lexicalContent,
-        excerpt: body.excerpt,
         categories: body.categories,
         _status: body._status,
         reviewStatus: body.reviewStatus,

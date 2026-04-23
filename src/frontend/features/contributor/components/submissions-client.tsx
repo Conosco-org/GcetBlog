@@ -20,7 +20,19 @@ interface SubmissionsClientProps {
   statusFilter: string
 }
 
-function getStatusBadge(status: string) {
+function getStatusBadge(post: Post) {
+  // Prioritize _status field - if published, show Published badge regardless of reviewStatus
+  if (post._status === 'published') {
+    return (
+      <Badge variant="outline" className="gap-1 border-blue-500 text-blue-700 dark:text-blue-400">
+        <CheckCircle2 className="h-3 w-3" />
+        Published
+      </Badge>
+    )
+  }
+
+  // For non-published posts, use reviewStatus
+  const status = post.reviewStatus || 'draft'
   switch (status) {
     case 'pending_review':
       return (
@@ -62,7 +74,7 @@ const columns: Column<Post>[] = [
   {
     key: 'status',
     header: 'Status',
-    render: (post) => getStatusBadge(post.reviewStatus || 'draft'),
+    render: (post) => getStatusBadge(post),
   },
   {
     key: 'submitted',
@@ -132,6 +144,7 @@ export function SubmissionsClient({
                 { label: 'Pending Review', value: 'pending_review' },
                 { label: 'Approved', value: 'approved' },
                 { label: 'Needs Revision', value: 'rejected' },
+                { label: 'Published', value: 'published' },
               ],
             },
           ]}
