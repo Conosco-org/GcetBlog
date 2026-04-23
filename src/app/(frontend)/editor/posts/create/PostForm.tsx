@@ -29,7 +29,6 @@ interface PostFormProps {
     featuredFrom?: string
     featuredUntil?: string
     meta?: {
-      title?: string
       description?: string
     }
     heroImage?: string
@@ -52,7 +51,6 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
   const [title, setTitle] = useState(initialData?.title || initialTemplate?.suggestedTitle || '')
   const [content, setContent] = useState(initialData?.content || initialTemplate?.content || '')
   const [selectedCategories, setSelectedCategories] = useState<string[]>(initialData?.categories || [])
-  const [metaTitle, setMetaTitle] = useState(initialData?.meta?.title || '')
   const [metaDescription, setMetaDescription] = useState(initialData?.meta?.description || '')
   const [tags, setTags] = useState<string[]>(initialData?.tags || initialTemplate?.suggestedTags || [])
   const [tagInput, setTagInput] = useState('')
@@ -208,7 +206,6 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
           _status: 'draft',
           heroImage: heroImageId,
           meta: {
-            title: metaTitle.trim() || title.trim(),
             description: metaDescription.trim() || plainText.substring(0, 160).trim(),
           },
         }),
@@ -307,7 +304,6 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
           submittedForReviewAt: new Date().toISOString(),
           heroImage: heroImageId,
           meta: {
-            title: metaTitle.trim() || title.trim(),
             description: metaDescription.trim() || plainText.substring(0, 160).trim(),
           },
         }),
@@ -417,7 +413,6 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
           ...(isEditor && featuredUntil ? { featuredUntil: fromISTInputToISOString(featuredUntil) } : {}),
           heroImage: heroImageId,
           meta: {
-            title: metaTitle.trim() || title.trim(),
             description: metaDescription.trim() || plainText.substring(0, 160).trim(),
           },
         }),
@@ -827,23 +822,6 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
           <h3 className="text-lg font-semibold mb-4">SEO Meta Tags</h3>
           
           <div className="space-y-4">
-            <div>
-              <label htmlFor="metaTitle" className="block text-sm font-semibold mb-2">
-                Meta Title
-              </label>
-              <Input
-                type="text"
-                id="metaTitle"
-                value={metaTitle}
-                onChange={(e) => setMetaTitle(e.target.value)}
-                placeholder="Leave empty to use post title"
-                maxLength={60}
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                {metaTitle.length}/60 characters
-              </p>
-            </div>
-
             <div>
               <label htmlFor="metaDescription" className="block text-sm font-semibold mb-2">
                 Meta Description

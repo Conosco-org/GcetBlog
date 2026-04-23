@@ -20,7 +20,7 @@ import { BaseLayout } from './base-layout'
 
 export interface DigestPost {
   title: string
-  excerpt: string
+  description: string
   slug: string
   heroImageUrl?: string
   authorName: string
@@ -95,10 +95,10 @@ export function NewsletterDigest({
               >
                 <Text style={postTitle}>{post.title}</Text>
               </Link>
-              <Text style={postExcerpt}>
-                {post.excerpt.length > 120
-                  ? `${post.excerpt.substring(0, 120)}…`
-                  : post.excerpt}
+              <Text style={postDescription}>
+                {post.description.length > 120
+                  ? `${post.description.substring(0, 120)}…`
+                  : post.description}
               </Text>
               <Text style={postMeta}>
                 By {post.authorName} · {post.publishedAt}
@@ -178,7 +178,7 @@ const postTitle: React.CSSProperties = {
   lineHeight: '22px',
 }
 
-const postExcerpt: React.CSSProperties = {
+const postDescription: React.CSSProperties = {
   fontSize: '13px',
   color: '#6b7280',
   margin: '0 0 6px',

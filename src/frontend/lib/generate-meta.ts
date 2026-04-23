@@ -28,7 +28,7 @@ export const generateMeta = async (args: {
   const ogImage = getImageURL(doc?.meta?.image)
   const pagePath = pathname || (doc?.slug ? `/${doc.slug}` : '/')
 
-  const rawTitle = doc?.meta?.title
+  const rawTitle = doc?.title
   // Sanitize the default Payload seed title
   const sanitizedTitle =
     !rawTitle || rawTitle === 'Payload Website Template' ? 'GCET Blog' : rawTitle

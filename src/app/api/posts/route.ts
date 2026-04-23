@@ -117,7 +117,6 @@ export async function POST(request: NextRequest) {
     const postData: Record<string, unknown> = {
       title: body.title,
       content: lexicalContent,
-      excerpt: body.excerpt || undefined,
       categories: body.categories || [],
       authors: body.authors || [user.id],
       _status: 'draft', // Always create as draft first

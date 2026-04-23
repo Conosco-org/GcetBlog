@@ -26,7 +26,6 @@ import { revalidateDelete, revalidatePost } from './hooks/revalidatePost'
 import {
   MetaDescriptionField,
   MetaImageField,
-  MetaTitleField,
   OverviewField,
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
@@ -79,14 +78,6 @@ export const Posts: CollectionConfig<'posts'> = {
       name: 'title',
       type: 'text',
       required: true,
-    },
-    {
-      name: 'excerpt',
-      type: 'textarea',
-      maxLength: 300,
-      admin: {
-        description: 'Short summary for cards/previews (max 300 characters)',
-      },
     },
     {
       type: 'tabs',
@@ -157,12 +148,9 @@ export const Posts: CollectionConfig<'posts'> = {
           label: 'SEO',
           fields: [
             OverviewField({
-              titlePath: 'meta.title',
+              titlePath: 'title',
               descriptionPath: 'meta.description',
               imagePath: 'meta.image',
-            }),
-            MetaTitleField({
-              hasGenerateFn: true,
             }),
             MetaImageField({
               relationTo: 'media',
@@ -174,7 +162,7 @@ export const Posts: CollectionConfig<'posts'> = {
               hasGenerateFn: true,
 
               // field paths to match the target field for data
-              titlePath: 'meta.title',
+              titlePath: 'title',
               descriptionPath: 'meta.description',
             }),
           ],

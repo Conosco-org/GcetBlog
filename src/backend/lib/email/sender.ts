@@ -193,7 +193,7 @@ export async function sendNewsletter(
         Array.isArray(newsletter.posts) ? newsletter.posts : []
       ).map((post: Record<string, unknown>) => ({
         title: String(post.title ?? ''),
-        excerpt: String(post.meta && typeof post.meta === 'object' && 'description' in post.meta
+        description: String(post.meta && typeof post.meta === 'object' && 'description' in post.meta
           ? (post.meta as { description?: string }).description ?? ''
           : ''),
         slug: String(post.slug ?? ''),

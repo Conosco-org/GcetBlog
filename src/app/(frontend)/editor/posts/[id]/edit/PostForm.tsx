@@ -22,7 +22,6 @@ interface PostFormProps {
   user: User
   initialData?: {
     title?: string
-    excerpt?: string
     content?: string
     categories?: string[]
     tags?: string[]
@@ -30,7 +29,6 @@ interface PostFormProps {
     featuredFrom?: string
     featuredUntil?: string
     meta?: {
-      title?: string
       description?: string
     }
     heroImage?: string
@@ -53,10 +51,8 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
   const router = useRouter()
   const { toast } = useToast()
   const [title, setTitle] = useState(initialData?.title || initialTemplate?.suggestedTitle || '')
-  const [excerpt, setExcerpt] = useState(initialData?.excerpt || '')
   const [content, setContent] = useState(initialData?.content || initialTemplate?.content || '')
   const [selectedCategories, setSelectedCategories] = useState<string[]>(initialData?.categories || [])
-  const [metaTitle, setMetaTitle] = useState(initialData?.meta?.title || '')
   const [metaDescription, setMetaDescription] = useState(initialData?.meta?.description || '')
   const [tags, setTags] = useState<string[]>(initialData?.tags || initialTemplate?.suggestedTags || [])
   const [tagInput, setTagInput] = useState('')
@@ -194,16 +190,6 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
       return
     }
 
-    // Validate excerpt length
-    if (excerpt && excerpt.length > 300) {
-      toast({
-        title: "Error",
-        description: "Excerpt must not exceed 300 characters",
-        variant: "destructive",
-      })
-      return
-    }
-
     setIsPreviewingDraft(true)
 
     try {
@@ -217,7 +203,6 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
         },
         body: JSON.stringify({
           title: title.trim(),
-          excerpt: excerpt.trim() || undefined,
           content: htmlToLexical(content),
           categories: selectedCategories,
           tags,
@@ -225,7 +210,6 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
           _status: 'draft',
           heroImage: heroImageId,
           meta: {
-            title: metaTitle.trim() || title.trim(),
             description: metaDescription.trim() || plainText.substring(0, 160).trim(),
           },
         }),
@@ -279,16 +263,6 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
       return
     }
 
-    // Validate excerpt length
-    if (excerpt && excerpt.length > 300) {
-      toast({
-        title: "Error",
-        description: "Excerpt must not exceed 300 characters",
-        variant: "destructive",
-      })
-      return
-    }
-
     const metaError = validateMetaDescription(metaDescription.trim())
     if (metaError) {
       toast({
@@ -326,7 +300,6 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
         },
         body: JSON.stringify({
           title: title.trim(),
-          excerpt: excerpt.trim() || undefined,
           content: htmlToLexical(content),
           categories: selectedCategories,
           tags,
@@ -336,7 +309,6 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
           submittedForReviewAt: new Date().toISOString(),
           heroImage: heroImageId,
           meta: {
-            title: metaTitle.trim() || title.trim(),
             description: metaDescription.trim() || plainText.substring(0, 160).trim(),
           },
         }),
@@ -397,16 +369,6 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
       return
     }
 
-    // Validate excerpt length
-    if (excerpt && excerpt.length > 300) {
-      toast({
-        title: "Error",
-        description: "Excerpt must not exceed 300 characters",
-        variant: "destructive",
-      })
-      return
-    }
-
     const metaError = validateMetaDescription(metaDescription.trim())
     if (metaError) {
       toast({
@@ -449,7 +411,6 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
         },
         body: JSON.stringify({
           title: title.trim(),
-          excerpt: excerpt.trim() || undefined,
           content: htmlToLexical(content),
           categories: selectedCategories,
           tags,
@@ -461,7 +422,6 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
           ...(isEditor && featuredUntil ? { featuredUntil: fromISTInputToISOString(featuredUntil) } : {}),
           heroImage: heroImageId,
           meta: {
-            title: metaTitle.trim() || title.trim(),
             description: metaDescription.trim() || plainText.substring(0, 160).trim(),
           },
         }),
@@ -666,25 +626,6 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
             required
           />
         </div>
-
-        {/* Excerpt */}
-        <div>
-          <label htmlFor="excerpt" className="block text-sm font-semibold mb-2">
-            Excerpt
-          </label>
-          <Textarea
-            id="excerpt"
-            value={excerpt}
-            onChange={(e) => setExcerpt(e.target.value)}
-            placeholder="Short summary for cards/previews..."
-            rows={3}
-            maxLength={300}
-          />
-          <p className="text-xs text-muted-foreground mt-1">
-            {excerpt.length}/300 characters • Short summary for cards/previews (max 300 characters)
-          </p>
-        </div>
-
         {/* Hero Image */}
         <div>
           <label className="block text-sm font-semibold mb-2">
@@ -896,23 +837,6 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
           <h3 className="text-lg font-semibold mb-4">SEO Meta Tags</h3>
           
           <div className="space-y-4">
-            <div>
-              <label htmlFor="metaTitle" className="block text-sm font-semibold mb-2">
-                Meta Title
-              </label>
-              <Input
-                type="text"
-                id="metaTitle"
-                value={metaTitle}
-                onChange={(e) => setMetaTitle(e.target.value)}
-                placeholder="Leave empty to use post title"
-                maxLength={60}
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                {metaTitle.length}/60 characters
-              </p>
-            </div>
-
             <div>
               <label htmlFor="metaDescription" className="block text-sm font-semibold mb-2">
                 Meta Description

@@ -48,7 +48,6 @@ export function CreateContentForm({ categories: dbCategories, initialTemplate }:
   const [selectedType, setSelectedType] = useState<string>(initialTemplate?.contentType || '')
   const [title, setTitle] = useState(initialTemplate?.suggestedTitle || '')
   const [content, setContent] = useState(initialTemplate?.content || '')
-  const [excerpt, setExcerpt] = useState('')
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [tags, setTags] = useState<string[]>(initialTemplate?.suggestedTags || [])
   const [tagInput, setTagInput] = useState('')
@@ -163,7 +162,6 @@ export function CreateContentForm({ categories: dbCategories, initialTemplate }:
         body: JSON.stringify({
           title,
           content: htmlToLexical(content),
-          excerpt,
           categories: selectedCategories,
           tags,
           metaDescription,
@@ -237,7 +235,6 @@ export function CreateContentForm({ categories: dbCategories, initialTemplate }:
         body: JSON.stringify({
           title,
           content: htmlToLexical(content),
-          excerpt,
           categories: selectedCategories,
           tags,
           metaDescription,
@@ -311,7 +308,6 @@ export function CreateContentForm({ categories: dbCategories, initialTemplate }:
                 </div>
               )}
               <h1 className="text-2xl font-bold leading-tight">{title || <span className="text-muted-foreground italic">No title yet</span>}</h1>
-              {excerpt && <p className="text-muted-foreground mt-2 text-sm">{excerpt}</p>}
             </div>
             <div
               className="prose dark:prose-invert max-w-none text-sm"
@@ -531,20 +527,6 @@ export function CreateContentForm({ categories: dbCategories, initialTemplate }:
                   </label>
                 )}
               </div>
-
-              {/* Excerpt */}
-              <div className="space-y-2">
-                <Label htmlFor="excerpt">Excerpt/Summary</Label>
-                <Textarea
-                  id="excerpt"
-                  placeholder="Brief summary of your content..."
-                  value={excerpt}
-                  onChange={(e) => setExcerpt(e.target.value)}
-                  rows={3}
-                />
-                <p className="text-xs text-muted-foreground">{excerpt.length}/200 characters</p>
-              </div>
-
               {/* Publication Date */}
               <div className="space-y-2">
                 <Label htmlFor="publishDate">Publication Date</Label>

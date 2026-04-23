@@ -10,7 +10,6 @@ import { ArrowRight, Clock, User } from 'lucide-react'
 interface Post {
   id: string
   title: string
-  excerpt: string
   category: string
   author: string
   date: string
@@ -28,7 +27,6 @@ export const RecentPostsSection: React.FC<RecentPostsSectionProps> = ({ posts = 
     {
       id: '1',
       title: 'Getting Started with Machine Learning',
-      excerpt: 'Explore the fundamentals of ML and how to build your first model with Python.',
       category: 'Technology',
       author: 'John Doe',
       date: 'Oct 15, 2025',
@@ -37,7 +35,6 @@ export const RecentPostsSection: React.FC<RecentPostsSectionProps> = ({ posts = 
     {
       id: '2',
       title: 'The Art of Creative Writing',
-      excerpt: 'Discover techniques to enhance your storytelling and captivate readers.',
       category: 'Literature',
       author: 'Jane Smith',
       date: 'Oct 12, 2025',
@@ -46,7 +43,6 @@ export const RecentPostsSection: React.FC<RecentPostsSectionProps> = ({ posts = 
     {
       id: '3',
       title: 'Winning at Smart India Hackathon',
-      excerpt: 'Our journey from ideation to victory at one of India&apos;s biggest hackathons.',
       category: 'Achievement',
       author: 'Team GCET',
       date: 'Oct 10, 2025',
@@ -99,10 +95,6 @@ export const RecentPostsSection: React.FC<RecentPostsSectionProps> = ({ posts = 
                 <h3 className="text-xl font-bold mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
                   {post.title}
                 </h3>
-                
-                <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
-                  {post.excerpt}
-                </p>
 
                 {/* Meta Info */}
                 <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
