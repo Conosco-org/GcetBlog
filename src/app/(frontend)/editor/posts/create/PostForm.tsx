@@ -410,6 +410,8 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
           tags,
           authors: [user.id],
           _status: status,
+          reviewStatus: status === 'draft' ? 'draft' : undefined,
+          isDraft: status === 'draft',
           ...(publishedAt ? { publishedAt: fromISTInputToISOString(publishedAt) } : {}),
           ...(isEditor && featuredFrom ? { featuredFrom: fromISTInputToISOString(featuredFrom) } : {}),
           ...(isEditor && featuredUntil ? { featuredUntil: fromISTInputToISOString(featuredUntil) } : {}),

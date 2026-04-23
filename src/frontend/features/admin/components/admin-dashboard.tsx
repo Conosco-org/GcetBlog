@@ -65,7 +65,7 @@ export default async function AdminDashboard() {
     payload.count({ collection: 'posts' }),
     payload.count({
       collection: 'posts',
-      where: { reviewStatus: { equals: 'pending' } },
+      where: { reviewStatus: { equals: 'pending_review' } },
     }),
     payload.count({ collection: 'comments' }),
     payload.count({ collection: 'users', where: { isAdmin: { equals: true } } }),
