@@ -60,6 +60,7 @@
     "**/*.test.ts",
     "**/*.test.tsx",
     "vitest.setup.ts",
-    "vitest.config.ts"
+    "vitest.config.ts",
+    "scripts/test-*.ts"
   ]
 }
