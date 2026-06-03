@@ -48,8 +48,11 @@ export default async function EditorLayout({
 
   // Get real counts for sidebar badges - parallelized
   const [pendingPostsFromContributors, publishedPosts, recentLogs] = await Promise.all([
-    // Review Queue: Only posts from contributors with pending_review status
-    payload.count({
+    // Review Queue: Use draft: true so we read the latest draft version per document,
+    // matching what the queue page does. Without this, the live document retains a
+    // stale reviewStatus after an editor requests changes (which only updates the draft),
+    // causing the badge to overcount.
+    payload.find({
       collection: 'posts',
       where: {
         and: [
@@ -58,6 +61,9 @@ export default async function EditorLayout({
           { authors: { in: contributorIds } },
         ],
       },
+      draft: true,
+      limit: 1,
+      depth: 0,
     }),
     // Content Manager: Only published posts
     payload.count({
