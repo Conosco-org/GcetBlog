@@ -80,8 +80,7 @@ export const homeStatic: RequiredDataFromCollectionSlug<'pages'> = {
     },
   },
   meta: {
-    description: 'Built for the
-GCET community',
+    description: 'Built for the GCET community',
     title: 'GCET Blog',
   },
   title: 'Home',

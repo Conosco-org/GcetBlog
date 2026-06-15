@@ -566,8 +566,7 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
       },
     ],
     meta: {
-      description: 'Built for the
-GCET community',
+      description: 'Built for the GCET community',
       image: heroImage.id,
       title: 'GCET Blog',
     },
