@@ -566,7 +566,8 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
       },
     ],
     meta: {
-      description: 'An open-source website built with Payload and Next.js.',
+      description: 'Built for the
+GCET community',
       image: heroImage.id,
       title: 'GCET Blog',
     },

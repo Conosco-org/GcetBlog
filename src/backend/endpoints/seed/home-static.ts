@@ -80,7 +80,8 @@ export const homeStatic: RequiredDataFromCollectionSlug<'pages'> = {
     },
   },
   meta: {
-    description: 'An open-source website built with Payload and Next.js.',
+    description: 'Built for the
+GCET community',
     title: 'GCET Blog',
   },
   title: 'Home',
