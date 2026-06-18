@@ -7,16 +7,14 @@ import { X } from 'lucide-react'
 
 interface PostsFilterBarProps {
   categories: Array<{ id: string; title: string; slug: string }>
-  allTags: string[]
 }
 
-export function PostsFilterBar({ categories, allTags }: PostsFilterBarProps) {
+export function PostsFilterBar({ categories }: PostsFilterBarProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
 
   const currentCategory = searchParams.get('category') || ''
-  const currentTag = searchParams.get('tag') || ''
   const currentSort = searchParams.get('sort') || 'latest'
   const currentQuery = searchParams.get('q') || ''
 
@@ -29,9 +27,6 @@ export function PostsFilterBar({ categories, allTags }: PostsFilterBarProps) {
       // Category
       const cat = 'category' in params ? params.category : currentCategory
       if (cat) url.set('category', cat)
-      // Tag
-      const tag = 'tag' in params ? params.tag : currentTag
-      if (tag) url.set('tag', tag)
       // Sort
       const sort = 'sort' in params ? params.sort : currentSort
       if (sort && sort !== 'latest') url.set('sort', sort)
@@ -41,20 +36,20 @@ export function PostsFilterBar({ categories, allTags }: PostsFilterBarProps) {
         router.push(`/posts${str ? `?${str}` : ''}`, { scroll: false })
       })
     },
-    [router, currentCategory, currentTag, currentSort, currentQuery],
+    [router, currentCategory, currentSort, currentQuery],
   )
 
-  const hasActiveFilters = Boolean(currentQuery || currentCategory || currentTag || currentSort !== 'latest')
+  const hasActiveFilters = Boolean(currentQuery || currentCategory || currentSort !== 'latest')
 
   return (
     <div className={cn('space-y-3', isPending && 'opacity-60 pointer-events-none transition-opacity')}>
       {/* Categories */}
       <div className="flex flex-wrap gap-2">
         <button
-          onClick={() => navigate({ category: '', tag: '', sort: 'latest', q: '' })}
+          onClick={() => navigate({ category: '', sort: 'latest', q: '' })}
           className={cn(
             'px-3 py-1.5 text-xs rounded-full border transition-colors',
-            !currentCategory && !currentTag
+            !currentCategory
               ? 'bg-accent text-accent-foreground border-accent'
               : 'border-border hover:bg-muted text-muted-foreground',
           )}
@@ -67,7 +62,6 @@ export function PostsFilterBar({ categories, allTags }: PostsFilterBarProps) {
             onClick={() =>
               navigate({
                 category: cat.slug === currentCategory ? '' : cat.slug,
-                tag: '',
               })
             }
             className={cn(
@@ -81,31 +75,6 @@ export function PostsFilterBar({ categories, allTags }: PostsFilterBarProps) {
           </button>
         ))}
       </div>
-
-      {/* Popular Tags */}
-      {allTags.length > 0 && (
-        <div className="flex flex-wrap gap-1.5">
-          {allTags.slice(0, 15).map((t) => (
-            <button
-              key={t}
-              onClick={() =>
-                navigate({
-                  tag: t === currentTag ? '' : t,
-                  category: '',
-                })
-              }
-              className={cn(
-                'px-2 py-1 text-[11px] rounded-md transition-colors',
-                currentTag === t
-                  ? 'bg-foreground text-background'
-                  : 'bg-muted text-muted-foreground hover:bg-muted/80',
-              )}
-            >
-              #{t}
-            </button>
-          ))}
-        </div>
-      )}
 
       {/* Sort */}
       <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -134,7 +103,7 @@ export function PostsFilterBar({ categories, allTags }: PostsFilterBarProps) {
       {hasActiveFilters && (
         <div className="flex items-center gap-2">
           <button
-            onClick={() => navigate({ category: '', tag: '', sort: 'latest', q: '' })}
+            onClick={() => navigate({ category: '', sort: 'latest', q: '' })}
             className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
             <X className="h-3 w-3" />

@@ -14,30 +14,7 @@ import { NewsletterSignup } from '@frontend/features/newsletter/components/newsl
 import type { Where } from 'payload'
 import { publishedVisibilityWhere } from '@frontend/features/posts/lib/post-validation'
 
-// Cache popular tags for 10 minutes - they rarely change
-const getCachedPopularTags = unstable_cache(
-  async () => {
-    const payload = await getPayload({ config: configPromise })
-    const publishVisibility = publishedVisibilityWhere()
-    const result = await payload.find({
-      collection: 'posts',
-      limit: 100,
-      overrideAccess: true,
-      where: { and: [{ _status: { equals: 'published' } }, publishVisibility] },
-      select: { tags: true },
-      pagination: false,
-    })
-    const allTags = new Set<string>()
-    result.docs.forEach((post) => {
-      if (post.tags && Array.isArray(post.tags)) {
-        ;(post.tags as string[]).forEach((t) => allTags.add(t))
-      }
-    })
-    return Array.from(allTags)
-  },
-  ['popular-tags'],
-  { revalidate: 600, tags: ['posts'] },
-)
+
 
 export const dynamic = 'force-dynamic'
 
@@ -45,7 +22,6 @@ type Args = {
   searchParams: Promise<{
     q?: string
     category?: string
-    tag?: string
     sort?: string
     page?: string
   }>
@@ -55,7 +31,6 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
   const searchParams = await searchParamsPromise
   const query = searchParams.q || ''
   const categorySlug = searchParams.category || ''
-  const tag = searchParams.tag || ''
   const sort = searchParams.sort || 'latest'
   const pageNumber = Number(searchParams.page || '1')
   const publishVisibility = publishedVisibilityWhere()
@@ -105,13 +80,6 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
     }
   }
 
-  // Tag filter
-  if (tag) {
-    conditions.push({
-      tags: { like: tag },
-    })
-  }
-
   // Build sort string
   let sortField: string
   switch (sort) {
@@ -126,30 +94,26 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
       sortField = '-publishedAt'
   }
 
-  const [posts, popularTags] = await Promise.all([
-    payload.find({
-      collection: 'posts',
-      depth: 1,
-      limit: 12,
-      page: pageNumber,
-      overrideAccess: true,
-      where: { and: conditions },
-      sort: sortField,
-      select: {
-        title: true,
-        slug: true,
-        categories: true,
-        meta: true,
-        heroImage: true,
-        tags: true,
-        voteScore: true,
-      },
-    }),
-    getCachedPopularTags(),
-  ])
+  const posts = await payload.find({
+    collection: 'posts',
+    depth: 1,
+    limit: 12,
+    page: pageNumber,
+    overrideAccess: true,
+    where: { and: conditions },
+    sort: sortField,
+    select: {
+      title: true,
+      slug: true,
+      categories: true,
+      meta: true,
+      heroImage: true,
+      tags: true,
+      voteScore: true,
+    },
+  })
 
-  const allTags = popularTags
-  const hasActiveFilters = Boolean(query || categorySlug || tag || sort !== 'latest')
+  const hasActiveFilters = Boolean(query || categorySlug || sort !== 'latest')
 
   return (
     <div className="min-h-screen">
@@ -163,9 +127,7 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
               ? `Results for "${query}"`
               : categorySlug
                 ? categories.find((c) => c.slug === categorySlug)?.title || 'Posts'
-                : tag
-                  ? `#${tag}`
-                  : 'Posts'}
+                : 'Posts'}
           </h1>
           <p className="text-sm text-muted-foreground">
             {hasActiveFilters
@@ -178,10 +140,7 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
       {/* Filters Bar (client-side for instant interaction) */}
       <div className="container mx-auto px-5 sm:px-6 mb-4">
         <Suspense fallback={null}>
-          <PostsFilterBar
-            categories={categories}
-            allTags={Array.from(allTags)}
-          />
+          <PostsFilterBar categories={categories} />
         </Suspense>
       </div>
 
