@@ -33,9 +33,6 @@ test.env
 .prettierignore
 .prettierrc.json
 
-# Linting (not needed for Vercel)
-eslint.config.mjs
-
 # OS
 .DS_Store
 Thumbs.db

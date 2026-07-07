@@ -1,4 +1,7 @@
 import { withPayload } from '@payloadcms/next/withPayload'
+import { createRequire } from 'module'
+
+const require = createRequire(import.meta.url)
 
 const NEXT_PUBLIC_SERVER_URL =
   process.env.NEXT_PUBLIC_SERVER_URL ||
@@ -29,6 +32,10 @@ const nextConfig = {
       '.cjs': ['.cts', '.cjs'],
       '.js': ['.ts', '.tsx', '.js', '.jsx'],
       '.mjs': ['.mts', '.mjs'],
+    }
+    webpackConfig.resolve.alias = {
+      ...webpackConfig.resolve.alias,
+      'js-cookie$': require.resolve('js-cookie'),
     }
 
     return webpackConfig
