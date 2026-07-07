@@ -82,6 +82,7 @@ export interface Config {
     newsletters: Newsletter;
     'newsletter-events': NewsletterEvent;
     'rejection-notifications': RejectionNotification;
+    'lifecycle-notices': LifecycleNotice;
     notifications: Notification;
     redirects: Redirect;
     forms: Form;
@@ -110,6 +111,7 @@ export interface Config {
     newsletters: NewslettersSelect<false> | NewslettersSelect<true>;
     'newsletter-events': NewsletterEventsSelect<false> | NewsletterEventsSelect<true>;
     'rejection-notifications': RejectionNotificationsSelect<false> | RejectionNotificationsSelect<true>;
+    'lifecycle-notices': LifecycleNoticesSelect<false> | LifecycleNoticesSelect<true>;
     notifications: NotificationsSelect<false> | NotificationsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
@@ -128,11 +130,13 @@ export interface Config {
   globals: {
     header: Header;
     footer: Footer;
+    'lifecycle-config': LifecycleConfig;
     'payload-jobs-stats': PayloadJobsStat;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
+    'lifecycle-config': LifecycleConfigSelect<false> | LifecycleConfigSelect<true>;
     'payload-jobs-stats': PayloadJobsStatsSelect<false> | PayloadJobsStatsSelect<true>;
   };
   locale: null;
@@ -147,6 +151,7 @@ export interface Config {
       'newsletter-monthly-digest': TaskNewsletterMonthlyDigest;
       'newsletter-scheduled-send': TaskNewsletterScheduledSend;
       'newsletter-stats-rollup': TaskNewsletterStatsRollup;
+      'lifecycle-maintenance': TaskLifecycleMaintenance;
       schedulePublish: TaskSchedulePublish;
       inline: {
         input: unknown;
@@ -361,6 +366,23 @@ export interface Post {
    * When the post was submitted for review
    */
   submittedForReviewAt?: string | null;
+  /**
+   * Lifecycle status for review queue retention.
+   */
+  archivedStatus?: ('active' | 'archived' | 'deleted') | null;
+  /**
+   * Contributor-facing lifecycle status message.
+   */
+  statusMessage?: string | null;
+  /**
+   * Timestamp used by lifecycle automation for age calculations.
+   */
+  postAgeReferenceTimestamp?: string | null;
+  archivedAt?: string | null;
+  archivedBy?: (string | null) | User;
+  archiveReason?: ('automated' | 'manual') | null;
+  lifecycleDeletedAt?: string | null;
+  lifecycleDeletedBy?: (string | null) | User;
   slug?: string | null;
   slugLock?: boolean | null;
   updatedAt: string;
@@ -1527,6 +1549,29 @@ export interface RejectionNotification {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "lifecycle-notices".
+ */
+export interface LifecycleNotice {
+  id: string;
+  /**
+   * Post that triggered this lifecycle notice.
+   */
+  post?: (string | null) | Post;
+  postTitle: string;
+  contributor: string | User;
+  type: 'archived' | 'deleted' | 'restored';
+  message: string;
+  /**
+   * Editor/admin who triggered the notice. Empty for automated lifecycle jobs.
+   */
+  createdBy?: (string | null) | User;
+  isRead?: boolean | null;
+  readAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "notifications".
  */
 export interface Notification {
@@ -1707,6 +1752,7 @@ export interface PayloadJob {
           | 'newsletter-monthly-digest'
           | 'newsletter-scheduled-send'
           | 'newsletter-stats-rollup'
+          | 'lifecycle-maintenance'
           | 'schedulePublish';
         taskID: string;
         input?:
@@ -1748,6 +1794,7 @@ export interface PayloadJob {
         | 'newsletter-monthly-digest'
         | 'newsletter-scheduled-send'
         | 'newsletter-stats-rollup'
+        | 'lifecycle-maintenance'
         | 'schedulePublish'
       )
     | null;
@@ -1832,6 +1879,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'rejection-notifications';
         value: string | RejectionNotification;
+      } | null)
+    | ({
+        relationTo: 'lifecycle-notices';
+        value: string | LifecycleNotice;
       } | null)
     | ({
         relationTo: 'notifications';
@@ -2076,6 +2127,14 @@ export interface PostsSelect<T extends boolean = true> {
   editorFeedback?: T;
   reviewStatus?: T;
   submittedForReviewAt?: T;
+  archivedStatus?: T;
+  statusMessage?: T;
+  postAgeReferenceTimestamp?: T;
+  archivedAt?: T;
+  archivedBy?: T;
+  archiveReason?: T;
+  lifecycleDeletedAt?: T;
+  lifecycleDeletedBy?: T;
   slug?: T;
   slugLock?: T;
   updatedAt?: T;
@@ -2479,6 +2538,22 @@ export interface RejectionNotificationsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "lifecycle-notices_select".
+ */
+export interface LifecycleNoticesSelect<T extends boolean = true> {
+  post?: T;
+  postTitle?: T;
+  contributor?: T;
+  type?: T;
+  message?: T;
+  createdBy?: T;
+  isRead?: T;
+  readAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "notifications_select".
  */
 export interface NotificationsSelect<T extends boolean = true> {
@@ -2819,6 +2894,39 @@ export interface Footer {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "lifecycle-config".
+ */
+export interface LifecycleConfig {
+  id: string;
+  /**
+   * Age in days after which comments are deleted by lifecycle maintenance.
+   */
+  commentDeletionThreshold: number;
+  /**
+   * Age after which pending contributor posts are moved out of the review queue.
+   */
+  postArchiveThreshold: '15-days' | '30-days' | '60-days' | '90-days';
+  /**
+   * Enable automatic post archiving during lifecycle maintenance.
+   */
+  autoArchiveEnabled?: boolean | null;
+  /**
+   * How often the hourly lifecycle task should perform real maintenance.
+   */
+  jobSchedule: 'hourly' | 'daily' | 'weekly' | 'monthly';
+  /**
+   * When enabled, the scheduled job reports candidates without changing records.
+   */
+  dryRunEnabled?: boolean | null;
+  /**
+   * Last time lifecycle maintenance performed a scheduled run.
+   */
+  lastRunAt?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-jobs-stats".
  */
 export interface PayloadJobsStat {
@@ -2883,6 +2991,21 @@ export interface FooterSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "lifecycle-config_select".
+ */
+export interface LifecycleConfigSelect<T extends boolean = true> {
+  commentDeletionThreshold?: T;
+  postArchiveThreshold?: T;
+  autoArchiveEnabled?: T;
+  jobSchedule?: T;
+  dryRunEnabled?: T;
+  lastRunAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-jobs-stats_select".
  */
 export interface PayloadJobsStatsSelect<T extends boolean = true> {
@@ -2938,6 +3061,14 @@ export interface TaskNewsletterScheduledSend {
  * via the `definition` "TaskNewsletter-stats-rollup".
  */
 export interface TaskNewsletterStatsRollup {
+  input?: unknown;
+  output?: unknown;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskLifecycle-maintenance".
+ */
+export interface TaskLifecycleMaintenance {
   input?: unknown;
   output?: unknown;
 }

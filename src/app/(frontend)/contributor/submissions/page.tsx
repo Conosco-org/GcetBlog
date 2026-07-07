@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import type { User } from '@shared/types/payload-types'
 import { PageHeader } from '@frontend/components/base/PageHeader'
 import { SubmissionsClient } from '@frontend/features/contributor/components/submissions-client'
+import { getActiveLifecycleWhere } from '@backend/lifecycle/service'
 
 const PAGE_SIZE = 10
 
@@ -39,6 +40,7 @@ export default async function SubmissionsPage({ searchParams }: PageProps) {
   // Build where
   const conditions: Where[] = [
     { authors: { equals: typedUser.id } },
+    getActiveLifecycleWhere(),
   ]
 
   if (statusFilter) {

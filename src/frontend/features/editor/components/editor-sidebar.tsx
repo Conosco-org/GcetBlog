@@ -15,6 +15,7 @@ import {
   FileStack, 
   BarChart3, 
   Activity, 
+  Archive,
   Tag,
   Users,
   Mail,
@@ -87,6 +88,11 @@ export function EditorSidebar({
       href: '/editor/queue',
       icon: <Clock className="w-5 h-5" />,
       badge: pendingPostsCount, // Only pending posts count
+    },
+    {
+      label: 'Lifecycle',
+      href: '/editor/lifecycle',
+      icon: <Archive className="w-5 h-5" />,
     },
     {
       label: 'Media Manager',

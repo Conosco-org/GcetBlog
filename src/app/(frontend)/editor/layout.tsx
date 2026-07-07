@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import type { User } from '@/shared/types/payload-types'
 import { EditorLayoutClient } from '@/frontend/features/editor/components/editor-layout-client'
 import type { Metadata } from 'next'
+import { getActiveLifecycleWhere } from '@backend/lifecycle/service'
 
 export const metadata: Metadata = {
   title: 'Editor Dashboard',
@@ -59,6 +60,7 @@ export default async function EditorLayout({
           { _status: { equals: 'draft' } },
           { reviewStatus: { equals: 'pending_review' } },
           { authors: { in: contributorIds } },
+          getActiveLifecycleWhere(),
         ],
       },
       draft: true,

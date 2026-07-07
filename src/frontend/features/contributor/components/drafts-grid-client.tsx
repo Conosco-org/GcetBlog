@@ -32,9 +32,19 @@ interface RejectionNotification {
   isRead?: boolean | null
 }
 
+interface LifecycleNotice {
+  id: string
+  postTitle: string
+  message: string
+  type: 'archived' | 'deleted' | 'restored'
+  createdAt: string
+  isRead?: boolean | null
+}
+
 interface DraftsGridClientProps {
   drafts: Post[]
   rejections: RejectionNotification[]
+  lifecycleNotices: LifecycleNotice[]
   totalPages: number
   currentPage: number
   totalItems: number
@@ -45,6 +55,7 @@ interface DraftsGridClientProps {
 export function DraftsGridClient({
   drafts,
   rejections,
+  lifecycleNotices,
   totalPages,
   currentPage,
   totalItems,
@@ -208,6 +219,29 @@ export function DraftsGridClient({
       <p className="text-sm text-muted-foreground">
         {totalItems} {totalItems === 1 ? 'draft' : 'drafts'}
       </p>
+
+      {lifecycleNotices.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {lifecycleNotices.map((notice) => (
+            <Card key={notice.id} className="border-blue-300 dark:border-blue-700 bg-blue-50/50 dark:bg-blue-950/20">
+              <CardHeader>
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <CardTitle className="text-lg line-clamp-2">{notice.postTitle}</CardTitle>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {formatDateTime(notice.createdAt)}
+                    </p>
+                  </div>
+                  <Badge variant="outline" className="capitalize">
+                    {notice.type}
+                  </Badge>
+                </div>
+                <p className="text-sm text-blue-900 dark:text-blue-300">{notice.message}</p>
+              </CardHeader>
+            </Card>
+          ))}
+        </div>
+      )}
 
       {/* Tabs for Drafts */}
       <Tabs defaultValue="current" className="w-full">

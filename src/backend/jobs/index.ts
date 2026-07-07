@@ -5,3 +5,4 @@
  */
 
 export * from './newsletter'
+export * from './lifecycle'

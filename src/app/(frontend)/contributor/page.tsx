@@ -21,6 +21,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import type { User } from '@/shared/types/payload-types'
+import { getActiveLifecycleWhere } from '@backend/lifecycle/service'
 
 export const metadata: Metadata = {
   title: 'Contributor Dashboard',
@@ -42,6 +43,7 @@ export default async function ContributorDashboardPage() {
   const typedUser = user as User
 
   const authorFilter = { authors: { equals: user.id } }
+  const activeAuthorFilter = { and: [authorFilter, getActiveLifecycleWhere()] }
 
   // Efficient parallel count queries instead of fetching all posts
   const [
@@ -53,16 +55,16 @@ export default async function ContributorDashboardPage() {
     submittedCount,
     recentActivity,
   ] = await Promise.all([
-    payload.count({ collection: 'posts', where: authorFilter }),
+    payload.count({ collection: 'posts', where: activeAuthorFilter }),
     payload.count({ collection: 'posts', where: { ...authorFilter, _status: { equals: 'published' } } }),
-    payload.count({ collection: 'posts', where: { ...authorFilter, _status: { equals: 'draft' } } }),
-    payload.count({ collection: 'posts', where: { ...authorFilter, reviewStatus: { equals: 'approved' } } }),
-    payload.count({ collection: 'posts', where: { ...authorFilter, reviewStatus: { equals: 'rejected' } } }),
-    payload.count({ collection: 'posts', where: { ...authorFilter, reviewStatus: { equals: 'pending_review' } } }),
+    payload.count({ collection: 'posts', where: { and: [authorFilter, getActiveLifecycleWhere(), { _status: { equals: 'draft' } }] } }),
+    payload.count({ collection: 'posts', where: { and: [authorFilter, getActiveLifecycleWhere(), { reviewStatus: { equals: 'approved' } }] } }),
+    payload.count({ collection: 'posts', where: { and: [authorFilter, getActiveLifecycleWhere(), { reviewStatus: { equals: 'rejected' } }] } }),
+    payload.count({ collection: 'posts', where: { and: [authorFilter, getActiveLifecycleWhere(), { reviewStatus: { equals: 'pending_review' } }] } }),
     // Recent activity - only need 5 docs for the feed
     payload.find({
       collection: 'posts',
-      where: authorFilter,
+      where: activeAuthorFilter,
       sort: '-updatedAt',
       limit: 5,
     }),

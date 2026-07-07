@@ -4,6 +4,7 @@ import { Clock, MessageSquare, Calendar } from 'lucide-react'
 import { Card, CardContent } from '@/frontend/components/ui/card'
 import { PageHeader } from '@frontend/components/base/PageHeader'
 import { QueueTabs } from './QueueTabs'
+import { getActiveLifecycleWhere } from '@backend/lifecycle/service'
 
 // Force dynamic rendering - no caching
 export const dynamic = 'force-dynamic'
@@ -49,6 +50,7 @@ export default async function EditorQueuePage({ searchParams }: PageProps) {
     { _status: { equals: 'draft' } },
     { reviewStatus: { equals: 'pending_review' } },
     { authors: { in: contributorIds } },
+    getActiveLifecycleWhere(),
   ]
 
   if (query) {

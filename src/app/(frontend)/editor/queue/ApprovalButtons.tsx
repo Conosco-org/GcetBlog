@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { CheckCircle, XCircle, Eye, Edit, MessageSquare } from 'lucide-react'
+import { Archive, CheckCircle, XCircle, Eye, Edit, MessageSquare } from 'lucide-react'
 import { approvePost, requestChanges, deletePost } from './actions'
 import { useRouter } from 'next/navigation'
 import { Button } from '@frontend/components/ui/button'
@@ -22,6 +22,7 @@ export function ApprovalButtons({ postId, postTitle, postSlug }: ApprovalButtons
   const [isApproving, setIsApproving] = useState(false)
   const [isRequestingChanges, setIsRequestingChanges] = useState(false)
   const [isRejecting, setIsRejecting] = useState(false)
+  const [isArchiving, setIsArchiving] = useState(false)
   const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(false)
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false)
 
@@ -125,7 +126,49 @@ export function ApprovalButtons({ postId, postTitle, postSlug }: ApprovalButtons
     }
   }
 
-  const isProcessing = isApproving || isRequestingChanges || isRejecting
+  const handleArchive = async () => {
+    if (!confirm(`Archive "${postTitle}" and remove it from the review queue?`)) {
+      return
+    }
+
+    setIsArchiving(true)
+    try {
+      const response = await fetch('/api/lifecycle/archive-post', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ postId }),
+      })
+      const result = await response.json()
+
+      if (response.ok && result.success) {
+        toast({
+          title: 'Post Archived',
+          description: 'Post moved out of the active review queue.',
+        })
+        setTimeout(() => {
+          router.refresh()
+        }, 500)
+      } else {
+        toast({
+          title: 'Error',
+          description: result.message || 'Failed to archive post',
+          variant: 'destructive',
+        })
+        setIsArchiving(false)
+      }
+    } catch {
+      toast({
+        title: 'Error',
+        description: 'An error occurred while archiving the post',
+        variant: 'destructive',
+      })
+      setIsArchiving(false)
+    }
+  }
+
+  const isProcessing = isApproving || isRequestingChanges || isRejecting || isArchiving
 
   return (
     <>
@@ -178,6 +221,17 @@ export function ApprovalButtons({ postId, postTitle, postSlug }: ApprovalButtons
         >
           <MessageSquare className="w-4 h-4 sm:mr-1" />
           <span className="hidden sm:inline">{isRequestingChanges ? 'Sending...' : 'Feedback'}</span>
+        </Button>
+        <Button
+          onClick={handleArchive}
+          disabled={isProcessing}
+          size="sm"
+          variant="outline"
+          title="Archive Post"
+          aria-label="Archive"
+        >
+          <Archive className="w-4 h-4 sm:mr-1" />
+          <span className="hidden sm:inline">{isArchiving ? 'Archiving...' : 'Archive'}</span>
         </Button>
         <Button
           onClick={() => setRejectDialogOpen(true)}

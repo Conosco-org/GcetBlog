@@ -22,6 +22,7 @@ import { NewsletterEvents } from './collections/newsletter/events'
 import { Feedback } from './collections/editorial/feedback'
 import { Templates } from './collections/editorial/templates'
 import { RejectionNotifications } from './collections/editorial/rejection-notifications'
+import { LifecycleNotices } from './collections/editorial/lifecycle-notices'
 import {
   newsletterDailyDigest,
   newsletterWeeklyDigest,
@@ -29,8 +30,10 @@ import {
   newsletterScheduledSend,
   newsletterStatsRollup,
 } from './jobs/newsletter'
+import { lifecycleMaintenanceJob } from './jobs/lifecycle'
 import { Header } from './globals/header/config'
 import { Footer } from './globals/footer/config'
+import { LifecycleConfig } from './globals/lifecycle-config/config'
 import { plugins } from './plugins'
 import { defaultLexical } from './fields/default-lexical'
 import { getServerSideURL } from '@shared/lib/get-url'
@@ -122,10 +125,11 @@ export default buildConfig({
     Newsletters,
     NewsletterEvents,
     RejectionNotifications,
+    LifecycleNotices,
     Notifications,
   ],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer],
+  globals: [Header, Footer, LifecycleConfig],
   plugins: [
     ...plugins,
     // storage-adapter-placeholder
@@ -173,6 +177,11 @@ export default buildConfig({
         slug: 'newsletter-stats-rollup',
         handler: newsletterStatsRollup,
         schedule: [{ cron: '0 */6 * * *', queue: 'default' }], // Every 6 hours
+      },
+      {
+        slug: 'lifecycle-maintenance',
+        handler: lifecycleMaintenanceJob,
+        schedule: [{ cron: '0 * * * *', queue: 'default' }], // Hourly; handler enforces configured cadence
       },
     ],
   },

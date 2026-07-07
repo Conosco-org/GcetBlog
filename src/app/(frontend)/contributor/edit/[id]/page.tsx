@@ -42,6 +42,10 @@ export default async function ContributorEditPostPage({ params }: PageProps) {
 
   if (!post) notFound()
 
+  if (post.archivedStatus === 'archived' || post.archivedStatus === 'deleted') {
+    redirect('/contributor/drafts')
+  }
+
   // Contributors can only edit their own posts
   const authorIds = (post.authors || []).map((a: unknown) =>
     typeof a === 'object' && a !== null && 'id' in a ? String((a as { id: unknown }).id) : String(a)

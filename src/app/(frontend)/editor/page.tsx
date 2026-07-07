@@ -9,6 +9,7 @@ import { PageHeader } from '@frontend/components/base'
 import { DashboardErrorFallback } from '@/frontend/features/editor/components/dashboard-error-fallback'
 import { formatDateTimeIST } from '@/frontend/lib/format-date-time'
 import type { Metadata } from 'next'
+import { getActiveLifecycleWhere } from '@backend/lifecycle/service'
 
 export const metadata: Metadata = {
   title: 'Editor Dashboard',
@@ -60,6 +61,7 @@ export default async function EditorDashboardPage() {
             { _status: { equals: 'draft' } },
             { reviewStatus: { equals: 'pending_review' } },
             { authors: { in: contributorIds } }, // Only posts authored by contributors
+            getActiveLifecycleWhere(),
           ]
         },
       }),
@@ -72,6 +74,7 @@ export default async function EditorDashboardPage() {
             { reviewStatus: { equals: 'pending_review' } },
             { authors: { in: contributorIds } }, // Only posts authored by contributors
             { submittedForReviewAt: { greater_than: today.toISOString() } },
+            getActiveLifecycleWhere(),
           ]
         },
       }),

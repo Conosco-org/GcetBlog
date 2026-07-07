@@ -505,6 +505,85 @@ export const Posts: CollectionConfig<'posts'> = {
         description: 'When the post was submitted for review',
       },
     },
+    {
+      name: 'archivedStatus',
+      type: 'select',
+      defaultValue: 'active',
+      options: [
+        { label: 'Active', value: 'active' },
+        { label: 'Archived', value: 'archived' },
+        { label: 'Deleted', value: 'deleted' },
+      ],
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description: 'Lifecycle status for review queue retention.',
+      },
+    },
+    {
+      name: 'statusMessage',
+      type: 'textarea',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description: 'Contributor-facing lifecycle status message.',
+      },
+    },
+    {
+      name: 'postAgeReferenceTimestamp',
+      type: 'date',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description: 'Timestamp used by lifecycle automation for age calculations.',
+      },
+    },
+    {
+      name: 'archivedAt',
+      type: 'date',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+      },
+    },
+    {
+      name: 'archivedBy',
+      type: 'relationship',
+      relationTo: 'users',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+      },
+    },
+    {
+      name: 'archiveReason',
+      type: 'select',
+      options: [
+        { label: 'Automated', value: 'automated' },
+        { label: 'Manual', value: 'manual' },
+      ],
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+      },
+    },
+    {
+      name: 'lifecycleDeletedAt',
+      type: 'date',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+      },
+    },
+    {
+      name: 'lifecycleDeletedBy',
+      type: 'relationship',
+      relationTo: 'users',
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+      },
+    },
     ...slugField(),
   ],
   hooks: {
@@ -560,6 +639,19 @@ export const Posts: CollectionConfig<'posts'> = {
         if (data._status === 'published' && !originalDoc?.publishedAt) {
           data.publishedAt = new Date()
         }
+        return data
+      },
+      // Hook 5: Initialize lifecycle fields for existing and new active posts
+      async ({ data, originalDoc, operation }) => {
+        if (operation === 'create') {
+          data.archivedStatus = data.archivedStatus || 'active'
+          data.postAgeReferenceTimestamp = data.postAgeReferenceTimestamp || new Date()
+        }
+
+        if (operation === 'update' && originalDoc && !originalDoc.postAgeReferenceTimestamp) {
+          data.postAgeReferenceTimestamp = data.postAgeReferenceTimestamp || originalDoc.createdAt || new Date()
+        }
+
         return data
       },
     ],
