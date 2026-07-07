@@ -82,7 +82,7 @@ export interface Config {
     newsletters: Newsletter;
     'newsletter-events': NewsletterEvent;
     'rejection-notifications': RejectionNotification;
-    'lifecycle-notices': LifecycleNotice;
+    'archived-posts': ArchivedPost;
     notifications: Notification;
     redirects: Redirect;
     forms: Form;
@@ -111,7 +111,7 @@ export interface Config {
     newsletters: NewslettersSelect<false> | NewslettersSelect<true>;
     'newsletter-events': NewsletterEventsSelect<false> | NewsletterEventsSelect<true>;
     'rejection-notifications': RejectionNotificationsSelect<false> | RejectionNotificationsSelect<true>;
-    'lifecycle-notices': LifecycleNoticesSelect<false> | LifecycleNoticesSelect<true>;
+    'archived-posts': ArchivedPostsSelect<false> | ArchivedPostsSelect<true>;
     notifications: NotificationsSelect<false> | NotificationsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
@@ -130,13 +130,13 @@ export interface Config {
   globals: {
     header: Header;
     footer: Footer;
-    'lifecycle-config': LifecycleConfig;
+    'archive-config': ArchiveConfig;
     'payload-jobs-stats': PayloadJobsStat;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
-    'lifecycle-config': LifecycleConfigSelect<false> | LifecycleConfigSelect<true>;
+    'archive-config': ArchiveConfigSelect<false> | ArchiveConfigSelect<true>;
     'payload-jobs-stats': PayloadJobsStatsSelect<false> | PayloadJobsStatsSelect<true>;
   };
   locale: null;
@@ -151,7 +151,7 @@ export interface Config {
       'newsletter-monthly-digest': TaskNewsletterMonthlyDigest;
       'newsletter-scheduled-send': TaskNewsletterScheduledSend;
       'newsletter-stats-rollup': TaskNewsletterStatsRollup;
-      'lifecycle-maintenance': TaskLifecycleMaintenance;
+      'archive-maintenance': TaskArchiveMaintenance;
       schedulePublish: TaskSchedulePublish;
       inline: {
         input: unknown;
@@ -367,22 +367,17 @@ export interface Post {
    */
   submittedForReviewAt?: string | null;
   /**
-   * Lifecycle status for review queue retention.
+   * Archive status for review queue retention.
    */
-  archivedStatus?: ('active' | 'archived' | 'deleted') | null;
+  archiveStatus?: ('active' | 'archived' | 'deleted') | null;
   /**
-   * Contributor-facing lifecycle status message.
+   * Contributor-facing archive status message.
    */
   statusMessage?: string | null;
   /**
-   * Timestamp used by lifecycle automation for age calculations.
+   * When the current pending-review queue age started.
    */
-  postAgeReferenceTimestamp?: string | null;
-  archivedAt?: string | null;
-  archivedBy?: (string | null) | User;
-  archiveReason?: ('automated' | 'manual') | null;
-  lifecycleDeletedAt?: string | null;
-  lifecycleDeletedBy?: (string | null) | User;
+  reviewQueueAgeStartedAt?: string | null;
   slug?: string | null;
   slugLock?: boolean | null;
   updatedAt: string;
@@ -1549,24 +1544,24 @@ export interface RejectionNotification {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "lifecycle-notices".
+ * via the `definition` "archived-posts".
  */
-export interface LifecycleNotice {
+export interface ArchivedPost {
   id: string;
   /**
-   * Post that triggered this lifecycle notice.
+   * Original post that carries the contributor-facing status message.
    */
-  post?: (string | null) | Post;
+  post: string | Post;
   postTitle: string;
   contributor: string | User;
-  type: 'archived' | 'deleted' | 'restored';
-  message: string;
+  archivedAt: string;
+  archivedBy?: (string | null) | User;
+  archiveReason: 'automated' | 'manual';
+  statusMessage: string;
   /**
-   * Editor/admin who triggered the notice. Empty for automated lifecycle jobs.
+   * Review queue age timestamp from the source post when it was archived.
    */
-  createdBy?: (string | null) | User;
-  isRead?: boolean | null;
-  readAt?: string | null;
+  reviewQueueAgeStartedAt?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1752,7 +1747,7 @@ export interface PayloadJob {
           | 'newsletter-monthly-digest'
           | 'newsletter-scheduled-send'
           | 'newsletter-stats-rollup'
-          | 'lifecycle-maintenance'
+          | 'archive-maintenance'
           | 'schedulePublish';
         taskID: string;
         input?:
@@ -1794,7 +1789,7 @@ export interface PayloadJob {
         | 'newsletter-monthly-digest'
         | 'newsletter-scheduled-send'
         | 'newsletter-stats-rollup'
-        | 'lifecycle-maintenance'
+        | 'archive-maintenance'
         | 'schedulePublish'
       )
     | null;
@@ -1881,8 +1876,8 @@ export interface PayloadLockedDocument {
         value: string | RejectionNotification;
       } | null)
     | ({
-        relationTo: 'lifecycle-notices';
-        value: string | LifecycleNotice;
+        relationTo: 'archived-posts';
+        value: string | ArchivedPost;
       } | null)
     | ({
         relationTo: 'notifications';
@@ -2127,14 +2122,9 @@ export interface PostsSelect<T extends boolean = true> {
   editorFeedback?: T;
   reviewStatus?: T;
   submittedForReviewAt?: T;
-  archivedStatus?: T;
+  archiveStatus?: T;
   statusMessage?: T;
-  postAgeReferenceTimestamp?: T;
-  archivedAt?: T;
-  archivedBy?: T;
-  archiveReason?: T;
-  lifecycleDeletedAt?: T;
-  lifecycleDeletedBy?: T;
+  reviewQueueAgeStartedAt?: T;
   slug?: T;
   slugLock?: T;
   updatedAt?: T;
@@ -2538,17 +2528,17 @@ export interface RejectionNotificationsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "lifecycle-notices_select".
+ * via the `definition` "archived-posts_select".
  */
-export interface LifecycleNoticesSelect<T extends boolean = true> {
+export interface ArchivedPostsSelect<T extends boolean = true> {
   post?: T;
   postTitle?: T;
   contributor?: T;
-  type?: T;
-  message?: T;
-  createdBy?: T;
-  isRead?: T;
-  readAt?: T;
+  archivedAt?: T;
+  archivedBy?: T;
+  archiveReason?: T;
+  statusMessage?: T;
+  reviewQueueAgeStartedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2894,24 +2884,24 @@ export interface Footer {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "lifecycle-config".
+ * via the `definition` "archive-config".
  */
-export interface LifecycleConfig {
+export interface ArchiveConfig {
   id: string;
   /**
-   * Age in days after which comments are deleted by lifecycle maintenance.
+   * Age in days after which pending comments are deleted by archive maintenance.
    */
   commentDeletionThreshold: number;
   /**
-   * Age after which pending contributor posts are moved out of the review queue.
+   * Review queue age after which pending contributor posts are moved to archive.
    */
   postArchiveThreshold: '15-days' | '30-days' | '60-days' | '90-days';
   /**
-   * Enable automatic post archiving during lifecycle maintenance.
+   * Enable automatic post archiving during archive maintenance.
    */
   autoArchiveEnabled?: boolean | null;
   /**
-   * How often the hourly lifecycle task should perform real maintenance.
+   * How often the hourly archive task should perform real maintenance.
    */
   jobSchedule: 'hourly' | 'daily' | 'weekly' | 'monthly';
   /**
@@ -2919,7 +2909,7 @@ export interface LifecycleConfig {
    */
   dryRunEnabled?: boolean | null;
   /**
-   * Last time lifecycle maintenance performed a scheduled run.
+   * Last time archive maintenance performed a scheduled run.
    */
   lastRunAt?: string | null;
   updatedAt?: string | null;
@@ -2991,9 +2981,9 @@ export interface FooterSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "lifecycle-config_select".
+ * via the `definition` "archive-config_select".
  */
-export interface LifecycleConfigSelect<T extends boolean = true> {
+export interface ArchiveConfigSelect<T extends boolean = true> {
   commentDeletionThreshold?: T;
   postArchiveThreshold?: T;
   autoArchiveEnabled?: T;
@@ -3066,9 +3056,9 @@ export interface TaskNewsletterStatsRollup {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "TaskLifecycle-maintenance".
+ * via the `definition` "TaskArchive-maintenance".
  */
-export interface TaskLifecycleMaintenance {
+export interface TaskArchiveMaintenance {
   input?: unknown;
   output?: unknown;
 }

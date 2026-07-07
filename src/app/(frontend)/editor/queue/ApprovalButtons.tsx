@@ -133,7 +133,7 @@ export function ApprovalButtons({ postId, postTitle, postSlug }: ApprovalButtons
 
     setIsArchiving(true)
     try {
-      const response = await fetch('/api/lifecycle/archive-post', {
+      const response = await fetch('/api/archive/archive-post', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

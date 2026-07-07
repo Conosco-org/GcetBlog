@@ -13,9 +13,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@frontend/components/ui/switch'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@frontend/components/ui/table'
 import { useToast } from '@frontend/components/ui/use-toast'
-import type { Post } from '@shared/types/payload-types'
 
-interface LifecycleConfigForm {
+interface ArchiveConfigForm {
   commentDeletionThreshold: number
   postArchiveThreshold: string
   autoArchiveEnabled: boolean
@@ -23,21 +22,24 @@ interface LifecycleConfigForm {
   dryRunEnabled: boolean
 }
 
-type ArchivedPost = Post & {
+type ArchivedPostRecord = {
+  id: string
+  postTitle: string
+  contributor?: string | { id: string; name?: string | null } | null
   archivedAt?: string | null
   archiveReason?: 'manual' | 'automated' | null
+  post?: string | { id: string; title?: string | null } | null
 }
 
-interface LifecycleManagerClientProps {
-  archivedPosts: ArchivedPost[]
+interface ArchiveManagerClientProps {
+  archivedPosts: ArchivedPostRecord[]
   isAdmin: boolean
-  config: LifecycleConfigForm | null
+  config: ArchiveConfigForm | null
 }
 
-function getContributorName(post: ArchivedPost) {
-  const author = Array.isArray(post.authors) && post.authors.length > 0 ? post.authors[0] : null
-  if (typeof author === 'object' && author && 'name' in author) {
-    return String(author.name || 'Unknown')
+function getContributorName(record: ArchivedPostRecord) {
+  if (typeof record.contributor === 'object' && record.contributor && 'name' in record.contributor) {
+    return String(record.contributor.name || 'Unknown')
   }
   return 'Unknown'
 }
@@ -50,24 +52,24 @@ function getDaysRemaining(archivedAt?: string | null) {
   return Math.max(0, 30 - elapsedDays)
 }
 
-async function parseLifecycleResponse(response: Response) {
+async function parseArchiveResponse(response: Response) {
   const data = await response.json()
   if (!response.ok || !data.success) {
-    throw new Error(data.message || 'Lifecycle operation failed')
+    throw new Error(data.message || 'Archive operation failed')
   }
   return data
 }
 
-export function LifecycleManagerClient({
+export function ArchiveManagerClient({
   archivedPosts,
   isAdmin,
   config,
-}: LifecycleManagerClientProps) {
+}: ArchiveManagerClientProps) {
   const router = useRouter()
   const { toast } = useToast()
   const [saving, setSaving] = useState(false)
   const [processingPostId, setProcessingPostId] = useState<string | null>(null)
-  const [form, setForm] = useState<LifecycleConfigForm>(
+  const [form, setForm] = useState<ArchiveConfigForm>(
     config || {
       commentDeletionThreshold: 60,
       postArchiveThreshold: '60-days',
@@ -80,17 +82,17 @@ export function LifecycleManagerClient({
   const saveConfig = async () => {
     setSaving(true)
     try {
-      const response = await fetch('/api/lifecycle/config', {
+      const response = await fetch('/api/archive/config', {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(form),
       })
-      const data = await parseLifecycleResponse(response)
+      const data = await parseArchiveResponse(response)
       toast({
         title: 'Settings saved',
-        description: data.message || 'Lifecycle settings updated.',
+        description: data.message || 'Archive settings updated.',
       })
       router.refresh()
     } catch (error) {
@@ -104,20 +106,20 @@ export function LifecycleManagerClient({
     }
   }
 
-  const restorePost = async (post: ArchivedPost) => {
-    setProcessingPostId(post.id)
+  const restorePost = async (record: ArchivedPostRecord) => {
+    setProcessingPostId(record.id)
     try {
-      const response = await fetch('/api/lifecycle/restore-post', {
+      const response = await fetch('/api/archive/restore-post', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ postId: post.id }),
+        body: JSON.stringify({ archiveId: record.id }),
       })
-      await parseLifecycleResponse(response)
+      await parseArchiveResponse(response)
       toast({
         title: 'Post restored',
-        description: `"${post.title}" returned to the review queue.`,
+        description: `"${record.postTitle}" returned to the review queue.`,
       })
       router.refresh()
     } catch (error) {
@@ -131,22 +133,22 @@ export function LifecycleManagerClient({
     }
   }
 
-  const deleteArchivedPost = async (post: ArchivedPost) => {
-    if (!confirm(`Remove "${post.title}" from active lifecycle views?`)) return
+  const deleteArchivedPost = async (record: ArchivedPostRecord) => {
+    if (!confirm(`Delete archive record for "${record.postTitle}" and mark the contributor post as removed?`)) return
 
-    setProcessingPostId(post.id)
+    setProcessingPostId(record.id)
     try {
-      const response = await fetch('/api/lifecycle/delete-archived', {
+      const response = await fetch('/api/archive/delete-archived', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ postId: post.id }),
+        body: JSON.stringify({ archiveId: record.id }),
       })
-      await parseLifecycleResponse(response)
+      await parseArchiveResponse(response)
       toast({
-        title: 'Archived post removed',
-        description: 'Contributor notice was retained.',
+        title: 'Archived post deleted',
+        description: 'The archive record was deleted and the contributor message was saved on the post.',
       })
       router.refresh()
     } catch (error) {
@@ -165,7 +167,7 @@ export function LifecycleManagerClient({
       {isAdmin && (
         <Card>
           <CardHeader>
-            <CardTitle>Lifecycle Settings</CardTitle>
+            <CardTitle>Archive Settings</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-5 md:grid-cols-2">
             <div className="space-y-2">
@@ -271,7 +273,7 @@ export function LifecycleManagerClient({
                     const processing = processingPostId === post.id
                     return (
                       <TableRow key={post.id}>
-                        <TableCell className="font-medium">{post.title}</TableCell>
+                        <TableCell className="font-medium">{post.postTitle}</TableCell>
                         <TableCell>{getContributorName(post)}</TableCell>
                         <TableCell>
                           <Badge variant="secondary">{post.archiveReason || 'manual'}</Badge>

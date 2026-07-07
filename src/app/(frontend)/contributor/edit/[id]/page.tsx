@@ -45,7 +45,7 @@ export default async function ContributorEditPostPage({ params }: PageProps) {
 
   if (!post) notFound()
 
-  if (post.archivedStatus === 'archived' || post.archivedStatus === 'deleted') {
+  if (post.archiveStatus === 'archived' || post.archiveStatus === 'deleted') {
     redirect('/contributor/drafts')
   }
 

@@ -3,11 +3,11 @@ import { getPayload } from 'payload'
 import { revalidatePath } from 'next/cache'
 import configPromise from '@payload-config'
 
-import { restoreArchivedPost } from '@backend/lifecycle/service'
+import { restoreArchivedPost } from '@backend/archive/service'
 
-const canManageLifecycle = (user: unknown): user is { id: string; role?: string } => {
-  const role = (user as { role?: string } | undefined)?.role
-  return role === 'editor' || role === 'admin'
+const canManageArchive = (user: unknown): user is { id: string; role?: string; isAdmin?: boolean } => {
+  const typedUser = user as { role?: string; isAdmin?: boolean } | undefined
+  return typedUser?.role === 'editor' || typedUser?.role === 'admin' || typedUser?.isAdmin === true
 }
 
 export async function POST(request: NextRequest) {
@@ -16,22 +16,22 @@ export async function POST(request: NextRequest) {
     const { user } = await payload.auth({ headers: request.headers })
 
     if (!user) return NextResponse.json({ success: false, message: 'Authentication required' }, { status: 401 })
-    if (!canManageLifecycle(user)) {
+    if (!canManageArchive(user)) {
       return NextResponse.json({ success: false, message: 'Access denied: Admin or Editor role required' }, { status: 403 })
     }
 
     const body = await request.json()
-    const postId = typeof body?.postId === 'string' ? body.postId : ''
-    if (!postId) return NextResponse.json({ success: false, message: 'postId is required' }, { status: 400 })
+    const archiveId = typeof body?.archiveId === 'string' ? body.archiveId : ''
+    if (!archiveId) return NextResponse.json({ success: false, message: 'archiveId is required' }, { status: 400 })
 
     await restoreArchivedPost({
       payload,
-      postId,
+      archiveId,
       user,
     })
 
     revalidatePath('/editor/queue')
-    revalidatePath('/editor/lifecycle')
+    revalidatePath('/editor/archive')
     revalidatePath('/contributor/drafts')
     revalidatePath('/contributor/submissions')
 

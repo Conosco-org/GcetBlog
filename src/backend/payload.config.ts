@@ -22,7 +22,7 @@ import { NewsletterEvents } from './collections/newsletter/events'
 import { Feedback } from './collections/editorial/feedback'
 import { Templates } from './collections/editorial/templates'
 import { RejectionNotifications } from './collections/editorial/rejection-notifications'
-import { LifecycleNotices } from './collections/editorial/lifecycle-notices'
+import { ArchivedPosts } from './collections/editorial/archived-posts'
 import {
   newsletterDailyDigest,
   newsletterWeeklyDigest,
@@ -30,10 +30,10 @@ import {
   newsletterScheduledSend,
   newsletterStatsRollup,
 } from './jobs/newsletter'
-import { lifecycleMaintenanceJob } from './jobs/lifecycle'
+import { archiveMaintenanceJob } from './jobs/archive'
 import { Header } from './globals/header/config'
 import { Footer } from './globals/footer/config'
-import { LifecycleConfig } from './globals/lifecycle-config/config'
+import { ArchiveConfig } from './globals/archive-config/config'
 import { plugins } from './plugins'
 import { defaultLexical } from './fields/default-lexical'
 import { getServerSideURL } from '@shared/lib/get-url'
@@ -125,11 +125,11 @@ export default buildConfig({
     Newsletters,
     NewsletterEvents,
     RejectionNotifications,
-    LifecycleNotices,
+    ArchivedPosts,
     Notifications,
   ],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer, LifecycleConfig],
+  globals: [Header, Footer, ArchiveConfig],
   plugins: [
     ...plugins,
     // storage-adapter-placeholder
@@ -179,8 +179,8 @@ export default buildConfig({
         schedule: [{ cron: '0 */6 * * *', queue: 'default' }], // Every 6 hours
       },
       {
-        slug: 'lifecycle-maintenance',
-        handler: lifecycleMaintenanceJob,
+        slug: 'archive-maintenance',
+        handler: archiveMaintenanceJob,
         schedule: [{ cron: '0 * * * *', queue: 'default' }], // Hourly; handler enforces configured cadence
       },
     ],

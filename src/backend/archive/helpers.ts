@@ -1,8 +1,8 @@
 import {
   ARCHIVE_RETENTION_DAYS,
-  LIFECYCLE_SCHEDULE_HOURS,
+  ARCHIVE_SCHEDULE_HOURS,
   POST_ARCHIVE_THRESHOLD_DAYS,
-  type LifecycleSchedule,
+  type ArchiveSchedule,
   type PostArchiveThreshold,
 } from './constants'
 
@@ -10,8 +10,8 @@ export function getPostArchiveThresholdDays(value: string | null | undefined): n
   return POST_ARCHIVE_THRESHOLD_DAYS[(value || '60-days') as PostArchiveThreshold] ?? 60
 }
 
-export function getLifecycleScheduleHours(value: string | null | undefined): number {
-  return LIFECYCLE_SCHEDULE_HOURS[(value || 'daily') as LifecycleSchedule] ?? 24
+export function getArchiveScheduleHours(value: string | null | undefined): number {
+  return ARCHIVE_SCHEDULE_HOURS[(value || 'daily') as ArchiveSchedule] ?? 24
 }
 
 export function daysAgoCutoff(days: number, now = new Date()): string {
@@ -25,7 +25,7 @@ export function isArchivedPostRestorable(archivedAt: string | Date | null | unde
   return now.getTime() - archivedTime < ARCHIVE_RETENTION_DAYS * 24 * 60 * 60 * 1000
 }
 
-export function isLifecycleScheduleDue(
+export function isArchiveScheduleDue(
   lastRunAt: string | Date | null | undefined,
   schedule: string | null | undefined,
   now = new Date(),
@@ -34,6 +34,6 @@ export function isLifecycleScheduleDue(
   const lastRunTime = new Date(lastRunAt).getTime()
   if (Number.isNaN(lastRunTime)) return true
 
-  const hours = getLifecycleScheduleHours(schedule)
+  const hours = getArchiveScheduleHours(schedule)
   return now.getTime() - lastRunTime >= hours * 60 * 60 * 1000
 }

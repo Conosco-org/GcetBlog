@@ -21,7 +21,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import type { User } from '@/shared/types/payload-types'
-import { getActiveLifecycleWhere } from '@backend/lifecycle/service'
+import { getActiveArchiveWhere } from '@backend/archive/service'
 
 export const metadata: Metadata = {
   title: 'Contributor Dashboard',
@@ -43,7 +43,7 @@ export default async function ContributorDashboardPage() {
   const typedUser = user as User
 
   const authorFilter = { authors: { equals: user.id } }
-  const activeAuthorFilter = { and: [authorFilter, getActiveLifecycleWhere()] }
+  const activeAuthorFilter = { and: [authorFilter, getActiveArchiveWhere()] }
 
   // Efficient parallel count queries instead of fetching all posts
   const [
@@ -57,10 +57,10 @@ export default async function ContributorDashboardPage() {
   ] = await Promise.all([
     payload.count({ collection: 'posts', where: activeAuthorFilter }),
     payload.count({ collection: 'posts', where: { ...authorFilter, _status: { equals: 'published' } } }),
-    payload.count({ collection: 'posts', where: { and: [authorFilter, getActiveLifecycleWhere(), { _status: { equals: 'draft' } }] } }),
-    payload.count({ collection: 'posts', where: { and: [authorFilter, getActiveLifecycleWhere(), { reviewStatus: { equals: 'approved' } }] } }),
-    payload.count({ collection: 'posts', where: { and: [authorFilter, getActiveLifecycleWhere(), { reviewStatus: { equals: 'rejected' } }] } }),
-    payload.count({ collection: 'posts', where: { and: [authorFilter, getActiveLifecycleWhere(), { reviewStatus: { equals: 'pending_review' } }] } }),
+    payload.count({ collection: 'posts', where: { and: [authorFilter, getActiveArchiveWhere(), { _status: { equals: 'draft' } }] } }),
+    payload.count({ collection: 'posts', where: { and: [authorFilter, getActiveArchiveWhere(), { reviewStatus: { equals: 'approved' } }] } }),
+    payload.count({ collection: 'posts', where: { and: [authorFilter, getActiveArchiveWhere(), { reviewStatus: { equals: 'rejected' } }] } }),
+    payload.count({ collection: 'posts', where: { and: [authorFilter, getActiveArchiveWhere(), { reviewStatus: { equals: 'pending_review' } }] } }),
     // Recent activity - only need 5 docs for the feed
     payload.find({
       collection: 'posts',

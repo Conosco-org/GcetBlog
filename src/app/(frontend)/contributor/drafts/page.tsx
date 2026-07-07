@@ -8,7 +8,6 @@ import { Button } from '@frontend/components/ui/button'
 import { FileText } from 'lucide-react'
 import { PageHeader } from '@frontend/components/base/PageHeader'
 import { DraftsGridClient } from '@frontend/features/contributor/components/drafts-grid-client'
-import { getActiveLifecycleWhere } from '@backend/lifecycle/service'
 
 const PAGE_SIZE = 12
 
@@ -41,13 +40,14 @@ export default async function DraftsPage({ searchParams }: PageProps) {
 
   const conditions: Where[] = [
     { authors: { equals: typedUser.id } },
-    getActiveLifecycleWhere(),
     { 
       or: [
         { reviewStatus: { equals: 'draft' } },
         { reviewStatus: { equals: 'requesting_changes' } },
         { reviewStatus: { equals: 'pending_review' } },
         { reviewStatus: { equals: 'rejected' } },
+        { archiveStatus: { equals: 'archived' } },
+        { archiveStatus: { equals: 'deleted' } },
       ]
     },
   ]
@@ -78,18 +78,6 @@ export default async function DraftsPage({ searchParams }: PageProps) {
     limit: 50,
   })
 
-  const lifecycleNotices = await payload.find({
-    collection: 'lifecycle-notices',
-    where: {
-      and: [
-        { contributor: { equals: typedUser.id } },
-        { isRead: { equals: false } },
-      ],
-    },
-    sort: '-createdAt',
-    limit: 50,
-  })
-
   return (
     <div className="container max-w-6xl mx-auto p-6">
       <PageHeader
@@ -109,7 +97,6 @@ export default async function DraftsPage({ searchParams }: PageProps) {
         <DraftsGridClient
           drafts={drafts.docs}
           rejections={rejections.docs}
-          lifecycleNotices={lifecycleNotices.docs}
           totalPages={drafts.totalPages}
           currentPage={drafts.page || page}
           totalItems={drafts.totalDocs}

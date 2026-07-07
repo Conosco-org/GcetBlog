@@ -506,7 +506,7 @@ export const Posts: CollectionConfig<'posts'> = {
       },
     },
     {
-      name: 'archivedStatus',
+      name: 'archiveStatus',
       type: 'select',
       defaultValue: 'active',
       options: [
@@ -517,7 +517,7 @@ export const Posts: CollectionConfig<'posts'> = {
       admin: {
         position: 'sidebar',
         readOnly: true,
-        description: 'Lifecycle status for review queue retention.',
+        description: 'Archive status for review queue retention.',
       },
     },
     {
@@ -526,62 +526,16 @@ export const Posts: CollectionConfig<'posts'> = {
       admin: {
         position: 'sidebar',
         readOnly: true,
-        description: 'Contributor-facing lifecycle status message.',
+        description: 'Contributor-facing archive status message.',
       },
     },
     {
-      name: 'postAgeReferenceTimestamp',
+      name: 'reviewQueueAgeStartedAt',
       type: 'date',
       admin: {
         position: 'sidebar',
         readOnly: true,
-        description: 'Timestamp used by lifecycle automation for age calculations.',
-      },
-    },
-    {
-      name: 'archivedAt',
-      type: 'date',
-      admin: {
-        position: 'sidebar',
-        readOnly: true,
-      },
-    },
-    {
-      name: 'archivedBy',
-      type: 'relationship',
-      relationTo: 'users',
-      admin: {
-        position: 'sidebar',
-        readOnly: true,
-      },
-    },
-    {
-      name: 'archiveReason',
-      type: 'select',
-      options: [
-        { label: 'Automated', value: 'automated' },
-        { label: 'Manual', value: 'manual' },
-      ],
-      admin: {
-        position: 'sidebar',
-        readOnly: true,
-      },
-    },
-    {
-      name: 'lifecycleDeletedAt',
-      type: 'date',
-      admin: {
-        position: 'sidebar',
-        readOnly: true,
-      },
-    },
-    {
-      name: 'lifecycleDeletedBy',
-      type: 'relationship',
-      relationTo: 'users',
-      admin: {
-        position: 'sidebar',
-        readOnly: true,
+        description: 'When the current pending-review queue age started.',
       },
     },
     ...slugField(),
@@ -614,11 +568,16 @@ export const Posts: CollectionConfig<'posts'> = {
           if (prevStatus !== 'pending_review' && newStatus === 'pending_review') {
             data.submittedForReviewAt = new Date()
             data.submittedForReviewCount = (originalDoc.submittedForReviewCount || 0) + 1
+            data.reviewQueueAgeStartedAt = new Date()
           }
 
           if (prevStatus !== 'approved' && newStatus === 'approved') {
             data.approvedAt = new Date()
             data.approvedBy = req.user?.id
+          }
+
+          if (prevStatus === 'pending_review' && newStatus && newStatus !== 'pending_review') {
+            data.reviewQueueAgeStartedAt = null
           }
 
           if (newStatus === 'draft' && data.editorFeedback) {
@@ -641,15 +600,25 @@ export const Posts: CollectionConfig<'posts'> = {
         }
         return data
       },
-      // Hook 5: Initialize lifecycle fields for existing and new active posts
+      // Hook 5: Initialize archive fields for existing and new active posts
       async ({ data, originalDoc, operation }) => {
         if (operation === 'create') {
-          data.archivedStatus = data.archivedStatus || 'active'
-          data.postAgeReferenceTimestamp = data.postAgeReferenceTimestamp || new Date()
+          data.archiveStatus = data.archiveStatus || 'active'
+          if (data.reviewStatus === 'pending_review') {
+            data.reviewQueueAgeStartedAt = data.reviewQueueAgeStartedAt || new Date()
+          }
         }
 
-        if (operation === 'update' && originalDoc && !originalDoc.postAgeReferenceTimestamp) {
-          data.postAgeReferenceTimestamp = data.postAgeReferenceTimestamp || originalDoc.createdAt || new Date()
+        if (
+          operation === 'update' &&
+          originalDoc &&
+          originalDoc.reviewStatus === 'pending_review' &&
+          !originalDoc.reviewQueueAgeStartedAt &&
+          data.reviewQueueAgeStartedAt === undefined &&
+          data.archiveStatus !== 'archived' &&
+          data.archiveStatus !== 'deleted'
+        ) {
+          data.reviewQueueAgeStartedAt = originalDoc.submittedForReviewAt || originalDoc.createdAt || new Date()
         }
 
         return data

@@ -7,7 +7,7 @@ import { PayloadBlocker } from '@frontend/features/contributor/components/payloa
 import type { User } from '@shared/types/payload-types'
 import React from 'react'
 import type { Metadata } from 'next'
-import { getActiveLifecycleWhere } from '@backend/lifecycle/service'
+import { getActiveArchiveWhere } from '@backend/archive/service'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -45,16 +45,16 @@ export default async function ContributorLayout({
 
   // Fetch badge counts for sidebar - use count() for efficiency
   const authorWhere = { authors: { equals: typedUser.id } }
-  const activeLifecycleWhere = getActiveLifecycleWhere()
+  const activeArchiveWhere = getActiveArchiveWhere()
 
   const [draftCount, submittedCount, publishedCount, feedbackCount] = await Promise.all([
     payload.count({
       collection: 'posts',
-      where: { and: [authorWhere, activeLifecycleWhere, { _status: { equals: 'draft' } }] },
+      where: { and: [authorWhere, activeArchiveWhere, { _status: { equals: 'draft' } }] },
     }),
     payload.count({
       collection: 'posts',
-      where: { and: [authorWhere, activeLifecycleWhere, { reviewStatus: { equals: 'pending_review' } }] },
+      where: { and: [authorWhere, activeArchiveWhere, { reviewStatus: { equals: 'pending_review' } }] },
     }),
     payload.count({
       collection: 'posts',

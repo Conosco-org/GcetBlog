@@ -5,68 +5,63 @@ import { redirect } from 'next/navigation'
 import type { Metadata } from 'next'
 
 import { PageHeader } from '@frontend/components/base/PageHeader'
-import { LifecycleManagerClient } from './LifecycleManagerClient'
+import { ArchiveManagerClient } from './ArchiveManagerClient'
 
 export const metadata: Metadata = {
-  title: 'Content Lifecycle',
+  title: 'Archive',
 }
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-export default async function LifecyclePage() {
+export default async function ArchivePage() {
   const payload = await getPayload({ config: configPromise })
   const requestHeaders = await headers()
   const { user } = await payload.auth({ headers: requestHeaders })
 
   if (!user) redirect('/login')
 
-  const userRole = (user as { role?: string }).role
-  const isAdmin = userRole === 'admin'
+  const typedUser = user as { role?: string; isAdmin?: boolean }
+  const userRole = typedUser.role
+  const isAdmin = userRole === 'admin' || typedUser.isAdmin === true
   const isEditor = userRole === 'editor'
   if (!isAdmin && !isEditor) redirect('/contributor')
 
-  const [archivedPosts, lifecycleConfig] = await Promise.all([
+  const [archivedPosts, archiveConfig] = await Promise.all([
     payload.find({
-      collection: 'posts',
-      where: {
-        archivedStatus: {
-          equals: 'archived',
-        },
-      },
+      collection: 'archived-posts',
       depth: 2,
-      draft: true,
       limit: 100,
       sort: '-archivedAt',
     }),
     isAdmin
       ? payload.findGlobal({
-          slug: 'lifecycle-config',
+          slug: 'archive-config',
           depth: 0,
           overrideAccess: true,
         })
       : Promise.resolve(null),
   ])
 
-  const config = lifecycleConfig
+  const config = archiveConfig
     ? {
-        commentDeletionThreshold: lifecycleConfig.commentDeletionThreshold || 60,
-        postArchiveThreshold: lifecycleConfig.postArchiveThreshold || '60-days',
-        autoArchiveEnabled: lifecycleConfig.autoArchiveEnabled !== false,
-        jobSchedule: lifecycleConfig.jobSchedule || 'daily',
-        dryRunEnabled: lifecycleConfig.dryRunEnabled !== false,
+        commentDeletionThreshold: archiveConfig.commentDeletionThreshold || 60,
+        postArchiveThreshold: archiveConfig.postArchiveThreshold || '60-days',
+        autoArchiveEnabled: archiveConfig.autoArchiveEnabled !== false,
+        jobSchedule: archiveConfig.jobSchedule || 'daily',
+        dryRunEnabled: archiveConfig.dryRunEnabled !== false,
       }
     : null
 
   return (
     <div className="p-8 min-h-screen">
       <PageHeader
-        title="Content Lifecycle"
+        title="Archive"
         description="Configure review queue retention and manage archived contributor posts"
       />
 
       <div className="mt-6">
-        <LifecycleManagerClient
+        <ArchiveManagerClient
           archivedPosts={archivedPosts.docs}
           isAdmin={isAdmin}
           config={config}

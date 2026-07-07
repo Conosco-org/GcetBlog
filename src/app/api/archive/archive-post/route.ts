@@ -3,11 +3,11 @@ import { getPayload } from 'payload'
 import { revalidatePath } from 'next/cache'
 import configPromise from '@payload-config'
 
-import { archivePost } from '@backend/lifecycle/service'
+import { archivePost } from '@backend/archive/service'
 
-const canManageLifecycle = (user: unknown): user is { id: string; role?: string } => {
-  const role = (user as { role?: string } | undefined)?.role
-  return role === 'editor' || role === 'admin'
+const canManageArchive = (user: unknown): user is { id: string; role?: string; isAdmin?: boolean } => {
+  const typedUser = user as { role?: string; isAdmin?: boolean } | undefined
+  return typedUser?.role === 'editor' || typedUser?.role === 'admin' || typedUser?.isAdmin === true
 }
 
 export async function POST(request: NextRequest) {
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     const { user } = await payload.auth({ headers: request.headers })
 
     if (!user) return NextResponse.json({ success: false, message: 'Authentication required' }, { status: 401 })
-    if (!canManageLifecycle(user)) {
+    if (!canManageArchive(user)) {
       return NextResponse.json({ success: false, message: 'Access denied: Admin or Editor role required' }, { status: 403 })
     }
 
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     })
 
     revalidatePath('/editor/queue')
-    revalidatePath('/editor/lifecycle')
+    revalidatePath('/editor/archive')
     revalidatePath('/contributor/drafts')
     revalidatePath('/contributor/submissions')
 

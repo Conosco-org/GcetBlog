@@ -11,7 +11,7 @@ import { Button } from '@frontend/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@frontend/components/ui/tabs'
 import { formatDateTime } from '@frontend/lib/format-date-time'
 import Link from 'next/link'
-import { Edit, FileText, ChevronLeft, ChevronRight, Plus, AlertCircle, XCircle, Clock, Trash2 } from 'lucide-react'
+import { Edit, FileText, ChevronLeft, ChevronRight, Plus, AlertCircle, XCircle, Clock, Trash2, Archive } from 'lucide-react'
 import { useToast } from '@frontend/components/ui/use-toast'
 import {
   AlertDialog,
@@ -32,19 +32,9 @@ interface RejectionNotification {
   isRead?: boolean | null
 }
 
-interface LifecycleNotice {
-  id: string
-  postTitle: string
-  message: string
-  type: 'archived' | 'deleted' | 'restored'
-  createdAt: string
-  isRead?: boolean | null
-}
-
 interface DraftsGridClientProps {
   drafts: Post[]
   rejections: RejectionNotification[]
-  lifecycleNotices: LifecycleNotice[]
   totalPages: number
   currentPage: number
   totalItems: number
@@ -55,7 +45,6 @@ interface DraftsGridClientProps {
 export function DraftsGridClient({
   drafts,
   rejections,
-  lifecycleNotices,
   totalPages,
   currentPage,
   totalItems,
@@ -121,17 +110,21 @@ export function DraftsGridClient({
   }
 
   // Categorize drafts into sections
+  const isActiveArchivePost = (post: Post) => post.archiveStatus !== 'archived' && post.archiveStatus !== 'deleted'
   const currentDrafts = drafts.filter(post => 
-    post.reviewStatus === 'draft'
+    post.reviewStatus === 'draft' && isActiveArchivePost(post)
   )
   const requestingChangesPosts = drafts.filter(post => 
-    post.reviewStatus === 'requesting_changes'
+    post.reviewStatus === 'requesting_changes' && isActiveArchivePost(post)
   )
   const pendingReviewPosts = drafts.filter(post => 
-    post.reviewStatus === 'pending_review'
+    post.reviewStatus === 'pending_review' && isActiveArchivePost(post)
   )
   const rejectedPosts = drafts.filter(post => 
-    post.reviewStatus === 'rejected'
+    post.reviewStatus === 'rejected' && isActiveArchivePost(post)
+  )
+  const archivedPosts = drafts.filter(post =>
+    post.archiveStatus === 'archived' || post.archiveStatus === 'deleted'
   )
 
   const renderPostCard = (post: Post, showFeedback: boolean = false, isPending: boolean = false) => (
@@ -207,6 +200,35 @@ export function DraftsGridClient({
     </Card>
   )
 
+  const renderArchiveCard = (post: Post) => {
+    const isDeleted = post.archiveStatus === 'deleted'
+    return (
+      <Card key={post.id} className={isDeleted ? 'border-red-300 dark:border-red-700 bg-red-50/50 dark:bg-red-950/20' : 'border-blue-300 dark:border-blue-700 bg-blue-50/50 dark:bg-blue-950/20'}>
+        <CardHeader>
+          <div className="flex items-start justify-between gap-2">
+            <div>
+              <CardTitle className="text-lg line-clamp-2">{post.title}</CardTitle>
+              <p className="text-xs text-muted-foreground mt-1">
+                Updated: {formatDateTime(post.updatedAt)}
+              </p>
+            </div>
+            <Badge variant="outline" className={isDeleted ? 'border-red-500 text-red-700 dark:text-red-400' : 'border-blue-500 text-blue-700 dark:text-blue-400'}>
+              <Archive className="w-3 h-3 mr-1" />
+              {isDeleted ? 'Removed' : 'Archived'}
+            </Badge>
+          </div>
+          {post.statusMessage && (
+            <div className={isDeleted ? 'mt-2 p-3 bg-red-100 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-md' : 'mt-2 p-3 bg-blue-100 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-md'}>
+              <p className={isDeleted ? 'text-sm text-red-800 dark:text-red-400' : 'text-sm text-blue-800 dark:text-blue-400'}>
+                {post.statusMessage}
+              </p>
+            </div>
+          )}
+        </CardHeader>
+      </Card>
+    )
+  }
+
   return (
     <div className="space-y-4">
       <SearchInput
@@ -220,32 +242,9 @@ export function DraftsGridClient({
         {totalItems} {totalItems === 1 ? 'draft' : 'drafts'}
       </p>
 
-      {lifecycleNotices.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {lifecycleNotices.map((notice) => (
-            <Card key={notice.id} className="border-blue-300 dark:border-blue-700 bg-blue-50/50 dark:bg-blue-950/20">
-              <CardHeader>
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <CardTitle className="text-lg line-clamp-2">{notice.postTitle}</CardTitle>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {formatDateTime(notice.createdAt)}
-                    </p>
-                  </div>
-                  <Badge variant="outline" className="capitalize">
-                    {notice.type}
-                  </Badge>
-                </div>
-                <p className="text-sm text-blue-900 dark:text-blue-300">{notice.message}</p>
-              </CardHeader>
-            </Card>
-          ))}
-        </div>
-      )}
-
       {/* Tabs for Drafts */}
       <Tabs defaultValue="current" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="current">
             Current Drafts ({currentDrafts.length})
           </TabsTrigger>
@@ -257,6 +256,9 @@ export function DraftsGridClient({
           </TabsTrigger>
           <TabsTrigger value="rejected">
             Rejected ({rejectedPosts.length + rejections.length})
+          </TabsTrigger>
+          <TabsTrigger value="archived">
+            Archive ({archivedPosts.length})
           </TabsTrigger>
         </TabsList>
 
@@ -388,6 +390,20 @@ export function DraftsGridClient({
                   </CardContent>
                 </Card>
               ))}
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="archived" className="mt-4">
+          {archivedPosts.length === 0 ? (
+            <EmptyState
+              icon={Archive}
+              title="No archived posts"
+              description="Archived or removed posts will appear here"
+            />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {archivedPosts.map((post) => renderArchiveCard(post))}
             </div>
           )}
         </TabsContent>

@@ -90,8 +90,8 @@ export function EditorSidebar({
       badge: pendingPostsCount, // Only pending posts count
     },
     {
-      label: 'Lifecycle',
-      href: '/editor/lifecycle',
+      label: 'Archive',
+      href: '/editor/archive',
       icon: <Archive className="w-5 h-5" />,
     },
     {

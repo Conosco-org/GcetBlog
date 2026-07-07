@@ -16,8 +16,8 @@ const scheduleOptions = [
   { label: 'Monthly', value: 'monthly' },
 ]
 
-export const LifecycleConfig: GlobalConfig = {
-  slug: 'lifecycle-config',
+export const ArchiveConfig: GlobalConfig = {
+  slug: 'archive-config',
   access: {
     read: isAdmin,
     update: isAdmin,
@@ -34,7 +34,7 @@ export const LifecycleConfig: GlobalConfig = {
       min: 1,
       max: 3650,
       admin: {
-        description: 'Age in days after which comments are deleted by lifecycle maintenance.',
+        description: 'Age in days after which pending comments are deleted by archive maintenance.',
       },
       validate: (value: unknown) => {
         const threshold = Number(value)
@@ -52,7 +52,7 @@ export const LifecycleConfig: GlobalConfig = {
       defaultValue: '60-days',
       options: thresholdOptions,
       admin: {
-        description: 'Age after which pending contributor posts are moved out of the review queue.',
+        description: 'Review queue age after which pending contributor posts are moved to archive.',
       },
     },
     {
@@ -60,7 +60,7 @@ export const LifecycleConfig: GlobalConfig = {
       type: 'checkbox',
       defaultValue: true,
       admin: {
-        description: 'Enable automatic post archiving during lifecycle maintenance.',
+        description: 'Enable automatic post archiving during archive maintenance.',
       },
     },
     {
@@ -70,7 +70,7 @@ export const LifecycleConfig: GlobalConfig = {
       defaultValue: 'daily',
       options: scheduleOptions,
       admin: {
-        description: 'How often the hourly lifecycle task should perform real maintenance.',
+        description: 'How often the hourly archive task should perform real maintenance.',
       },
     },
     {
@@ -86,7 +86,7 @@ export const LifecycleConfig: GlobalConfig = {
       type: 'date',
       admin: {
         readOnly: true,
-        description: 'Last time lifecycle maintenance performed a scheduled run.',
+        description: 'Last time archive maintenance performed a scheduled run.',
       },
     },
   ],
