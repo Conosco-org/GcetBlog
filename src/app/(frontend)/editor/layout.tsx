@@ -7,6 +7,9 @@ import { EditorLayoutClient } from '@/frontend/features/editor/components/editor
 import type { Metadata } from 'next'
 import { getActiveLifecycleWhere } from '@backend/lifecycle/service'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export const metadata: Metadata = {
   title: 'Editor Dashboard',
   robots: {

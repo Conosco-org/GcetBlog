@@ -4,6 +4,9 @@ import { getMeUser } from '@backend/lib/get-me-user'
 import { redirect } from 'next/navigation'
 import { MyCommentsView } from './MyCommentsView'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function MyCommentsPage() {
   const { user } = await getMeUser()
 

@@ -8,6 +8,9 @@ import { Search } from '@backend/search/Component'
 import PageClient from './page.client'
 import { CardPostData } from '@frontend/features/posts/components/post-card'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 type Args = {
   searchParams: Promise<{
     q: string

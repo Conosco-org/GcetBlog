@@ -6,6 +6,9 @@ import { redirect } from 'next/navigation'
 import type { User } from '@shared/types/payload-types'
 import { ContributorTemplatesClient } from '@frontend/features/contributor/components/contributor-templates-client'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function ContributorTemplatesPage({
   searchParams,
 }: {

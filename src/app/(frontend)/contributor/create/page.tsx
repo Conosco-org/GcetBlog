@@ -5,6 +5,9 @@ import { redirect } from 'next/navigation'
 import type { User } from '@shared/types/payload-types'
 import { CreateContentForm } from '@frontend/features/contributor/components/create-content-form'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function CreateContentPage({
   searchParams,
 }: {

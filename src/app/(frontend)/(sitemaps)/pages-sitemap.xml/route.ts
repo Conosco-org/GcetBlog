@@ -3,8 +3,36 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { unstable_cache } from 'next/cache'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
+const isProductionBuild = process.env.NEXT_PHASE === 'phase-production-build'
+
+function getDefaultSitemap() {
+  const SITE_URL =
+    process.env.NEXT_PUBLIC_SERVER_URL ||
+    process.env.VERCEL_PROJECT_PRODUCTION_URL ||
+    'https://example.com'
+  const dateFallback = new Date().toISOString()
+
+  return [
+    {
+      loc: `${SITE_URL}/search`,
+      lastmod: dateFallback,
+    },
+    {
+      loc: `${SITE_URL}/posts`,
+      lastmod: dateFallback,
+    },
+  ]
+}
+
 const getPagesSitemap = unstable_cache(
   async () => {
+    if (isProductionBuild) {
+      return getDefaultSitemap()
+    }
+
     const payload = await getPayload({ config })
     const SITE_URL =
       process.env.NEXT_PUBLIC_SERVER_URL ||
@@ -30,17 +58,7 @@ const getPagesSitemap = unstable_cache(
     })
 
     const dateFallback = new Date().toISOString()
-
-    const defaultSitemap = [
-      {
-        loc: `${SITE_URL}/search`,
-        lastmod: dateFallback,
-      },
-      {
-        loc: `${SITE_URL}/posts`,
-        lastmod: dateFallback,
-      },
-    ]
+    const defaultSitemap = getDefaultSitemap()
 
     const sitemap = results.docs
       ? results.docs

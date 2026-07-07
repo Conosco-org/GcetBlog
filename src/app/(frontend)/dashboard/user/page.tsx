@@ -8,6 +8,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/frontend/components/
 import { Button } from '@frontend/components/ui/button'
 import { Badge } from '@/frontend/components/ui/badge'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function UserDashboardPage() {
   const payload = await getPayload({ config: configPromise })
   const requestHeaders = await headers()

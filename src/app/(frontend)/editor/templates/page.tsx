@@ -5,6 +5,9 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { TemplatesPageClient } from './TemplatesPageClient'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function TemplatesPage({
   searchParams,
 }: {

@@ -22,29 +22,7 @@ import { NewsletterSignup } from '@frontend/features/newsletter/components/newsl
 import { InstagramEmbedLoader } from '@frontend/components/instagram-embed-loader'
 import { publishedVisibilityWhere } from '@frontend/features/posts/lib/post-validation'
 
-export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const publishVisibility = publishedVisibilityWhere()
-  const posts = await payload.find({
-    collection: 'posts',
-    draft: false,
-    limit: 1000,
-    overrideAccess: false,
-    pagination: false,
-    where: {
-      and: [{ _status: { equals: 'published' } }, publishVisibility],
-    },
-    select: {
-      slug: true,
-    },
-  })
-
-  const params = posts.docs.map(({ slug }) => {
-    return { slug }
-  })
-
-  return params
-}
+export const dynamic = 'force-dynamic'
 
 type Args = {
   params: Promise<{

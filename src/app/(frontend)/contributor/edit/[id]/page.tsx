@@ -7,6 +7,9 @@ import { PostForm } from '@/app/(frontend)/editor/posts/[id]/edit/PostForm'
 import type { Post } from '@shared/types/payload-types'
 import { toISTDateTimeInput } from '@shared/lib/date-time-ist'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 interface PageProps {
   params: Promise<{ id: string }>
 }

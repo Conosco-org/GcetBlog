@@ -9,6 +9,9 @@ import React from 'react'
 import type { Metadata } from 'next'
 import { getActiveLifecycleWhere } from '@backend/lifecycle/service'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export const metadata: Metadata = {
   title: 'Contributor Dashboard',
   robots: {

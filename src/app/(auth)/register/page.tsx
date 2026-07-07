@@ -4,6 +4,9 @@ import { SignInLink } from './SignInLink'
 import { RegistrationForm } from '../../../frontend/features/auth/components/register-form'
 import type { Metadata } from 'next'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export const metadata: Metadata = {
   title: 'Register',
   description: 'Create your GCET Blog account',

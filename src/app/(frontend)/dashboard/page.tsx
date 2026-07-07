@@ -4,6 +4,9 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import type { User } from '@/shared/types/payload-types'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function DashboardPage() {
   const payload = await getPayload({ config: configPromise })
   const requestHeaders = await headers()

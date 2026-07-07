@@ -4,6 +4,9 @@ import { headers } from 'next/headers'
 import { redirect, notFound } from 'next/navigation'
 import { TemplateForm } from '../../TemplateForm'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function EditTemplatePage({
   params,
 }: {

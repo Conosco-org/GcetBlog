@@ -6,6 +6,9 @@ import Link from 'next/link'
 import { LogoutButton } from '@frontend/components/shared/logout-button'
 import type { User } from '@/shared/types/payload-types'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function EditorDashboardPage() {
   const payload = await getPayload({ config: configPromise })
   const requestHeaders = await headers()

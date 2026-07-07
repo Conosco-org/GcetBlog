@@ -3,8 +3,17 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { unstable_cache } from 'next/cache'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
+const isProductionBuild = process.env.NEXT_PHASE === 'phase-production-build'
+
 const getPostsSitemap = unstable_cache(
   async () => {
+    if (isProductionBuild) {
+      return []
+    }
+
     const payload = await getPayload({ config })
     const SITE_URL =
       process.env.NEXT_PUBLIC_SERVER_URL ||

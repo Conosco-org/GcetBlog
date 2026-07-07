@@ -18,30 +18,6 @@ import { HeroSection, FeaturesSection, CTASection } from '@frontend/components/l
 import { HomePosts, FeaturedPosts } from '@frontend/features/posts/components'
 import { publishedVisibilityWhere } from '@frontend/features/posts/lib/post-validation'
 
-export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const pages = await payload.find({
-    collection: 'pages',
-    draft: false,
-    limit: 1000,
-    overrideAccess: false,
-    pagination: false,
-    select: {
-      slug: true,
-    },
-  })
-
-  const params = pages.docs
-    ?.filter((doc) => {
-      return doc.slug !== 'home'
-    })
-    .map(({ slug }) => {
-      return { slug }
-    })
-
-  return params
-}
-
 type Args = {
   params: Promise<{
     slug?: string

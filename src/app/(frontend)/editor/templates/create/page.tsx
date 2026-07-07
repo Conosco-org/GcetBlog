@@ -4,6 +4,9 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { TemplateForm } from '../TemplateForm'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function CreateTemplatePage() {
   const payload = await getPayload({ config: configPromise })
   const requestHeaders = await headers()
