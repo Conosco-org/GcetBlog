@@ -62,6 +62,21 @@ export default async function EditorQueuePage({ searchParams }: PageProps) {
   }
 
   const baseWhere: Where = { and: baseConditions }
+  const archivedPostsPromise = payload.find({
+    collection: 'archived-posts',
+    depth: 2,
+    limit,
+    page,
+    sort: '-archivedAt',
+  }).catch(() => ({
+    docs: [],
+    totalDocs: 0,
+    totalPages: 0,
+    page,
+    limit,
+    hasPrevPage: false,
+    hasNextPage: false,
+  }))
 
   // Parallel queries
   const [pendingPosts, pendingComments, archivedPosts] = await Promise.all([
@@ -82,13 +97,7 @@ export default async function EditorQueuePage({ searchParams }: PageProps) {
       page,
       sort: '-createdAt',
     }),
-    payload.find({
-      collection: 'archived-posts',
-      depth: 2,
-      limit,
-      page,
-      sort: '-archivedAt',
-    }),
+    archivedPostsPromise,
   ])
 
   return (

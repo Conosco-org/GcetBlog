@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Card } from '@/frontend/components/ui/card'
 import { QueueTableClient } from './QueueTableClient'
 import { CommentModerationView } from './CommentModerationView'
-import { ArchiveManagerClient } from '../archive/ArchiveManagerClient'
+import { QueueArchiveView } from './QueueArchiveView'
 import type { Post, Comment, ArchivedPost } from '@/shared/types/payload-types'
 
 interface QueueTabsProps {
@@ -117,11 +117,7 @@ export function QueueTabs({
       )}
 
       {activeTab === 'archive' && (
-        <ArchiveManagerClient
-          archivedPosts={archivedPosts}
-          isAdmin={false}
-          config={null}
-        />
+        <QueueArchiveView archivedPosts={archivedPosts} />
       )}
     </>
   )

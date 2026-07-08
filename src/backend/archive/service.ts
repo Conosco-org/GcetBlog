@@ -54,12 +54,7 @@ type ReviewPost = {
   _status?: string
   reviewStatus?: string | null
   archiveStatus?: string | null
-  archivedStatus?: string | null
-  archivedAt?: string | null
-  archivedBy?: string | ArchiveUser | null
-  archiveReason?: 'manual' | 'automated' | null
   reviewQueueAgeStartedAt?: string | null
-  postAgeReferenceTimestamp?: string | null
   statusMessage?: string | null
   createdAt?: string | null
   submittedForReviewAt?: string | null
@@ -73,19 +68,9 @@ type ArchivedPostRecord = {
 }
 
 const activeArchiveWhere: Where = {
-  and: [
-    {
-      or: [
-        { archiveStatus: { exists: false } },
-        { archiveStatus: { equals: 'active' } },
-      ],
-    },
-    {
-      or: [
-        { archivedStatus: { exists: false } },
-        { archivedStatus: { equals: 'active' } },
-      ],
-    },
+  or: [
+    { archiveStatus: { exists: false } },
+    { archiveStatus: { equals: 'active' } },
   ],
 }
 
@@ -97,23 +82,12 @@ export async function getArchiveConfig(payload: Payload): Promise<ArchiveConfigS
       overrideAccess: true,
     }) as ArchiveConfigShape
   } catch {
-    try {
-      const legacyPayload = payload as unknown as {
-        findGlobal: (args: { slug: string; depth: number; overrideAccess: boolean }) => Promise<ArchiveConfigShape>
-      }
-      return await legacyPayload.findGlobal({
-        slug: 'lifecycle-config',
-        depth: 0,
-        overrideAccess: true,
-      })
-    } catch {
-      return {
-        commentDeletionThreshold: 60,
-        postArchiveThreshold: '60-days',
-        autoArchiveEnabled: true,
-        jobSchedule: 'daily',
-        dryRunEnabled: true,
-      }
+    return {
+      commentDeletionThreshold: 60,
+      postArchiveThreshold: '60-days',
+      autoArchiveEnabled: true,
+      jobSchedule: 'daily',
+      dryRunEnabled: true,
     }
   }
 }
@@ -135,161 +109,6 @@ export function getContributorId(post: ReviewPost): string | null {
 
 export function getActiveArchiveWhere(): Where {
   return activeArchiveWhere
-}
-
-function getUserId(value: unknown): string | undefined {
-  if (!value) return undefined
-  if (typeof value === 'string') return value
-  if (typeof value === 'object' && 'id' in value) return String((value as { id: unknown }).id)
-  return undefined
-}
-
-function getRawPostsCollection(payload: Payload) {
-  const db = (payload as unknown as {
-    db?: {
-      connection?: {
-        db?: {
-          collection: (name: string) => {
-            find: (query: Record<string, unknown>) => {
-              limit: (limit: number) => {
-                toArray: () => Promise<Array<Record<string, unknown>>>
-              }
-            }
-          }
-        }
-      }
-    }
-  }).db
-
-  return db?.connection?.db?.collection('posts')
-}
-
-function normalizeRawPost(doc: Record<string, unknown>): ReviewPost {
-  return {
-    ...(doc as ReviewPost),
-    id: String(doc.id || doc._id),
-  }
-}
-
-export async function syncLegacyArchivedPosts(payload: Payload) {
-  const rawPosts = getRawPostsCollection(payload)
-  let legacyArchivedDocs: ReviewPost[] = []
-
-  try {
-    const legacyArchived = await payload.find({
-      collection: 'posts',
-      where: {
-        archivedStatus: {
-          equals: 'archived',
-        },
-      },
-      depth: 1,
-      draft: true,
-      limit: 1000,
-      overrideAccess: true,
-    })
-    legacyArchivedDocs = legacyArchived.docs as ReviewPost[]
-  } catch {
-    legacyArchivedDocs = []
-  }
-
-  if (legacyArchivedDocs.length === 0 && rawPosts) {
-    const rawArchived = await rawPosts.find({ archivedStatus: 'archived' }).limit(1000).toArray()
-    legacyArchivedDocs = rawArchived.map(normalizeRawPost)
-  }
-
-  let synced = 0
-  for (const post of legacyArchivedDocs) {
-    const contributorId = getContributorId(post)
-    if (!contributorId) continue
-
-    const existing = await payload.find({
-      collection: 'archived-posts',
-      where: {
-        post: {
-          equals: post.id,
-        },
-      },
-      depth: 0,
-      limit: 1,
-      overrideAccess: true,
-    })
-
-    if (existing.totalDocs === 0) {
-      await payload.create({
-        collection: 'archived-posts',
-        data: {
-          post: post.id,
-          postTitle: post.title || 'Untitled post',
-          contributor: contributorId,
-          archivedAt: post.archivedAt || new Date().toISOString(),
-          archivedBy: getUserId(post.archivedBy),
-          archiveReason: post.archiveReason || 'manual',
-          statusMessage: post.statusMessage || ARCHIVE_STATUS_MESSAGE,
-          reviewQueueAgeStartedAt: post.reviewQueueAgeStartedAt || post.postAgeReferenceTimestamp || post.submittedForReviewAt || post.createdAt,
-        },
-        overrideAccess: true,
-      })
-    }
-
-    if (post.archiveStatus !== 'archived') {
-      await payload.update({
-        collection: 'posts',
-        id: post.id,
-        data: {
-          archiveStatus: 'archived',
-          statusMessage: post.statusMessage || ARCHIVE_STATUS_MESSAGE,
-          reviewQueueAgeStartedAt: null,
-        },
-        draft: true,
-        overrideAccess: true,
-      })
-    }
-
-    synced++
-  }
-
-  let legacyDeletedDocs: ReviewPost[] = []
-  try {
-    const legacyDeleted = await payload.find({
-      collection: 'posts',
-      where: {
-        archivedStatus: {
-          equals: 'deleted',
-        },
-      },
-      depth: 0,
-      draft: true,
-      limit: 1000,
-      overrideAccess: true,
-    })
-    legacyDeletedDocs = legacyDeleted.docs as ReviewPost[]
-  } catch {
-    legacyDeletedDocs = []
-  }
-
-  if (legacyDeletedDocs.length === 0 && rawPosts) {
-    const rawDeleted = await rawPosts.find({ archivedStatus: 'deleted' }).limit(1000).toArray()
-    legacyDeletedDocs = rawDeleted.map(normalizeRawPost)
-  }
-
-  for (const post of legacyDeletedDocs) {
-    if (post.archiveStatus === 'deleted') continue
-    await payload.update({
-      collection: 'posts',
-      id: post.id,
-      data: {
-        archiveStatus: 'deleted',
-        statusMessage: post.statusMessage || DELETE_STATUS_MESSAGE,
-        reviewQueueAgeStartedAt: null,
-      },
-      draft: true,
-      overrideAccess: true,
-    })
-    synced++
-  }
-
-  return synced
 }
 
 export async function findEligibleCommentsForDeletion(
@@ -325,17 +144,7 @@ export async function findEligiblePostsForArchive(
         { _status: { equals: 'draft' } },
         { reviewStatus: { equals: 'pending_review' } },
         activeArchiveWhere,
-        {
-          or: [
-            { reviewQueueAgeStartedAt: { less_than_equal: daysAgoCutoff(thresholdDays, now) } },
-            {
-              and: [
-                { reviewQueueAgeStartedAt: { exists: false } },
-                { postAgeReferenceTimestamp: { less_than_equal: daysAgoCutoff(thresholdDays, now) } },
-              ],
-            },
-          ],
-        },
+        { reviewQueueAgeStartedAt: { less_than_equal: daysAgoCutoff(thresholdDays, now) } },
       ],
     },
     depth: 1,
@@ -381,8 +190,7 @@ export async function archivePost({
   if (post._status !== 'draft' || post.reviewStatus !== 'pending_review') {
     throw new Error('Post not found in review queue')
   }
-  const legacyStatus = post.archivedStatus
-  if ((post.archiveStatus && post.archiveStatus !== 'active') || (legacyStatus && legacyStatus !== 'active')) {
+  if (post.archiveStatus && post.archiveStatus !== 'active') {
     throw new Error('Post is already archived or deleted')
   }
 
@@ -425,7 +233,7 @@ export async function archivePost({
       archivedBy: user?.id,
       archiveReason: reason,
       statusMessage: ARCHIVE_STATUS_MESSAGE,
-      reviewQueueAgeStartedAt: post.reviewQueueAgeStartedAt || post.postAgeReferenceTimestamp || post.submittedForReviewAt || post.createdAt,
+      reviewQueueAgeStartedAt: post.reviewQueueAgeStartedAt || post.submittedForReviewAt || post.createdAt,
     },
     overrideAccess: true,
   })
