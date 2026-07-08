@@ -537,9 +537,6 @@ export async function runArchiveMaintenance(
 ): Promise<ArchiveRunResult> {
   const now = options.now || new Date()
   const config = await getArchiveConfig(payload)
-  if (!options.dryRun) {
-    await syncLegacyArchivedPosts(payload)
-  }
   const dryRun = options.dryRun ?? Boolean(config.dryRunEnabled)
   const due = options.force || isArchiveScheduleDue(config.lastRunAt, config.jobSchedule, now)
   const errors: ArchiveError[] = []

@@ -4,7 +4,7 @@ import { Archive, Clock, MessageSquare } from 'lucide-react'
 import { Card, CardContent } from '@/frontend/components/ui/card'
 import { PageHeader } from '@frontend/components/base/PageHeader'
 import { QueueTabs } from './QueueTabs'
-import { getActiveArchiveWhere, syncLegacyArchivedPosts } from '@backend/archive/service'
+import { getActiveArchiveWhere } from '@backend/archive/service'
 
 // Force dynamic rendering - no caching
 export const dynamic = 'force-dynamic'
@@ -22,8 +22,6 @@ export default async function EditorQueuePage({ searchParams }: PageProps) {
   const page = Math.max(1, Number(params.page) || 1)
   const limit = Math.max(10, Math.min(100, Number(params.limit) || 10))
   const activeTab = params.tab || 'posts'
-
-  await syncLegacyArchivedPosts(payload)
 
   // First, get all contributor user IDs using pagination to avoid hard limits
   const contributorIds: string[] = []

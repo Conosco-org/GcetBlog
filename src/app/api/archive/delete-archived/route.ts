@@ -31,6 +31,7 @@ export async function DELETE(request: NextRequest) {
     })
 
     revalidatePath('/editor/archive')
+    revalidatePath('/editor/queue')
     revalidatePath('/contributor/drafts')
     revalidatePath('/contributor/submissions')
 
