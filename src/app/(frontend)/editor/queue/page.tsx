@@ -1,10 +1,10 @@
 import { getPayload, type Where } from 'payload'
 import configPromise from '@payload-config'
-import { Clock, MessageSquare, Calendar } from 'lucide-react'
+import { Archive, Clock, MessageSquare } from 'lucide-react'
 import { Card, CardContent } from '@/frontend/components/ui/card'
 import { PageHeader } from '@frontend/components/base/PageHeader'
 import { QueueTabs } from './QueueTabs'
-import { getActiveArchiveWhere } from '@backend/archive/service'
+import { getActiveArchiveWhere, syncLegacyArchivedPosts } from '@backend/archive/service'
 
 // Force dynamic rendering - no caching
 export const dynamic = 'force-dynamic'
@@ -22,6 +22,8 @@ export default async function EditorQueuePage({ searchParams }: PageProps) {
   const page = Math.max(1, Number(params.page) || 1)
   const limit = Math.max(10, Math.min(100, Number(params.limit) || 10))
   const activeTab = params.tab || 'posts'
+
+  await syncLegacyArchivedPosts(payload)
 
   // First, get all contributor user IDs using pagination to avoid hard limits
   const contributorIds: string[] = []
@@ -64,7 +66,7 @@ export default async function EditorQueuePage({ searchParams }: PageProps) {
   const baseWhere: Where = { and: baseConditions }
 
   // Parallel queries
-  const [pendingPosts, pendingComments] = await Promise.all([
+  const [pendingPosts, pendingComments, archivedPosts] = await Promise.all([
     payload.find({
       collection: 'posts',
       where: baseWhere,
@@ -81,6 +83,13 @@ export default async function EditorQueuePage({ searchParams }: PageProps) {
       limit,
       page,
       sort: '-createdAt',
+    }),
+    payload.find({
+      collection: 'archived-posts',
+      depth: 2,
+      limit,
+      page,
+      sort: '-archivedAt',
     }),
   ])
 
@@ -125,11 +134,11 @@ export default async function EditorQueuePage({ searchParams }: PageProps) {
           <CardContent className="pt-6">
             <div className="flex items-start justify-between mb-4">
               <div>
-                <p className="text-muted-foreground text-sm font-medium mb-1">Scheduled Posts</p>
-                <p className="text-4xl font-bold">0</p>
+                <p className="text-muted-foreground text-sm font-medium mb-1">Archived Posts</p>
+                <p className="text-4xl font-bold">{archivedPosts.totalDocs}</p>
               </div>
               <div className="w-12 h-12 bg-purple-500/10 rounded-full flex items-center justify-center">
-                <Calendar className="w-6 h-6 text-purple-500" />
+                <Archive className="w-6 h-6 text-purple-500" />
               </div>
             </div>
           </CardContent>
@@ -141,8 +150,10 @@ export default async function EditorQueuePage({ searchParams }: PageProps) {
         activeTab={activeTab}
         pendingPostsCount={pendingPosts.totalDocs}
         pendingCommentsCount={pendingComments.totalDocs}
+        archivedPostsCount={archivedPosts.totalDocs}
         posts={pendingPosts}
         pendingComments={pendingComments}
+        archivedPosts={archivedPosts.docs}
         query={query}
       />
     </div>

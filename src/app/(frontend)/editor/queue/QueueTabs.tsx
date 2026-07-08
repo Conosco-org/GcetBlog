@@ -4,12 +4,14 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Card } from '@/frontend/components/ui/card'
 import { QueueTableClient } from './QueueTableClient'
 import { CommentModerationView } from './CommentModerationView'
-import type { Post, Comment } from '@/shared/types/payload-types'
+import { ArchiveManagerClient } from '../archive/ArchiveManagerClient'
+import type { Post, Comment, ArchivedPost } from '@/shared/types/payload-types'
 
 interface QueueTabsProps {
   activeTab: string
   pendingPostsCount: number
   pendingCommentsCount: number
+  archivedPostsCount: number
   posts: {
     docs: Post[]
     totalDocs: number
@@ -28,6 +30,7 @@ interface QueueTabsProps {
     hasPrevPage?: boolean
     hasNextPage?: boolean
   }
+  archivedPosts: ArchivedPost[]
   query: string
 }
 
@@ -35,8 +38,10 @@ export function QueueTabs({
   activeTab,
   pendingPostsCount,
   pendingCommentsCount,
+  archivedPostsCount,
   posts,
   pendingComments,
+  archivedPosts,
   query,
 }: QueueTabsProps) {
   const router = useRouter()
@@ -77,6 +82,16 @@ export function QueueTabs({
               Comment Moderation ({pendingCommentsCount})
             </button>
             <button
+              onClick={() => handleTabChange('archive')}
+              className={`px-6 py-4 text-sm font-medium transition-colors ${
+                activeTab === 'archive'
+                  ? 'text-primary border-b-2 border-primary'
+                  : 'text-muted-foreground hover:text-foreground hover:border-b-2 hover:border-muted-foreground'
+              }`}
+            >
+              Archive ({archivedPostsCount})
+            </button>
+            <button
               className="px-6 py-4 text-sm font-medium text-muted-foreground/50 cursor-not-allowed"
               disabled
               title="Coming soon"
@@ -98,6 +113,14 @@ export function QueueTabs({
       {activeTab === 'comments' && (
         <CommentModerationView
           pendingComments={pendingComments}
+        />
+      )}
+
+      {activeTab === 'archive' && (
+        <ArchiveManagerClient
+          archivedPosts={archivedPosts}
+          isAdmin={false}
+          config={null}
         />
       )}
     </>

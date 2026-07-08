@@ -6,6 +6,7 @@ import type { Metadata } from 'next'
 
 import { PageHeader } from '@frontend/components/base/PageHeader'
 import { ArchiveManagerClient } from './ArchiveManagerClient'
+import { syncLegacyArchivedPosts } from '@backend/archive/service'
 
 export const metadata: Metadata = {
   title: 'Archive',
@@ -26,6 +27,8 @@ export default async function ArchivePage() {
   const isAdmin = userRole === 'admin' || typedUser.isAdmin === true
   const isEditor = userRole === 'editor'
   if (!isAdmin && !isEditor) redirect('/contributor')
+
+  await syncLegacyArchivedPosts(payload)
 
   const [archivedPosts, archiveConfig] = await Promise.all([
     payload.find({

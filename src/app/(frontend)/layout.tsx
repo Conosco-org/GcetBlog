@@ -23,10 +23,6 @@ const sora = Sora({
 })
 
 export const metadata: Metadata = {
-  title: {
-    default: 'GCET Blog',
-    template: '%s | GCET Blog',
-  },
   description: 'Official blog platform for Geethanjali College of Engineering and Technology',
   icons: {
     icon: '/gcet-logo.png',

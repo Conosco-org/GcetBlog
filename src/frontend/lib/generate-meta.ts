@@ -32,7 +32,7 @@ export const generateMeta = async (args: {
   // Sanitize the default Payload seed title
   const sanitizedTitle =
     !rawTitle || rawTitle === 'Payload Website Template' ? 'GCET Blog' : rawTitle
-  const title = sanitizedTitle === 'GCET Blog' ? 'GCET Blog' : sanitizedTitle + ' | GCET Blog'
+  const title = sanitizedTitle
 
   return {
     description: doc?.meta?.description,
