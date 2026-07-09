@@ -23,6 +23,7 @@ import { Feedback } from './collections/editorial/feedback'
 import { Templates } from './collections/editorial/templates'
 import { RejectionNotifications } from './collections/editorial/rejection-notifications'
 import { ArchivedPosts } from './collections/editorial/archived-posts'
+import { ArchivedComments } from './collections/editorial/archived-comments'
 import {
   newsletterDailyDigest,
   newsletterWeeklyDigest,
@@ -126,6 +127,7 @@ export default buildConfig({
     NewsletterEvents,
     RejectionNotifications,
     ArchivedPosts,
+    ArchivedComments,
     Notifications,
   ],
   cors: [getServerSideURL()].filter(Boolean),

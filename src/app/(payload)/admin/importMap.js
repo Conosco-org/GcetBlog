@@ -27,6 +27,7 @@ import { default as default_77b5e5c794d565b6c7b0b104a52c6f86 } from '@frontend/c
 import { default as default_c303825a2b50e4e99234032eb4135c1f } from '@frontend/components/admin-ui/before-login'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
+/** @type import('payload').ImportMap */
 export const importMap = {
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalField": RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e,

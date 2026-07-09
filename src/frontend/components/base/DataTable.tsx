@@ -19,7 +19,7 @@ export interface Column<T> {
   /** Unique key for the column */
   key: string
   /** Column header label */
-  header: string
+  header: React.ReactNode
   /** Render function for the cell content */
   render: (item: T) => React.ReactNode
   /** Additional className for the column */

@@ -19,7 +19,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/frontend/components/ui/alert-dialog'
-import { CheckCircle, XCircle, User, FileText, Clock, Loader2 } from 'lucide-react'
+import { Archive, CheckCircle, XCircle, User, FileText, Clock, Loader2 } from 'lucide-react'
 import { approveComments, deleteComments } from '@/frontend/features/comments/lib/comment-actions'
 import { formatDistanceToNow } from 'date-fns'
 import Link from 'next/link'
@@ -49,6 +49,7 @@ export function CommentModerationView({
     commentIds: [],
   })
   const [isRejecting, setIsRejecting] = useState(false)
+  const [isArchiving, setIsArchiving] = useState(false)
 
   // Filter comments based on search
   const filteredComments = pendingComments.docs.filter((comment) => {
@@ -97,6 +98,36 @@ export function CommentModerationView({
     setRejectDialog({ open: true, commentIds: ids })
   }
 
+  const handleArchive = async (commentId?: string) => {
+    const ids = commentId ? [commentId] : selectedComments
+    if (ids.length === 0 || !confirm(`Archive ${ids.length} pending comment(s)?`)) return
+    setIsArchiving(true)
+    try {
+      const response = await fetch('/api/archive/bulk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'comments', ids }),
+      })
+      const data = await response.json()
+      if (!response.ok) throw new Error(data.message || 'Failed to archive comments')
+      toast({
+        title: 'Archive complete',
+        description: data.message,
+        variant: data.failed?.length ? 'destructive' : 'default',
+      })
+      setSelectedComments([])
+      router.refresh()
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'Failed to archive comments',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsArchiving(false)
+    }
+  }
+
   const confirmReject = async () => {
     setIsRejecting(true)
     const result = await deleteComments(rejectDialog.commentIds)
@@ -135,6 +166,10 @@ export function CommentModerationView({
                 <Button size="sm" variant="outline" onClick={() => handleApprove()}>
                   <CheckCircle className="w-4 h-4 mr-1" />
                   Approve
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => handleArchive()} disabled={isArchiving}>
+                  <Archive className="w-4 h-4 mr-1" />
+                  {isArchiving ? 'Archiving...' : 'Archive'}
                 </Button>
                 <Button size="sm" variant="destructive" onClick={() => handleReject()}>
                   <XCircle className="w-4 h-4 mr-1" />
@@ -221,6 +256,16 @@ export function CommentModerationView({
                     >
                       <CheckCircle className="w-4 h-4 mr-1" />
                       Approve
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      title="Archive comment"
+                      aria-label="Archive comment"
+                      disabled={isArchiving}
+                      onClick={() => handleArchive(comment.id)}
+                    >
+                      <Archive className="w-4 h-4" />
                     </Button>
                     <Button
                       size="sm"

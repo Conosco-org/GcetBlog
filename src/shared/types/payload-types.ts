@@ -83,6 +83,7 @@ export interface Config {
     'newsletter-events': NewsletterEvent;
     'rejection-notifications': RejectionNotification;
     'archived-posts': ArchivedPost;
+    'archived-comments': ArchivedComment;
     notifications: Notification;
     redirects: Redirect;
     forms: Form;
@@ -112,6 +113,7 @@ export interface Config {
     'newsletter-events': NewsletterEventsSelect<false> | NewsletterEventsSelect<true>;
     'rejection-notifications': RejectionNotificationsSelect<false> | RejectionNotificationsSelect<true>;
     'archived-posts': ArchivedPostsSelect<false> | ArchivedPostsSelect<true>;
+    'archived-comments': ArchivedCommentsSelect<false> | ArchivedCommentsSelect<true>;
     notifications: NotificationsSelect<false> | NotificationsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
@@ -1147,7 +1149,11 @@ export interface Comment {
    */
   authorEmail?: string | null;
   content: string;
-  status?: ('pending' | 'approved' | 'rejected' | 'spam') | null;
+  status?: ('pending' | 'approved' | 'rejected' | 'spam' | 'archived') | null;
+  /**
+   * When the current pending moderation queue age started.
+   */
+  reviewQueueAgeStartedAt?: string | null;
   /**
    * Parent comment (for replies/threading)
    */
@@ -1567,6 +1573,31 @@ export interface ArchivedPost {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "archived-comments".
+ */
+export interface ArchivedComment {
+  id: string;
+  /**
+   * Source pending comment retained until archive expiry.
+   */
+  comment: string | Comment;
+  contentSnapshot: string;
+  post: string | Post;
+  author?: (string | null) | User;
+  authorName?: string | null;
+  authorEmail?: string | null;
+  archivedAt: string;
+  archivedBy?: (string | null) | User;
+  archiveReason: 'automated' | 'manual';
+  /**
+   * Queue age timestamp from the source comment when archived.
+   */
+  reviewQueueAgeStartedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "notifications".
  */
 export interface Notification {
@@ -1878,6 +1909,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'archived-posts';
         value: string | ArchivedPost;
+      } | null)
+    | ({
+        relationTo: 'archived-comments';
+        value: string | ArchivedComment;
       } | null)
     | ({
         relationTo: 'notifications';
@@ -2372,6 +2407,7 @@ export interface CommentsSelect<T extends boolean = true> {
   authorEmail?: T;
   content?: T;
   status?: T;
+  reviewQueueAgeStartedAt?: T;
   parent?: T;
   moderatorNotes?: T;
   moderatedBy?: T;
@@ -2538,6 +2574,24 @@ export interface ArchivedPostsSelect<T extends boolean = true> {
   archivedBy?: T;
   archiveReason?: T;
   statusMessage?: T;
+  reviewQueueAgeStartedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "archived-comments_select".
+ */
+export interface ArchivedCommentsSelect<T extends boolean = true> {
+  comment?: T;
+  contentSnapshot?: T;
+  post?: T;
+  author?: T;
+  authorName?: T;
+  authorEmail?: T;
+  archivedAt?: T;
+  archivedBy?: T;
+  archiveReason?: T;
   reviewQueueAgeStartedAt?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -2889,17 +2943,29 @@ export interface Footer {
 export interface ArchiveConfig {
   id: string;
   /**
-   * Age in days after which pending comments are deleted by archive maintenance.
+   * Pending-review age after which posts are archived.
    */
-  commentDeletionThreshold: number;
+  postQueueRetentionDays: number;
   /**
-   * Review queue age after which pending contributor posts are moved to archive.
+   * Days archived posts remain restorable.
    */
-  postArchiveThreshold: '15-days' | '30-days' | '60-days' | '90-days';
+  postArchiveRetentionDays: number;
   /**
-   * Enable automatic post archiving during archive maintenance.
+   * Pending age after which comments are archived.
    */
-  autoArchiveEnabled?: boolean | null;
+  commentQueueRetentionDays: number;
+  /**
+   * Days archived comments remain restorable.
+   */
+  commentArchiveRetentionDays: number;
+  /**
+   * Automatically archive stale pending posts.
+   */
+  autoArchivePostsEnabled?: boolean | null;
+  /**
+   * Automatically archive stale pending comments.
+   */
+  autoArchiveCommentsEnabled?: boolean | null;
   /**
    * How often the hourly archive task should perform real maintenance.
    */
@@ -2984,9 +3050,12 @@ export interface FooterSelect<T extends boolean = true> {
  * via the `definition` "archive-config_select".
  */
 export interface ArchiveConfigSelect<T extends boolean = true> {
-  commentDeletionThreshold?: T;
-  postArchiveThreshold?: T;
-  autoArchiveEnabled?: T;
+  postQueueRetentionDays?: T;
+  postArchiveRetentionDays?: T;
+  commentQueueRetentionDays?: T;
+  commentArchiveRetentionDays?: T;
+  autoArchivePostsEnabled?: T;
+  autoArchiveCommentsEnabled?: T;
   jobSchedule?: T;
   dryRunEnabled?: T;
   lastRunAt?: T;

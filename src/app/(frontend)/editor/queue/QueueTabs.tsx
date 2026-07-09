@@ -5,13 +5,14 @@ import { Card } from '@/frontend/components/ui/card'
 import { QueueTableClient } from './QueueTableClient'
 import { CommentModerationView } from './CommentModerationView'
 import { QueueArchiveView } from './QueueArchiveView'
-import type { Post, Comment, ArchivedPost } from '@/shared/types/payload-types'
+import type { Post, Comment, ArchivedPost, ArchivedComment } from '@/shared/types/payload-types'
+import type { ArchiveConfigView } from './ArchiveSettingsPanel'
 
 interface QueueTabsProps {
   activeTab: string
   pendingPostsCount: number
   pendingCommentsCount: number
-  archivedPostsCount: number
+  archivedItemsCount: number
   posts: {
     docs: Post[]
     totalDocs: number
@@ -30,18 +31,34 @@ interface QueueTabsProps {
     hasPrevPage?: boolean
     hasNextPage?: boolean
   }
-  archivedPosts: ArchivedPost[]
+  archivedPosts: ArchivePageResult<ArchivedPost>
+  archivedComments: ArchivePageResult<ArchivedComment>
+  archiveConfig: ArchiveConfigView
+  isAdmin: boolean
   query: string
+}
+
+interface ArchivePageResult<T> {
+  docs: T[]
+  totalDocs: number
+  totalPages: number
+  page?: number
+  limit?: number
+  hasPrevPage?: boolean
+  hasNextPage?: boolean
 }
 
 export function QueueTabs({
   activeTab,
   pendingPostsCount,
   pendingCommentsCount,
-  archivedPostsCount,
+  archivedItemsCount,
   posts,
   pendingComments,
   archivedPosts,
+  archivedComments,
+  archiveConfig,
+  isAdmin,
   query,
 }: QueueTabsProps) {
   const router = useRouter()
@@ -89,7 +106,7 @@ export function QueueTabs({
                   : 'text-muted-foreground hover:text-foreground hover:border-b-2 hover:border-muted-foreground'
               }`}
             >
-              Archive ({archivedPostsCount})
+              Archive ({archivedItemsCount})
             </button>
             <button
               className="px-6 py-4 text-sm font-medium text-muted-foreground/50 cursor-not-allowed"
@@ -117,7 +134,12 @@ export function QueueTabs({
       )}
 
       {activeTab === 'archive' && (
-        <QueueArchiveView archivedPosts={archivedPosts} />
+        <QueueArchiveView
+          archivedPosts={archivedPosts}
+          archivedComments={archivedComments}
+          config={archiveConfig}
+          isAdmin={isAdmin}
+        />
       )}
     </>
   )

@@ -104,10 +104,19 @@ export const Comments: CollectionConfig = {
         { label: 'Approved', value: 'approved' },
         { label: 'Rejected', value: 'rejected' },
         { label: 'Spam', value: 'spam' },
+        { label: 'Archived', value: 'archived' },
       ],
       defaultValue: 'pending',
       access: {
         update: isEditorFieldAccess,
+      },
+    },
+    {
+      name: 'reviewQueueAgeStartedAt',
+      type: 'date',
+      admin: {
+        readOnly: true,
+        description: 'When the current pending moderation queue age started.',
       },
     },
     {
@@ -322,7 +331,7 @@ export const Comments: CollectionConfig = {
   ],
   hooks: {
     beforeChange: [
-      ({ req, operation, data }) => {
+      ({ req, operation, data, originalDoc }) => {
         // Auto-approve comments from editors
         if (operation === 'create' && req.user) {
           const user = req.user as { role: string }
@@ -341,6 +350,23 @@ export const Comments: CollectionConfig = {
         // Set author from authenticated user if not provided
         if (operation === 'create' && req.user && !data.author) {
           data.author = req.user.id
+        }
+
+        if (operation === 'create' && data.status === 'pending') {
+          data.reviewQueueAgeStartedAt = data.reviewQueueAgeStartedAt || new Date()
+        }
+
+        if (operation === 'update' && originalDoc) {
+          const previousStatus = originalDoc.status
+          const nextStatus = data.status
+
+          if (previousStatus !== 'pending' && nextStatus === 'pending') {
+            data.reviewQueueAgeStartedAt = new Date()
+          }
+
+          if (previousStatus === 'pending' && nextStatus && nextStatus !== 'pending') {
+            data.reviewQueueAgeStartedAt = null
+          }
         }
       },
     ],

@@ -1,10 +1,11 @@
 import { getPayload, type Where } from 'payload'
 import configPromise from '@payload-config'
+import { headers } from 'next/headers'
 import { Archive, Clock, MessageSquare } from 'lucide-react'
 import { Card, CardContent } from '@/frontend/components/ui/card'
 import { PageHeader } from '@frontend/components/base/PageHeader'
 import { QueueTabs } from './QueueTabs'
-import { getActiveArchiveWhere } from '@backend/archive/service'
+import { getActiveArchiveWhere, getArchiveConfig } from '@backend/archive/service'
 
 // Force dynamic rendering - no caching
 export const dynamic = 'force-dynamic'
@@ -17,6 +18,10 @@ interface PageProps {
 export default async function EditorQueuePage({ searchParams }: PageProps) {
   const params = await searchParams
   const payload = await getPayload({ config: configPromise })
+  const requestHeaders = await headers()
+  const { user } = await payload.auth({ headers: requestHeaders })
+  const typedUser = user as { role?: string; isAdmin?: boolean } | null
+  const isAdmin = typedUser?.role === 'admin' || typedUser?.isAdmin === true
 
   const query = params.q || ''
   const page = Math.max(1, Number(params.page) || 1)
@@ -77,9 +82,24 @@ export default async function EditorQueuePage({ searchParams }: PageProps) {
     hasPrevPage: false,
     hasNextPage: false,
   }))
+  const archivedCommentsPromise = payload.find({
+    collection: 'archived-comments',
+    depth: 2,
+    limit,
+    page,
+    sort: '-archivedAt',
+  }).catch(() => ({
+    docs: [],
+    totalDocs: 0,
+    totalPages: 0,
+    page,
+    limit,
+    hasPrevPage: false,
+    hasNextPage: false,
+  }))
 
   // Parallel queries
-  const [pendingPosts, pendingComments, archivedPosts] = await Promise.all([
+  const [pendingPosts, pendingComments, archivedPosts, archivedComments, archiveConfig] = await Promise.all([
     payload.find({
       collection: 'posts',
       where: baseWhere,
@@ -98,6 +118,8 @@ export default async function EditorQueuePage({ searchParams }: PageProps) {
       sort: '-createdAt',
     }),
     archivedPostsPromise,
+    archivedCommentsPromise,
+    getArchiveConfig(payload),
   ])
 
   return (
@@ -141,8 +163,8 @@ export default async function EditorQueuePage({ searchParams }: PageProps) {
           <CardContent className="pt-6">
             <div className="flex items-start justify-between mb-4">
               <div>
-                <p className="text-muted-foreground text-sm font-medium mb-1">Archived Posts</p>
-                <p className="text-4xl font-bold">{archivedPosts.totalDocs}</p>
+                <p className="text-muted-foreground text-sm font-medium mb-1">Archived Items</p>
+                <p className="text-4xl font-bold">{archivedPosts.totalDocs + archivedComments.totalDocs}</p>
               </div>
               <div className="w-12 h-12 bg-purple-500/10 rounded-full flex items-center justify-center">
                 <Archive className="w-6 h-6 text-purple-500" />
@@ -157,10 +179,13 @@ export default async function EditorQueuePage({ searchParams }: PageProps) {
         activeTab={activeTab}
         pendingPostsCount={pendingPosts.totalDocs}
         pendingCommentsCount={pendingComments.totalDocs}
-        archivedPostsCount={archivedPosts.totalDocs}
+        archivedItemsCount={archivedPosts.totalDocs + archivedComments.totalDocs}
         posts={pendingPosts}
         pendingComments={pendingComments}
-        archivedPosts={archivedPosts.docs}
+        archivedPosts={archivedPosts}
+        archivedComments={archivedComments}
+        archiveConfig={archiveConfig}
+        isAdmin={isAdmin}
         query={query}
       />
     </div>

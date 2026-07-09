@@ -1,22 +1,28 @@
 import type { Payload, Where } from 'payload'
 
 import {
-  ARCHIVE_RETENTION_DAYS,
-  ARCHIVE_STATUS_MESSAGE,
-  DELETE_STATUS_MESSAGE,
+  DEFAULT_COMMENT_ARCHIVE_RETENTION_DAYS,
+  DEFAULT_COMMENT_QUEUE_RETENTION_DAYS,
+  DEFAULT_POST_ARCHIVE_RETENTION_DAYS,
+  DEFAULT_POST_QUEUE_RETENTION_DAYS,
   RESTORE_STATUS_MESSAGE,
+  getArchiveStatusMessage,
+  getDeleteStatusMessage,
 } from './constants'
 import {
   daysAgoCutoff,
-  getPostArchiveThresholdDays,
-  isArchivedPostRestorable,
+  isArchivedItemRestorable,
   isArchiveScheduleDue,
+  normalizeRetentionDays,
 } from './helpers'
 
-interface ArchiveConfigShape {
-  commentDeletionThreshold?: number | null
-  postArchiveThreshold?: string | null
-  autoArchiveEnabled?: boolean | null
+export interface ArchiveConfigShape {
+  postQueueRetentionDays?: number | null
+  postArchiveRetentionDays?: number | null
+  commentQueueRetentionDays?: number | null
+  commentArchiveRetentionDays?: number | null
+  autoArchivePostsEnabled?: boolean | null
+  autoArchiveCommentsEnabled?: boolean | null
   jobSchedule?: string | null
   dryRunEnabled?: boolean | null
   lastRunAt?: string | null
@@ -38,10 +44,11 @@ interface ArchiveError {
   message: string
 }
 
-interface ArchiveRunResult {
-  commentsDeleted: number
+export interface ArchiveRunResult {
+  commentsArchived: number
   postsArchived: number
-  archiveRecordsDeleted: number
+  archivedCommentsDeleted: number
+  archivedPostsDeleted: number
   skipped: boolean
   dryRun: boolean
   errors: ArchiveError[]
@@ -55,15 +62,28 @@ type ReviewPost = {
   reviewStatus?: string | null
   archiveStatus?: string | null
   reviewQueueAgeStartedAt?: string | null
-  statusMessage?: string | null
-  createdAt?: string | null
-  submittedForReviewAt?: string | null
+}
+
+type PendingComment = {
+  id: string
+  content?: string | null
+  status?: string | null
+  post?: string | { id: string } | null
+  author?: string | { id: string; name?: string | null; email?: string | null } | null
+  authorName?: string | null
+  authorEmail?: string | null
+  reviewQueueAgeStartedAt?: string | null
 }
 
 type ArchivedPostRecord = {
   id: string
   post?: string | ReviewPost | null
-  postTitle?: string | null
+  archivedAt?: string | null
+}
+
+type ArchivedCommentRecord = {
+  id: string
+  comment?: string | PendingComment | null
   archivedAt?: string | null
 }
 
@@ -74,21 +94,53 @@ const activeArchiveWhere: Where = {
   ],
 }
 
-export async function getArchiveConfig(payload: Payload): Promise<ArchiveConfigShape> {
+export const ARCHIVE_CONFIG_DEFAULTS = {
+  postQueueRetentionDays: DEFAULT_POST_QUEUE_RETENTION_DAYS,
+  postArchiveRetentionDays: DEFAULT_POST_ARCHIVE_RETENTION_DAYS,
+  commentQueueRetentionDays: DEFAULT_COMMENT_QUEUE_RETENTION_DAYS,
+  commentArchiveRetentionDays: DEFAULT_COMMENT_ARCHIVE_RETENTION_DAYS,
+  autoArchivePostsEnabled: true,
+  autoArchiveCommentsEnabled: true,
+  jobSchedule: 'daily',
+  dryRunEnabled: true,
+} as const
+
+export function normalizeArchiveConfig(config: ArchiveConfigShape = {}) {
+  return {
+    postQueueRetentionDays: normalizeRetentionDays(
+      config.postQueueRetentionDays,
+      ARCHIVE_CONFIG_DEFAULTS.postQueueRetentionDays,
+    ),
+    postArchiveRetentionDays: normalizeRetentionDays(
+      config.postArchiveRetentionDays,
+      ARCHIVE_CONFIG_DEFAULTS.postArchiveRetentionDays,
+    ),
+    commentQueueRetentionDays: normalizeRetentionDays(
+      config.commentQueueRetentionDays,
+      ARCHIVE_CONFIG_DEFAULTS.commentQueueRetentionDays,
+    ),
+    commentArchiveRetentionDays: normalizeRetentionDays(
+      config.commentArchiveRetentionDays,
+      ARCHIVE_CONFIG_DEFAULTS.commentArchiveRetentionDays,
+    ),
+    autoArchivePostsEnabled: config.autoArchivePostsEnabled !== false,
+    autoArchiveCommentsEnabled: config.autoArchiveCommentsEnabled !== false,
+    jobSchedule: config.jobSchedule || ARCHIVE_CONFIG_DEFAULTS.jobSchedule,
+    dryRunEnabled: config.dryRunEnabled !== false,
+    lastRunAt: config.lastRunAt || null,
+  }
+}
+
+export async function getArchiveConfig(payload: Payload) {
   try {
-    return await payload.findGlobal({
+    const config = await payload.findGlobal({
       slug: 'archive-config',
       depth: 0,
       overrideAccess: true,
     }) as ArchiveConfigShape
+    return normalizeArchiveConfig(config)
   } catch {
-    return {
-      commentDeletionThreshold: 60,
-      postArchiveThreshold: '60-days',
-      autoArchiveEnabled: true,
-      jobSchedule: 'daily',
-      dryRunEnabled: true,
-    }
+    return normalizeArchiveConfig()
   }
 }
 
@@ -100,34 +152,39 @@ export function getContributorId(post: ReviewPost): string | null {
   if (typeof firstAuthor === 'object' && firstAuthor && 'id' in firstAuthor) {
     return String((firstAuthor as { id: unknown }).id)
   }
-  if (firstAuthor && typeof firstAuthor === 'object' && typeof firstAuthor.toString === 'function') {
-    const value = firstAuthor.toString()
-    return value === '[object Object]' ? null : value
-  }
   return null
+}
+
+function getRelationshipId(value: string | { id: string } | null | undefined): string | null {
+  if (typeof value === 'string') return value
+  return value?.id ? String(value.id) : null
 }
 
 export function getActiveArchiveWhere(): Where {
   return activeArchiveWhere
 }
 
-export async function findEligibleCommentsForDeletion(
+export async function findEligibleCommentsForArchive(
   payload: Payload,
   config: ArchiveConfigShape,
   now = new Date(),
 ) {
-  const commentThreshold = config.commentDeletionThreshold || 60
+  const normalized = normalizeArchiveConfig(config)
   return payload.find({
     collection: 'comments',
     where: {
       and: [
         { status: { equals: 'pending' } },
-        { createdAt: { less_than_equal: daysAgoCutoff(commentThreshold, now) } },
+        {
+          reviewQueueAgeStartedAt: {
+            less_than_equal: daysAgoCutoff(normalized.commentQueueRetentionDays, now),
+          },
+        },
       ],
     },
     depth: 0,
     limit: 1000,
-    sort: 'createdAt',
+    sort: 'reviewQueueAgeStartedAt',
   })
 }
 
@@ -136,7 +193,7 @@ export async function findEligiblePostsForArchive(
   config: ArchiveConfigShape,
   now = new Date(),
 ) {
-  const thresholdDays = getPostArchiveThresholdDays(config.postArchiveThreshold)
+  const normalized = normalizeArchiveConfig(config)
   return payload.find({
     collection: 'posts',
     where: {
@@ -144,7 +201,11 @@ export async function findEligiblePostsForArchive(
         { _status: { equals: 'draft' } },
         { reviewStatus: { equals: 'pending_review' } },
         activeArchiveWhere,
-        { reviewQueueAgeStartedAt: { less_than_equal: daysAgoCutoff(thresholdDays, now) } },
+        {
+          reviewQueueAgeStartedAt: {
+            less_than_equal: daysAgoCutoff(normalized.postQueueRetentionDays, now),
+          },
+        },
       ],
     },
     depth: 1,
@@ -154,15 +215,29 @@ export async function findEligiblePostsForArchive(
   })
 }
 
-export async function findExpiredArchivedPosts(payload: Payload, now = new Date()) {
+export async function findExpiredArchivedPosts(
+  payload: Payload,
+  retentionDays: number,
+  now = new Date(),
+) {
   return payload.find({
     collection: 'archived-posts',
-    where: {
-      archivedAt: {
-        less_than_equal: daysAgoCutoff(ARCHIVE_RETENTION_DAYS, now),
-      },
-    },
+    where: { archivedAt: { less_than_equal: daysAgoCutoff(retentionDays, now) } },
     depth: 2,
+    limit: 1000,
+    sort: 'archivedAt',
+  })
+}
+
+export async function findExpiredArchivedComments(
+  payload: Payload,
+  retentionDays: number,
+  now = new Date(),
+) {
+  return payload.find({
+    collection: 'archived-comments',
+    where: { archivedAt: { less_than_equal: daysAgoCutoff(retentionDays, now) } },
+    depth: 1,
     limit: 1000,
     sort: 'archivedAt',
   })
@@ -173,12 +248,17 @@ export async function archivePost({
   postId,
   user,
   reason = 'manual',
+  retentionDays,
 }: {
   payload: Payload
   postId: string
   user?: ArchiveUser | null
   reason?: 'manual' | 'automated'
+  retentionDays?: number
 }) {
+  const config = retentionDays ? null : await getArchiveConfig(payload)
+  const archiveRetentionDays = retentionDays || config!.postArchiveRetentionDays
+  const statusMessage = getArchiveStatusMessage(archiveRetentionDays)
   const post = await payload.findByID({
     collection: 'posts',
     id: postId,
@@ -186,8 +266,7 @@ export async function archivePost({
     draft: true,
   }) as ReviewPost | null
 
-  if (!post) throw new Error('Post not found in review queue')
-  if (post._status !== 'draft' || post.reviewStatus !== 'pending_review') {
+  if (!post || post._status !== 'draft' || post.reviewStatus !== 'pending_review') {
     throw new Error('Post not found in review queue')
   }
   if (post.archiveStatus && post.archiveStatus !== 'active') {
@@ -206,79 +285,148 @@ export async function archivePost({
     throw new Error('Only contributor posts can be archived from the review queue')
   }
 
-  const archivedAt = new Date().toISOString()
-
   const existingArchive = await payload.find({
     collection: 'archived-posts',
-    where: {
-      post: {
-        equals: postId,
-      },
-    },
+    where: { post: { equals: postId } },
     depth: 0,
     limit: 1,
     overrideAccess: true,
   })
-  if (existingArchive.totalDocs > 0) {
-    throw new Error('Post is already archived')
-  }
+  if (existingArchive.totalDocs > 0) throw new Error('Post is already archived')
 
-  await payload.create({
+  const archive = await payload.create({
     collection: 'archived-posts',
     data: {
       post: post.id,
       postTitle: post.title || 'Untitled post',
       contributor: contributorId,
-      archivedAt,
+      archivedAt: new Date().toISOString(),
       archivedBy: user?.id,
       archiveReason: reason,
-      statusMessage: ARCHIVE_STATUS_MESSAGE,
-      reviewQueueAgeStartedAt: post.reviewQueueAgeStartedAt || post.submittedForReviewAt || post.createdAt,
+      statusMessage,
+      reviewQueueAgeStartedAt: post.reviewQueueAgeStartedAt,
     },
     overrideAccess: true,
   })
 
-  return payload.update({
-    collection: 'posts',
-    id: postId,
-    data: {
-      archiveStatus: 'archived',
-      statusMessage: ARCHIVE_STATUS_MESSAGE,
-      reviewQueueAgeStartedAt: null,
-    },
-    draft: true,
+  try {
+    return await payload.update({
+      collection: 'posts',
+      id: postId,
+      data: {
+        archiveStatus: 'archived',
+        statusMessage,
+        reviewQueueAgeStartedAt: null,
+      },
+      draft: true,
+      overrideAccess: true,
+    })
+  } catch (error) {
+    await payload.delete({
+      collection: 'archived-posts',
+      id: archive.id,
+      overrideAccess: true,
+    })
+    throw error
+  }
+}
+
+export async function archiveComment({
+  payload,
+  commentId,
+  user,
+  reason = 'manual',
+}: {
+  payload: Payload
+  commentId: string
+  user?: ArchiveUser | null
+  reason?: 'manual' | 'automated'
+}) {
+  const comment = await payload.findByID({
+    collection: 'comments',
+    id: commentId,
+    depth: 1,
+    overrideAccess: true,
+  }) as PendingComment | null
+  if (!comment || comment.status !== 'pending') {
+    throw new Error('Comment not found in moderation queue')
+  }
+
+  const postId = getRelationshipId(comment.post)
+  if (!postId) throw new Error('Comment has no source post')
+  const existingArchive = await payload.find({
+    collection: 'archived-comments',
+    where: { comment: { equals: commentId } },
+    depth: 0,
+    limit: 1,
     overrideAccess: true,
   })
+  if (existingArchive.totalDocs > 0) throw new Error('Comment is already archived')
+
+  const authorId = getRelationshipId(comment.author)
+  const populatedAuthor = typeof comment.author === 'object' ? comment.author : null
+  const archive = await payload.create({
+    collection: 'archived-comments',
+    data: {
+      comment: comment.id,
+      contentSnapshot: comment.content || '',
+      post: postId,
+      author: authorId || undefined,
+      authorName: populatedAuthor?.name || comment.authorName || undefined,
+      authorEmail: populatedAuthor?.email || comment.authorEmail || undefined,
+      archivedAt: new Date().toISOString(),
+      archivedBy: user?.id,
+      archiveReason: reason,
+      reviewQueueAgeStartedAt: comment.reviewQueueAgeStartedAt,
+    },
+    overrideAccess: true,
+  })
+
+  try {
+    return await payload.update({
+      collection: 'comments',
+      id: commentId,
+      data: {
+        status: 'archived',
+        reviewQueueAgeStartedAt: null,
+      },
+      overrideAccess: true,
+    })
+  } catch (error) {
+    await payload.delete({
+      collection: 'archived-comments',
+      id: archive.id,
+      overrideAccess: true,
+    })
+    throw error
+  }
 }
 
 export async function restoreArchivedPost({
   payload,
   archiveId,
-  user,
 }: {
   payload: Payload
   archiveId: string
   user?: ArchiveUser | null
 }) {
-  void user
+  const config = await getArchiveConfig(payload)
   const archive = await payload.findByID({
     collection: 'archived-posts',
     id: archiveId,
     depth: 2,
     overrideAccess: true,
   }) as ArchivedPostRecord | null
-
   if (!archive) throw new Error('Post not found in archive')
-  if (!isArchivedPostRestorable(archive.archivedAt)) {
-    throw new Error('Post cannot be restored after 30 days')
+  if (!isArchivedItemRestorable(archive.archivedAt, config.postArchiveRetentionDays)) {
+    throw new Error(`Post cannot be restored after ${config.postArchiveRetentionDays} days`)
   }
 
-  const postId = typeof archive.post === 'object' && archive.post ? archive.post.id : archive.post
+  const postId = getRelationshipId(archive.post)
   if (!postId) throw new Error('Post not found in archive')
-
   const updatedPost = await payload.update({
     collection: 'posts',
-    id: String(postId),
+    id: postId,
     data: {
       archiveStatus: 'active',
       reviewStatus: 'pending_review',
@@ -288,55 +436,105 @@ export async function restoreArchivedPost({
     draft: true,
     overrideAccess: true,
   })
-
-  await payload.delete({
-    collection: 'archived-posts',
-    id: archiveId,
-    overrideAccess: true,
-  })
-
+  await payload.delete({ collection: 'archived-posts', id: archiveId, overrideAccess: true })
   return updatedPost
 }
 
-export async function deleteArchivedPost({
+export async function restoreArchivedComment({
   payload,
   archiveId,
-  user,
 }: {
   payload: Payload
   archiveId: string
   user?: ArchiveUser | null
 }) {
-  void user
+  const config = await getArchiveConfig(payload)
+  const archive = await payload.findByID({
+    collection: 'archived-comments',
+    id: archiveId,
+    depth: 1,
+    overrideAccess: true,
+  }) as ArchivedCommentRecord | null
+  if (!archive) throw new Error('Comment not found in archive')
+  if (!isArchivedItemRestorable(archive.archivedAt, config.commentArchiveRetentionDays)) {
+    throw new Error(`Comment cannot be restored after ${config.commentArchiveRetentionDays} days`)
+  }
+
+  const commentId = getRelationshipId(archive.comment)
+  if (!commentId) throw new Error('Comment not found in archive')
+  const updatedComment = await payload.update({
+    collection: 'comments',
+    id: commentId,
+    data: {
+      status: 'pending',
+      reviewQueueAgeStartedAt: new Date().toISOString(),
+    },
+    overrideAccess: true,
+  })
+  await payload.delete({ collection: 'archived-comments', id: archiveId, overrideAccess: true })
+  return updatedComment
+}
+
+export async function deleteArchivedPost({
+  payload,
+  archiveId,
+}: {
+  payload: Payload
+  archiveId: string
+  user?: ArchiveUser | null
+}) {
+  const config = await getArchiveConfig(payload)
   const archive = await payload.findByID({
     collection: 'archived-posts',
     id: archiveId,
     depth: 2,
     overrideAccess: true,
   }) as ArchivedPostRecord | null
-
   if (!archive) throw new Error('Post not found in archive')
-  const postId = typeof archive.post === 'object' && archive.post ? archive.post.id : archive.post
 
+  const postId = getRelationshipId(archive.post)
   if (postId) {
     await payload.update({
       collection: 'posts',
-      id: String(postId),
+      id: postId,
       data: {
         archiveStatus: 'deleted',
-        statusMessage: DELETE_STATUS_MESSAGE,
+        statusMessage: getDeleteStatusMessage(config.postArchiveRetentionDays),
         reviewQueueAgeStartedAt: null,
       },
       draft: true,
       overrideAccess: true,
     })
   }
+  return payload.delete({ collection: 'archived-posts', id: archiveId, overrideAccess: true })
+}
 
-  return payload.delete({
-    collection: 'archived-posts',
+export async function deleteArchivedComment({
+  payload,
+  archiveId,
+}: {
+  payload: Payload
+  archiveId: string
+  user?: ArchiveUser | null
+}) {
+  const archive = await payload.findByID({
+    collection: 'archived-comments',
     id: archiveId,
+    depth: 1,
     overrideAccess: true,
-  })
+  }) as ArchivedCommentRecord | null
+  if (!archive) throw new Error('Comment not found in archive')
+
+  const commentId = getRelationshipId(archive.comment)
+  if (commentId) {
+    try {
+      await payload.delete({ collection: 'comments', id: commentId, overrideAccess: true })
+    } catch (error) {
+      const message = error instanceof Error ? error.message : ''
+      if (!message.toLowerCase().includes('not found')) throw error
+    }
+  }
+  return payload.delete({ collection: 'archived-comments', id: archiveId, overrideAccess: true })
 }
 
 export async function runArchiveMaintenance(
@@ -345,55 +543,51 @@ export async function runArchiveMaintenance(
 ): Promise<ArchiveRunResult> {
   const now = options.now || new Date()
   const config = await getArchiveConfig(payload)
-  const dryRun = options.dryRun ?? Boolean(config.dryRunEnabled)
+  const dryRun = options.dryRun ?? config.dryRunEnabled
   const due = options.force || isArchiveScheduleDue(config.lastRunAt, config.jobSchedule, now)
   const errors: ArchiveError[] = []
-
-  if (!due) {
-    return {
-      commentsDeleted: 0,
-      postsArchived: 0,
-      archiveRecordsDeleted: 0,
-      skipped: true,
-      dryRun,
-      errors,
-    }
+  const result: ArchiveRunResult = {
+    commentsArchived: 0,
+    postsArchived: 0,
+    archivedCommentsDeleted: 0,
+    archivedPostsDeleted: 0,
+    skipped: !due,
+    dryRun,
+    errors,
   }
+  if (!due) return result
 
-  const oldComments = await findEligibleCommentsForDeletion(payload, config, now)
-  let commentsDeleted = 0
-  for (const comment of oldComments.docs) {
-    try {
-      if (!dryRun) {
-        await payload.delete({
-          collection: 'comments',
-          id: comment.id,
-          overrideAccess: true,
+  if (config.autoArchiveCommentsEnabled) {
+    const comments = await findEligibleCommentsForArchive(payload, config, now)
+    for (const comment of comments.docs) {
+      try {
+        if (!dryRun) {
+          await archiveComment({ payload, commentId: comment.id, reason: 'automated' })
+        }
+        result.commentsArchived++
+      } catch (error) {
+        errors.push({
+          id: String(comment.id),
+          operation: 'archive_comment',
+          message: error instanceof Error ? error.message : 'Failed to archive comment',
         })
       }
-      commentsDeleted++
-    } catch (error) {
-      errors.push({
-        id: String(comment.id),
-        operation: 'delete_pending_comment',
-        message: error instanceof Error ? error.message : 'Failed to delete pending comment',
-      })
     }
   }
 
-  let postsArchived = 0
-  if (config.autoArchiveEnabled !== false) {
-    const eligiblePosts = await findEligiblePostsForArchive(payload, config, now)
-    for (const post of eligiblePosts.docs as ReviewPost[]) {
+  if (config.autoArchivePostsEnabled) {
+    const posts = await findEligiblePostsForArchive(payload, config, now)
+    for (const post of posts.docs as ReviewPost[]) {
       try {
         if (!dryRun) {
           await archivePost({
             payload,
             postId: post.id,
             reason: 'automated',
+            retentionDays: config.postArchiveRetentionDays,
           })
         }
-        postsArchived++
+        result.postsArchived++
       } catch (error) {
         errors.push({
           id: String(post.id),
@@ -404,22 +598,30 @@ export async function runArchiveMaintenance(
     }
   }
 
-  const expiredArchives = await findExpiredArchivedPosts(payload, now)
-  let archiveRecordsDeleted = 0
-  for (const archive of expiredArchives.docs as ArchivedPostRecord[]) {
+  const expiredPosts = await findExpiredArchivedPosts(payload, config.postArchiveRetentionDays, now)
+  for (const archive of expiredPosts.docs as ArchivedPostRecord[]) {
     try {
-      if (!dryRun) {
-        await deleteArchivedPost({
-          payload,
-          archiveId: archive.id,
-        })
-      }
-      archiveRecordsDeleted++
+      if (!dryRun) await deleteArchivedPost({ payload, archiveId: archive.id })
+      result.archivedPostsDeleted++
     } catch (error) {
       errors.push({
         id: String(archive.id),
-        operation: 'delete_archive_record',
+        operation: 'delete_archived_post',
         message: error instanceof Error ? error.message : 'Failed to delete archived post',
+      })
+    }
+  }
+
+  const expiredComments = await findExpiredArchivedComments(payload, config.commentArchiveRetentionDays, now)
+  for (const archive of expiredComments.docs as ArchivedCommentRecord[]) {
+    try {
+      if (!dryRun) await deleteArchivedComment({ payload, archiveId: archive.id })
+      result.archivedCommentsDeleted++
+    } catch (error) {
+      errors.push({
+        id: String(archive.id),
+        operation: 'delete_archived_comment',
+        message: error instanceof Error ? error.message : 'Failed to delete archived comment',
       })
     }
   }
@@ -427,26 +629,15 @@ export async function runArchiveMaintenance(
   if (!dryRun) {
     await payload.updateGlobal({
       slug: 'archive-config',
-      data: {
-        lastRunAt: now.toISOString(),
-      },
+      data: { lastRunAt: now.toISOString() },
       overrideAccess: true,
     })
   }
-
-  return {
-    commentsDeleted,
-    postsArchived,
-    archiveRecordsDeleted,
-    skipped: false,
-    dryRun,
-    errors,
-  }
+  return result
 }
 
 export function summarizeArchiveRun(result: ArchiveRunResult): string {
   const prefix = result.dryRun ? 'Archive maintenance dry run' : 'Archive maintenance completed'
   if (result.skipped) return `${prefix}: skipped until configured schedule is due`
-
-  return `${prefix}: ${result.commentsDeleted} pending comments deleted, ${result.postsArchived} posts archived, ${result.archiveRecordsDeleted} archive records deleted, ${result.errors.length} errors`
+  return `${prefix}: ${result.postsArchived} posts archived, ${result.commentsArchived} comments archived, ${result.archivedPostsDeleted} archived posts deleted, ${result.archivedCommentsDeleted} archived comments deleted, ${result.errors.length} errors`
 }

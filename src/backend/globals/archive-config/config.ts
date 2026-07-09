@@ -2,19 +2,20 @@ import type { GlobalConfig } from 'payload'
 
 import { isAdmin } from '@backend/access/is-admin'
 
-const thresholdOptions = [
-  { label: '15 Days', value: '15-days' },
-  { label: '30 Days (1 month)', value: '30-days' },
-  { label: '60 Days (2 months)', value: '60-days' },
-  { label: '90 Days (3 months)', value: '90-days' },
-]
-
 const scheduleOptions = [
   { label: 'Hourly', value: 'hourly' },
   { label: 'Daily', value: 'daily' },
   { label: 'Weekly', value: 'weekly' },
   { label: 'Monthly', value: 'monthly' },
 ]
+
+const validateRetentionDays = (value: unknown) => {
+  const days = Number(value)
+  if (!Number.isInteger(days) || days < 1 || days > 3650) {
+    return 'Retention must be an integer between 1 and 3650 days'
+  }
+  return true
+}
 
 export const ArchiveConfig: GlobalConfig = {
   slug: 'archive-config',
@@ -27,40 +28,67 @@ export const ArchiveConfig: GlobalConfig = {
   },
   fields: [
     {
-      name: 'commentDeletionThreshold',
+      name: 'postQueueRetentionDays',
       type: 'number',
       required: true,
-      defaultValue: 60,
+      defaultValue: 90,
       min: 1,
       max: 3650,
+      validate: validateRetentionDays,
       admin: {
-        description: 'Age in days after which pending comments are deleted by archive maintenance.',
-      },
-      validate: (value: unknown) => {
-        const threshold = Number(value)
-        if (!Number.isInteger(threshold)) return 'Comment deletion threshold must be an integer'
-        if (threshold < 1 || threshold > 3650) {
-          return 'Comment deletion threshold must be between 1 and 3650 days'
-        }
-        return true
+        description: 'Pending-review age after which posts are archived.',
       },
     },
     {
-      name: 'postArchiveThreshold',
-      type: 'select',
+      name: 'postArchiveRetentionDays',
+      type: 'number',
       required: true,
-      defaultValue: '60-days',
-      options: thresholdOptions,
+      defaultValue: 30,
+      min: 1,
+      max: 3650,
+      validate: validateRetentionDays,
       admin: {
-        description: 'Review queue age after which pending contributor posts are moved to archive.',
+        description: 'Days archived posts remain restorable.',
       },
     },
     {
-      name: 'autoArchiveEnabled',
+      name: 'commentQueueRetentionDays',
+      type: 'number',
+      required: true,
+      defaultValue: 30,
+      min: 1,
+      max: 3650,
+      validate: validateRetentionDays,
+      admin: {
+        description: 'Pending age after which comments are archived.',
+      },
+    },
+    {
+      name: 'commentArchiveRetentionDays',
+      type: 'number',
+      required: true,
+      defaultValue: 15,
+      min: 1,
+      max: 3650,
+      validate: validateRetentionDays,
+      admin: {
+        description: 'Days archived comments remain restorable.',
+      },
+    },
+    {
+      name: 'autoArchivePostsEnabled',
       type: 'checkbox',
       defaultValue: true,
       admin: {
-        description: 'Enable automatic post archiving during archive maintenance.',
+        description: 'Automatically archive stale pending posts.',
+      },
+    },
+    {
+      name: 'autoArchiveCommentsEnabled',
+      type: 'checkbox',
+      defaultValue: true,
+      admin: {
+        description: 'Automatically archive stale pending comments.',
       },
     },
     {

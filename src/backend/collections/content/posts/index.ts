@@ -600,25 +600,13 @@ export const Posts: CollectionConfig<'posts'> = {
         }
         return data
       },
-      // Hook 5: Initialize archive fields for existing and new active posts
-      async ({ data, originalDoc, operation }) => {
+      // Hook 5: Initialize archive fields for newly created posts
+      async ({ data, operation }) => {
         if (operation === 'create') {
           data.archiveStatus = data.archiveStatus || 'active'
           if (data.reviewStatus === 'pending_review') {
             data.reviewQueueAgeStartedAt = data.reviewQueueAgeStartedAt || new Date()
           }
-        }
-
-        if (
-          operation === 'update' &&
-          originalDoc &&
-          originalDoc.reviewStatus === 'pending_review' &&
-          !originalDoc.reviewQueueAgeStartedAt &&
-          data.reviewQueueAgeStartedAt === undefined &&
-          data.archiveStatus !== 'archived' &&
-          data.archiveStatus !== 'deleted'
-        ) {
-          data.reviewQueueAgeStartedAt = originalDoc.submittedForReviewAt || originalDoc.createdAt || new Date()
         }
 
         return data
