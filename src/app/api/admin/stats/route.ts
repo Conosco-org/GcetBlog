@@ -27,7 +27,10 @@ export async function GET() {
       totalUsers,
       totalMedia,
     ] = await Promise.all([
-      payload.count({ collection: 'posts' }),
+      payload.count({
+        collection: 'posts',
+        where: { _status: { equals: 'published' } },
+      }),
       payload.count({ collection: 'users' }),
       payload.count({ collection: 'media' }),
     ])

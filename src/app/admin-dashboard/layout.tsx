@@ -13,6 +13,7 @@ import { Providers } from '@/frontend/providers'
 import { InitTheme } from '@/frontend/providers/Theme/InitTheme'
 import '@/frontend/styles/globals.css'
 import type { Metadata } from 'next'
+import { getActiveArchiveWhere } from '@backend/archive/service'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -55,13 +56,34 @@ export default async function AdminDashboardLayout({
     redirect(dest)
   }
 
-  // Fetch counts for sidebar badges - parallelized
-  const [pendingPosts, totalPosts, recentLogs] = await Promise.all([
+  const contributors = await payload.find({
+    collection: 'users',
+    where: { role: { equals: 'contributor' } },
+    limit: 1000,
+    depth: 0,
+  })
+  const contributorIds = contributors.docs.map((contributor) => contributor.id)
+
+  // Keep these badges aligned with the Content Manager and Review Queue pages.
+  const [pendingPosts, publishedPosts, recentLogs] = await Promise.all([
+    payload.find({
+      collection: 'posts',
+      where: {
+        and: [
+          { _status: { equals: 'draft' } },
+          { reviewStatus: { equals: 'pending_review' } },
+          { authors: { in: contributorIds } },
+          getActiveArchiveWhere(),
+        ],
+      },
+      draft: true,
+      limit: 1,
+      depth: 0,
+    }),
     payload.count({
       collection: 'posts',
-      where: { _status: { equals: 'draft' } },
+      where: { _status: { equals: 'published' } },
     }),
-    payload.count({ collection: 'posts' }),
     payload.count({
       collection: 'admin-logs',
       where: {
@@ -81,7 +103,7 @@ export default async function AdminDashboardLayout({
           <EditorLayoutClient
             user={fullUser as User & { role: string }}
             pendingPostsCount={pendingPosts.totalDocs}
-            totalPostsCount={totalPosts.totalDocs}
+            totalPostsCount={publishedPosts.totalDocs}
             activityLogsCount={recentLogs.totalDocs}
           >
             {children}

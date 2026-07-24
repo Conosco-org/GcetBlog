@@ -198,6 +198,7 @@ export async function PATCH(
     return NextResponse.json({
       success: true,
       post,
+      doc: post,
       message: isPublishing ? 'Post published successfully!' : 'Draft saved successfully!',
     })
   } catch (error: unknown) {

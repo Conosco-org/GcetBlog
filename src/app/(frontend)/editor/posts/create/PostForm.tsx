@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Save, ArrowLeft, Eye, Upload, X, Send, Clock, Tag, Star, Plus, FileStack, XCircle } from 'lucide-react'
 import Link from 'next/link'
@@ -66,6 +66,8 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
   const [isPreviewingDraft, setIsPreviewingDraft] = useState(false)
   const [showTemplateSelector, setShowTemplateSelector] = useState(false)
   const [activeTemplateName, setActiveTemplateName] = useState<string | null>(initialTemplate?.name || null)
+  const postIdRef = useRef<string | undefined>(postId)
+  const actionInFlightRef = useRef(false)
 
   const isAdmin = Boolean((user as unknown as Record<string, unknown>).isAdmin)
   const isEditor = user.role === 'editor' || isAdmin
@@ -186,14 +188,17 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
       return
     }
 
+    if (actionInFlightRef.current) return
+    actionInFlightRef.current = true
     setIsPreviewingDraft(true)
 
     try {
       const plainText = htmlToPlainText(content)
+      const existingPostId = postIdRef.current
 
-      // Save as draft first
-      const response = await fetch('/api/posts', {
-        method: 'POST',
+      // The first preview creates one draft; every later preview updates that same draft.
+      const response = await fetch(existingPostId ? `/api/posts/${existingPostId}` : '/api/posts', {
+        method: existingPostId ? 'PATCH' : 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -204,6 +209,8 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
           tags,
           authors: [user.id],
           _status: 'draft',
+          isDraft: true,
+          reviewStatus: 'draft',
           heroImage: heroImageId,
           meta: {
             description: metaDescription.trim() || plainText.substring(0, 160).trim(),
@@ -212,10 +219,12 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
       })
 
       const data = await response.json()
+      const savedPost = data.post ?? data.doc
 
-      if (response.ok && data.doc?.slug) {
+      if (response.ok && savedPost?.id && savedPost?.slug) {
+        postIdRef.current = String(savedPost.id)
         // Open preview in new tab
-        window.open(`/api/draft?slug=${data.doc.slug}&collection=posts`, '_blank')
+        window.open(`/api/draft?id=${encodeURIComponent(String(savedPost.id))}`, '_blank', 'noopener,noreferrer')
         
         toast({
           title: "Preview opened",
@@ -237,6 +246,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
       console.error('Preview error:', err)
     } finally {
       setIsPreviewingDraft(false)
+      actionInFlightRef.current = false
     }
   }
 
@@ -282,11 +292,14 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
       return
     }
 
+    if (actionInFlightRef.current) return
+    actionInFlightRef.current = true
     setIsSubmittingForReview(true)
 
     try {
-      const url = isEdit ? `/api/posts/${postId}` : '/api/posts'
-      const method = isEdit ? 'PATCH' : 'POST'
+      const existingPostId = postIdRef.current
+      const url = existingPostId ? `/api/posts/${existingPostId}` : '/api/posts'
+      const method = existingPostId ? 'PATCH' : 'POST'
       const plainText = htmlToPlainText(content)
 
       const response = await fetch(url, {
@@ -301,6 +314,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
           tags,
           authors: [user.id],
           _status: 'draft',
+          reviewStatus: 'pending_review',
           submittedForReviewAt: new Date().toISOString(),
           heroImage: heroImageId,
           meta: {
@@ -328,6 +342,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
           variant: "destructive",
         })
         setIsSubmittingForReview(false)
+        actionInFlightRef.current = false
       }
     } catch (err) {
       toast({
@@ -337,6 +352,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
       })
       console.error('Submit for review error:', err)
       setIsSubmittingForReview(false)
+      actionInFlightRef.current = false
     }
   }
 
@@ -382,6 +398,9 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
       return
     }
 
+    if (actionInFlightRef.current) return
+    actionInFlightRef.current = true
+
     // Set appropriate loading state based on status
     if (status === 'draft') {
       setIsSavingDraft(true)
@@ -390,8 +409,9 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
     }
 
     try {
-      const url = isEdit ? `/api/posts/${postId}` : '/api/posts'
-      const method = isEdit ? 'PATCH' : 'POST'
+      const existingPostId = postIdRef.current
+      const url = existingPostId ? `/api/posts/${existingPostId}` : '/api/posts'
+      const method = existingPostId ? 'PATCH' : 'POST'
       const plainText = htmlToPlainText(content)
 
       const response = await fetch(url, {
@@ -421,6 +441,8 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
       const data = await response.json()
 
       if (response.ok) {
+        const savedPost = data.post ?? data.doc
+        if (savedPost?.id) postIdRef.current = String(savedPost.id)
         // Show success toast
         toast({
           title: "Success!",
@@ -454,6 +476,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
         } else {
           setIsPublishing(false)
         }
+        actionInFlightRef.current = false
       }
     } catch (err) {
       toast({
@@ -468,6 +491,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
       } else {
         setIsPublishing(false)
       }
+      actionInFlightRef.current = false
     }
   }
 

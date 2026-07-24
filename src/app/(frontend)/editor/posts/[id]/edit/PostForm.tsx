@@ -1,6 +1,6 @@
 ﻿'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Save, ArrowLeft, Eye, Upload, X, Send, Clock, Tag, Star, Plus, FileStack, XCircle } from 'lucide-react'
 import Link from 'next/link'
@@ -68,6 +68,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
   const [isPreviewingDraft, setIsPreviewingDraft] = useState(false)
   const [showTemplateSelector, setShowTemplateSelector] = useState(false)
   const [activeTemplateName, setActiveTemplateName] = useState<string | null>(initialTemplate?.name || null)
+  const actionInFlightRef = useRef(false)
   const postStatus = initialData?.status || 'draft'
   const isPublished = postStatus === 'published'
 
@@ -190,6 +191,8 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
       return
     }
 
+    if (actionInFlightRef.current) return
+    actionInFlightRef.current = true
     setIsPreviewingDraft(true)
 
     try {
@@ -217,9 +220,11 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
 
       const data = await response.json()
 
-      if (response.ok && data.doc?.slug) {
+      const savedPost = data.post ?? data.doc
+
+      if (response.ok && savedPost?.id) {
         // Open preview in new tab
-        window.open(`/api/draft?slug=${data.doc.slug}&collection=posts`, '_blank')
+        window.open(`/api/draft?id=${encodeURIComponent(String(savedPost.id))}`, '_blank', 'noopener,noreferrer')
         
         toast({
           title: "Preview opened",
@@ -241,6 +246,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
       console.error('Preview error:', err)
     } finally {
       setIsPreviewingDraft(false)
+      actionInFlightRef.current = false
     }
   }
 
@@ -286,6 +292,8 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
       return
     }
 
+    if (actionInFlightRef.current) return
+    actionInFlightRef.current = true
     setIsSubmittingForReview(true)
 
     try {
@@ -338,6 +346,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
           variant: "destructive",
         })
         setIsSubmittingForReview(false)
+        actionInFlightRef.current = false
       }
     } catch (err) {
       toast({
@@ -347,6 +356,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
       })
       console.error('Submit for review error:', err)
       setIsSubmittingForReview(false)
+      actionInFlightRef.current = false
     }
   }
 
@@ -391,6 +401,9 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
       })
       return
     }
+
+    if (actionInFlightRef.current) return
+    actionInFlightRef.current = true
 
     // Set appropriate loading state based on status
     if (status === 'draft') {
@@ -467,6 +480,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
         } else {
           setIsPublishing(false)
         }
+        actionInFlightRef.current = false
       }
     } catch (err) {
       toast({
@@ -481,6 +495,7 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
       } else {
         setIsPublishing(false)
       }
+      actionInFlightRef.current = false
     }
   }
 

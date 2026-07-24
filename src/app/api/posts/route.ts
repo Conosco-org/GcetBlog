@@ -164,6 +164,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       post,
+      doc: post,
       message: isPublishing ? 'Post published successfully!' : (isDraft ? 'Draft saved successfully!' : 'Post submitted for review!'),
     })
   } catch (error: unknown) {

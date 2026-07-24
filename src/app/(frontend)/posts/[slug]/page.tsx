@@ -28,13 +28,17 @@ type Args = {
   params: Promise<{
     slug?: string
   }>
+  searchParams?: Promise<{
+    previewId?: string
+  }>
 }
 
-export default async function Post({ params: paramsPromise }: Args) {
+export default async function Post({ params: paramsPromise, searchParams: searchParamsPromise }: Args) {
   const { isEnabled: draft } = await draftMode()
   const { slug = '' } = await paramsPromise
+  const { previewId } = (await searchParamsPromise) || {}
   const url = '/posts/' + slug
-  const post = await queryPostBySlug({ slug })
+  const post = await queryPostBySlug({ slug, previewId })
 
   if (!post) return <PayloadRedirects url={url} />
 
@@ -231,17 +235,32 @@ export default async function Post({ params: paramsPromise }: Args) {
   )
 }
 
-export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
+export async function generateMetadata({ params: paramsPromise, searchParams: searchParamsPromise }: Args): Promise<Metadata> {
   const { slug = '' } = await paramsPromise
-  const post = await queryPostBySlug({ slug })
+  const { previewId } = (await searchParamsPromise) || {}
+  const post = await queryPostBySlug({ slug, previewId })
 
   return generateMeta({ doc: post })
 }
 
-const queryPostBySlug = cache(async ({ slug }: { slug: string }) => {
+const queryPostBySlug = cache(async ({ slug, previewId }: { slug: string; previewId?: string }) => {
   const { isEnabled: draft } = await draftMode()
 
   const payload = await getPayload({ config: configPromise })
+
+  if (draft && previewId) {
+    try {
+      const previewPost = await payload.findByID({
+        collection: 'posts',
+        id: previewId,
+        draft: true,
+        overrideAccess: true,
+      })
+      if (previewPost.slug === slug) return previewPost
+    } catch {
+      return null
+    }
+  }
 
   const result = await payload.find({
     collection: 'posts',

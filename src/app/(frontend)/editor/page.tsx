@@ -54,7 +54,7 @@ export default async function EditorDashboardPage() {
       recentLogs,
     ] = await Promise.all([
       // Pending posts for review (matching review queue page exactly - contributors only)
-      payload.count({
+      payload.find({
         collection: 'posts',
         where: { 
           and: [
@@ -64,9 +64,12 @@ export default async function EditorDashboardPage() {
             getActiveArchiveWhere(),
           ]
         },
+        draft: true,
+        limit: 1,
+        depth: 0,
       }),
       // New posts submitted for review today count (contributors only)
-      payload.count({
+      payload.find({
         collection: 'posts',
         where: {
           and: [
@@ -77,6 +80,9 @@ export default async function EditorDashboardPage() {
             getActiveArchiveWhere(),
           ]
         },
+        draft: true,
+        limit: 1,
+        depth: 0,
       }),
       // Approved posts (last 24h)
       payload.find({

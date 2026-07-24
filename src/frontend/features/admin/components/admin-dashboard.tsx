@@ -17,6 +17,7 @@ import {
   Shield,
   ShieldCheck,
 } from 'lucide-react'
+import { getActiveArchiveWhere } from '@backend/archive/service'
 
 // Force dynamic rendering for real-time data
 export const dynamic = 'force-dynamic'
@@ -51,6 +52,14 @@ export default async function AdminDashboard() {
     depth: 1,
   })
 
+  const contributors = await payload.find({
+    collection: 'users',
+    where: { role: { equals: 'contributor' } },
+    limit: 1000,
+    depth: 0,
+  })
+  const contributorIds = contributors.docs.map((contributor) => contributor.id)
+
   // Stats - use count() for efficient counting
   const [
     totalUsers,
@@ -62,10 +71,23 @@ export default async function AdminDashboard() {
     recentActivity,
   ] = await Promise.all([
     payload.count({ collection: 'users' }),
-    payload.count({ collection: 'posts' }),
     payload.count({
       collection: 'posts',
-      where: { reviewStatus: { equals: 'pending_review' } },
+      where: { _status: { equals: 'published' } },
+    }),
+    payload.find({
+      collection: 'posts',
+      where: {
+        and: [
+          { _status: { equals: 'draft' } },
+          { reviewStatus: { equals: 'pending_review' } },
+          { authors: { in: contributorIds } },
+          getActiveArchiveWhere(),
+        ],
+      },
+      draft: true,
+      limit: 1,
+      depth: 0,
     }),
     payload.count({ collection: 'comments' }),
     payload.count({ collection: 'users', where: { isAdmin: { equals: true } } }),
@@ -123,7 +145,7 @@ export default async function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalPosts.totalDocs}</div>
-            <p className="text-xs text-muted-foreground mt-1">Published & drafts</p>
+            <p className="text-xs text-muted-foreground mt-1">Published posts</p>
           </CardContent>
         </Card>
 
