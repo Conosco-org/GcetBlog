@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { User, Category } from '@shared/types/payload-types'
 import { Card, CardContent, CardHeader, CardTitle } from '@frontend/components/ui/card'
@@ -58,6 +58,7 @@ export function CreateContentForm({ categories: dbCategories, initialTemplate }:
   const [featuredImage, setFeaturedImage] = useState<string | null>(null)
   const [featuredImagePreview, setFeaturedImagePreview] = useState<string | null>(null)
   const [uploadingImage, setUploadingImage] = useState(false)
+  const actionInFlightRef = useRef(false)
   const [showTemplateSelector, setShowTemplateSelector] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
   const [activeTemplateName, setActiveTemplateName] = useState<string | null>(initialTemplate?.name || null)
@@ -150,6 +151,8 @@ export function CreateContentForm({ categories: dbCategories, initialTemplate }:
       return
     }
 
+    if (actionInFlightRef.current) return
+    actionInFlightRef.current = true
     setIsSaving(true)
     setSaveStatus('saving')
     
@@ -175,7 +178,7 @@ export function CreateContentForm({ categories: dbCategories, initialTemplate }:
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to submit post')
+        throw new Error(data.message || data.error || 'Failed to submit post')
       }
       
       setSaveStatus('saved')
@@ -200,6 +203,7 @@ export function CreateContentForm({ categories: dbCategories, initialTemplate }:
         variant: 'destructive',
       })
       setSaveStatus('idle')
+      actionInFlightRef.current = false
     } finally {
       setIsSaving(false)
     }
@@ -225,6 +229,8 @@ export function CreateContentForm({ categories: dbCategories, initialTemplate }:
       return
     }
 
+    if (actionInFlightRef.current) return
+    actionInFlightRef.current = true
     setSaveStatus('saving')
     try {
       const response = await fetch('/api/posts', {
@@ -248,7 +254,7 @@ export function CreateContentForm({ categories: dbCategories, initialTemplate }:
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to save draft')
+        throw new Error(data.message || data.error || 'Failed to save draft')
       }
 
       setSaveStatus('saved')
@@ -273,6 +279,7 @@ export function CreateContentForm({ categories: dbCategories, initialTemplate }:
         variant: 'destructive',
       })
       setSaveStatus('idle')
+      actionInFlightRef.current = false
     }
   }
 
@@ -575,6 +582,7 @@ export function CreateContentForm({ categories: dbCategories, initialTemplate }:
               className="w-full gap-2"
               onClick={handlePreview}
               type="button"
+              disabled={isSaving || saveStatus === 'saving'}
             >
               <Eye className="h-4 w-4" />
               Preview
@@ -584,6 +592,7 @@ export function CreateContentForm({ categories: dbCategories, initialTemplate }:
               className="w-full gap-2"
               onClick={handleSaveDraft}
               type="button"
+              disabled={isSaving || saveStatus === 'saving'}
             >
               <Save className="h-4 w-4" />
               Save Draft

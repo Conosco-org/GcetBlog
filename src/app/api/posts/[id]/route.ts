@@ -3,6 +3,12 @@ import { getPayload } from 'payload'
 import { revalidatePath } from 'next/cache'
 import config from '@payload-config'
 import { validateFeaturedRange, validateMetaDescription } from '@frontend/features/posts/lib/post-validation'
+import {
+  canContributorEditStatus,
+  canUpdatePost,
+  isContributorReviewStatusAllowed,
+  isPostEditor,
+} from '@backend/lib/post-api-permissions'
 
 // Convert plain text to Lexical JSON format
 function textToLexical(text: string) {
@@ -51,47 +57,19 @@ export async function DELETE(
       )
     }
 
-    // Fetch the post to check permissions
-    const post = await payload.findByID({
+    const existingPost = await payload.findByID({
       collection: 'posts',
       id,
       draft: true,
+      overrideAccess: true,
+      depth: 0,
     })
 
-    if (!post) {
+    if (!canUpdatePost(user, existingPost)) {
       return NextResponse.json(
-        { error: 'Post not found' },
-        { status: 404 }
+        { error: 'You do not have permission to delete this post' },
+        { status: 403 },
       )
-    }
-
-    // Check if user has permission to delete
-    const userRole = (user as { role?: string }).role
-    const isEditorOrAdmin = userRole === 'editor' || userRole === 'admin'
-
-    // Editors and admins can delete any post
-    if (!isEditorOrAdmin) {
-      // Contributors can only delete their own unpublished posts
-      const authorIds = (post.authors || []).map((a: unknown) =>
-        typeof a === 'object' && a !== null && 'id' in a ? String((a as { id: unknown }).id) : String(a)
-      )
-      
-      const isAuthor = authorIds.includes(String(user.id))
-      const isPublished = post._status === 'published'
-
-      if (!isAuthor) {
-        return NextResponse.json(
-          { error: 'You do not have permission to delete this post' },
-          { status: 403 }
-        )
-      }
-
-      if (isPublished) {
-        return NextResponse.json(
-          { error: 'Cannot delete published posts' },
-          { status: 403 }
-        )
-      }
     }
 
     // Delete the post
@@ -166,25 +144,74 @@ export async function PATCH(
     const isPublishing = body._status === 'published'
 
     // Update the post - use draft: false when publishing to properly create a published version
+    const updateData: Record<string, unknown> = {
+      title: body.title,
+      content: lexicalContent,
+      categories: body.categories,
+      _status: body._status,
+      reviewStatus: body.reviewStatus,
+      submittedForReviewAt: body.submittedForReviewAt,
+      heroImage: body.heroImage,
+      tags: body.tags,
+      meta: body.meta,
+      publishedAt: isPublishing && !body.publishedAt
+        ? new Date().toISOString()
+        : body.publishedAt,
+    }
+
+    const existingPost = await payload.findByID({
+      collection: 'posts',
+      id,
+      draft: true,
+      overrideAccess: true,
+      depth: 0,
+    })
+
+    if (!canUpdatePost(user, existingPost)) {
+      return NextResponse.json(
+        { message: 'You do not have permission to update this post' },
+        { status: 403 },
+      )
+    }
+
+    const editor = isPostEditor(user)
+    if (!editor) {
+      if (body._status === 'published') {
+        return NextResponse.json(
+          { message: 'Only editors and administrators can publish posts' },
+          { status: 403 },
+        )
+      }
+      if (!isContributorReviewStatusAllowed(body.reviewStatus)) {
+        return NextResponse.json(
+          { message: 'Contributors cannot set that review status' },
+          { status: 403 },
+        )
+      }
+      if (
+        !canContributorEditStatus(existingPost.reviewStatus) &&
+        !(existingPost.reviewStatus === 'pending_review' && body.reviewStatus === 'pending_review')
+      ) {
+        return NextResponse.json(
+          { message: 'This post cannot be edited in its current review state' },
+          { status: 409 },
+        )
+      }
+    }
+
+    if (editor) {
+      updateData.featuredFrom = body.featuredFrom
+      updateData.featuredUntil = body.featuredUntil
+    }
+
+    for (const key of Object.keys(updateData)) {
+      if (updateData[key] === undefined) delete updateData[key]
+    }
+
     const post = await payload.update({
       collection: 'posts',
       id: id,
-      data: {
-        title: body.title,
-        content: lexicalContent,
-        categories: body.categories,
-        _status: body._status,
-        reviewStatus: body.reviewStatus,
-        submittedForReviewAt: body.submittedForReviewAt,
-        heroImage: body.heroImage,
-        tags: body.tags,
-        featuredFrom: body.featuredFrom,
-        featuredUntil: body.featuredUntil,
-        meta: body.meta,
-        publishedAt: isPublishing && !body.publishedAt 
-          ? new Date().toISOString() 
-          : body.publishedAt,
-      },
+      data: updateData,
       draft: !isPublishing, // draft: false when publishing to create proper published version
     })
 

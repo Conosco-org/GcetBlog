@@ -580,7 +580,7 @@ export const Posts: CollectionConfig<'posts'> = {
             data.reviewQueueAgeStartedAt = null
           }
 
-          if (newStatus === 'draft' && data.editorFeedback) {
+          if ((newStatus === 'draft' || newStatus === 'requesting_changes') && data.editorFeedback) {
             data.editorFeedbackAt = new Date()
             data.feedbackGivenBy = req.user?.id
           }

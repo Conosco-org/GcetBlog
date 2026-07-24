@@ -3,6 +3,7 @@ import { getPayload } from 'payload'
 import { revalidatePath } from 'next/cache'
 import config from '@payload-config'
 import { validateFeaturedRange, validateMetaDescription } from '@frontend/features/posts/lib/post-validation'
+import { canCreatePost, isPostEditor } from '@backend/lib/post-api-permissions'
 
 // GET handler - list posts (proxies to Payload's built-in REST)
 export async function GET(request: NextRequest) {
@@ -79,6 +80,13 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    if (!canCreatePost(user)) {
+      return NextResponse.json(
+        { message: 'Only contributors, editors, and administrators can create posts' },
+        { status: 403 },
+      )
+    }
+
     const incomingMetaDescription =
       typeof body?.meta?.description === 'string' ? body.meta.description : body.metaDescription
     const metaError = validateMetaDescription(incomingMetaDescription)
@@ -99,12 +107,23 @@ export async function POST(request: NextRequest) {
     // Determine if this is a draft or submission for review
     const isDraft = body.isDraft === true
     const isPublishing = body._status === 'published'
+    const canPublish = isPostEditor(user)
+
+    if (isPublishing && !canPublish) {
+      return NextResponse.json(
+        { message: 'Only editors and administrators can publish posts' },
+        { status: 403 },
+      )
+    }
 
     // Set review status based on whether it's a draft or submission
     let reviewStatus = 'draft'
     let submittedForReviewAt = null
     
-    if (!isDraft && !isPublishing) {
+    if (!canPublish) {
+      reviewStatus = isDraft ? 'draft' : 'pending_review'
+      submittedForReviewAt = isDraft ? null : new Date().toISOString()
+    } else if (!isDraft && !isPublishing) {
       // Contributor submitting for review
       reviewStatus = 'pending_review'
       submittedForReviewAt = new Date().toISOString()
@@ -118,14 +137,16 @@ export async function POST(request: NextRequest) {
       title: body.title,
       content: lexicalContent,
       categories: body.categories || [],
-      authors: body.authors || [user.id],
+      authors: canPublish && Array.isArray(body.authors) && body.authors.length > 0
+        ? body.authors
+        : [user.id],
       _status: 'draft', // Always create as draft first
       reviewStatus,
       submittedForReviewAt,
       heroImage: body.featuredImage || body.heroImage || undefined,
       tags: body.tags || undefined,
-      featuredFrom: body.featuredFrom || undefined,
-      featuredUntil: body.featuredUntil || undefined,
+      featuredFrom: canPublish ? body.featuredFrom || undefined : undefined,
+      featuredUntil: canPublish ? body.featuredUntil || undefined : undefined,
       publishedAt: body.publishDate || body.publishedAt || undefined,
       contentType: body.contentType || undefined,
       meta: {

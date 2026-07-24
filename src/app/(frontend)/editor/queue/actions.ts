@@ -4,6 +4,7 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers } from 'next/headers'
 import { revalidatePath } from 'next/cache'
+import { isActivePendingReview } from '@backend/lib/post-api-permissions'
 
 export async function approvePost(postId: string, editorNotes?: string) {
   try {
@@ -28,6 +29,9 @@ export async function approvePost(postId: string, editorNotes?: string) {
 
     if (!post) {
       throw new Error('Post not found')
+    }
+    if (!isActivePendingReview(post)) {
+      throw new Error('Only active posts pending review can be approved')
     }
 
     // Publish the post - convert draft to published version
@@ -100,6 +104,9 @@ export async function requestChanges(postId: string, feedback: string) {
     if (!post) {
       throw new Error('Post not found')
     }
+    if (!isActivePendingReview(post)) {
+      throw new Error('Only active posts pending review can be returned for changes')
+    }
 
     // Add feedback and return to requesting_changes status so contributor can edit
     await payload.update({
@@ -170,6 +177,9 @@ export async function deletePost(postId: string, reason: string) {
 
     if (!post) {
       throw new Error('Post not found')
+    }
+    if (!isActivePendingReview(post)) {
+      throw new Error('Only active posts pending review can be rejected')
     }
 
     // Get the contributor (first author)
