@@ -191,6 +191,15 @@ export function PostForm({ categories, user, initialData, initialTemplate, postI
       return
     }
 
+    if (isPublished && initialData?.slug) {
+      window.open(
+        `/posts/${encodeURIComponent(initialData.slug)}`,
+        '_blank',
+        'noopener,noreferrer',
+      )
+      return
+    }
+
     if (actionInFlightRef.current) return
     actionInFlightRef.current = true
     setIsPreviewingDraft(true)
