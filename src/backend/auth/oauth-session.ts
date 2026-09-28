@@ -131,7 +131,7 @@ export async function createPayloadOAuthSession({
   // 3. Mint the JWT
   const { token } = await jwtSign({
     fieldsToSign,
-    secret: process.env.PAYLOAD_SECRET!,
+    secret: payload.secret,
     tokenExpiration,
   })
 
