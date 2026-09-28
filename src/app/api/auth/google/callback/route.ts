@@ -171,6 +171,14 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    console.log('[GoogleAuth] callback resolved user', {
+      userId: user.id,
+      status: isNewUser ? 'newly-created' : (usersBySub.docs.length > 0 ? 'existing-google' : 'linked-by-email'),
+      linkedProviders: user.linkedProviders,
+      role: user.role,
+      googleSubIdPresent: !!user.googleSubId
+    })
+
     // ── Create Payload Session Safely ────────────────────────────
     // This removes the dangerous temp password overwrite hack.
     const { token, cookieName } = await createPayloadOAuthSession({
@@ -195,6 +203,11 @@ export async function GET(request: NextRequest) {
               ? '/editor'
               : '/contributor'
     }
+
+    console.log('[GoogleAuth] session helper completed', {
+      userId: user.id,
+      redirectTarget: redirectPath
+    })
 
     const response = NextResponse.redirect(new URL(redirectPath, request.url))
 

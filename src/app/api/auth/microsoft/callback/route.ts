@@ -201,6 +201,15 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    console.log('[MicrosoftAuth] callback resolved user', {
+      userId: user.id,
+      status: isNewUser ? 'newly-created' : (usersByMs.docs.length > 0 ? 'existing-microsoft' : 'linked-by-email'),
+      linkedProviders: user.linkedProviders,
+      role: user.role,
+      microsoftSubIdPresent: !!user.microsoftSubId,
+      microsoftTenantIdMatches: user.microsoftTenantId === tid
+    })
+
     // 8. Create Payload Session Safely
     const { token, cookieName } = await createPayloadOAuthSession({
       payload,
@@ -230,6 +239,11 @@ export async function GET(request: NextRequest) {
               ? '/editor'
               : '/contributor'
     }
+
+    console.log('[MicrosoftAuth] session helper completed', {
+      userId: user.id,
+      redirectTarget: redirectPath
+    })
 
     const response = NextResponse.redirect(new URL(redirectPath, request.url))
 
