@@ -7,29 +7,16 @@ export async function GET(request: NextRequest) {
   try {
     const payload = await getPayload({ config })
     
-    console.log('[AuthMe] request received', {
-      payloadTokenPresent: request.cookies.has('payload-token'),
-      cookieCount: request.cookies.getAll().length,
-      authHeaderPresent: request.headers.has('authorization')
-    })
+
     
     const { user } = await payload.auth({ headers: request.headers })
 
     if (!user) {
-      console.log('[AuthMe] authentication failed', {
-        tokenCookiePresent: request.cookies.has('payload-token'),
-        resultUserNull: true,
-      })
+
       return Response.json({ error: 'Unauthorized', sessionExpired: true }, { status: 401 })
     }
     
-    console.log('[AuthMe] authenticated', {
-      userId: user.id,
-      collection: user.collection,
-      role: (user as User).role,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      strategy: (user as any)._strategy
-    })
+
 
     // Type assertion to access custom fields
     const typedUser = user as User

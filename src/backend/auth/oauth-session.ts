@@ -49,60 +49,26 @@ export async function createPayloadOAuthSession({
     user.sessions = [...activeSessions, session]
     user.updatedAt = null // Prevent updatedAt from being updated when only adding a session
 
-    console.log('[OAuthSession] creating session', {
-      userId: user.id,
-      sidPrefix: sid?.slice(0, 8),
-      createdAtType: typeof session.createdAt,
-      createdAtIsDate: session.createdAt instanceof Date,
-      createdAt: (session.createdAt as Date).toISOString(),
-      expiresAtType: typeof session.expiresAt,
-      expiresAtIsDate: session.expiresAt instanceof Date,
-      expiresAt: (session.expiresAt as Date).toISOString(),
-      previousSessionCount: user.sessions?.length || 0,
-      activeSessionCount: activeSessions.length,
-      tokenExpiration,
-    })
+
 
     // Use db.updateOne directly to avoid triggering collection hooks on login
     try {
-      const updateResult = await payload.db.updateOne({
+      await payload.db.updateOne({
         collection: 'users',
         id: user.id,
         data: user,
       })
-      console.log('[OAuthSession] session write complete', {
-        userId: user.id,
-        sidPrefix: sid?.slice(0, 8),
-        success: !!updateResult,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        returnedId: (updateResult as any)?.id
-      })
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
-      console.log('[OAuthSession] session write failed', {
-        name: e?.name,
-        message: e?.message,
-        userId: user.id,
-        sidPrefix: sid?.slice(0, 8)
+      console.error('[OAuthSession] session write failed', {
+        message: e instanceof Error ? e.message : 'Unknown error'
       })
       throw e
     }
 
-    const postWriteUser = await payload.findByID({
-      collection: 'users',
-      id: user.id,
-    })
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const matchingSession = postWriteUser?.sessions?.find((s: any) => s.id === sid)
-    console.log('[OAuthSession] post-write verification', {
-      userId: user.id,
-      sessionCount: postWriteUser?.sessions?.length || 0,
-      sessionExists: !!matchingSession,
-      matchingSessionCreatedAtType: matchingSession ? typeof matchingSession.createdAt : null,
-      matchingSessionCreatedAtValue: matchingSession?.createdAt,
-      matchingSessionExpiresAtType: matchingSession ? typeof matchingSession.expiresAt : null,
-      matchingSessionExpiresAtValue: matchingSession?.expiresAt,
-    })
+
+
     
     user.collection = 'users'
     user._strategy = 'local-jwt'
@@ -116,17 +82,7 @@ export async function createPayloadOAuthSession({
     user,
   })
   
-  console.log('[OAuthSession] jwt metadata', {
-    userId: user.id,
-    sidPrefix: sid?.slice(0, 8),
-    fieldsToSignKeys: Object.keys(fieldsToSign),
-    hasSid: 'sid' in fieldsToSign || '_sid' in fieldsToSign,
-    collection: fieldsToSign.collection,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    strategy: (fieldsToSign as any)._strategy,
-    hasAuthVersion: 'authVersion' in fieldsToSign,
-    tokenExpiration,
-  })
+
 
   // 3. Mint the JWT
   const { token } = await jwtSign({
@@ -148,15 +104,7 @@ export async function createPayloadOAuthSession({
     maxAge: tokenExpiration, // maxAge takes seconds
   })
 
-  console.log('[OAuthSession] cookie set', {
-    cookieName,
-    path: '/',
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    httpOnly: true,
-    maxAge: tokenExpiration,
-    tokenPresent: !!token,
-  })
+
 
   return { token, cookieName }
 }

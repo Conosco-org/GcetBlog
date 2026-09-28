@@ -171,13 +171,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    console.log('[GoogleAuth] callback resolved user', {
-      userId: user.id,
-      status: isNewUser ? 'newly-created' : (usersBySub.docs.length > 0 ? 'existing-google' : 'linked-by-email'),
-      linkedProviders: user.linkedProviders,
-      role: user.role,
-      googleSubIdPresent: !!user.googleSubId
-    })
+
 
     // ── Create Payload Session Safely ────────────────────────────
     // This removes the dangerous temp password overwrite hack.
@@ -204,10 +198,7 @@ export async function GET(request: NextRequest) {
               : '/contributor'
     }
 
-    console.log('[GoogleAuth] session helper completed', {
-      userId: user.id,
-      redirectTarget: redirectPath
-    })
+
 
     const response = NextResponse.redirect(new URL(redirectPath, request.url))
 
@@ -229,7 +220,9 @@ export async function GET(request: NextRequest) {
 
     return response
   } catch (error) {
-    console.error('Google OAuth callback error:', error)
+    console.error('[GoogleAuth] callback error', {
+      message: error instanceof Error ? error.message : 'Unknown error'
+    })
     return NextResponse.redirect(
       new URL('/login?message=An error occurred during Google sign-in', request.url),
     )
