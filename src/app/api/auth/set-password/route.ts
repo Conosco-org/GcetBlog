@@ -11,7 +11,7 @@ import config from '@payload-config'
  *
  * Body: { password: string }
  *
- * On success, sets authProvider to 'both' and returns the redirect path.
+ * On success, appends 'local' to linkedProviders and returns the redirect path.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -43,13 +43,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Update the user's password and set authProvider to 'both'
+    // Update the user's password (the beforeChange hook in users collection will ensure 'local' is added to linkedProviders)
     await payload.update({
       collection: 'users',
       id: user.id,
       data: {
         password,
-        authProvider: 'both',
       },
       overrideAccess: true,
     })

@@ -40,7 +40,7 @@ async function checkSuperadminStatus() {
     console.log(`Is Admin: ${user.isAdmin}`)
     console.log(`Can Manage Admins: ${user.canManageAdmins}`)
     console.log(`Is Active: ${user.isActive}`)
-    console.log(`Auth Provider: ${user.authProvider}`)
+    console.log(`Linked Providers: ${(user.linkedProviders as string[])?.join(', ')}`)
     
     if (user.deactivatedAt) {
       console.log(`Deactivated At: ${user.deactivatedAt}`)

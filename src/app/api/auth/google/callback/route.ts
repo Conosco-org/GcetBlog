@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@payload-config'
+import { createPayloadOAuthSession } from '@backend/auth/oauth-session'
 
 interface GoogleTokenResponse {
   access_token: string
@@ -23,19 +24,6 @@ interface GoogleUserInfo {
 /**
  * Google OAuth - Step 2: Handle callback from Google
  * GET /api/auth/google/callback
- *
- * Scenarios:
- *   A) New user (no account) → create with authProvider='google', googleSubId set.
- *   B) Existing local-only user → link Google, upgrade authProvider to 'both',
- *      **preserve** their original password so email login still works.
- *   C) Existing google/both user → just log them in, password untouched.
- *
- * Token strategy:
- *   We need a Payload-minted JWT so the middleware trusts it. For
- *   existing users whose password we must not lose, we:
- *     1. Read the raw hash+salt from MongoDB.
- *     2. Set a temp password → call payload.login() → get JWT.
- *     3. Restore the original hash+salt immediately after.
  */
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl
@@ -111,75 +99,67 @@ export async function GET(request: NextRequest) {
         new URL('/login?message=Google email is not verified', request.url),
       )
     }
+    
+    const normalizedEmail = googleUser.email.trim().toLowerCase()
 
     const payload = await getPayload({ config })
 
-    // ── Find existing user by email ──────────────────────────────────────
-    const existingUsers = await payload.find({
+    // ── Find existing user by googleSubId ──────────────────────────────────────
+    let user = null
+    let isNewUser = false
+    
+    const usersBySub = await payload.find({
       collection: 'users',
-      where: { email: { equals: googleUser.email } },
+      where: { googleSubId: { equals: googleUser.sub } },
       limit: 1,
       overrideAccess: true,
     })
 
-    const tempPassword = generateSecurePassword()
-    let user
-    let savedHash: string | null = null
-    let savedSalt: string | null = null
-    let isNewUser = false
-
-    if (existingUsers.docs.length > 0) {
-      // ── Existing user ────────────────────────────────────────────────
-      user = existingUsers.docs[0]
-      const currentProvider = (user as unknown as Record<string, unknown>).authProvider as
-        | string
-        | undefined
-
-      // 1. Read original hash+salt from MongoDB so we can restore them
-      //    after the temp-password login.
-      const db = (payload.db as unknown as { connection: { db: { collection: (n: string) => { findOne: (q: Record<string, unknown>) => Promise<Record<string, unknown> | null> } } } }).connection?.db
-      if (db) {
-        const rawUser = await db.collection('users').findOne({ email: googleUser.email })
-        if (rawUser) {
-          savedHash = (rawUser.hash as string) ?? null
-          savedSalt = (rawUser.salt as string) ?? null
-        }
-      }
-
-      // 2. Set temp password so payload.login() works
-      const updateData: Record<string, unknown> = {
-        password: tempPassword,
-        googleSubId: googleUser.sub,
-      }
-
-      // Upgrade authProvider: local → both, undefined → both
-      if (!currentProvider || currentProvider === 'local') {
-        updateData.authProvider = 'both'
-      }
-      // If already 'google' or 'both', leave as-is
-
-      await payload.update({
-        collection: 'users',
-        id: user.id,
-        data: updateData,
-        overrideAccess: true,
-      })
+    if (usersBySub.docs.length > 0) {
+      user = usersBySub.docs[0]
     } else {
-      // ── New user (Google-only) ─────────────────────────────────────────
-      user = await payload.create({
+      // ── Find existing user by email ──────────────────────────────────────
+      const usersByEmail = await payload.find({
         collection: 'users',
-        data: {
-          name: googleUser.name,
-          email: googleUser.email,
-          password: tempPassword,
-          role: 'contributor',
-          bio: '',
-          authProvider: 'google',
-          googleSubId: googleUser.sub,
-        },
+        where: { email: { equals: normalizedEmail } },
+        limit: 1,
         overrideAccess: true,
       })
-      isNewUser = true
+
+      if (usersByEmail.docs.length > 0) {
+        // Link Google to existing user
+        user = usersByEmail.docs[0]
+        
+        const linkedProviders = (user.linkedProviders || []) as string[]
+        const newProviders = linkedProviders.includes('google') ? linkedProviders : [...linkedProviders, 'google']
+        
+        user = await payload.update({
+          collection: 'users',
+          id: user.id,
+          data: {
+            googleSubId: googleUser.sub,
+            linkedProviders: newProviders,
+          },
+          overrideAccess: true,
+        })
+      } else {
+        // ── New user (Google-only) ─────────────────────────────────────────
+        const tempPassword = generateSecurePassword()
+        user = await payload.create({
+          collection: 'users',
+          data: {
+            name: googleUser.name,
+            email: normalizedEmail,
+            password: tempPassword,
+            role: 'contributor',
+            bio: '',
+            linkedProviders: ['google'],
+            googleSubId: googleUser.sub,
+          },
+          overrideAccess: true,
+        })
+        isNewUser = true
+      }
     }
 
     if (!user) {
@@ -188,38 +168,14 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // ── Log in via Payload to get a valid JWT ────────────────────────────
-    const loginResult = await payload.login({
-      collection: 'users',
-      data: {
-        email: googleUser.email,
-        password: tempPassword,
-      },
+    // ── Create Payload Session Safely ────────────────────────────
+    // This removes the dangerous temp password overwrite hack.
+    const { token, cookieName } = await createPayloadOAuthSession({
+      payload,
+      user,
     })
 
-    const token = loginResult?.token
-
-    // ── Restore original password hash for existing users ────────────────
-    // This ensures their email/password login still works.
-    if (savedHash && savedSalt) {
-      const db = (payload.db as unknown as { connection: { db: { collection: (n: string) => { updateOne: (q: Record<string, unknown>, u: Record<string, unknown>) => Promise<unknown> } } } }).connection?.db
-      if (db) {
-        await db.collection('users').updateOne(
-          { email: googleUser.email },
-          { $set: { hash: savedHash, salt: savedSalt } },
-        )
-      }
-    }
-
-    if (!token) {
-      return NextResponse.redirect(
-        new URL('/login?message=Failed to generate session token', request.url),
-      )
-    }
-
     // ── Determine redirect path ──────────────────────────────────────────
-    // New users go to /set-password to create their email login credentials.
-    // Existing users go to their dashboard (or saved redirect).
     let redirectPath: string
 
     if (isNewUser) {
@@ -239,13 +195,16 @@ export async function GET(request: NextRequest) {
 
     const response = NextResponse.redirect(new URL(redirectPath, request.url))
 
-    // Set auth cookie
-    response.cookies.set('payload-token', token, {
+    // Set auth cookie explicitly on the response object to guarantee Next.js redirect picks it up
+    const collectionConfig = payload.collections['users'].config
+    const tokenExpiration = collectionConfig.auth?.tokenExpiration || 7200
+
+    response.cookies.set(cookieName, token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: tokenExpiration,
     })
 
     // Clean up OAuth cookies

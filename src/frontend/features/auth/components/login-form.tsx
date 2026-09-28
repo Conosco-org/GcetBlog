@@ -16,6 +16,7 @@ import {
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import { loginAction } from '../../../../app/(auth)/login/actions'
 import { GoogleSignInButton } from './google-sign-in-button'
+import { MicrosoftSignInButton } from './microsoft-sign-in-button'
 
 interface LoginFormProps {
   redirectTo?: string
@@ -130,7 +131,10 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
             </div>
           </div>
 
-          <GoogleSignInButton redirectTo={redirectTo} />
+          <div className="flex flex-col gap-2">
+            <GoogleSignInButton redirectTo={redirectTo} />
+            <MicrosoftSignInButton redirectTo={redirectTo} />
+          </div>
         </CardFooter>
       </form>
     </Card>

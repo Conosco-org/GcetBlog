@@ -41,7 +41,7 @@ async function setSuperadminPassword() {
       data: {
         password: 'superadmin123',
         isActive: true,
-        authProvider: 'local',
+        linkedProviders: ['local'],
       },
       overrideAccess: true,
     })

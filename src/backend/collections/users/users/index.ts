@@ -56,11 +56,13 @@ export const Users: CollectionConfig = {
       },
     ],
     beforeChange: [
-      // When a Google-only user sets a password via the profile page,
-      // upgrade their authProvider to 'both' so email login works too.
+      // Ensure 'local' is in linkedProviders if a user sets a password
       ({ data, originalDoc }) => {
-        if (data?.password && originalDoc?.authProvider === 'google') {
-          data.authProvider = 'both'
+        if (data?.password) {
+          const currentProviders = (originalDoc?.linkedProviders || data?.linkedProviders || []) as string[]
+          if (!currentProviders.includes('local')) {
+            data.linkedProviders = [...currentProviders, 'local']
+          }
         }
         return data
       },
@@ -227,16 +229,17 @@ export const Users: CollectionConfig = {
       },
     },
     {
-      name: 'authProvider',
+      name: 'linkedProviders',
       type: 'select',
+      hasMany: true,
       options: [
         { label: 'Local (Email/Password)', value: 'local' },
         { label: 'Google', value: 'google' },
-        { label: 'Both', value: 'both' },
+        { label: 'Microsoft', value: 'microsoft' },
       ],
-      defaultValue: 'local',
+      defaultValue: ['local'],
       admin: {
-        description: 'How the user authenticates (managed automatically)',
+        description: 'Authentication methods linked to this account',
         position: 'sidebar',
         readOnly: true,
       },
@@ -251,6 +254,31 @@ export const Users: CollectionConfig = {
       unique: true,
       admin: {
         description: 'Google account unique ID (set automatically on Google sign-in)',
+        position: 'sidebar',
+        readOnly: true,
+      },
+      access: {
+        update: () => false,
+      },
+    },
+    {
+      name: 'microsoftSubId',
+      type: 'text',
+      unique: true, // Unique because we only accept one tenant, so oid alone is practically unique, plus this enforces one MS account per user
+      admin: {
+        description: 'Microsoft Entra Object ID (set automatically on Microsoft sign-in)',
+        position: 'sidebar',
+        readOnly: true,
+      },
+      access: {
+        update: () => false,
+      },
+    },
+    {
+      name: 'microsoftTenantId',
+      type: 'text',
+      admin: {
+        description: 'Microsoft Entra Tenant ID (set automatically on Microsoft sign-in)',
         position: 'sidebar',
         readOnly: true,
       },

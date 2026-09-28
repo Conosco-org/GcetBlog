@@ -16,6 +16,7 @@ import {
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import { registerAction } from '../../../../app/(auth)/register/actions'
 import { GoogleSignInButton } from './google-sign-in-button'
+import { MicrosoftSignInButton } from './microsoft-sign-in-button'
 
 export function RegistrationForm() {
   const [isLoading, setIsLoading] = useState(false)
@@ -161,7 +162,10 @@ export function RegistrationForm() {
             </div>
           </div>
 
-          <GoogleSignInButton label="Sign up with Google" />
+          <div className="flex flex-col gap-2">
+            <GoogleSignInButton label="Sign up with Google" />
+            <MicrosoftSignInButton label="Sign up with Microsoft" />
+          </div>
         </CardFooter>
       </form>
     </Card>

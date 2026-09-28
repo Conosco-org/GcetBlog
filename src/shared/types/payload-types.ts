@@ -542,13 +542,21 @@ export interface User {
   deactivatedAt?: string | null;
   deactivatedBy?: (string | null) | User;
   /**
-   * How the user authenticates (managed automatically)
+   * Authentication methods linked to this account
    */
-  authProvider?: ('local' | 'google' | 'both') | null;
+  linkedProviders?: ('local' | 'google' | 'microsoft')[] | null;
   /**
    * Google account unique ID (set automatically on Google sign-in)
    */
   googleSubId?: string | null;
+  /**
+   * Microsoft Entra Object ID (set automatically on Microsoft sign-in)
+   */
+  microsoftSubId?: string | null;
+  /**
+   * Microsoft Entra Tenant ID (set automatically on Microsoft sign-in)
+   */
+  microsoftTenantId?: string | null;
   /**
    * Social media profiles
    */
@@ -2308,8 +2316,10 @@ export interface UsersSelect<T extends boolean = true> {
   isActive?: T;
   deactivatedAt?: T;
   deactivatedBy?: T;
-  authProvider?: T;
+  linkedProviders?: T;
   googleSubId?: T;
+  microsoftSubId?: T;
+  microsoftTenantId?: T;
   socialLinks?:
     | T
     | {
