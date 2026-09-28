@@ -6,11 +6,17 @@ import { User } from '@shared/types/payload-types'
 export async function GET(request: NextRequest) {
   try {
     const payload = await getPayload({ config })
+    
+    console.log(`[AuthDebug] /api/users/me invoked. Cookies present:`, request.cookies.getAll().map(c => c.name))
+    
     const { user } = await payload.auth({ headers: request.headers })
 
     if (!user) {
+      console.log(`[AuthDebug] /api/users/me payload.auth() returned NO user. Session expired.`)
       return Response.json({ error: 'Unauthorized', sessionExpired: true }, { status: 401 })
     }
+    
+    console.log(`[AuthDebug] /api/users/me payload.auth() returned user ID: ${user.id}`)
 
     // Type assertion to access custom fields
     const typedUser = user as User

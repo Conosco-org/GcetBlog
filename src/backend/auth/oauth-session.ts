@@ -46,23 +46,29 @@ export async function createPayloadOAuthSession({
       return expiry > now
     })
 
-    await payload.update({
+    user.sessions = [...activeSessions, session]
+    user.updatedAt = null // Prevent updatedAt from being updated when only adding a session
+
+    // Use db.updateOne directly to avoid triggering collection hooks on login
+    await payload.db.updateOne({
       collection: 'users',
       id: user.id,
-      data: {
-        sessions: [...activeSessions, session],
-      },
-      overrideAccess: true,
+      data: user,
     })
+    
+    user.collection = 'users'
+    user._strategy = 'local-jwt'
   }
 
-  // 2. Generate fields to sign (id, collection, email, sid, and anything with saveToJWT)
+  // 2. Generate fields to sign using the UPDATED user
   const fieldsToSign = getFieldsToSign({
     collectionConfig,
     email: user.email,
     sid,
     user,
   })
+  
+  console.log(`[PayloadOAuthSession] fieldsToSign keys: ${Object.keys(fieldsToSign).join(', ')}`)
 
   // 3. Mint the JWT
   const { token } = await jwtSign({
@@ -83,6 +89,8 @@ export async function createPayloadOAuthSession({
     path: '/',
     maxAge: tokenExpiration, // maxAge takes seconds
   })
+
+  console.log(`[PayloadOAuthSession] Set cookie ${cookieName} with maxAge ${tokenExpiration}`)
 
   return { token, cookieName }
 }
