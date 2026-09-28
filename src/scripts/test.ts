@@ -35,15 +35,7 @@ async function run() {
     data: { email, password: 'password123!' },
   })
   const nativeToken = nativeResult.token
-  const decodedNative = jwt.decode(nativeToken)
-  
-  // Re-fetch user to see the session that native login created
-  const userAfterNative = await payload.findByID({ collection: 'users', id: user.id })
-  console.log('--- NATIVE LOGIN ---')
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  console.log('JWT sid:', (decodedNative as any).sid)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  console.log('Sessions in DB:', userAfterNative.sessions?.map((s: any) => s.id))
+  const decodedNative = jwt.decode(nativeToken!, { complete: true })
   
   // OAUTH LOGIN
   const collectionConfig = payload.collections['users'].config
@@ -54,17 +46,17 @@ async function run() {
 
   const oauthSession = {
     id: sid,
-    createdAt: now.toISOString(),
-    expiresAt: expiresAt.toISOString(),
+    createdAt: now,
+    expiresAt: expiresAt,
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const activeSessions = (userAfterNative.sessions || []).filter((s: any) => {
+  const activeSessions = (user.sessions || []).filter((s: any) => {
     const expiry = s.expiresAt instanceof Date ? s.expiresAt : new Date(s.expiresAt)
     return expiry > now
   })
 
-  const updatedUserForOauth = { ...userAfterNative, sessions: [...activeSessions, oauthSession], updatedAt: null }
+  const updatedUserForOauth = { ...user, sessions: [...activeSessions, oauthSession], updatedAt: null }
 
   await payload.db.updateOne({
     collection: 'users',
@@ -72,14 +64,17 @@ async function run() {
     data: updatedUserForOauth,
   })
   
-  updatedUserForOauth.collection = 'users'
-  updatedUserForOauth._strategy = 'local-jwt'
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ;(updatedUserForOauth as any).collection = 'users'
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ;(updatedUserForOauth as any)._strategy = 'local-jwt'
 
   const fieldsToSign = getFieldsToSign({
     collectionConfig,
     email: updatedUserForOauth.email,
     sid,
-    user: updatedUserForOauth,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    user: updatedUserForOauth as any,
   })
 
   const { token: oauthToken } = await jwtSign({
@@ -88,24 +83,35 @@ async function run() {
     tokenExpiration,
   })
 
-  const decodedOauth = jwt.decode(oauthToken)
+  const decodedOauth = jwt.decode(oauthToken, { complete: true })
   
-  // Re-fetch user to see the session that OAuth login created
-  const userAfterOauth = await payload.findByID({ collection: 'users', id: user.id })
-  
-  console.log('--- OAUTH LOGIN ---')
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  console.log('JWT sid:', (decodedOauth as any).sid)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  console.log('Sessions in DB:', userAfterOauth.sessions?.map((s: any) => s.id))
+  const extractMetadata = (decoded: any) => ({
+    headerKeys: Object.keys(decoded.header),
+    alg: decoded.header.alg,
+    claimNames: Object.keys(decoded.payload),
+    id: decoded.payload.id,
+    collection: decoded.payload.collection,
+    sidPresent: 'sid' in decoded.payload,
+    _sidPresent: '_sid' in decoded.payload,
+    _strategyPresent: '_strategy' in decoded.payload,
+    _strategyValue: decoded.payload._strategy,
+    authVersionPresent: 'authVersion' in decoded.payload,
+    authVersionValue: decoded.payload.authVersion,
+    iat: decoded.payload.iat,
+    exp: decoded.payload.exp,
+    lifetime: decoded.payload.exp - decoded.payload.iat,
+  });
 
-  console.log('--- DB SESSION VALIDATION ---')
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  console.log('Is OAuth JWT sid in DB?', userAfterOauth.sessions?.some((s: any) => s.id === (decodedOauth as any).sid))
+  console.log('--- NATIVE JWT METADATA ---')
+  console.log(JSON.stringify(extractMetadata(decodedNative), null, 2))
+
+  console.log('--- OAUTH JWT METADATA ---')
+  console.log(JSON.stringify(extractMetadata(decodedOauth), null, 2))
   
-  console.log('--- SECRETS ---')
-  console.log('process.env.PAYLOAD_SECRET:', process.env.PAYLOAD_SECRET?.substring(0, 8))
-  console.log('payload.secret:', payload.secret?.substring(0, 8))
+  console.log('--- SECRETS AND ALGORITHM COMPARISON ---')
+  console.log('process.env.PAYLOAD_SECRET fingerprint:', process.env.PAYLOAD_SECRET?.substring(0, 8))
+  console.log('payload.secret fingerprint:', payload.secret?.substring(0, 8))
   
   process.exit(0)
 }
