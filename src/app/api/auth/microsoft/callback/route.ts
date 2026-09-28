@@ -3,6 +3,9 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { createPayloadOAuthSession } from '@backend/auth/oauth-session'
 import { createRemoteJWKSet, jwtVerify } from 'jose'
+import type { User } from '@/shared/types/payload-types'
+
+type LinkedProvider = NonNullable<User['linkedProviders']>[number]
 
 interface MicrosoftTokenResponse {
   access_token: string
@@ -155,8 +158,8 @@ export async function GET(request: NextRequest) {
           )
         }
 
-        const linkedProviders = (user.linkedProviders || []) as string[]
-        const newProviders = linkedProviders.includes('microsoft') ? linkedProviders : [...linkedProviders, 'microsoft']
+        const currentProviders: LinkedProvider[] = (user.linkedProviders || []) as LinkedProvider[]
+        const newProviders: LinkedProvider[] = currentProviders.includes('microsoft') ? currentProviders : [...currentProviders, 'microsoft']
         
         user = await payload.update({
           collection: 'users',

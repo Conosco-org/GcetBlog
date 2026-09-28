@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { createPayloadOAuthSession } from '@backend/auth/oauth-session'
+import type { User } from '@/shared/types/payload-types'
+
+type LinkedProvider = NonNullable<User['linkedProviders']>[number]
 
 interface GoogleTokenResponse {
   access_token: string
@@ -130,8 +133,8 @@ export async function GET(request: NextRequest) {
         // Link Google to existing user
         user = usersByEmail.docs[0]
         
-        const linkedProviders = (user.linkedProviders || []) as string[]
-        const newProviders = linkedProviders.includes('google') ? linkedProviders : [...linkedProviders, 'google']
+        const currentProviders: LinkedProvider[] = (user.linkedProviders || []) as LinkedProvider[]
+        const newProviders: LinkedProvider[] = currentProviders.includes('google') ? currentProviders : [...currentProviders, 'google']
         
         user = await payload.update({
           collection: 'users',

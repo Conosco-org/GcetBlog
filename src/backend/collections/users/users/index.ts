@@ -3,6 +3,9 @@ import type { CollectionConfig } from 'payload'
 import { isAuthenticated } from '@backend/access/is-authenticated'
 import { isAdminAccess } from '@backend/access/is-admin-access'
 import { adminOrSelf } from '@backend/access/admin-or-self'
+import type { User } from '@/shared/types/payload-types'
+
+type LinkedProvider = NonNullable<User['linkedProviders']>[number]
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -59,7 +62,7 @@ export const Users: CollectionConfig = {
       // Ensure 'local' is in linkedProviders if a user sets a password
       ({ data, originalDoc }) => {
         if (data?.password) {
-          const currentProviders = (originalDoc?.linkedProviders || data?.linkedProviders || []) as string[]
+          const currentProviders: LinkedProvider[] = (originalDoc?.linkedProviders || data?.linkedProviders || []) as LinkedProvider[]
           if (!currentProviders.includes('local')) {
             data.linkedProviders = [...currentProviders, 'local']
           }
